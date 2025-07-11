@@ -252,10 +252,62 @@
             <button id="theme-toggle" aria-label="تبديل الوضع"><i class="fas fa-sun"></i></button>
             <button class="hamburger" id="hamburger" aria-label="فتح القائمة"><i class="fas fa-bars"></i></button>
 
-            <!-- زر تحديث الموقع -->
-            <button id="refresh-btn" aria-label="تحديث الصفحة" onclick="location.reload();">
-                <i class="fas fa-sync-alt"></i>
-            </button>
+      
+            
+
+
+
+
+
+<!-- زر تحديث الموقع -->
+<style>
+  #refresh-btn {
+    position: fixed;
+    bottom: 26px;
+    left: 10px;
+    z-index: 9999;
+    background-color: #1e88e5;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    padding: 14px;
+    font-size: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s ease, background-color 0.3s ease;
+  }
+
+  #refresh-btn:hover {
+    background-color: #1565c0;
+    transform: scale(1.1);
+  }
+
+  #refresh-btn:active {
+    transform: scale(0.95);
+  }
+
+  /* للأجهزة الصغيرة جدًا */
+  @media (max-width: 480px) {
+    #refresh-btn {
+      padding: 12px;
+      font-size: 16px;
+      bottom: 15px;
+      right: 15px;
+    }
+  }
+</style>
+
+<button id="refresh-btn" aria-label="تحديث الصفحة" onclick="location.reload();">
+  <i class="fas fa-sync-alt"></i>
+</button>
+
+
+
+
+
+
+
+
         </div>
     </div>
 </header>
