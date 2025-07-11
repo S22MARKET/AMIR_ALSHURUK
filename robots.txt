@@ -1,0 +1,6 @@
+
+User-agent: *
+Disallow: /admin/
+Allow: /
+
+Sitemap: https://s22market.github.io/AMIR_ALSHURUK/sitemap.xml
