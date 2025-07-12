@@ -550,7 +550,7 @@
         .unified-section {
             padding: 60px 20px;
             text-align: center;
-            background: radial-gradient(circle, #f4f7fa 0%, #eef2f7 100%);
+
             font-family: 'Tajawal', sans-serif; /* يفضل إضافة خط عربي جميل مثل تجوال */
         }
 
@@ -716,6 +716,39 @@
 
 
 
+
+
+
+
+
+
+
+        /* نمط الوضع الداكن */
+body.dark-mode {
+  background-color: #121212;
+  color: #ddd;
+}
+
+body.dark-mode a {
+  color: #c5a46d; /* لون ذهبي في الوضع الداكن */
+}
+
+body.dark-mode .business-card {
+  background-color: #222;
+  box-shadow: 0 15px 45px rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .card-right {
+  background: linear-gradient(135deg, #444c66, #2c3a5a);
+  color: #f0d97e;
+}
+
+/* عدل ألوان أخرى حسب حاجتك في الوضع الداكن */
+
+
+
+
+
     </style>
 </head>
 <body>
@@ -756,7 +789,7 @@
       color: #000;
       text-decoration: underline;
       font-weight: 900;
-      font-size: 16px;
+      font-size: 40px;
       transition: color 0.3s ease;
     }
     .phone-number:hover {
@@ -838,7 +871,7 @@
           onclick="event.stopPropagation(); showPhoneOptions('0781465477')">
       0781465477
     </span>
-    |
+  
     <span class="phone-number" 
           onclick="event.stopPropagation(); showPhoneOptions('0557754808')">
       0557754808
@@ -891,6 +924,33 @@
         closeModal();
       }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   </script>
 
 </body>
@@ -901,7 +961,7 @@
                                 </div>
                                 <div class="info-item">
                                     <i class="fas fa-envelope"></i>
-                                    <a  style="font-weight: 900; font-size: 15px; color: #000; line-height: 1.7; margin-bottom: 20px;"class="description" href="mailto:amirchourouk363636@gmail.com" onclick="event.stopPropagation();">amirchourouk363636@gmail.com</a>
+                                    <a  style="font-weight: 900; font-size: 26px; color: #000; line-height: 1.7; margin-bottom: 20px;"class="description" href="mailto:amirchourouk363636@gmail.com" onclick="event.stopPropagation();">amirchourouk363636@gmail.com</a>
                                 </div>
                                 <div class="info-item whatsapp-link">
                                     <i class="fab fa-whatsapp"></i>
@@ -912,7 +972,7 @@
                         </div>
 
                         <div class="card-right">
-                            <h2  style="font-weight: 900; font-size: 38px; color: #ebb80f; line-height: 1.7; margin-bottom: 20px;"class="description" >أمير الشروق</h2>
+                            <h2  style="font-weight: 900; font-size: 48px; color: #ebb80f; line-height: 1.7; margin-bottom: 40px;"class="description" >أمير الشروق</h2>
                             <div class="qr-code-img">
                                 <img src="PIC/QR01.jpg" alt="QR Code للموقع" onerror="this.onerror=null;this.src='https://placehold.co/160x160/ffffff/c5a46d?text=QR+Code';">
                             </div>
@@ -998,7 +1058,15 @@
                     toast.classList.remove('show');
                 }, 3000);
             }
+
         }
+
+
+
+
+
+
+
     </script>
 
 </body>
