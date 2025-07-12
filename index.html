@@ -709,6 +709,13 @@
             .tagline { font-size: 20px; }
             .actions-container { gap: 20px; }
         }
+
+
+
+
+
+
+
     </style>
 </head>
 <body>
@@ -716,29 +723,185 @@
     <main>
         <section id="card_visit" class="unified-section">
             <div class="unified-container">
-                <h2 class="section-title">بطاقتك الرقمية وتفاصيل التواصل</h2>
+                <h2  class="section-title">بطاقتك الرقمية وتفاصيل التواصل</h2>
                 
                 <div class="page-container">
                     <div class="business-card" id="businessCard" title="انقر لتوليد صورة ديناميكية للبطاقة">
                         <div class="card-left">
-                            <h3 class="tagline">الجودة والنظافة تبدأ من هنا</h3>
-                            <p class="description">
+                            <h3  style="font-weight: 900; font-size: 15px; color: #000; line-height: 1.7; margin-bottom: 20px;" class="tagline">الجودة والنظافة تبدأ من هنا</h3>
+                            <p   style="font-weight: 900; font-size: 15px; color: #000; line-height: 1.7; margin-bottom: 20px;"class="description">
+
+
                                 خياركم الأول لمواد تنظيف عالية الفعالية بأسعار الجملة. نخدمكم في الطارف وكل أنحاء الجزائر.
                             </p>
                             <div class="contact-info">
                                 <div class="info-item">
-                                    <i class="fas fa-map-marker-alt"></i><span>الطارف، الجزائر</span>
+                                    <i class="fas fa-map-marker-alt"></i><span   style="font-weight: 900; font-size: 15px; color: #000; line-height: 1.7; margin-bottom: 20px;" >الطارف، الجزائر</span>
                                 </div>
                                 <div class="info-item">
                                     <i class="fas fa-phone-alt"></i>
+                            
+
                                     <div>
-                                        <a href="tel:+213781465477" onclick="event.stopPropagation(); copyToClipboard('0781465477')" title="اضغط للاتصال أو النسخ">0781465477</a> | 
-                                        <a href="tel:+213557754808" onclick="event.stopPropagation(); copyToClipboard('0557754808')" title="اضغط للاتصال أو النسخ">0557754808</a>
+
+                                        <!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>بطاقة الاتصال</title>
+  <style>
+    .phone-number {
+      cursor: pointer;
+      color: #000;
+      text-decoration: underline;
+      font-weight: 900;
+      font-size: 16px;
+      transition: color 0.3s ease;
+    }
+    .phone-number:hover {
+      color: #c5a46d; /* ذهبي */
+    }
+
+    #phoneModal {
+      display: none; /* مخفية عند التحميل */
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Tajawal', sans-serif;
+    }
+    #phoneModal .modal-content {
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      text-align: center;
+      max-width: 320px;
+      width: 90%;
+      user-select: none;
+    }
+    #phoneModal h3 {
+      margin-bottom: 20px;
+      font-size: 18px;
+    }
+    #phoneModal p#modalPhoneNumber {
+      font-weight: 900;
+      font-size: 20px;
+      margin-bottom: 25px;
+      direction: ltr;
+      letter-spacing: 2px;
+    }
+    #phoneModal button {
+      width: 100%;
+      padding: 12px 0;
+      margin-bottom: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      font-weight: 700;
+    }
+    #phoneModal button.call-btn {
+      background-color: #2c5b8a;
+      color: white;
+    }
+    #phoneModal button.call-btn:hover {
+      background-color: #24486e;
+    }
+    #phoneModal button.copy-btn {
+      background-color: #c5a46d;
+      color: white;
+    }
+    #phoneModal button.copy-btn:hover {
+      background-color: #a88a59;
+    }
+    #phoneModal button.cancel-btn {
+      background-color: #999;
+      color: white;
+      margin-top: 0;
+    }
+    #phoneModal button.cancel-btn:hover {
+      background-color: #777;
+    }
+  </style>
+</head>
+<body>
+
+  <p style="font-weight: 900; font-size: 16px; color: #000;">
+    <span class="phone-number" 
+          onclick="event.stopPropagation(); showPhoneOptions('0781465477')">
+      0781465477
+    </span>
+    |
+    <span class="phone-number" 
+          onclick="event.stopPropagation(); showPhoneOptions('0557754808')">
+      0557754808
+    </span>
+  </p>
+
+  <!-- نافذة مودال -->
+  <div id="phoneModal" onclick="closeModal()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <h3>اختر الإجراء للرقم:</h3>
+      <p id="modalPhoneNumber"></p>
+      <button class="call-btn" onclick="callNow()">📞 اتصال</button>
+      <button class="copy-btn" onclick="copyNow()">📋 نسخ الرقم</button>
+      <button class="cancel-btn" onclick="closeModal()">إلغاء</button>
+    </div>
+  </div>
+
+  <script>
+    window.onload = function() {
+      document.getElementById('phoneModal').style.display = 'none';
+    };
+
+    let currentPhone = "";
+
+    function showPhoneOptions(phoneNumber) {
+      currentPhone = phoneNumber;
+      document.getElementById('modalPhoneNumber').innerText = phoneNumber;
+      document.getElementById('phoneModal').style.display = 'flex';
+    }
+
+    function callNow() {
+      window.location.href = `tel:${currentPhone}`;
+      closeModal();
+    }
+
+    function copyNow() {
+      navigator.clipboard.writeText(currentPhone).then(() => {
+        alert("📋 تم نسخ الرقم: " + currentPhone);
+      });
+      closeModal();
+    }
+
+    function closeModal() {
+      document.getElementById('phoneModal').style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+      const modal = document.getElementById('phoneModal');
+      if (event.target === modal) {
+        closeModal();
+      }
+    }
+  </script>
+
+</body>
+</html>
+
+                              
                                     </div>
                                 </div>
                                 <div class="info-item">
                                     <i class="fas fa-envelope"></i>
-                                    <a href="mailto:amirchourouk363636@gmail.com" onclick="event.stopPropagation();">amirchourouk363636@gmail.com</a>
+                                    <a  style="font-weight: 900; font-size: 15px; color: #000; line-height: 1.7; margin-bottom: 20px;"class="description" href="mailto:amirchourouk363636@gmail.com" onclick="event.stopPropagation();">amirchourouk363636@gmail.com</a>
                                 </div>
                                 <div class="info-item whatsapp-link">
                                     <i class="fab fa-whatsapp"></i>
@@ -749,12 +912,12 @@
                         </div>
 
                         <div class="card-right">
-                            <h2>أمير الشروق</h2>
+                            <h2  style="font-weight: 900; font-size: 38px; color: #ebb80f; line-height: 1.7; margin-bottom: 20px;"class="description" >أمير الشروق</h2>
                             <div class="qr-code-img">
                                 <img src="PIC/QR01.jpg" alt="QR Code للموقع" onerror="this.onerror=null;this.src='https://placehold.co/160x160/ffffff/c5a46d?text=QR+Code';">
                             </div>
-                            <p>امسح الكود لزيارة موقعنا</p>
-                            <a href="https://s22market.github.io/AMIR_ALSHURUK/" target="_blank" onclick="event.stopPropagation();">s22market.github.io/AMIR_ALSHURUK</a>
+                            <p  style="font-weight: 900; font-size: 17px; color: #ffffff; line-height: 1.7; margin-bottom: 20px;"class="description">امسح الكود لزيارة موقعنا</p>
+                            <a  style="font-weight: 900; font-size: 17px; color: #ffffff; line-height: 1.7; margin-bottom: 20px;"class="description" href="https://s22market.github.io/AMIR_ALSHURUK/" target="_blank" onclick="event.stopPropagation();">s22market.github.io/AMIR_ALSHURUK</a>
                         </div>
                     </div>
 
