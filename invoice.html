@@ -9,7 +9,9 @@
             --primary-color: #005a9c; --secondary-color: #f4f6f9; --border-color: #dee2e6;
             --danger-color: #dc3545; --success-color: #28a745; --warning-color: #ffc107;
             --info-color: #17a2b8; --light-bg: #f8f9fa; --dark-text: #343a40;
-            --whatsapp-color: #25D366; --telegram-color: #0088cc;
+            --word-color: #2b579a; --purple-color: #6a0dad;
+            /* ألوان المشاركة */
+            --whatsapp-color: #25D366; --telegram-color: #0088cc; --email-color: #777;
         }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0;
@@ -19,36 +21,12 @@
             max-width: 900px; margin: 20px auto; background: #fff;
             padding: 25px; box-shadow: 0 4px 25px rgba(0,0,0,0.08); border-radius: 8px;
         }
-        /* --- تعديل هنا: تغيير تصميم الترويسة لوضع التاريخ في الأعلى --- */
         .invoice-header {
-            display: flex;
-            flex-direction: column; /* ترتيب العناصر بشكل عمودي */
-            gap: 25px; /* مسافة بين قسم التاريخ وقسم معلومات الشركة */
-            margin-bottom: 15px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid var(--primary-color);
+            display: flex; justify-content: space-between; align-items: flex-start;
+            margin-bottom: 15px; padding-bottom: 20px; border-bottom: 2px solid var(--primary-color);
+            flex-wrap: wrap; gap: 20px;
         }
-        /* --- تعديل هنا: تنسيق قسم التاريخ ليكون في أقصى اليسار --- */
-        .invoice-meta {
-            display: flex;
-            justify-content: flex-end; /* في RTL، هذا يدفع العناصر لليسار */
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 20px; /* مسافة بين رقم الفاتورة والتاريخ */
-        }
-        .meta-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .meta-item input {
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            text-align: right; /* محاذاة النص داخل الحقل لليسار في RTL */
-            font-weight: bold;
-        }
-        .company-info { width: 100%; }
+        .company-info { flex: 3; min-width: 300px; }
         .company-info h1 { margin: 0 0 10px; font-size: 1.8em; color: var(--primary-color); }
         .company-details p { margin: 4px 0; font-size: 0.85em; color: #555; display: flex; align-items: center; }
         .company-details p strong { color: var(--dark-text); min-width: 100px; display: inline-block; }
@@ -58,12 +36,14 @@
         .edit-mode input { display: inline-block; }
         .edit-company-btn { font-size: 0.8em; cursor: pointer; border: 1px solid #ccc; border-radius: 5px; padding: 3px 8px; margin-right: 15px; }
         
+        .invoice-meta { flex: 2; text-align: left; min-width: 250px;}
+        .meta-item { display: flex; align-items: center; justify-content: flex-end; gap: 10px; margin-bottom: 10px; }
+        .meta-item input { padding: 8px; border: 1px solid #ccc; border-radius: 4px; text-align: left; font-weight: bold; }
         .client-details { display: flex; gap: 15px; margin-bottom: 25px; flex-wrap: wrap; }
         .client-details input { flex: 1; min-width: 250px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-weight: bold; }
         table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
         table th, table td { border: 1px solid var(--border-color); padding: 12px; text-align: right; }
         table th { background-color: var(--light-bg); font-weight: 600; font-size: 0.9em; }
-        table td input.unit-price { width: 100%; box-sizing: border-box; border: 1px solid transparent; padding: 5px; border-radius: 4px; transition: border 0.2s; text-align: center; }
         table td input { width: 100%; box-sizing: border-box; border: 1px solid transparent; padding: 5px; border-radius: 4px; transition: border 0.2s; }
         table td input:focus { border: 1px solid var(--primary-color); background-color: #fcfcfc; }
         .delete-row-btn { background: none; border: none; color: var(--danger-color); font-size: 1.3em; cursor: pointer; transition: transform 0.2s; }
@@ -84,10 +64,14 @@
         input:checked + .slider { background-color: var(--success-color); }
         input:checked + .slider:before { transform: translateX(20px); }
         .amount-in-words-container { position: relative; }
-        .amount-in-words { margin-top: 25px; padding: 15px 15px 15px 40px; background-color: #eaf2f8; border-right: 4px solid var(--primary-color); border-radius: 5px; font-weight: bold; }
+        .amount-in-words { 
+            margin-top: 25px; padding: 15px 15px 15px 40px; background-color: #eaf2f8; 
+            border-right: 4px solid var(--purple-color); border-radius: 5px; font-weight: bold;
+            color: var(--purple-color);
+        }
         .edit-amount-btn { position: absolute; top: 50%; transform: translateY(-50%); left: 10px; cursor: pointer; font-size: 1.2em; opacity: 0.7; }
         div[contenteditable="true"] { outline: 2px solid var(--warning-color); background-color: #fff; }
-        .controls { margin: 30px 0; display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+        .controls { margin: 30px 0 15px; display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
         .action-btn {
             padding: 12px 18px; color: white; border: none; border-radius: 5px; cursor: pointer;
             font-size: 1em; text-decoration: none; display: inline-flex; align-items: center;
@@ -97,11 +81,13 @@
         .add-row-btn { background-color: var(--success-color); }
         .save-btn { background-color: var(--info-color); }
         .print-btn { background-color: #007bff; }
+        .word-btn { background-color: var(--word-color); }
+        /* أزرار المشاركة */
+        #share-email-btn { background-color: var(--email-color); }
+        #share-whatsapp-btn { background-color: var(--whatsapp-color); }
+        #share-telegram-btn { background-color: var(--telegram-color); }
         .history-btn { background-color: #6c757d; }
         .new-invoice-btn { background-color: var(--warning-color); color: var(--dark-text); }
-        .email-btn { background-color: #5a6268; }
-        .whatsapp-btn { background-color: var(--whatsapp-color); }
-        .telegram-btn { background-color: var(--telegram-color); }
         #save-status { text-align: center; color: #6c757d; font-style: italic; transition: opacity 1s; height: 1em;}
         .hidden { display: none !important; }
 
@@ -111,20 +97,16 @@
             .controls, .delete-row-btn, th.delete-header-cell, .options-section, .edit-company-btn, .edit-amount-btn, #save-status { display: none; }
             input { border: none !important; background: transparent !important; padding: 2px 0 !important; font-weight: bold; color: #000; width: auto; }
             .total-section { border: none; background-color: var(--light-bg) !important; flex-basis: 100%; }
-            .discount-row.disabled { display: none; }
+            .amount-in-words { border-right-color: var(--purple-color) !important; color: var(--purple-color) !important; background-color: #eaf2f8 !important;}
             #grand-total { background-color: var(--primary-color) !important; color: white !important; }
             .company-details .editable-value { display: inline-block !important; }
             .company-details input { display: none !important; }
         }
         @media (max-width: 768px) {
-            .invoice-header { flex-direction: column; align-items: stretch; }
-            .invoice-meta { justify-content: flex-start; } /* محاذاة لليمين في الجوال */
-            .company-info { width: 100%; text-align: right; }
+            .invoice-header, .summary-and-options, .client-details { flex-direction: column; }
+            .invoice-meta, .company-info { width: 100%; text-align: right; }
+            .invoice-meta { text-align: right; }
             .meta-item { justify-content: flex-start; }
-            table { font-size: 0.8em; }
-            table th, table td { padding: 8px; }
-            .controls { flex-direction: column; }
-            .action-btn { width: 100%; justify-content: center; }
         }
     </style>
 </head>
@@ -132,10 +114,6 @@
 
 <div class="page-container">
     <header class="invoice-header">
-        <div class="invoice-meta">
-            <div class="meta-item"><bdi><b>Facture N°:</b></bdi><input type="text" id="invoice-num" value="001/2025"></div>
-            <div class="meta-item"><bdi><b>Date:</b></bdi><input type="date" id="invoice-date"></div>
-        </div>
         <div class="company-info">
             <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                 <h1>مؤسسة صالحي سليم</h1>
@@ -148,6 +126,10 @@
                 <p><strong>سجل تجاري:</strong> <span class="editable-value" id="c-cr-val">36/00-3451123ا21</span><input type="text" id="c-cr-input"></p>
                 <p><strong>حساب بنكي:</strong> <span class="editable-value" id="c-bank-val">00500231400236854088</span><input type="text" id="c-bank-input"></p>
             </div>
+        </div>
+        <div class="invoice-meta">
+            <div class="meta-item"><bdi><b>Facture N°:</b></bdi><input type="text" id="invoice-num" value="001/2025"></div>
+            <div class="meta-item"><bdi><b>Date:</b></bdi><input type="date" id="invoice-date"></div>
         </div>
     </header>
 
@@ -170,13 +152,12 @@
             <button class="action-btn add-row-btn" onclick="addRow()">+ إضافة سطر</button>
             <button class="action-btn save-btn" id="save-invoice">💾 حفظ في المحفوظات</button>
             <button class="action-btn print-btn" onclick="window.print()">🖨️ طباعة</button>
+            <button class="action-btn word-btn" id="export-word-btn">📄 تصدير وورد</button>
+            <button class="action-btn" id="share-email-btn">📧 إرسال عبر البريد</button>
+            <button class="action-btn" id="share-whatsapp-btn">💬 إرسال عبر واتساب</button>
+            <button class="action-btn" id="share-telegram-btn">➤ إرسال عبر تيليجرام</button>
             <a href="invoices.html" class="action-btn history-btn">📜 عرض المحفوظات</a>
             <button class="action-btn new-invoice-btn" id="new-invoice-btn">📄 فاتورة جديدة</button>
-        </div>
-        <div class="controls" style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px;">
-            <button class="action-btn email-btn" id="send-email">📧 إرسال عبر البريد</button>
-            <button class="action-btn whatsapp-btn" id="send-whatsapp">💬 إرسال عبر واتساب</button>
-            <button class="action-btn telegram-btn" id="send-telegram">➤ إرسال عبر تيليجرام</button>
         </div>
         <p id="save-status"></p>
 
@@ -196,20 +177,20 @@
                 <div class="total-row" id="grand-total"><span class="total-label">الإجمالي للدفع (TTC)</span><span id="montant-ttc">0.00 دج</span></div>
             </div>
         </div>
-        <div class="amount-in-words-container">
-            <div class="amount-in-words hidden" id="amount-in-arabic" contenteditable="false"></div>
-            <span class="edit-amount-btn hidden" id="edit-arabic-btn">✏️</span>
+        <div class="amount-in-words-container hidden" id="arabic-container">
+            <div class="amount-in-words" id="amount-in-arabic" contenteditable="false"></div>
+            <span class="edit-amount-btn" id="edit-arabic-btn">✏️</span>
         </div>
-        <div class="amount-in-words-container">
-            <div class="amount-in-words hidden" id="amount-in-french" contenteditable="false"></div>
-            <span class="edit-amount-btn hidden" id="edit-french-btn">✏️</span>
+        <div class="amount-in-words-container hidden" id="french-container">
+            <div class="amount-in-words" id="amount-in-french" contenteditable="false"></div>
+            <span class="edit-amount-btn" id="edit-french-btn">✏️</span>
         </div>
     </main>
 </div>
 
 <script>
-    var Tafqeet=(function(){"use strict";const e=["","واحد","اثنان","ثلاثة","أربعة","خمسة","ستة","سبعة","ثمانية","تسعة"],t=["","عشرة","عشرون","ثلاثون","أربعون","خمسون","ستون","سبعون","ثمانون","تسعون"],n=["","مئة","مئتان","ثلاثمئة","أربعمئة","خمسمئة","ستمئة","سبعمئة","ثمانمئة","تسعمئة"],r=["","ألف","ألفان","آلاف"],o=["","مليون","مليونان","ملايين"],a=["","مليار","ملياران","مليارات"],i=["","تريليون","تريليونان","تريليونات"];function c(e){let r=Math.floor(e/100),o=Math.floor(e%100/10),a=e%10,i="";return r>0&&(i+=n[r]+(o>0||a>0?" و ":"")),o>0&&a>0?i+=t[o]+" و "+e[a]:o>0?i+=t[o]:a>0&&(i+=e[a]),i}return{convert:function(l){if(l=String(l).split(".")[0],"0"===l)return"صفر";let s=parseInt(l,10),u=[];const d=Math.floor(s/1e12),f=Math.floor(s%1e12/1e9),m=Math.floor(s%1e9/1e6),p=Math.floor(s%1e6/1e3),g=s%1e3;return d>0&&u.push(c(d)+" "+function(e,t){return 0===e?"":1===e?t[1]:2===e?t[2]:e>=3&&e<=10?e+" "+t[3]:e+" "+t[1]}(d,i).split(" ")[1]),f>0&&u.push(c(f)+" "+function(e,t){return 0===e?"":1===e?t[1]:2===e?t[2]:e>=3&&e<=10?e+" "+t[3]:e+" "+t[1]}(f,a).split(" ")[1]),m>0&&u.push(c(m)+" "+function(e,t){return 0===e?"":1===e?t[1]:2===e?t[2]:e>=3&&e<=10?e+" "+t[3]:e+" "+t[1]}(m,o).split(" ")[1]),p>0&&(1===p?u.push(r[1]):2===p?u.push(r[2]):u.push(c(p)+" "+(p>=3&&p<=10?r[3]:r[1]))),g>0&&u.push(c(g)),u.join(" و ")}}})();
-    function numberToWordsFr(n){if(n===0)return"Zéro";const a=["","un","deux","trois","quatre","cinq","six","sept","huit","neuf","dix","onze","douze","treize","quatorze","quinze","seize","dix-sept","dix-huit","dix-neuf"],e=["","","vingt","trente","quarante","cinquante","soixante","soixante-dix","quatre-vingt","quatre-vingt-dix"];const r=Math.floor(n),t=Math.round(100*(n-r));let i="";r>=1e3&&(i+=numberToWordsFr(Math.floor(r/1e3))+" mille ");let s=r%1e3;s>=100&&(i+=a[Math.floor(s/100)]+(s%100==0?" cents":" cent ")),s%=100,s>0&&(s<20?i+=a[s]:(i+=e[Math.floor(s/10)],s%10!=0&&(i+=(s%10==1&&Math.floor(s/10)!=8?" et ":"-")+a[s%10])));let o=i.trim().replace(/\s+/g," ");return t>0&&(o+=` et ${numberToWordsFr(t)} centimes`),o}
+    var Tafqeet=(function(){"use strict";const e=["","واحد","اثنان","ثلاثة","أربعة","خمسة","ستة","سبعة","ثمانية","تسعة"],t=["","عشرة","عشرون","ثلاثون","أربعون","خمسون","ستون","سبعون","ثمانون","تسعون"],n=["","مئة","مئتان","ثلاثمئة","أربعمئة","خمسمئة","ستمئة","سبعمئة","ثمانمئة","تسعمئة"],r=["","ألف","ألفان","آلاف"],o=["","مليون","مليونان","ملايين"],a=["","مليار","ملياران","مليارات"],i=["","تريليون","تريليونان","تريليونات"];function c(e){let r=Math.floor(e/100),o=Math.floor(e%100/10),a=e%10,i="";return r>0&&(i+=n[r]+(o>0||a>0?" و ":"")),o>0&&a>0?i+=e[a]+" و "+t[o]:o>0?i+=t[o]:a>0&&(i+=e[a]),i}return{convert:function(l){if(l=String(l).split(".")[0],"0"===l)return"صفر";let s=parseInt(l,10),u=[];const d=Math.floor(s/1e12),f=Math.floor(s%1e12/1e9),m=Math.floor(s%1e9/1e6),p=Math.floor(s%1e6/1e3),g=s%1e3;return d>0&&u.push(c(d)+" "+function(e,t){return 0===e?"":1===e?t[1]:2===e?t[2]:e>=3&&e<=10?e+" "+t[3]:e+" "+t[1]}(d,i).split(" ")[1]),f>0&&u.push(c(f)+" "+function(e,t){return 0===e?"":1===e?t[1]:2===e?t[2]:e>=3&&e<=10?e+" "+t[3]:e+" "+t[1]}(f,a).split(" ")[1]),m>0&&u.push(c(m)+" "+function(e,t){return 0===e?"":1===e?t[1]:2===e?t[2]:e>=3&&e<=10?e+" "+t[3]:e+" "+t[1]}(m,o).split(" ")[1]),p>0&&(1===p?u.push(r[1]):2===p?u.push(r[2]):u.push(c(p)+" "+(p>=3&&p<=10?r[3]:r[1]))),g>0&&u.push(c(g)),u.join(" و ")}}})();
+    function numberToWordsFr(n){if(n===0)return"Zéro";const a=["","un","deux","trois","quatre","cinq","six","sept","huit","neuf","dix","onze","douze","treize","quatorze","quinze","seize","dix-sept","dix-huit","dix-neuf"],e=["","","vingt","trente","quarante","cinquante","soixante","soixante-dix","quatre-vingt","quatre-vingt-dix"];const r=Math.floor(n),t=Math.round(100*(n-r));let i="";r>=1e3&&(i+=numberToWordsFr(Math.floor(r/1e3))+" mille ");let s=r%1e3;s>=100&&(i+=a[Math.floor(s/100)]+(s%100==0?" cents":" cent ")),s%=100,s>0&&(s<20?i+=a[s]:(i+=e[Math.floor(s/10)],s%10!=0&&(i+=(s%10==1&&Math.floor(s/10)<8&&s>70?" et ":"-")+a[s%10])));let o=i.trim().replace(/\s+/g," ");return t>0&&(o+=` et ${numberToWordsFr(t)} centimes`),o}
     
 document.addEventListener('DOMContentLoaded', function() {
     const elements = {
@@ -220,10 +201,12 @@ document.addEventListener('DOMContentLoaded', function() {
         discountRow: document.querySelector('.discount-row'),
         arabicTextToggle: document.getElementById('arabic-text-toggle'),
         frenchTextToggle: document.getElementById('french-text-toggle'),
+        arabicContainer: document.getElementById('arabic-container'),
+        frenchContainer: document.getElementById('french-container'),
         arabicDiv: document.getElementById('amount-in-arabic'),
         frenchDiv: document.getElementById('amount-in-french'),
         editArabicBtn: document.getElementById('edit-arabic-btn'),
-        editFrenchBtn: document.getElementById('edit-french-btn'), // --- إضافة هنا
+        editFrenchBtn: document.getElementById('edit-french-btn'),
         companyDetailsSection: document.getElementById('company-details-section'),
         editCompanyBtn: document.getElementById('edit-company-btn'),
         saveStatus: document.getElementById('save-status'),
@@ -242,8 +225,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     window.addRow = function(product = { name: '', quantity: 1, price: 0.00 }) {
         const newRow = elements.tableBody.insertRow();
-        const formattedPrice = (parseFloat(product.price || 0).toFixed(2)).replace('.', ',');
-        newRow.innerHTML = `<td><input type="text" class="product-name" placeholder="أدخل اسم المنتج" value="${product.name || ''}" spellcheck="true"></td><td><input type="number" class="quantity" value="${product.quantity || 1}" min="0"></td><td><input type="text" inputmode="decimal" class="unit-price" value="${formattedPrice}"></td><td class="total-price">0.00 دج</td><td class="delete-header-cell"><button class="delete-row-btn">🗑️</button></td>`;
+        newRow.innerHTML = `<td><input type="text" class="product-name" placeholder="أدخل اسم المنتج" value="${product.name || ''}" spellcheck="true"></td><td><input type="number" class="quantity" value="${product.quantity || 1}" min="0"></td><td><input type="number" class="unit-price" value="${parseFloat(product.price || 0).toFixed(2)}" min="0" step="0.01"></td><td class="total-price">0.00 دج</td><td class="delete-header-cell"><button class="delete-row-btn">🗑️</button></td>`;
         newRow.querySelector('.product-name').focus();
     };
 
@@ -251,7 +233,7 @@ document.addEventListener('DOMContentLoaded', function() {
         let subtotal = 0;
         elements.tableBody.querySelectorAll("tr").forEach(row => {
             const quantity = parseFloat(row.querySelector(".quantity").value) || 0;
-            const unitPrice = parseFloat(row.querySelector(".unit-price").value.replace(',', '.')) || 0;
+            const unitPrice = parseFloat(row.querySelector(".unit-price").value) || 0;
             const totalPrice = quantity * unitPrice;
             row.querySelector(".total-price").textContent = formatCurrency(totalPrice) + ' دج';
             subtotal += totalPrice;
@@ -277,8 +259,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function updateDisplay() {
         elements.discountControls.style.display = elements.discountToggle.checked ? 'flex' : 'none';
-        elements.discountRow.style.opacity = elements.discountToggle.checked ? '1' : '0.6';
-        elements.discountRow.classList.toggle('disabled', !elements.discountToggle.checked);
         
         const montantTTC = parseFloat(document.getElementById("montant-ttc").textContent.replace(/\s/g, '').replace(',', '.')) || 0;
 
@@ -286,41 +266,43 @@ document.addEventListener('DOMContentLoaded', function() {
             if (elements.arabicDiv.contentEditable !== 'true') {
                  elements.arabicDiv.textContent = `أوقفت هذه الفاتورة عند مبلغ: ${Tafqeet.convert(montantTTC)} دينار جزائري.`;
             }
-            elements.arabicDiv.parentElement.classList.remove('hidden');
+            elements.arabicContainer.classList.remove('hidden');
         } else {
-            elements.arabicDiv.parentElement.classList.add('hidden');
+            elements.arabicContainer.classList.add('hidden');
         }
-        
-        // --- تعديل هنا: منطق إظهار وتعديل النص الفرنسي ---
+
         if (elements.frenchTextToggle.checked) {
-            if (elements.frenchDiv.contentEditable !== 'true') {
+             if (elements.frenchDiv.contentEditable !== 'true') {
                 const [integerPart, decimalPart] = montantTTC.toFixed(2).split('.');
-                const fullText = `Arrêté la présente facture à la somme de: ${numberToWordsFr(parseInt(integerPart, 10))} dinars algériens et ${numberToWordsFr(parseInt(decimalPart, 10))} centimes.`;
-                elements.frenchDiv.textContent = fullText.replace(" et Zéro centimes.", ".");
+                let fullText = `Arrêté la présente facture à la somme de : ${numberToWordsFr(parseInt(integerPart, 10))} dinars algériens`;
+                if (parseInt(decimalPart, 10) > 0) {
+                    fullText += ` et ${numberToWordsFr(parseInt(decimalPart, 10))} centimes`;
+                }
+                fullText += ".";
+                elements.frenchDiv.textContent = fullText.replace(" et Zéro centimes", "").replace("  ", " ");
             }
-            elements.frenchDiv.parentElement.classList.remove('hidden');
+            elements.frenchContainer.classList.remove('hidden');
         } else {
-            elements.frenchDiv.parentElement.classList.add('hidden');
+            elements.frenchContainer.classList.add('hidden');
         }
     }
 
     function getInvoiceData() {
-        const companyInfo = {};
-        const isEditMode = elements.companyDetailsSection.classList.contains('edit-mode');
-        for (const key in companyFields) {
-            companyInfo[key] = isEditMode 
-                ? document.getElementById(companyFields[key].input).value
-                : document.getElementById(companyFields[key].val).textContent;
-        }
         return {
-            companyInfo: companyInfo,
+            companyInfo: {
+                activity: document.getElementById('c-activity-val').textContent,
+                address: document.getElementById('c-address-val').textContent,
+                tax: document.getElementById('c-tax-val').textContent,
+                cr: document.getElementById('c-cr-val').textContent,
+                bank: document.getElementById('c-bank-val').textContent,
+            },
             invoiceNum: document.getElementById('invoice-num').value, invoiceDate: document.getElementById('invoice-date').value,
             clientName: document.getElementById('client-name').value, clientAddress: document.getElementById('client-address').value,
             discount: { enabled: elements.discountToggle.checked, type: document.getElementById('discount-type').value, value: document.getElementById('discount-value').value },
             options: { showArabic: elements.arabicTextToggle.checked, showFrench: elements.frenchTextToggle.checked },
             arabicAmountText: elements.arabicDiv.textContent,
-            frenchAmountText: elements.frenchDiv.textContent, // --- إضافة هنا
-            rows: Array.from(elements.tableBody.querySelectorAll('tr')).map(r => ({ name: r.querySelector('.product-name').value, quantity: r.querySelector('.quantity').value, price: r.querySelector('.unit-price').value.replace(',', '.') })),
+            frenchAmountText: elements.frenchDiv.textContent,
+            rows: Array.from(elements.tableBody.querySelectorAll('tr')).map(r => ({ name: r.querySelector('.product-name').value, quantity: r.querySelector('.quantity').value, price: r.querySelector('.unit-price').value })),
             timestamp: new Date().toISOString()
         };
     }
@@ -352,12 +334,9 @@ document.addEventListener('DOMContentLoaded', function() {
             elements.arabicTextToggle.checked = data.options.showArabic;
             elements.frenchTextToggle.checked = data.options.showFrench;
         }
-        if (data.arabicAmountText) {
-            elements.arabicDiv.textContent = data.arabicAmountText;
-        }
-        if (data.frenchAmountText) { // --- إضافة هنا
-            elements.frenchDiv.textContent = data.frenchAmountText;
-        }
+        if (data.arabicAmountText) elements.arabicDiv.textContent = data.arabicAmountText;
+        if (data.frenchAmountText) elements.frenchDiv.textContent = data.frenchAmountText;
+        
         elements.tableBody.innerHTML = '';
         if (data.rows && data.rows.length > 0) {
             data.rows.forEach(row => addRow(row));
@@ -367,32 +346,8 @@ document.addEventListener('DOMContentLoaded', function() {
         updateCalculations();
     }
     
-    const saveDraft = (isAutoSave = false) => {
-        localStorage.setItem('invoiceDraft', JSON.stringify(getInvoiceData()));
-        if (isAutoSave) {
-            elements.saveStatus.textContent = `تم الحفظ التلقائي في ${new Date().toLocaleTimeString()}`;
-            elements.saveStatus.style.opacity = '1';
-            setTimeout(() => { elements.saveStatus.style.opacity = '0'; }, 2000);
-        }
-    };
+    const saveDraft = () => localStorage.setItem('invoiceDraft', JSON.stringify(getInvoiceData()));
     
-    function generateShareText() {
-        const data = getInvoiceData();
-        const ttc = document.getElementById('montant-ttc').textContent;
-        let text = `*فاتورة من مؤسسة صالحي سليم*\n\n`;
-        text += `*العميل:* ${data.clientName}\n`;
-        text += `*رقم الفاتورة:* ${data.invoiceNum}\n`;
-        text += `*التاريخ:* ${data.invoiceDate}\n\n`;
-        text += "*التفاصيل:*\n";
-        data.rows.forEach(row => {
-            if (row.name) {
-                text += `- ${row.name} (الكمية: ${row.quantity}, السعر: ${row.price.replace('.',',')} دج)\n`;
-            }
-        });
-        text += `\n*الإجمالي للدفع: ${ttc}*`;
-        return text;
-    }
-
     function clearFormAndStartNew() {
         if (confirm('هل أنت متأكد من رغبتك في بدء فاتورة جديدة؟ سيتم حذف المسودة الحالية.')) {
             localStorage.removeItem('invoiceDraft');
@@ -402,21 +357,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     elements.container.addEventListener('input', (e) => {
-      if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.contentEditable === 'true') {
         updateCalculations();
         saveDraft();
       }
     });
-
-    elements.container.addEventListener('blur', (e) => {
-        if (e.target.classList.contains('unit-price')) {
-            const input = e.target;
-            let value = parseFloat(input.value.replace(',', '.')) || 0;
-            input.value = value.toFixed(2).replace('.', ',');
-            updateCalculations();
-            saveDraft();
-        }
-    }, true); 
 
     elements.container.addEventListener('click', (e) => {
         if (e.target.closest('.delete-row-btn')) {
@@ -426,23 +371,18 @@ document.addEventListener('DOMContentLoaded', function() {
             saveDraft();
         }
     });
-
-    elements.editArabicBtn.addEventListener('click', () => {
-        const isEditable = elements.arabicDiv.contentEditable === 'true';
-        elements.arabicDiv.contentEditable = !isEditable;
-        elements.arabicDiv.focus();
-        elements.editArabicBtn.style.opacity = isEditable ? '0.7' : '1';
-        if (isEditable) saveDraft();
-    });
     
-    // --- إضافة هنا: تفعيل زر التعديل للنص الفرنسي ---
-    elements.editFrenchBtn.addEventListener('click', () => {
-        const isEditable = elements.frenchDiv.contentEditable === 'true';
-        elements.frenchDiv.contentEditable = !isEditable;
-        elements.frenchDiv.focus();
-        elements.editFrenchBtn.style.opacity = isEditable ? '0.7' : '1';
-        if (isEditable) saveDraft();
-    });
+    function setupEditButton(button, div) {
+        button.addEventListener('click', () => {
+            const isEditable = div.contentEditable === 'true';
+            div.contentEditable = !isEditable;
+            div.focus();
+            button.style.opacity = isEditable ? '0.7' : '1';
+            if (isEditable) saveDraft();
+        });
+    }
+    setupEditButton(elements.editArabicBtn, elements.arabicDiv);
+    setupEditButton(elements.editFrenchBtn, elements.frenchDiv);
 
     elements.editCompanyBtn.addEventListener('click', () => {
         const section = elements.companyDetailsSection;
@@ -459,11 +399,9 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('save-invoice').addEventListener('click', () => {
         const data = getInvoiceData();
         if (!data.clientName || data.rows.length === 0 || !data.rows[0].name) {
-            alert('الرجاء إدخال اسم العميل ومنتج واحد على الأقل.');
-            return;
+            alert('الرجاء إدخال اسم العميل ومنتج واحد على الأقل.'); return;
         }
         let history = JSON.parse(localStorage.getItem('invoicesHistory')) || [];
-        history = history.filter(inv => inv.timestamp !== data.timestamp);
         history.push(data);
         localStorage.setItem('invoicesHistory', JSON.stringify(history));
         alert('تم حفظ الفاتورة في المحفوظات بنجاح!');
@@ -471,25 +409,52 @@ document.addEventListener('DOMContentLoaded', function() {
     
     document.getElementById('new-invoice-btn').addEventListener('click', clearFormAndStartNew);
 
-    document.getElementById('send-email').addEventListener('click', () => {
-        const data = getInvoiceData();
-        if (!data.clientName) return alert('الرجاء إدخال اسم العميل أولاً.');
-        const subject = `فاتورة رقم ${data.invoiceNum} من مؤسسة صالحي سليم`;
-        const body = generateShareText().replace(/\*/g, ''); 
-        window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    document.getElementById('export-word-btn').addEventListener('click', function() {
+        const selectorsToHide = '.controls, .delete-row-btn, th.delete-header-cell, .options-section, .edit-company-btn, .edit-amount-btn, #save-status';
+        document.querySelectorAll(selectorsToHide).forEach(el => el.style.display = 'none');
+        
+        const header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Export HTML To Doc</title></head><body>";
+        const footer = "</body></html>";
+        const sourceHTML = header + document.querySelector(".page-container").innerHTML + footer;
+        
+        const source = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(sourceHTML);
+        const fileDownload = document.createElement("a");
+        document.body.appendChild(fileDownload);
+        fileDownload.href = source;
+        fileDownload.download = `فاتورة ${document.getElementById('invoice-num').value}.doc`;
+        fileDownload.click();
+        document.body.removeChild(fileDownload);
+
+        document.querySelectorAll(selectorsToHide).forEach(el => el.style.display = '');
     });
 
-    document.getElementById('send-whatsapp').addEventListener('click', () => {
-        if (!document.getElementById('client-name').value) return alert('الرجاء إدخال اسم العميل أولاً.');
-        const text = encodeURIComponent(generateShareText());
-        window.open(`https://wa.me/?text=${text}`, '_blank');
+    // --- كود المشاركة المضاف ---
+    function generateShareText() {
+        const clientName = document.getElementById('client-name').value || 'عميل غير محدد';
+        const invoiceNum = document.getElementById('invoice-num').value || 'غير محدد';
+        const totalAmount = document.getElementById('montant-ttc').textContent || '0.00 دج';
+        return `مرحباً،\n\nيرجى الاطلاع على تفاصيل الفاتورة:\n- العميل: ${clientName}\n- رقم الفاتورة: ${invoiceNum}\n- المبلغ الإجمالي للدفع: ${totalAmount}\n\nشكرًا لك.\nمؤسسة صالحي سليم`;
+    }
+
+    document.getElementById('share-email-btn').addEventListener('click', function() {
+        const subject = `فاتورة من مؤسسة صالحي سليم - رقم ${document.getElementById('invoice-num').value}`;
+        const body = generateShareText();
+        const mailtoLink = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        window.location.href = mailtoLink;
     });
 
-    document.getElementById('send-telegram').addEventListener('click', () => {
-        if (!document.getElementById('client-name').value) return alert('الرجاء إدخال اسم العميل أولاً.');
-        const text = encodeURIComponent(generateShareText());
-        window.open(`https://t.me/share/url?url=&text=${text}`, '_blank');
+    document.getElementById('share-whatsapp-btn').addEventListener('click', function() {
+        const text = generateShareText();
+        const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
+        window.open(whatsappUrl, '_blank');
     });
+
+    document.getElementById('share-telegram-btn').addEventListener('click', function() {
+        const text = generateShareText();
+        const telegramUrl = `https://t.me/share/url?url=&text=${encodeURIComponent(text)}`;
+        window.open(telegramUrl, '_blank');
+    });
+    // --- نهاية كود المشاركة ---
 
     const invoiceToLoad = sessionStorage.getItem('invoiceToLoad');
     if (invoiceToLoad) {
@@ -499,8 +464,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const draft = localStorage.getItem('invoiceDraft');
         loadInvoiceData(draft ? JSON.parse(draft) : {});
     }
-    
-    setInterval(() => saveDraft(true), 60000);
 });
 </script>
 </body>
