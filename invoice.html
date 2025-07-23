@@ -3,13 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مولد الفواتير المطور</title>
+    <title>مولد الفواتير - مؤسسة صالحي سليم</title>
     <style>
         :root {
             --primary-color: #005a9c;
-            --secondary-color: #f8f9fa;
+            --secondary-color: #f4f6f9;
             --border-color: #dee2e6;
             --danger-color: #dc3545;
+            --success-color: #28a745;
+            --light-bg: #f8f9fa;
         }
 
         body {
@@ -25,153 +27,78 @@
             margin: 20px auto;
             background: #fff;
             padding: 30px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.08);
             border-radius: 8px;
         }
 
         /* --- Header & Client Styles --- */
-        .invoice-header, .client-details {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            margin-bottom: 25px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .company-info {
-            width: 60%;
-        }
-        .company-info h1 {
-            margin: 0 0 10px;
-            font-size: 1.4em;
-            color: var(--primary-color);
-        }
-        .company-info p {
-            margin: 2px 0;
-            font-size: 0.8em;
-            color: #555;
-        }
-
-        .invoice-meta {
-            width: 35%;
-            text-align: left;
-        }
-        .invoice-meta div {
-            margin-bottom: 8px;
-        }
-        .invoice-meta label {
-            font-weight: bold;
-            display: block;
-            margin-bottom: 3px;
-            font-size: 0.9em;
-        }
-        .invoice-meta input {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        
-        .client-details input {
-            width: calc(50% - 10px);
-        }
-
-        /* --- Table Styles --- */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
-        table th, table td {
-            border: 1px solid var(--border-color);
-            padding: 12px;
-            text-align: right;
-        }
-        table th {
-            background-color: #f2f2f2;
-            font-size: 0.9em;
-        }
-        input[type="text"], input[type="number"] {
-            width: 100%;
-            padding: 8px;
-            box-sizing: border-box;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        .delete-row-btn {
-            background: none;
-            border: none;
-            color: var(--danger-color);
-            font-size: 1.2em;
-            cursor: pointer;
-        }
-
-        /* --- Totals & Footer Styles --- */
-        .invoice-summary {
+        .invoice-header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-        }
-        .notes-section, .total-section {
-            width: 48%;
-        }
-
-        .total-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 12px;
-            padding: 10px;
-            border-radius: 4px;
-        }
-        .total-row:nth-child(odd) { background-color: #f9f9f9; }
-        .total-label { font-weight: bold; }
-        #grand-total {
-             border-top: 2px solid var(--primary-color);
-             font-size: 1.3em;
-             font-weight: bold;
-        }
-        .discount-row input {
-            border: 1px solid #ccc;
-            padding: 8px;
-            width: 100px;
-            text-align: left;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--primary-color);
+            flex-wrap: wrap;
         }
 
-        .amount-in-words {
-            margin-top: 25px;
-            padding: 15px;
-            background-color: #eef;
-            border: 1px solid #cce;
-            border-radius: 5px;
+        .company-info { width: 60%; min-width: 300px; }
+        .company-info h1 { margin: 0 0 10px; font-size: 1.6em; color: var(--primary-color); }
+        .company-info p { margin: 3px 0; font-size: 0.85em; color: #555; }
+
+        .invoice-meta { width: 35%; text-align: left; min-width: 250px; }
+        .meta-item { display: flex; align-items: center; justify-content: flex-end; gap: 10px; margin-bottom: 10px; font-size: 1.1em; }
+        #invoice-details { font-weight: bold; font-size: 1.2em; }
+        .meta-item input { padding: 8px; border: 1px solid #ccc; border-radius: 4px; text-align: left; flex-grow: 1; }
+        .client-details input {
+            width: calc(50% - 12px); padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-weight: bold;
         }
 
-        .invoice-footer {
-            margin-top: 60px;
-            text-align: left;
-            font-weight: bold;
-        }
+        /* --- Table Styles --- */
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        table th, table td { border: 1px solid var(--border-color); padding: 14px; text-align: right; }
+        table th { background-color: var(--light-bg); font-size: 0.95em; }
+        .delete-row-btn { background: none; border: none; color: var(--danger-color); font-size: 1.3em; cursor: pointer; }
 
-        /* --- Controls --- */
-        .controls {
-            margin-top: 20px; display: flex; gap: 10px;
-        }
-        .action-btn {
-            padding: 12px 20px; color: white; border: none;
-            border-radius: 5px; cursor: pointer; font-size: 1em;
-        }
-        .add-row-btn { background-color: #28a745; }
+        /* --- Totals & Footer Styles --- */
+        .invoice-summary { display: flex; justify-content: flex-end; margin-top: 20px; }
+        .total-section { width: 50%; min-width: 350px; background-color: var(--light-bg); padding: 20px; border-radius: 8px; border: 1px solid var(--border-color); }
+        .total-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #eee; }
+        .total-row:last-child { border-bottom: none; margin-bottom: 0; }
+        .total-label { font-weight: bold; color: #333; }
+        #grand-total { background-color: var(--primary-color); color: white; padding: 15px; margin: 10px -20px -20px; border-radius: 0 0 8px 8px; font-size: 1.3em; }
+        .amount-in-words { margin-top: 25px; padding: 15px; background-color: #eaf2f8; border-right: 4px solid var(--primary-color); border-radius: 5px; font-weight: bold; }
+        
+        /* --- Discount Controls --- */
+        .discount-controls { display: flex; align-items: center; gap: 10px; }
+        .discount-controls input[type="number"] { width: 80px; text-align: center; }
+        .discount-controls select { padding: 8px; border-radius: 4px; }
+        /* Simple toggle switch */
+        .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--success-color); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        /* --- General Controls --- */
+        .controls { margin: 30px 0; display: flex; gap: 10px; flex-wrap: wrap; }
+        .action-btn { padding: 12px 20px; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 1em; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; transition: opacity 0.3s; }
+        .action-btn:hover { opacity: 0.9; }
+        .add-row-btn { background-color: var(--success-color); }
+        .save-btn { background-color: #17a2b8; }
         .print-btn { background-color: #007bff; }
+        .history-btn { background-color: #6c757d; }
         
         /* --- Print Styles --- */
         @media print {
-            body { background-color: #fff; padding: 0; }
-            .page-container { box-shadow: none; margin: 0; max-width: 100%; border-radius: 0; }
-            .controls, .delete-row-btn { display: none; }
-            input { border: none !important; background: transparent !important; }
-            .invoice-meta, .client-details, .discount-row {  padding: 0 !important; }
-            .company-info { width: 65%; }
-            .invoice-meta { width: 30%; }
+            body { background-color: #fff; padding: 0; margin: 0; -webkit-print-color-adjust: exact; color-adjust: exact; }
+            .page-container { box-shadow: none; margin: 0; max-width: 100%; border-radius: 0; padding: 15px; }
+            .controls, .delete-row-btn, .delete-header-cell { display: none; }
+            input { border: none !important; background: transparent !important; padding: 2px 0 !important; font-weight: bold; color: #000; }
+            .total-section { border: none; background-color: #f8f9fa !important; }
+            .discount-row.disabled { display: none; }
+            #grand-total { background-color: var(--primary-color) !important; color: white !important; }
         }
     </style>
 </head>
@@ -183,24 +110,22 @@
             <h1>مؤسسة صالحي سليم</h1>
             <p>للتجارة بالجملة للآليات والأدوات الصناعية والفلاحية والمكتبية وما ماثلها</p>
             <p><strong>الرقم الجبائي:</strong> 18136030080117100000 | <strong>السجل التجاري:</strong> 36/00-3451123ا21</p>
-            <p><strong>العنوان:</strong> تخصيص الفيض، سيدي قاسي، ابن مهيدي، الطارف</p>
-            <p><strong>الحساب البنكي (BNA):</strong> 00500231400236854088</p>
         </div>
         <div class="invoice-meta">
-            <div>
-                <label for="invoice-num">Facture N°</label>
+            <div class="meta-item" id="invoice-details">
+                <bdi><b>Facture N°</b></bdi>
                 <input type="text" id="invoice-num" value="412/2025">
             </div>
-            <div>
-                <label for="invoice-date">Date</label>
+            <div class="meta-item">
+                <bdi><b>Date:</b></bdi>
                 <input type="date" id="invoice-date">
             </div>
         </div>
     </header>
 
-    <section class="client-details">
-        <input type="text" id="client-name" placeholder="اسم العميل">
-        <input type="text" id="client-address" placeholder="عنوان العميل">
+    <section class="client-details" style="display: flex; gap: 20px; margin-bottom: 25px;">
+        <input type="text" id="client-name" placeholder="اسم العميل" spellcheck="true">
+        <input type="text" id="client-address" placeholder="عنوان العميل" spellcheck="true">
     </section>
 
     <main>
@@ -209,92 +134,90 @@
                 <tr>
                     <th style="width:40%;">اسم المنتج</th>
                     <th>الكمية</th>
-                    <th>سعر الوحدة</th>
-                    <th>المبلغ الإجمالي</th>
-                    <th style="width:5%;">حذف</th>
+                    <th>سعر الوحدة (دج)</th>
+                    <th>المبلغ الإجمالي (دج)</th>
+                    <th class="delete-header-cell" style="width:5%;">حذف</th>
                 </tr>
             </thead>
-            <tbody>
-                </tbody>
+            <tbody></tbody>
         </table>
 
         <div class="controls">
             <button class="action-btn add-row-btn" onclick="addRow()">+ إضافة سطر</button>
+            <button class="action-btn save-btn" id="save-invoice">💾 حفظ الفاتورة</button>
             <button class="action-btn print-btn" onclick="window.print()">🖨️ طباعة الفاتورة</button>
+            <a href="invoices.html" class="action-btn history-btn">📜 عرض المحفوظات</a>
         </div>
 
-        <div style="height: 60px;"></div>
-
         <div class="invoice-summary">
-            <div class="notes-section">
-                 </div>
             <div class="total-section">
                 <div class="total-row">
                     <span class="total-label">المجموع الفرعي</span>
-                    <span id="subtotal">0.00</span>
+                    <span id="subtotal">0.00 دج</span>
                 </div>
-                 <div class="total-row discount-row">
-                    <span class="total-label">خصم</span>
-                    <input type="number" id="discount" value="0" min="0" step="0.01">
+                <div class="total-row discount-row">
+                    <span class="total-label">
+                        خصم
+                        <label class="switch" title="تفعيل/إلغاء الخصم">
+                            <input type="checkbox" id="discount-toggle">
+                            <span class="slider"></span>
+                        </label>
+                    </span>
+                    <div class="discount-controls">
+                        <input type="number" id="discount-value" value="0" min="0">
+                        <select id="discount-type">
+                            <option value="amount">دج</option>
+                            <option value="percent">%</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="total-row">
-                    <span class="total-label">Menton HT</span>
-                    <span id="montant-ht">0.00</span>
+                    <span class="total-label">المبلغ الصافي (HT)</span>
+                    <span id="montant-ht">0.00 دج</span>
                 </div>
                 <div class="total-row">
-                    <span class="total-label">TVA 19%</span>
-                    <span id="tva">0.00</span>
+                    <span class="total-label">ضريبة القيمة المضافة (19%)</span>
+                    <span id="tva">0.00 دج</span>
                 </div>
                 <div class="total-row" id="grand-total">
-                    <span class="total-label">Menton TTC</span>
-                    <span id="montant-ttc">0.00</span>
+                    <span class="total-label">المبلغ الإجمالي للدفع (TTC)</span>
+                    <span id="montant-ttc">0.00 دج</span>
                 </div>
             </div>
         </div>
 
-        <div class="amount-in-words" id="amount-in-french"></div>
-        <div class="amount-in-words" id="amount-in-arabic"></div>
+        <div class="amount-in-words" id="amount-in-words-container"></div>
     </main>
-    
-    <footer class="invoice-footer">
-        <p>Cachet Et Signature</p>
-    </footer>
-
 </div>
 
 <script>
+// [Libraries: Tafqeet and numberToWordsFr remain here]
+var Tafqeet=function(){"use strict";var n={"":["","واحد","اثنان","ثلاثة","أربعة","خمسة","ستة","سبعة","ثمانية","تسعة"]," female":["","إحدى","اثنتان","ثلاث","أربع","خمس","ست","سبع","ثمان","تسع"]},t={"":["","","عشرون","ثلاثون","أربعون","خمسون","ستون","سبعون","ثمانون","تسعون"]," female":["","","عشرون","ثلاثون","أربعون","خمسون","ستون","سبعون","ثمانون","تسعون"]},e=["","أحد عشر","اثنا عشر","ثلاثة عشر","أربعة عشر","خمسة عشر","ستة عشر","سبعة عشر","ثمانية عشر","تسعة عشر"],r=["مئة","ألف","مليون","مليار","تريليون","كوادريليون","كوينتليون","سكستيليون"],o={1:"مئتان",2:"ألفان",3:"مليونان"},a={1:"مئة",2:"ألف",3:"مليون",4:"مليار",5:"تريليون",6:"كوادريليون",7:"كوينتليون",8:"سكستيليون"},i={1:"مئات",2:"آلاف",3:"ملايين"};function u(u,l){var s,c,f,d,p,m,v="string"==typeof(u=u.toString())&&u.includes(".")?(s=u.split("."),u=s[0],s[1]):void 0;if(0==+u)return"صفر";c=(d=(f=u).length%3,p=Math.floor(f.length/3),m=[],d>0&&m.push({number:parseInt(f.substr(0,d)),text:h(parseInt(f.substr(0,d)),p+1,l)}),f=f.substr(d),p>0&&f.length>0&&(m.push({number:parseInt(f.substr(0,3)),text:h(parseInt(f.substr(0,3)),p--,l)}),f=f.substr(3)),p>0&&f.length>0&&m.push({number:parseInt(f.substr(0,3)),text:h(parseInt(f.substr(0,3)),p--,l)}),f.length>0&&m.push({number:parseInt(f.substr(0,3)),text:h(parseInt(f.substr(0,3)),p--,l)})," ",m.forEach((function(n,t){m[t]=n.number>0?m[t]:""})),m.filter((function(n){return""!==n})).map((function(n,t,e){return 1==e.length?n.text.replace(/واحد (ألف|مليون|مليار|تريليون)/g,"$1"):0==t?n.text.replace(/واحد (ألف|مليون|مليار|تريليون)/g,"$1"):"و "+n.text})).join(" "));var g=l&&l.Currency?l.Currency.SubUnit||"سنتيم":"سنتيم";return l&&l.Currency&&v&&(c+=` و ${h(v)} ${1==v?g:l&&l.Currency?l.Currency.SubUnitPlural||"سنتيمات":g}`),c}function h(s,c,f){var d,p,m,v,g,y,b,k;if(0==s)return"";if(s<10)return d=c>2&&s>2?n[" female"][s]:n[""][s],s>2&&c?d+=` ${function(n,t){if(t>2&&t<11)return i[n-1];if(2==t)return r[n-1];if(1==t)return r[n-1]}(c,s)}`:d;if(s<20)return e[s-10];if(s<100)return p=t[""][Math.floor(s/10)],s%10>0&&(p+=` و ${h(s%10,c)}`),p;if(s<1e3)return 1==Math.floor(s/100)?m=r[0]:2==Math.floor(s/100)?m=o[1]:(m=h(Math.floor(s/100)),m+=` ${i[0]}`),s%100>0&&(m+=` و ${h(s%100,c)}`),m;if(s<1e6)return 2e3==s?v=o[2]:(v=h(Math.floor(s/1e3),2),v+=` ${2==Math.floor(s/1e3)?a[1]:s/1e3>2&&s/1e3<11?i[1]:a[1]}`),s%1e3>0&&(v+=` و ${h(s%1e3,c)}`),v;if(s<1e9)return 2e6==s?g=o[3]:(g=h(Math.floor(s/1e6),3),g+=` ${2==Math.floor(s/1e6)?a[2]:s/1e6>2&&s/1e6<11?i[2]:a[2]}`),s%1e6>0&&(g+=` و ${h(s%1e6,c)}`),g;if(s<1e12)return y=h(Math.floor(s/1e9),4),y+=` ${2==Math.floor(s/1e9)?a[3]:s/1e9>2&&s/1e9<11?i[3]:a[3]}`,s%1e9>0&&(y+=` و ${h(s%1e9,c)}`),y;if(s<1e15)return b=h(Math.floor(s/1e12),5),b+=` ${2==Math.floor(s/1e12)?a[4]:s/1e12>2&&s/1e12<11?i[4]:a[4]}`,s%1e12>0&&(b+=` و ${h(s%1e12,c)}`),b;if(s<1e18)return k=h(Math.floor(s/1e15),6),k+=` ${2==Math.floor(s/1e15)?a[5]:s/1e15>2&&s/1e15<11?i[5]:a[5]}`,s%1e15>0&&(k+=` و ${h(s%1e15,c)}`),k}return{convert:u}}();
+function numberToWordsFr(n){if(n===0)return"Zéro";const a=["","un","deux","trois","quatre","cinq","six","sept","huit","neuf","dix","onze","douze","treize","quatorze","quinze","seize","dix-sept","dix-huit","dix-neuf"],e=["","","vingt","trente","quarante","cinquante","soixante","soixante-dix","quatre-vingt","quatre-vingt-dix"];const r=Math.floor(n),t=Math.round(100*(n-r));let i="";r>=1e3&&(i+=numberToWordsFr(Math.floor(r/1e3))+" mille ");let s=r%1e3;s>=100&&(i+=numberToWordsFr(Math.floor(s/100))+" cent ");s%=100,s>=20?(i+=e[Math.floor(s/10)],s%10!=0&&(i+=(s%10==1?" et ":"-")+a[s%10])):(i+=a[s]);let o=i.trim().replace(/\s+/g,' ');return t>0&&(o+=` et ${numberToWordsFr(t)} centimes`),o}
+
 document.addEventListener('DOMContentLoaded', function() {
+    // --- DOM Elements ---
     const tableBody = document.querySelector("#invoice-table tbody");
     const container = document.querySelector(".page-container");
+    const discountToggle = document.getElementById('discount-toggle');
+    const discountControls = document.querySelector('.discount-controls');
+    const discountRow = document.querySelector('.discount-row');
 
-    function addRow(product = { name: '', quantity: 1, price: 0.00 }) {
+    // --- Utility Functions ---
+    const formatCurrency = (num) => num.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+    // --- Main Functions ---
+    window.addRow = function(product = { name: '', quantity: 1, price: 0.00 }) {
         const newRow = tableBody.insertRow();
         newRow.innerHTML = `
-            <td><input type="text" class="product-name" placeholder="أدخل اسم المنتج" value="${product.name}"></td>
+            <td><input type="text" class="product-name" placeholder="أدخل اسم المنتج" value="${product.name}" spellcheck="true"></td>
             <td><input type="number" class="quantity" value="${product.quantity}" min="0"></td>
             <td><input type="number" class="unit-price" value="${parseFloat(product.price).toFixed(2)}" min="0" step="0.01"></td>
-            <td class="total-price">0.00</td>
-            <td><button class="delete-row-btn">🗑️</button></td>
+            <td class="total-price">0.00 دج</td>
+            <td class="delete-header-cell"><button class="delete-row-btn">🗑️</button></td>
         `;
-        // Auto-focus the new product name input
         newRow.querySelector('.product-name').focus();
-    }
-
-    // Event Delegation for inputs and delete buttons
-    container.addEventListener('input', function(e) {
-        updateCalculations();
-        saveData();
-    });
-
-    container.addEventListener('click', function(e) {
-        if (e.target.classList.contains('delete-row-btn')) {
-            e.target.closest('tr').remove();
-            updateCalculations();
-            saveData();
-        }
-    });
-
-    window.addRow = addRow; // Make addRow globally accessible for the onclick attribute
+    };
 
     function updateCalculations() {
         let subtotal = 0;
@@ -302,77 +225,132 @@ document.addEventListener('DOMContentLoaded', function() {
             const quantity = parseFloat(row.querySelector(".quantity").value) || 0;
             const unitPrice = parseFloat(row.querySelector(".unit-price").value) || 0;
             const totalPrice = quantity * unitPrice;
-            row.querySelector(".total-price").textContent = totalPrice.toFixed(2);
+            row.querySelector(".total-price").textContent = formatCurrency(totalPrice) + ' دج';
             subtotal += totalPrice;
         });
 
-        const discount = parseFloat(document.getElementById('discount').value) || 0;
-        const montantHT = subtotal - discount;
+        const isDiscountEnabled = discountToggle.checked;
+        let discountAmount = 0;
+        if (isDiscountEnabled) {
+            const discountValue = parseFloat(document.getElementById('discount-value').value) || 0;
+            const discountType = document.getElementById('discount-type').value;
+            if (discountType === 'percent') {
+                discountAmount = subtotal * (discountValue / 100);
+            } else {
+                discountAmount = discountValue;
+            }
+            discountRow.classList.remove('disabled');
+        } else {
+            discountRow.classList.add('disabled');
+        }
+        
+        const montantHT = subtotal - discountAmount;
         const tva = montantHT * 0.19;
         const montantTTC = montantHT + tva;
 
-        document.getElementById("subtotal").textContent = subtotal.toFixed(2);
-        document.getElementById("montant-ht").textContent = montantHT.toFixed(2);
-        document.getElementById("tva").textContent = tva.toFixed(2);
-        document.getElementById("montant-ttc").textContent = montantTTC.toFixed(2);
-
-        document.getElementById("amount-in-french").textContent = `Arrêté la présente facture à la somme de : ${numberToWordsFr(montantTTC)} Dinar Algérien.`;
-        document.getElementById("amount-in-arabic").textContent = `أوقفت هذه الفاتورة عند مبلغ: ${Tafqeet.convert(montantTTC)} سنتيم جزائري.`;
+        document.getElementById("subtotal").textContent = formatCurrency(subtotal) + ' دج';
+        document.getElementById("montant-ht").textContent = formatCurrency(montantHT) + ' دج';
+        document.getElementById("tva").textContent = formatCurrency(tva) + ' دج';
+        document.getElementById("montant-ttc").textContent = formatCurrency(montantTTC) + ' دج';
+        
+        const arabicText = Tafqeet.convert(Math.floor(montantTTC));
+        document.getElementById("amount-in-words-container").textContent = `أوقفت هذه الفاتورة عند مبلغ: ${arabicText} دينار جزائري.`;
+        
+        updateDiscountUI();
+    }
+    
+    function updateDiscountUI() {
+        const isEnabled = discountToggle.checked;
+        discountControls.style.display = isEnabled ? 'flex' : 'none';
+        discountRow.style.opacity = isEnabled ? '1' : '0.6';
     }
 
-    // --- Local Storage Functions ---
-    function saveData() {
-        const rowsData = [];
-        tableBody.querySelectorAll('tr').forEach(row => {
-            rowsData.push({
-                name: row.querySelector('.product-name').value,
-                quantity: row.querySelector('.quantity').value,
-                price: row.querySelector('.unit-price').value
-            });
-        });
-
-        const invoiceData = {
+    // --- Data Management ---
+    function getInvoiceData() {
+        return {
             invoiceNum: document.getElementById('invoice-num').value,
             invoiceDate: document.getElementById('invoice-date').value,
             clientName: document.getElementById('client-name').value,
             clientAddress: document.getElementById('client-address').value,
-            discount: document.getElementById('discount').value,
-            rows: rowsData
+            discount: {
+                enabled: document.getElementById('discount-toggle').checked,
+                type: document.getElementById('discount-type').value,
+                value: document.getElementById('discount-value').value
+            },
+            rows: Array.from(tableBody.querySelectorAll('tr')).map(r => ({
+                name: r.querySelector('.product-name').value,
+                quantity: r.querySelector('.quantity').value,
+                price: r.querySelector('.unit-price').value
+            })),
+            timestamp: new Date().toISOString()
         };
-        localStorage.setItem('invoiceData', JSON.stringify(invoiceData));
+    }
+    
+    function saveDraft() {
+        localStorage.setItem('invoiceDraft', JSON.stringify(getInvoiceData()));
     }
 
-    function loadData() {
-        const savedData = localStorage.getItem('invoiceData');
-        if (savedData) {
-            const data = JSON.parse(savedData);
-            document.getElementById('invoice-num').value = data.invoiceNum || '412/2025';
-            document.getElementById('invoice-date').value = data.invoiceDate || new Date().toISOString().slice(0, 10);
-            document.getElementById('client-name').value = data.clientName || '';
-            document.getElementById('client-address').value = data.clientAddress || '';
-            document.getElementById('discount').value = data.discount || 0;
+    function loadData(data) {
+        document.getElementById('invoice-num').value = data.invoiceNum || '412/2025';
+        document.getElementById('invoice-date').value = data.invoiceDate || new Date().toISOString().slice(0, 10);
+        document.getElementById('client-name').value = data.clientName || '';
+        document.getElementById('client-address').value = data.clientAddress || '';
 
-            tableBody.innerHTML = ''; // Clear existing rows
-            if (data.rows && data.rows.length > 0) {
-                data.rows.forEach(row => addRow(row));
-            } else {
-                addRow(); // Add one empty row if none are saved
-            }
+        if(data.discount) {
+            discountToggle.checked = data.discount.enabled;
+            document.getElementById('discount-type').value = data.discount.type || 'amount';
+            document.getElementById('discount-value').value = data.discount.value || 0;
+        }
+
+        tableBody.innerHTML = '';
+        if (data.rows && data.rows.length > 0) {
+            data.rows.forEach(row => addRow(row));
         } else {
-            document.getElementById('invoice-date').value = new Date().toISOString().slice(0, 10);
-            addRow(); // Add one default row on first load
+            addRow();
         }
         updateCalculations();
     }
-    
-    loadData(); // Load data when the page loads
-    
-    // --- Number to Words Libraries (Same as before) ---
-    function numberToWordsFr(n){if(n===0)return"Zéro";const a=["","un","deux","trois","quatre","cinq","six","sept","huit","neuf","dix","onze","douze","treize","quatorze","quinze","seize","dix-sept","dix-huit","dix-neuf"],e=["","","vingt","trente","quarante","cinquante","soixante","soixante-dix","quatre-vingt","quatre-vingt-dix"];const r=Math.floor(n),t=Math.round(100*(n-r));let i="";r>=1e3&&(i+=numberToWordsFr(Math.floor(r/1e3))+" mille ");let s=r%1e3;s>=100&&(i+=numberToWordsFr(Math.floor(s/100))+" cent ");s%=100,s>=20?(i+=e[Math.floor(s/10)],s%10!=0&&(i+=(s%10==1?" et ":"-")+a[s%10])):(i+=a[s]);let o=i.trim();return t>0&&(o+=` et ${numberToWordsFr(t)} centimes`),o}
-    var Tafqeet=function(){"use strict";var n={"":["","واحد","اثنان","ثلاثة","أربعة","خمسة","ستة","سبعة","ثمانية","تسعة"]," female":["","إحدى","اثنتان","ثلاث","أربع","خمس","ست","سبع","ثمان","تسع"]},t={"":["","","عشرون","ثلاثون","أربعون","خمسون","ستون","سبعون","ثمانون","تسعون"]," female":["","","عشرون","ثلاثون","أربعون","خمسون","ستون","سبعون","ثمانون","تسعون"]},e=["","أحد عشر","اثنا عشر","ثلاثة عشر","أربعة عشر","خمسة عشر","ستة عشر","سبعة عشر","ثمانية عشر","تسعة عشر"],r=["مئة","ألف","مليون","مليار","تريليون","كوادريليون","كوينتليون","سكستيليون"],o={1:"مئتان",2:"ألفان",3:"مليونان"},a={1:"مئة",2:"ألف",3:"مليون",4:"مليار",5:"تريليون",6:"كوادريليون",7:"كوينتليون",8:"سكستيليون"},i={1:"مئات",2:"آلاف",3:"ملايين"};function u(u,l){var s,c,f,d,p,m,v="string"==typeof(u=u.toString())&&u.includes(".")?(s=u.split("."),u=s[0],s[1]):void 0;return 0==+u?"صفر":(c=(d=(f=u).length%3,p=Math.floor(f.length/3),m=[],f.length>0?m.push({number:parseInt(f.substr(0,d)),text:h(parseInt(f.substr(0,d)),p+1)}):"",f=f.substr(d),p>0&&f.length>0?m.push({number:parseInt(f.substr(0,3)),text:h(parseInt(f.substr(0,3)),p--)}):"",f=f.substr(3),p>0&&f.length>0?m.push({number:parseInt(f.substr(0,3)),text:h(parseInt(f.substr(0,3)),p--)}):"",f.length>0&&m.push({number:parseInt(f.substr(0,3)),text:h(parseInt(f.substr(0,3)),p--)})," ",m.forEach((function(n,t){m[t]=n.number>0?m[t]:""})),m.filter((function(n){return""!==n})).map((function(n,t,e){return 1==e.length?n.text.replace("واحد ألف","ألف").replace("واحد مليون","مليون").replace("واحد مليار","مليار"):0==t?n.text.replace("واحد ألف","ألف").replace("واحد مليون","مليون").replace("واحد مليار","مليار"):"و "+n.text})).join(" ")),l&&l.Currency&&v?c+=` ${l.Currency.Text} و ${h(v)} ${l.Currency.SubText}`:c)}function h(u,l){var s,c,f,d,p;if(0==u)return"";if(u<10)return s=l>2&&u>2?n[" female"][u]:n[""][u],u>2&&l?s+=` ${function(n,t){if(t>3&&t<11)return i[n-1];if(2==t)return r[n-1];if(1==t)return r[n-1]}(l,u)}`:s;if(u<20)return e[u-10];if(u<100)return c=t[""][Math.floor(u/10)],u%10>0&&(c+=` و ${h(u%10,l)}`),c;if(u<1e3)return u>=100&&u<200?f=r[0]:u>=200&&u<300?f=o[1]:(f=h(Math.floor(u/100)),f+=` ${r[0]}`),u%100>0&&(f+=` و ${h(u%100,l)}`),f;if(u<1e6)return 2==u/1e3?d=o[2]:(d=h(Math.floor(u/1e3),2),d+=` ${r[1]}`),u%1e3>0&&(d+=` و ${h(u%1e3,l)}`),d;if(u<1e9)return 2==u/1e6?p=o[3]:(p=h(Math.floor(u/1e6),3),p+=` ${r[2]}`),u%1e6>0&&(p+=` و ${h(u%1e6,l)}`),p}return{convert:u}}();
 
+    // --- Event Listeners ---
+    container.addEventListener('input', (e) => {
+        if (!e.target.closest('#save-invoice')) {
+            updateCalculations();
+            saveDraft();
+        }
+    });
+
+    container.addEventListener('click', (e) => {
+        if (e.target.classList.contains('delete-row-btn')) {
+            e.target.closest('tr').remove();
+            updateCalculations();
+            saveDraft();
+        }
+    });
+    
+    discountToggle.addEventListener('change', updateCalculations);
+
+    document.getElementById('save-invoice').addEventListener('click', function() {
+        const invoiceData = getInvoiceData();
+        if (!invoiceData.clientName || invoiceData.rows.length === 0) {
+            alert('الرجاء إدخال اسم العميل ومنتج واحد على الأقل قبل الحفظ.');
+            return;
+        }
+        let history = JSON.parse(localStorage.getItem('invoicesHistory')) || [];
+        history.push(invoiceData);
+        localStorage.setItem('invoicesHistory', JSON.stringify(history));
+        alert('تم حفظ الفاتورة في المحفوظات بنجاح!');
+    });
+
+    // --- Initial Load ---
+    const draft = localStorage.getItem('invoiceDraft');
+    if (draft) {
+        loadData(JSON.parse(draft));
+    } else {
+        document.getElementById('invoice-date').value = new Date().toISOString().slice(0, 10);
+        addRow();
+        updateCalculations();
+    }
 });
 </script>
-
 </body>
 </html>
