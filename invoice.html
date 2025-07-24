@@ -95,6 +95,8 @@
             body { background-color: #fff; padding: 0; margin: 0; -webkit-print-color-adjust: exact; color-adjust: exact; }
             .page-container { box-shadow: none; margin: 0; max-width: 100%; border-radius: 0; padding: 15px; }
             .controls, .delete-row-btn, th.delete-header-cell, .options-section, .edit-company-btn, .edit-amount-btn, #save-status { display: none; }
+            /* إخفاء صف الخصم إذا لم يكن مفعلاً */
+            .discount-row.inactive-for-print { display: none; }
             input { border: none !important; background: transparent !important; padding: 2px 0 !important; font-weight: bold; color: #000; width: auto; }
             .total-section { border: none; background-color: var(--light-bg) !important; flex-basis: 100%; }
             .amount-in-words { border-right-color: var(--purple-color) !important; color: var(--purple-color) !important; background-color: #eaf2f8 !important;}
@@ -120,11 +122,11 @@
                 <button id="edit-company-btn" class="edit-company-btn">تعديل البيانات ✏️</button>
             </div>
             <div class="company-details" id="company-details-section">
-                <p><strong>النشاط:</strong> <span class="editable-value" id="c-activity-val">للتجارة بالجملة للآليات والأدوات الصناعية والفلاحية والمكتبية وما ماثلها</span><input type="text" id="c-activity-input"></p>
-                <p><strong>العنوان:</strong> <span class="editable-value" id="c-address-val">تخصيص الفيض، سيدي قاسي، ابن مهيدي، الطارف</span><input type="text" id="c-address-input"></p>
-                <p><strong>رقم جبائي:</strong> <span class="editable-value" id="c-tax-val">18136030080117100000</span><input type="text" id="c-tax-input"></p>
-                <p><strong>سجل تجاري:</strong> <span class="editable-value" id="c-cr-val">36/00-3451123ا21</span><input type="text" id="c-cr-input"></p>
-                <p><strong>حساب بنكي:</strong> <span class="editable-value" id="c-bank-val">00500231400236854088</span><input type="text" id="c-bank-input"></p>
+                <p id="p-c-activity"><strong>النشاط:</strong> <span class="editable-value" id="c-activity-val">للتجارة بالجملة للآليات والأدوات الصناعية والفلاحية والمكتبية وما ماثلها</span><input type="text" id="c-activity-input"></p>
+                <p id="p-c-address"><strong>العنوان:</strong> <span class="editable-value" id="c-address-val">تخصيص الفيض، سيدي قاسي، ابن مهيدي، الطارف</span><input type="text" id="c-address-input"></p>
+                <p id="p-c-tax"><strong>رقم جبائي:</strong> <span class="editable-value" id="c-tax-val">18136030080117100000</span><input type="text" id="c-tax-input"></p>
+                <p id="p-c-cr"><strong>سجل تجاري:</strong> <span class="editable-value" id="c-cr-val">36/00-3451123ا21</span><input type="text" id="c-cr-input"></p>
+                <p id="p-c-bank"><strong>حساب بنكي:</strong> <span class="editable-value" id="c-bank-val">00500231400236854088</span><input type="text" id="c-bank-input"></p>
             </div>
         </div>
         <div class="invoice-meta">
@@ -163,12 +165,19 @@
 
         <div class="summary-and-options">
             <div class="options-section">
+                 <h4 style="margin-top:0; padding-bottom:10px; border-bottom:1px solid #eee;">خيارات الفاتورة</h4>
                 <div class="option-row"><span class="option-label">إظهار المبلغ بالعربية</span><label class="switch"><input type="checkbox" id="arabic-text-toggle" checked><span class="slider"></span></label></div>
                 <div class="option-row"><span class="option-label">إظهار المبلغ بالفرنسية</span><label class="switch"><input type="checkbox" id="french-text-toggle"><span class="slider"></span></label></div>
+                <h4 style="margin-top:15px; padding-bottom:10px; border-bottom:1px solid #eee;">إظهار بيانات المؤسسة</h4>
+                <div class="option-row"><span class="option-label">إظهار النشاط</span><label class="switch"><input type="checkbox" data-target="p-c-activity" checked><span class="slider"></span></label></div>
+                <div class="option-row"><span class="option-label">إظهار العنوان</span><label class="switch"><input type="checkbox" data-target="p-c-address" checked><span class="slider"></span></label></div>
+                <div class="option-row"><span class="option-label">الرقم الجبائي</span><label class="switch"><input type="checkbox" data-target="p-c-tax" checked><span class="slider"></span></label></div>
+                <div class="option-row"><span class="option-label">السجل التجاري</span><label class="switch"><input type="checkbox" data-target="p-c-cr" checked><span class="slider"></span></label></div>
+                <div class="option-row"><span class="option-label">الحساب البنكي</span><label class="switch"><input type="checkbox" data-target="p-c-bank" checked><span class="slider"></span></label></div>
             </div>
             <div class="total-section">
                 <div class="total-row"><span class="total-label">المجموع الفرعي</span><span id="subtotal">0.00 دج</span></div>
-                <div class="total-row discount-row">
+                <div class="total-row discount-row inactive-for-print">
                     <span class="total-label">خصم <label class="switch"><input type="checkbox" id="discount-toggle"><span class="slider"></span></label></span>
                     <div class="discount-controls"><input type="number" id="discount-value" value="0" min="0"><select id="discount-type"><option value="amount">دج</option><option value="percent">%</option></select></div>
                 </div>
@@ -201,6 +210,7 @@ document.addEventListener('DOMContentLoaded', function() {
         discountRow: document.querySelector('.discount-row'),
         arabicTextToggle: document.getElementById('arabic-text-toggle'),
         frenchTextToggle: document.getElementById('french-text-toggle'),
+        optionsSection: document.querySelector('.options-section'),
         arabicContainer: document.getElementById('arabic-container'),
         frenchContainer: document.getElementById('french-container'),
         arabicDiv: document.getElementById('amount-in-arabic'),
@@ -259,6 +269,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function updateDisplay() {
         elements.discountControls.style.display = elements.discountToggle.checked ? 'flex' : 'none';
+        // Add/remove class for printing based on discount toggle state
+        elements.discountRow.classList.toggle('inactive-for-print', !elements.discountToggle.checked);
         
         const montantTTC = parseFloat(document.getElementById("montant-ttc").textContent.replace(/\s/g, '').replace(',', '.')) || 0;
 
@@ -299,7 +311,15 @@ document.addEventListener('DOMContentLoaded', function() {
             invoiceNum: document.getElementById('invoice-num').value, invoiceDate: document.getElementById('invoice-date').value,
             clientName: document.getElementById('client-name').value, clientAddress: document.getElementById('client-address').value,
             discount: { enabled: elements.discountToggle.checked, type: document.getElementById('discount-type').value, value: document.getElementById('discount-value').value },
-            options: { showArabic: elements.arabicTextToggle.checked, showFrench: elements.frenchTextToggle.checked },
+            options: {
+                showArabic: elements.arabicTextToggle.checked,
+                showFrench: elements.frenchTextToggle.checked,
+                showActivity: document.querySelector('[data-target="p-c-activity"]').checked,
+                showAddress: document.querySelector('[data-target="p-c-address"]').checked,
+                showTax: document.querySelector('[data-target="p-c-tax"]').checked,
+                showCr: document.querySelector('[data-target="p-c-cr"]').checked,
+                showBank: document.querySelector('[data-target="p-c-bank"]').checked
+            },
             arabicAmountText: elements.arabicDiv.textContent,
             frenchAmountText: elements.frenchDiv.textContent,
             rows: Array.from(elements.tableBody.querySelectorAll('tr')).map(r => ({ name: r.querySelector('.product-name').value, quantity: r.querySelector('.quantity').value, price: r.querySelector('.unit-price').value })),
@@ -330,10 +350,25 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('discount-type').value = data.discount.type;
             document.getElementById('discount-value').value = data.discount.value;
         }
-        if(data.options) {
-            elements.arabicTextToggle.checked = data.options.showArabic;
-            elements.frenchTextToggle.checked = data.options.showFrench;
+        
+        const options = data.options || {};
+        elements.arabicTextToggle.checked = options.showArabic !== false;
+        elements.frenchTextToggle.checked = options.showFrench === true;
+
+        const companyOptionsMap = {
+            showActivity: 'p-c-activity', showAddress: 'p-c-address',
+            showTax: 'p-c-tax', showCr: 'p-c-cr', showBank: 'p-c-bank'
+        };
+        for (const [optionKey, targetId] of Object.entries(companyOptionsMap)) {
+            const toggle = document.querySelector(`[data-target="${targetId}"]`);
+            const element = document.getElementById(targetId);
+            const isChecked = options[optionKey] !== false;
+            if (toggle && element) {
+                toggle.checked = isChecked;
+                element.style.display = isChecked ? 'flex' : 'none';
+            }
         }
+
         if (data.arabicAmountText) elements.arabicDiv.textContent = data.arabicAmountText;
         if (data.frenchAmountText) elements.frenchDiv.textContent = data.frenchAmountText;
         
@@ -357,10 +392,20 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     elements.container.addEventListener('input', (e) => {
-      if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.contentEditable === 'true') {
-        updateCalculations();
-        saveDraft();
-      }
+     if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.contentEditable === 'true') {
+       updateCalculations();
+       saveDraft();
+     }
+    });
+    
+    // Listener for new company data toggles
+    elements.optionsSection.addEventListener('change', e => {
+        if (e.target.matches('input[type="checkbox"][data-target]')) {
+            const targetEl = document.getElementById(e.target.dataset.target);
+            if (targetEl) {
+                targetEl.style.display = e.target.checked ? 'flex' : 'none';
+            }
+        }
     });
 
     elements.container.addEventListener('click', (e) => {
@@ -413,6 +458,21 @@ document.addEventListener('DOMContentLoaded', function() {
         const selectorsToHide = '.controls, .delete-row-btn, th.delete-header-cell, .options-section, .edit-company-btn, .edit-amount-btn, #save-status';
         document.querySelectorAll(selectorsToHide).forEach(el => el.style.display = 'none');
         
+        // Temporarily hide company info based on toggles
+        document.querySelectorAll('.company-details p').forEach(p => {
+            const toggle = document.querySelector(`[data-target="${p.id}"]`);
+            if (toggle && !toggle.checked) {
+                p.style.display = 'none';
+            }
+        });
+        
+        // Hide discount row if inactive
+        const discountRow = document.querySelector('.discount-row');
+        const isDiscountActive = document.getElementById('discount-toggle').checked;
+        if (!isDiscountActive) {
+            discountRow.style.display = 'none';
+        }
+
         const header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Export HTML To Doc</title></head><body>";
         const footer = "</body></html>";
         const sourceHTML = header + document.querySelector(".page-container").innerHTML + footer;
@@ -425,7 +485,15 @@ document.addEventListener('DOMContentLoaded', function() {
         fileDownload.click();
         document.body.removeChild(fileDownload);
 
+        // Restore visibility
         document.querySelectorAll(selectorsToHide).forEach(el => el.style.display = '');
+        document.querySelectorAll('.company-details p').forEach(p => {
+             const toggle = document.querySelector(`[data-target="${p.id}"]`);
+            if (toggle && toggle.checked) {
+                 p.style.display = 'flex';
+            }
+        });
+        discountRow.style.display = 'flex'; // Always restore flex for the row
     });
 
     // --- كود المشاركة المضاف ---
