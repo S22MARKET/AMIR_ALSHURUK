@@ -10,7 +10,6 @@
             --danger-color: #dc3545; --success-color: #28a745; --warning-color: #ffc107;
             --info-color: #17a2b8; --light-bg: #f8f9fa; --dark-text: #343a40;
             --word-color: #2b579a; --purple-color: #6a0dad;
-            /* ألوان المشاركة */
             --whatsapp-color: #25D366; --telegram-color: #0088cc; --email-color: #777;
         }
         body {
@@ -30,7 +29,7 @@
         .company-info h1 { margin: 0 0 10px; font-size: 1.8em; color: var(--primary-color); }
         .company-details p { margin: 4px 0; font-size: 0.85em; color: #555; display: flex; align-items: center; }
         .company-details p strong { color: var(--dark-text); min-width: 100px; display: inline-block; }
-        .company-details .editable-value { display: inline-block; }
+        .company-details .editable-value, .company-details .custom-value { flex-grow: 1; }
         .company-details input { display: none; border: 1px solid #ccc; padding: 3px; font-size: 0.9em; flex-grow: 1; }
         .edit-mode .editable-value { display: none; }
         .edit-mode input { display: inline-block; }
@@ -46,8 +45,8 @@
         table th { background-color: var(--light-bg); font-weight: 600; font-size: 0.9em; }
         table td input { width: 100%; box-sizing: border-box; border: 1px solid transparent; padding: 5px; border-radius: 4px; transition: border 0.2s; }
         table td input:focus { border: 1px solid var(--primary-color); background-color: #fcfcfc; }
-        .delete-row-btn { background: none; border: none; color: var(--danger-color); font-size: 1.3em; cursor: pointer; transition: transform 0.2s; }
-        .delete-row-btn:hover { transform: scale(1.2); }
+        .delete-row-btn, .delete-custom-field-btn { background: none; border: none; color: var(--danger-color); font-size: 1.3em; cursor: pointer; transition: transform 0.2s; padding: 0 5px; }
+        .delete-row-btn:hover, .delete-custom-field-btn:hover { transform: scale(1.2); }
         .summary-and-options { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 20px; margin-top: 20px; }
         .total-section, .options-section { flex: 1; min-width: 300px; background-color: var(--light-bg); padding: 20px; border-radius: 8px; border: 1px solid var(--border-color); }
         .total-row, .option-row { display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; margin-bottom: 12px; border-bottom: 1px solid #eee; }
@@ -64,25 +63,16 @@
         input:checked + .slider { background-color: var(--success-color); }
         input:checked + .slider:before { transform: translateX(20px); }
         .amount-in-words-container { position: relative; }
-        .amount-in-words { 
-            margin-top: 25px; padding: 15px 15px 15px 40px; background-color: #eaf2f8; 
-            border-right: 4px solid var(--purple-color); border-radius: 5px; font-weight: bold;
-            color: var(--purple-color);
-        }
+        .amount-in-words { margin-top: 25px; padding: 15px 15px 15px 40px; background-color: #eaf2f8; border-right: 4px solid var(--purple-color); border-radius: 5px; font-weight: bold; color: var(--purple-color); }
         .edit-amount-btn { position: absolute; top: 50%; transform: translateY(-50%); left: 10px; cursor: pointer; font-size: 1.2em; opacity: 0.7; }
         div[contenteditable="true"] { outline: 2px solid var(--warning-color); background-color: #fff; }
         .controls { margin: 30px 0 15px; display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
-        .action-btn {
-            padding: 12px 18px; color: white; border: none; border-radius: 5px; cursor: pointer;
-            font-size: 1em; text-decoration: none; display: inline-flex; align-items: center;
-            gap: 8px; justify-content: center; transition: opacity 0.3s;
-        }
+        .action-btn { padding: 12px 18px; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 1em; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; justify-content: center; transition: opacity 0.3s; }
         .action-btn:hover { opacity: 0.9; }
         .add-row-btn { background-color: var(--success-color); }
         .save-btn { background-color: var(--info-color); }
         .print-btn { background-color: #007bff; }
         .word-btn { background-color: var(--word-color); }
-        /* أزرار المشاركة */
         #share-email-btn { background-color: var(--email-color); }
         #share-whatsapp-btn { background-color: var(--whatsapp-color); }
         #share-telegram-btn { background-color: var(--telegram-color); }
@@ -94,8 +84,7 @@
         @media print {
             body { background-color: #fff; padding: 0; margin: 0; -webkit-print-color-adjust: exact; color-adjust: exact; }
             .page-container { box-shadow: none; margin: 0; max-width: 100%; border-radius: 0; padding: 15px; }
-            .controls, .delete-row-btn, th.delete-header-cell, .options-section, .edit-company-btn, .edit-amount-btn, #save-status { display: none; }
-            /* إخفاء صف الخصم إذا لم يكن مفعلاً */
+            .controls, .delete-row-btn, th.delete-header-cell, .options-section, .edit-company-btn, .edit-amount-btn, #save-status, .delete-custom-field-btn { display: none; }
             .discount-row.inactive-for-print { display: none; }
             input { border: none !important; background: transparent !important; padding: 2px 0 !important; font-weight: bold; color: #000; width: auto; }
             .total-section { border: none; background-color: var(--light-bg) !important; flex-basis: 100%; }
@@ -107,7 +96,6 @@
         @media (max-width: 768px) {
             .invoice-header, .summary-and-options, .client-details { flex-direction: column; }
             .invoice-meta, .company-info { width: 100%; text-align: right; }
-            .invoice-meta { text-align: right; }
             .meta-item { justify-content: flex-start; }
         }
     </style>
@@ -127,6 +115,7 @@
                 <p id="p-c-tax"><strong>رقم جبائي:</strong> <span class="editable-value" id="c-tax-val">18136030080117100000</span><input type="text" id="c-tax-input"></p>
                 <p id="p-c-cr"><strong>سجل تجاري:</strong> <span class="editable-value" id="c-cr-val">36/00-3451123ا21</span><input type="text" id="c-cr-input"></p>
                 <p id="p-c-bank"><strong>حساب بنكي:</strong> <span class="editable-value" id="c-bank-val">00500231400236854088</span><input type="text" id="c-bank-input"></p>
+                <div id="custom-fields-container"></div>
             </div>
         </div>
         <div class="invoice-meta">
@@ -155,9 +144,6 @@
             <button class="action-btn save-btn" id="save-invoice">💾 حفظ في المحفوظات</button>
             <button class="action-btn print-btn" onclick="window.print()">🖨️ طباعة</button>
             <button class="action-btn word-btn" id="export-word-btn">📄 تصدير وورد</button>
-            <button class="action-btn" id="share-email-btn">📧 إرسال عبر البريد</button>
-            <button class="action-btn" id="share-whatsapp-btn">💬 إرسال عبر واتساب</button>
-            <button class="action-btn" id="share-telegram-btn">➤ إرسال عبر تيليجرام</button>
             <a href="invoices.html" class="action-btn history-btn">📜 عرض المحفوظات</a>
             <button class="action-btn new-invoice-btn" id="new-invoice-btn">📄 فاتورة جديدة</button>
         </div>
@@ -174,6 +160,8 @@
                 <div class="option-row"><span class="option-label">الرقم الجبائي</span><label class="switch"><input type="checkbox" data-target="p-c-tax" checked><span class="slider"></span></label></div>
                 <div class="option-row"><span class="option-label">السجل التجاري</span><label class="switch"><input type="checkbox" data-target="p-c-cr" checked><span class="slider"></span></label></div>
                 <div class="option-row"><span class="option-label">الحساب البنكي</span><label class="switch"><input type="checkbox" data-target="p-c-bank" checked><span class="slider"></span></label></div>
+                <div id="custom-fields-options-container"></div>
+                <button id="add-custom-field-btn" class="action-btn add-row-btn" style="width: 100%; margin-top: 15px; background-color: var(--info-color);">+ إضافة حقل مخصص</button>
             </div>
             <div class="total-section">
                 <div class="total-row"><span class="total-label">المجموع الفرعي</span><span id="subtotal">0.00 دج</span></div>
@@ -208,18 +196,15 @@ document.addEventListener('DOMContentLoaded', function() {
         discountToggle: document.getElementById('discount-toggle'),
         discountControls: document.querySelector('.discount-controls'),
         discountRow: document.querySelector('.discount-row'),
+        optionsSection: document.querySelector('.options-section'),
         arabicTextToggle: document.getElementById('arabic-text-toggle'),
         frenchTextToggle: document.getElementById('french-text-toggle'),
-        optionsSection: document.querySelector('.options-section'),
         arabicContainer: document.getElementById('arabic-container'),
         frenchContainer: document.getElementById('french-container'),
-        arabicDiv: document.getElementById('amount-in-arabic'),
-        frenchDiv: document.getElementById('amount-in-french'),
-        editArabicBtn: document.getElementById('edit-arabic-btn'),
-        editFrenchBtn: document.getElementById('edit-french-btn'),
         companyDetailsSection: document.getElementById('company-details-section'),
-        editCompanyBtn: document.getElementById('edit-company-btn'),
-        saveStatus: document.getElementById('save-status'),
+        customFieldsContainer: document.getElementById('custom-fields-container'),
+        customFieldsOptionsContainer: document.getElementById('custom-fields-options-container'),
+        addCustomFieldBtn: document.getElementById('add-custom-field-btn'),
     };
 
     const companyFields = {
@@ -269,14 +254,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function updateDisplay() {
         elements.discountControls.style.display = elements.discountToggle.checked ? 'flex' : 'none';
-        // Add/remove class for printing based on discount toggle state
         elements.discountRow.classList.toggle('inactive-for-print', !elements.discountToggle.checked);
-        
         const montantTTC = parseFloat(document.getElementById("montant-ttc").textContent.replace(/\s/g, '').replace(',', '.')) || 0;
 
         if (elements.arabicTextToggle.checked) {
-            if (elements.arabicDiv.contentEditable !== 'true') {
-                 elements.arabicDiv.textContent = `أوقفت هذه الفاتورة عند مبلغ: ${Tafqeet.convert(montantTTC)} دينار جزائري.`;
+            if (document.getElementById('amount-in-arabic').contentEditable !== 'true') {
+                 document.getElementById('amount-in-arabic').textContent = `أوقفت هذه الفاتورة عند مبلغ: ${Tafqeet.convert(montantTTC)} دينار جزائري.`;
             }
             elements.arabicContainer.classList.remove('hidden');
         } else {
@@ -284,22 +267,78 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         if (elements.frenchTextToggle.checked) {
-             if (elements.frenchDiv.contentEditable !== 'true') {
+             if (document.getElementById('amount-in-french').contentEditable !== 'true') {
                 const [integerPart, decimalPart] = montantTTC.toFixed(2).split('.');
                 let fullText = `Arrêté la présente facture à la somme de : ${numberToWordsFr(parseInt(integerPart, 10))} dinars algériens`;
                 if (parseInt(decimalPart, 10) > 0) {
                     fullText += ` et ${numberToWordsFr(parseInt(decimalPart, 10))} centimes`;
                 }
                 fullText += ".";
-                elements.frenchDiv.textContent = fullText.replace(" et Zéro centimes", "").replace("  ", " ");
+                document.getElementById('amount-in-french').textContent = fullText.replace(" et Zéro centimes", "").replace("  ", " ");
             }
             elements.frenchContainer.classList.remove('hidden');
         } else {
             elements.frenchContainer.classList.add('hidden');
         }
     }
+    
+    function addCustomField(fieldData) {
+        const fieldId = fieldData ? fieldData.id : `custom-field-${Date.now()}`;
+        const label = fieldData ? fieldData.label : prompt("أدخل اسم الحقل (مثال: الهاتف):");
+        if (!fieldData && (!label || label.trim() === '')) return;
+        
+        const value = fieldData ? fieldData.value : prompt(`أدخل قيمة الحقل "${label}":`);
+        if (!fieldData && (!value || value.trim() === '')) return;
+
+        const isVisible = fieldData ? fieldData.isVisible : true;
+
+        // Create field in company details
+        const p = document.createElement('p');
+        p.id = fieldId;
+        p.className = 'custom-field';
+        p.style.display = isVisible ? 'flex' : 'none';
+        p.innerHTML = `<strong>${label}:</strong><span class="custom-value">${value}</span><button class="delete-custom-field-btn">🗑️</button>`;
+        elements.customFieldsContainer.appendChild(p);
+
+        // Create toggle in options
+        const optionDiv = document.createElement('div');
+        optionDiv.className = 'option-row';
+        optionDiv.innerHTML = `<span class="option-label">إظهار ${label}</span><label class="switch"><input type="checkbox" data-target="${fieldId}" ${isVisible ? 'checked' : ''}><span class="slider"></span></label>`;
+        elements.customFieldsOptionsContainer.appendChild(optionDiv);
+
+        if (!fieldData) saveDraft();
+    }
+    
+    elements.addCustomFieldBtn.addEventListener('click', () => addCustomField(null));
+    
+    document.body.addEventListener('click', function(e) {
+        if (e.target.classList.contains('delete-custom-field-btn')) {
+            const p = e.target.closest('p.custom-field');
+            if (p) {
+                const fieldId = p.id;
+                const toggleRow = document.querySelector(`.option-row input[data-target="${fieldId}"]`);
+                if (toggleRow) {
+                    toggleRow.closest('.option-row').remove();
+                }
+                p.remove();
+                saveDraft();
+            }
+        }
+    });
 
     function getInvoiceData() {
+        const customCompanyFields = [];
+        document.querySelectorAll('#custom-fields-container .custom-field').forEach(p => {
+            const fieldId = p.id;
+            const toggle = document.querySelector(`input[data-target="${fieldId}"]`);
+            customCompanyFields.push({
+                id: fieldId,
+                label: p.querySelector('strong').textContent.replace(':', '').trim(),
+                value: p.querySelector('.custom-value').textContent,
+                isVisible: toggle ? toggle.checked : true
+            });
+        });
+
         return {
             companyInfo: {
                 activity: document.getElementById('c-activity-val').textContent,
@@ -308,6 +347,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 cr: document.getElementById('c-cr-val').textContent,
                 bank: document.getElementById('c-bank-val').textContent,
             },
+            customCompanyFields: customCompanyFields,
             invoiceNum: document.getElementById('invoice-num').value, invoiceDate: document.getElementById('invoice-date').value,
             clientName: document.getElementById('client-name').value, clientAddress: document.getElementById('client-address').value,
             discount: { enabled: elements.discountToggle.checked, type: document.getElementById('discount-type').value, value: document.getElementById('discount-value').value },
@@ -320,31 +360,29 @@ document.addEventListener('DOMContentLoaded', function() {
                 showCr: document.querySelector('[data-target="p-c-cr"]').checked,
                 showBank: document.querySelector('[data-target="p-c-bank"]').checked
             },
-            arabicAmountText: elements.arabicDiv.textContent,
-            frenchAmountText: elements.frenchDiv.textContent,
             rows: Array.from(elements.tableBody.querySelectorAll('tr')).map(r => ({ name: r.querySelector('.product-name').value, quantity: r.querySelector('.quantity').value, price: r.querySelector('.unit-price').value })),
-            timestamp: new Date().toISOString()
         };
     }
         
     function loadInvoiceData(data) {
-        const defaultCompanyInfo = {
-            activity: 'للتجارة بالجملة للآليات والأدوات الصناعية والفلاحية والمكتبية وما ماثلها',
-            address: 'تخصيص الفيض، سيدي قاسي، ابن مهيدي، الطارف',
-            tax: '18136030080117100000',
-            cr: '36/00-3451123ا21',
-            bank: '00500231400236854088'
-        };
-        const info = data.companyInfo || defaultCompanyInfo;
+        // ... (loading static company info, invoice meta, client details) ...
+        const info = data.companyInfo || {};
         for (const key in companyFields) {
-            document.getElementById(companyFields[key].val).textContent = info[key] || defaultCompanyInfo[key];
-            document.getElementById(companyFields[key].input).value = info[key] || defaultCompanyInfo[key];
+            document.getElementById(companyFields[key].val).textContent = info[key] || '';
+            document.getElementById(companyFields[key].input).value = info[key] || '';
         }
-        
         document.getElementById('invoice-num').value = data.invoiceNum || '';
         document.getElementById('invoice-date').value = data.invoiceDate || getTodaysDate();
         document.getElementById('client-name').value = data.clientName || '';
         document.getElementById('client-address').value = data.clientAddress || '';
+
+        // Clear and load custom fields
+        elements.customFieldsContainer.innerHTML = '';
+        elements.customFieldsOptionsContainer.innerHTML = '';
+        if (data.customCompanyFields && Array.isArray(data.customCompanyFields)) {
+            data.customCompanyFields.forEach(field => addCustomField(field));
+        }
+
         if(data.discount) {
             elements.discountToggle.checked = data.discount.enabled;
             document.getElementById('discount-type').value = data.discount.type;
@@ -362,15 +400,12 @@ document.addEventListener('DOMContentLoaded', function() {
         for (const [optionKey, targetId] of Object.entries(companyOptionsMap)) {
             const toggle = document.querySelector(`[data-target="${targetId}"]`);
             const element = document.getElementById(targetId);
-            const isChecked = options[optionKey] !== false;
             if (toggle && element) {
+                const isChecked = options[optionKey] !== false;
                 toggle.checked = isChecked;
                 element.style.display = isChecked ? 'flex' : 'none';
             }
         }
-
-        if (data.arabicAmountText) elements.arabicDiv.textContent = data.arabicAmountText;
-        if (data.frenchAmountText) elements.frenchDiv.textContent = data.frenchAmountText;
         
         elements.tableBody.innerHTML = '';
         if (data.rows && data.rows.length > 0) {
@@ -398,13 +433,13 @@ document.addEventListener('DOMContentLoaded', function() {
      }
     });
     
-    // Listener for new company data toggles
     elements.optionsSection.addEventListener('change', e => {
         if (e.target.matches('input[type="checkbox"][data-target]')) {
             const targetEl = document.getElementById(e.target.dataset.target);
             if (targetEl) {
                 targetEl.style.display = e.target.checked ? 'flex' : 'none';
             }
+            saveDraft();
         }
     });
 
@@ -417,22 +452,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    function setupEditButton(button, div) {
-        button.addEventListener('click', () => {
-            const isEditable = div.contentEditable === 'true';
-            div.contentEditable = !isEditable;
-            div.focus();
-            button.style.opacity = isEditable ? '0.7' : '1';
-            if (isEditable) saveDraft();
-        });
-    }
-    setupEditButton(elements.editArabicBtn, elements.arabicDiv);
-    setupEditButton(elements.editFrenchBtn, elements.frenchDiv);
-
-    elements.editCompanyBtn.addEventListener('click', () => {
+    document.getElementById('edit-company-btn').addEventListener('click', () => {
         const section = elements.companyDetailsSection;
         const isEditing = section.classList.toggle('edit-mode');
-        elements.editCompanyBtn.textContent = isEditing ? 'حفظ البيانات ✓' : 'تعديل البيانات ✏️';
+        document.getElementById('edit-company-btn').textContent = isEditing ? 'حفظ البيانات ✓' : 'تعديل البيانات ✏️';
         if (!isEditing) {
             for (const key in companyFields) {
                 document.getElementById(companyFields[key].val).textContent = document.getElementById(companyFields[key].input).value;
@@ -455,28 +478,22 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('new-invoice-btn').addEventListener('click', clearFormAndStartNew);
 
     document.getElementById('export-word-btn').addEventListener('click', function() {
-        const selectorsToHide = '.controls, .delete-row-btn, th.delete-header-cell, .options-section, .edit-company-btn, .edit-amount-btn, #save-status';
-        document.querySelectorAll(selectorsToHide).forEach(el => el.style.display = 'none');
-        
-        // Temporarily hide company info based on toggles
-        document.querySelectorAll('.company-details p').forEach(p => {
-            const toggle = document.querySelector(`[data-target="${p.id}"]`);
-            if (toggle && !toggle.checked) {
-                p.style.display = 'none';
-            }
-        });
-        
-        // Hide discount row if inactive
-        const discountRow = document.querySelector('.discount-row');
-        const isDiscountActive = document.getElementById('discount-toggle').checked;
-        if (!isDiscountActive) {
-            discountRow.style.display = 'none';
-        }
-
         const header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Export HTML To Doc</title></head><body>";
         const footer = "</body></html>";
-        const sourceHTML = header + document.querySelector(".page-container").innerHTML + footer;
         
+        // Clone the container to manipulate for export without affecting the view
+        const exportContainer = document.querySelector(".page-container").cloneNode(true);
+        
+        // Remove unwanted elements from the clone
+        const selectorsToHide = '.controls, .delete-row-btn, th.delete-header-cell, .options-section, .edit-company-btn, .edit-amount-btn, #save-status, .delete-custom-field-btn, #add-custom-field-btn';
+        exportContainer.querySelectorAll(selectorsToHide).forEach(el => el.remove());
+
+        // Hide discount row if inactive
+        if (!document.getElementById('discount-toggle').checked) {
+            exportContainer.querySelector('.discount-row').style.display = 'none';
+        }
+
+        const sourceHTML = header + exportContainer.innerHTML + footer;
         const source = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(sourceHTML);
         const fileDownload = document.createElement("a");
         document.body.appendChild(fileDownload);
@@ -484,46 +501,9 @@ document.addEventListener('DOMContentLoaded', function() {
         fileDownload.download = `فاتورة ${document.getElementById('invoice-num').value}.doc`;
         fileDownload.click();
         document.body.removeChild(fileDownload);
-
-        // Restore visibility
-        document.querySelectorAll(selectorsToHide).forEach(el => el.style.display = '');
-        document.querySelectorAll('.company-details p').forEach(p => {
-             const toggle = document.querySelector(`[data-target="${p.id}"]`);
-            if (toggle && toggle.checked) {
-                 p.style.display = 'flex';
-            }
-        });
-        discountRow.style.display = 'flex'; // Always restore flex for the row
     });
-
-    // --- كود المشاركة المضاف ---
-    function generateShareText() {
-        const clientName = document.getElementById('client-name').value || 'عميل غير محدد';
-        const invoiceNum = document.getElementById('invoice-num').value || 'غير محدد';
-        const totalAmount = document.getElementById('montant-ttc').textContent || '0.00 دج';
-        return `مرحباً،\n\nيرجى الاطلاع على تفاصيل الفاتورة:\n- العميل: ${clientName}\n- رقم الفاتورة: ${invoiceNum}\n- المبلغ الإجمالي للدفع: ${totalAmount}\n\nشكرًا لك.\nمؤسسة صالحي سليم`;
-    }
-
-    document.getElementById('share-email-btn').addEventListener('click', function() {
-        const subject = `فاتورة من مؤسسة صالحي سليم - رقم ${document.getElementById('invoice-num').value}`;
-        const body = generateShareText();
-        const mailtoLink = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-        window.location.href = mailtoLink;
-    });
-
-    document.getElementById('share-whatsapp-btn').addEventListener('click', function() {
-        const text = generateShareText();
-        const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
-        window.open(whatsappUrl, '_blank');
-    });
-
-    document.getElementById('share-telegram-btn').addEventListener('click', function() {
-        const text = generateShareText();
-        const telegramUrl = `https://t.me/share/url?url=&text=${encodeURIComponent(text)}`;
-        window.open(telegramUrl, '_blank');
-    });
-    // --- نهاية كود المشاركة ---
-
+    
+    // --- Initial Load ---
     const invoiceToLoad = sessionStorage.getItem('invoiceToLoad');
     if (invoiceToLoad) {
         loadInvoiceData(JSON.parse(invoiceToLoad));
