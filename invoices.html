@@ -11,77 +11,83 @@
         :root {
             --primary-color: #005a9c;
             --primary-light: #eaf2f8;
-            --secondary-color: #f8f9fa;
+            --secondary-color: #f7f9fc;
             --border-color: #dee2e6;
             --danger-color: #dc3545;
             --success-color: #28a745;
             --info-color: #17a2b8;
-            --light-bg: #fff;
+            --light-bg: #ffffff;
             --dark-text: #343a40;
             --gray-text: #6c757d;
             --whatsapp-color: #25D366;
             --telegram-color: #0088cc;
             --email-color: #5a6268;
+            --font-size-base: 1rem;
+            --font-size-sm: 0.9rem;
+            --font-size-lg: 1.25rem;
+            --border-radius: 12px;
         }
 
         body {
             font-family: 'Cairo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
-            padding: 20px;
+            padding: 1rem;
             background-color: var(--secondary-color);
-            background-image: linear-gradient(to top, #f2f4f6 0%, #ffffff 100%);
             direction: rtl;
         }
 
         .page-container {
             max-width: 1200px;
-            margin: 20px auto;
+            margin: 1rem auto;
             background: var(--light-bg);
-            padding: 30px;
+            padding: clamp(1rem, 5vw, 2rem);
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-            border-radius: 12px;
+            border-radius: var(--border-radius);
         }
 
         .page-header {
             border-bottom: 2px solid var(--primary-color);
-            padding-bottom: 15px;
-            margin-bottom: 30px;
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 1rem;
         }
 
         .page-header h1 {
             color: var(--primary-color);
             margin: 0;
             font-weight: 700;
+            font-size: clamp(1.5rem, 4vw, 2rem);
         }
 
         .controls {
             display: flex;
-            gap: 15px;
+            gap: 1rem;
             align-items: center;
+            flex-wrap: wrap;
+            width: 100%;
         }
 
         #search-box {
-            padding: 10px 15px;
+            padding: 0.75rem 1rem;
             border: 1px solid var(--border-color);
             border-radius: 8px;
-            width: 250px;
+            flex-grow: 1;
+            min-width: 200px;
             transition: all 0.3s ease-in-out;
-            background-color: #f8f9fa;
         }
 
         #search-box:focus {
-            width: 300px;
             border-color: var(--primary-color);
             box-shadow: 0 0 0 3px rgba(0, 90, 156, 0.15);
+            outline: none;
         }
 
-        .back-btn {
-            padding: 10px 20px;
+        .create-btn {
+            padding: 0.75rem 1.5rem;
             background-color: var(--primary-color);
             color: white;
             text-decoration: none;
@@ -90,10 +96,13 @@
             transition: all 0.3s;
             display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: center;
+            gap: 0.5rem;
+            border: none;
+            cursor: pointer;
         }
 
-        .back-btn:hover {
+        .create-btn:hover {
             opacity: 0.9;
             transform: translateY(-2px);
             box-shadow: 0 4px 15px rgba(0, 90, 156, 0.2);
@@ -101,95 +110,104 @@
 
         #invoices-list {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
         }
 
         .invoice-card {
             background: #fff;
             border: 1px solid var(--border-color);
             border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+            padding: 1.25rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             transition: box-shadow 0.3s, transform 0.3s;
             display: flex;
             flex-direction: column;
-            border-right: 4px solid var(--primary-color);
+            border-right: 5px solid var(--primary-color);
         }
 
         .invoice-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
         }
 
         .card-header {
             font-weight: 700;
-            font-size: 1.2em;
+            font-size: var(--font-size-lg);
             color: var(--dark-text);
-            margin-bottom: 15px;
+            margin-bottom: 1rem;
         }
         .card-header .invoice-num { color: var(--primary-color); }
         .card-body { flex-grow: 1; }
-        .card-body p { margin: 8px 0; color: var(--gray-text); font-size: 0.95em; }
-        .card-body p strong { color: var(--dark-text); margin-left: 5px; }
+        .card-body p { margin: 0.5rem 0; color: var(--gray-text); font-size: var(--font-size-base); }
+        .card-body p strong { color: var(--dark-text); margin-left: 0.5rem; }
 
         .card-footer {
-            margin-top: 20px;
-            padding-top: 15px;
+            margin-top: 1.5rem;
+            padding-top: 1rem;
             border-top: 1px solid #eee;
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
+            gap: 0.75rem;
         }
 
         .action-btn {
-            padding: 9px 12px;
+            padding: 0.7rem;
             border: none;
             border-radius: 6px;
             cursor: pointer;
             color: white;
-            font-size: 0.9em;
+            font-size: var(--font-size-sm);
             font-weight: 600;
             text-align: center;
-            transition: opacity 0.3s;
+            transition: opacity 0.3s, transform 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
+            gap: 0.5rem;
         }
-        .view-btn {
-            background-color: var(--success-color);
-            grid-column: 1 / -1;
-        }
+        .action-btn:hover { opacity: 0.85; transform: scale(1.03); }
+        .action-btn svg { width: 16px; height: 16px; fill: currentColor; }
+
+        .view-btn { background-color: var(--success-color); grid-column: 1 / -1; }
         .whatsapp-btn { background-color: var(--whatsapp-color); }
         .telegram-btn { background-color: var(--telegram-color); }
         .email-btn { background-color: var(--email-color); }
         .delete-btn { background-color: var(--danger-color); }
-
+        
         .no-invoices-container {
             text-align: center;
-            padding: 50px;
-            background-color: #f8f9fa;
+            padding: 3rem 1.5rem;
+            background-color: var(--secondary-color);
             border: 2px dashed var(--border-color);
-            border-radius: 12px;
+            border-radius: var(--border-radius);
             color: var(--gray-text);
             grid-column: 1 / -1;
         }
-        .no-invoices-container svg {
-            width: 80px;
-            height: 80px;
-            margin-bottom: 20px;
-            opacity: 0.5;
-        }
-        .no-invoices-container h2 {
-            margin: 0 0 10px 0;
-            color: var(--dark-text);
+        .no-invoices-container svg { width: 60px; height: 60px; margin-bottom: 1.5rem; opacity: 0.5; }
+        .no-invoices-container h2 { margin: 0 0 0.5rem 0; color: var(--dark-text); }
+        
+        /* Responsive Adjustments */
+        @media (min-width: 768px) {
+            .controls { flex-wrap: nowrap; width: auto; }
         }
 
-        @media (max-width: 768px) {
-            .page-header { flex-direction: column-reverse; align-items: stretch; }
-            #search-box, .back-btn { width: 100%; box-sizing: border-box; text-align: center; }
-            .page-container { padding: 20px; }
+        @media (max-width: 600px) {
+            #invoices-list {
+                grid-template-columns: 1fr;
+            }
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .create-btn {
+                width: 100%;
+                justify-content: center;
+            }
         }
     </style>
 </head>
@@ -199,8 +217,11 @@
     <header class="page-header">
         <h1>محفوظات الفواتير</h1>
         <div class="controls">
-            <input type="text" id="search-box" placeholder="🔎 ابحث عن فاتورة (بالاسم أو الرقم)...">
-            <a href="invoice.html" class="back-btn">➕ إنشاء فاتورة جديدة</a>
+            <input type="text" id="search-box" placeholder="🔎 ابحث بالاسم أو الرقم...">
+            <a href="invoice.html" class="create-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/></svg>
+                إنشاء فاتورة جديدة
+            </a>
         </div>
     </header>
 
@@ -217,13 +238,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const formatCurrency = (num) => num.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-    function calculateTotal(invoice) {
-        const subtotal = invoice.rows.reduce((sum, row) => {
-            return sum + (parseFloat(row.quantity) || 0) * (parseFloat(row.price) || 0);
-        }, 0);
+    const calculateTotal = (invoice) => {
+        const subtotal = invoice.rows.reduce((sum, row) => sum + (parseFloat(row.quantity) || 0) * (parseFloat(row.price) || 0), 0);
         
         let discountAmount = 0;
-        if (invoice.discount && invoice.discount.enabled) {
+        if (invoice.discount?.enabled) {
             const discountValue = parseFloat(invoice.discount.value) || 0;
             discountAmount = invoice.discount.type === 'percent' ? subtotal * (discountValue / 100) : discountValue;
         }
@@ -231,33 +250,29 @@ document.addEventListener('DOMContentLoaded', () => {
         const montantHT = subtotal - discountAmount;
         const tva = montantHT * 0.19;
         return montantHT + tva;
-    }
+    };
 
-    function generateShareText(invoice) {
+    const generateShareText = (invoice) => {
         const totalTTC = calculateTotal(invoice);
-        let text = `*فاتورة من مؤسسة صالحي سليم*\n\n`;
-        text += `*العميل:* ${invoice.clientName}\n`;
-        text += `*رقم الفاتورة:* ${invoice.invoiceNum}\n`;
-        text += `*التاريخ:* ${invoice.invoiceDate}\n`;
-        text += `*المبلغ الإجمالي:* ${formatCurrency(totalTTC)} دج\n\n`;
-        text += `شكراً لتعاملكم معنا.`;
-        return text;
-    }
+        return `*فاتورة من مؤسسة صالحي سليم*\n\n` +
+               `*العميل:* ${invoice.clientName}\n` +
+               `*رقم الفاتورة:* ${invoice.invoiceNum}\n` +
+               `*التاريخ:* ${invoice.invoiceDate}\n` +
+               `*المبلغ الإجمالي:* ${formatCurrency(totalTTC)} دج\n\n` +
+               `شكراً لتعاملكم معنا.`;
+    };
 
-    function renderInvoices(invoicesToRender) {
+    const renderInvoices = (invoicesToRender) => {
         listContainer.innerHTML = '';
         if (invoicesToRender.length === 0) {
             listContainer.innerHTML = `
                 <div class="no-invoices-container">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
-                        <path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h13zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13z"/>
-                        <path d="M3 8.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5zm0-5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5v-1z"/>
+                        <path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h13zM1 3.5a.5.5 0 0 0 0 1h14a.5.5 0 0 0 0-1H1zm0 3a.5.5 0 0 0 0 1h14a.5.5 0 0 0 0-1H1zm0 3a.5.5 0 0 0 0 1h14a.5.5 0 0 0 0-1H1z"/>
                     </svg>
-                    <h2>لا توجد فواتير محفوظة بعد</h2>
-                    <p>ابدأ بإضافة فاتورتك الأولى من خلال النقر على الزر أدناه.</p>
-                     <a href="invoice.html" class="back-btn" style="margin-top: 15px; display: inline-block;">➕ إنشاء فاتورة جديدة</a>
-                </div>
-            `;
+                    <h2>لا توجد فواتير محفوظة</h2>
+                    <p>ليس لديك أي فواتير حاليًا. انقر على الزر أعلاه لبدء إضافة فاتورة جديدة.</p>
+                </div>`;
             return;
         }
         
@@ -276,21 +291,36 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="card-body">
                     <p><strong>العميل:</strong> ${invoice.clientName || 'غير محدد'}</p>
                     <p><strong>التاريخ:</strong> ${invoice.invoiceDate || 'غير محدد'}</p>
-                    <p><strong>الإجمالي:</strong> ${formatCurrency(totalTTC)} دج</p>
+                    <p><strong>الإجمالي (TTC):</strong> ${formatCurrency(totalTTC)} دج</p>
                 </div>
                 <div class="card-footer">
-                    <button class="action-btn view-btn">👁️ عرض وتعديل الفاتورة</button>
-                    <button class="action-btn whatsapp-btn">💬 واتساب</button>
-                    <button class="action-btn telegram-btn">➤ تيليجرام</button>
-                    <button class="action-btn email-btn">📧 بريد إلكتروني</button>
-                    <button class="action-btn delete-btn">🗑️ حذف</button>
+                    <button class="action-btn view-btn" data-action="view">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.816 1.221-2.25 2.226-3.821 2.85C9.879 11.832 8.12 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.133 13.133 0 0 1 1.172 8z"/><path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/></svg>
+                        عرض وتعديل
+                    </button>
+                    <button class="action-btn whatsapp-btn" data-action="whatsapp">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/></svg>
+                        واتساب
+                    </button>
+                    <button class="action-btn telegram-btn" data-action="telegram">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.287 5.906c-.778.324-2.334.994-4.666 2.01-.378.15-.577.298-.595.442-.03.243.275.339.69.47l.175.055c.408.133.958.288 1.243.294.26.006.549-.1.868-.32 2.179-1.471 3.304-2.214 3.374-2.23.05-.012.12-.026.166.016.047.041.042.12.037.141-.03.129-1.227 1.241-1.846 1.817-.193.18-.33.307-.358.336a.508.508 0 0 0-.012.042c-.016.076.01.145.043.199.034.052.072.094.12.127.142.095.27.187.402.26.223.125.432.25.64.354.225.108.414.192.593.265.228.093.437.185.626.258.32.125.592.225.804.292.244.076.47.13.67.158.253.035.47.01.65-.046.18-.058.31-.15.39-.27.08-.12.1-.25.09-.37a.99.99 0 0 0-.01-1.095c-.011-.044-.243-.923-1.07-1.774z"/></svg>
+                        تيليجرام
+                    </button>
+                    <button class="action-btn email-btn" data-action="email">
+                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2Zm13 2.383-4.708 2.825L15 11.105V5.383Zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741ZM1 11.105l4.708-2.897L1 5.383v5.722Z"/></svg>
+                        بريد
+                    </button>
+                    <button class="action-btn delete-btn" data-action="delete">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/><path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/></svg>
+                        حذف
+                    </button>
                 </div>
             `;
             listContainer.appendChild(card);
         });
     }
 
-    function handleAction(e) {
+    const handleAction = (e) => {
         const button = e.target.closest('.action-btn');
         if (!button) return;
 
@@ -301,40 +331,59 @@ document.addEventListener('DOMContentLoaded', () => {
         const invoice = allInvoices.find(inv => inv.timestamp === timestamp);
         if (!invoice) return;
 
-        if (button.classList.contains('view-btn')) {
-            sessionStorage.setItem('invoiceToLoad', JSON.stringify(invoice));
-            window.location.href = 'invoice.html';
-        } else if (button.classList.contains('delete-btn')) {
-            if (confirm(`هل أنت متأكد من حذف فاتورة العميل "${invoice.clientName}"؟ لا يمكن التراجع عن هذا الإجراء.`)) {
-                allInvoices = allInvoices.filter(inv => inv.timestamp !== timestamp);
-                localStorage.setItem('invoicesHistory', JSON.stringify(allInvoices));
-                renderInvoices(allInvoices);
+        const action = button.dataset.action;
+
+        switch (action) {
+            case 'view':
+                sessionStorage.setItem('invoiceToLoad', JSON.stringify(invoice));
+                window.location.href = 'invoice.html';
+                break;
+            case 'delete':
+                if (confirm(`هل أنت متأكد من حذف فاتورة العميل "${invoice.clientName}"؟ لا يمكن التراجع عن هذا الإجراء.`)) {
+                    allInvoices = allInvoices.filter(inv => inv.timestamp !== timestamp);
+                    localStorage.setItem('invoicesHistory', JSON.stringify(allInvoices));
+                    filterInvoices(); // Re-render the filtered list
+                }
+                break;
+            case 'whatsapp': {
+                const text = encodeURIComponent(generateShareText(invoice));
+                window.open(`https://wa.me/?text=${text}`, '_blank');
+                break;
             }
-        } else if (button.classList.contains('whatsapp-btn')) {
-            const text = encodeURIComponent(generateShareText(invoice));
-            window.open(`https://wa.me/?text=${text}`, '_blank');
-        } else if (button.classList.contains('telegram-btn')) {
-             const text = encodeURIComponent(generateShareText(invoice));
-             window.open(`https://t.me/share/url?url=&text=${text}`, '_blank');
-        } else if (button.classList.contains('email-btn')) {
-            const subject = `فاتورة رقم ${invoice.invoiceNum} من مؤسسة صالحي سليم`;
-            const body = generateShareText(invoice).replace(/\*/g, '');
-            window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            case 'telegram': {
+                 const text = encodeURIComponent(generateShareText(invoice));
+                 window.open(`https://t.me/share/url?url=&text=${text}`, '_blank');
+                 break;
+            }
+            case 'email': {
+                const subject = `فاتورة رقم ${invoice.invoiceNum} من مؤسسة صالحي سليم`;
+                const body = generateShareText(invoice).replace(/\*/g, '');
+                window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+                break;
+            }
         }
     }
 
-    function filterInvoices() {
+    const filterInvoices = () => {
         const query = searchBox.value.toLowerCase().trim();
-        const filtered = allInvoices.filter(invoice => {
-            const clientName = (invoice.clientName || '').toLowerCase();
-            const invoiceNum = (invoice.invoiceNum || '').toLowerCase();
-            return clientName.includes(query) || invoiceNum.includes(query);
-        });
+        if (!query) {
+            renderInvoices(allInvoices);
+            return;
+        }
+        const filtered = allInvoices.filter(invoice => 
+            (invoice.clientName || '').toLowerCase().includes(query) || 
+            (invoice.invoiceNum || '').toLowerCase().includes(query)
+        );
         renderInvoices(filtered);
     }
 
     // Initial Load
-    allInvoices = JSON.parse(localStorage.getItem('invoicesHistory')) || [];
+    try {
+        allInvoices = JSON.parse(localStorage.getItem('invoicesHistory')) || [];
+    } catch (error) {
+        console.error("Error parsing invoices from localStorage:", error);
+        allInvoices = [];
+    }
     renderInvoices(allInvoices);
 
     // Event Listeners
