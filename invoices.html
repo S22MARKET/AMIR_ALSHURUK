@@ -218,10 +218,13 @@
         <h1>محفوظات الفواتير</h1>
         <div class="controls">
             <input type="text" id="search-box" placeholder="🔎 ابحث بالاسم أو الرقم...">
+            <button id="import-btn" class="create-btn" style="background-color: #28a745;">📂 استيراد ملف</button>
+            <button id="export-btn" class="create-btn" style="background-color: #17a2b8;">💾 تصدير كملف</button>
             <a href="invoice.html" class="create-btn">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/></svg>
                 إنشاء فاتورة جديدة
             </a>
+            <input type="file" id="import-file-input" accept=".json" style="display: none;">
         </div>
     </header>
 
@@ -387,7 +390,53 @@ const handleAction = (e) => {
     }
     renderInvoices(allInvoices);
 
+    const handleExport = () => {
+        const invoices = localStorage.getItem('invoicesHistory');
+        if (!invoices || JSON.parse(invoices).length === 0) {
+            alert('لا توجد فواتير محفوظة لتصديرها.');
+            return;
+        }
+        const blob = new Blob([invoices], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `backup-invoices-${new Date().toISOString().slice(0, 10)}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        alert('تم تصدير الملف بنجاح! احتفظ به في مكان آمن.');
+    };
+
+    const handleImport = (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const importedInvoices = JSON.parse(e.target.result);
+                if (!Array.isArray(importedInvoices)) {
+                    throw new Error('الملف غير صالح.');
+                }
+                if (confirm(`هل أنت متأكد من استيراد ${importedInvoices.length} فاتورة؟ سيؤدي هذا إلى الكتابة فوق أي فواتير محفوظة حاليًا.`)) {
+                    localStorage.setItem('invoicesHistory', JSON.stringify(importedInvoices));
+                    alert('تم استيراد الفواتير بنجاح!');
+                    location.reload(); // إعادة تحميل الصفحة لعرض البيانات الجديدة
+                }
+            } catch (error) {
+                alert('فشل استيراد الملف. يرجى التأكد من أنه ملف تصدير صالح.');
+            }
+        };
+        reader.readAsText(file);
+        // إعادة تعيين الإدخال للسماح بتحميل نفس الملف مرة أخرى
+        event.target.value = null; 
+    };
+
     // Event Listeners
+    document.getElementById('export-btn').addEventListener('click', handleExport);
+    document.getElementById('import-btn').addEventListener('click', () => document.getElementById('import-file-input').click());
+    document.getElementById('import-file-input').addEventListener('change', handleImport);
     listContainer.addEventListener('click', handleAction);
     searchBox.addEventListener('input', filterInvoices);
 });
