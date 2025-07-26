@@ -5,13 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>مولد الفواتير - مؤسسة صالحي سليم</title>
     <style>
+   
+
+
         :root {
-            --primary-color: #005a9c; --secondary-color: #f4f6f9; --border-color: #dee2e6;
-            --danger-color: #dc3545; --success-color: #28a745; --warning-color: #ffc107;
-            --info-color: #17a2b8; --light-bg: #f8f9fa; --dark-text: #343a40;
-            --word-color: #2b579a; --purple-color: #6a0dad;
-            --whatsapp-color: #25D366; --telegram-color: #0088cc; --email-color: #777;
-        }
+    --primary-color: #005a9c; --secondary-color: #f4f6f9; --border-color: #dee2e6;
+    --danger-color: #dc3545; --success-color: #28a745; --warning-color: #ffc107;
+    --info-color: #17a2b8; --light-bg: #f8f9fa; --dark-text: #343a40;
+    --word-color: #2b579a; --purple-color: #6a0dad;
+    /* أضف هذه المتغيرات اللونية */
+    --whatsapp-color: #25D366; --telegram-color: #0088cc; --email-color: #777;
+}
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0;
             padding: 15px; background-color: var(--secondary-color); direction: rtl;
@@ -73,6 +77,13 @@
         .save-btn { background-color: var(--info-color); }
         .print-btn { background-color: #007bff; }
         .word-btn { background-color: var(--word-color); }
+
+#share-email-btn { background-color: var(--email-color); }
+#share-whatsapp-btn { background-color: var(--whatsapp-color); }
+#share-telegram-btn { background-color: var(--telegram-color); }
+
+
+
         #share-email-btn { background-color: var(--email-color); }
         #share-whatsapp-btn { background-color: var(--whatsapp-color); }
         #share-telegram-btn { background-color: var(--telegram-color); }
@@ -139,14 +150,18 @@
             </thead>
             <tbody></tbody>
         </table>
-        <div class="controls">
-            <button class="action-btn add-row-btn" onclick="addRow()">+ إضافة سطر</button>
-            <button class="action-btn save-btn" id="save-invoice">💾 حفظ في المحفوظات</button>
-            <button class="action-btn print-btn" onclick="window.print()">🖨️ طباعة</button>
-            <button class="action-btn word-btn" id="export-word-btn">📄 تصدير وورد</button>
-            <a href="invoices.html" class="action-btn history-btn">📜 عرض المحفوظات</a>
-            <button class="action-btn new-invoice-btn" id="new-invoice-btn">📄 فاتورة جديدة</button>
-        </div>
+  <div class="controls">
+    <button class="action-btn add-row-btn" onclick="addRow()">+ إضافة سطر</button>
+    <button class="action-btn save-btn" id="save-invoice">💾 حفظ في المحفوظات</button>
+    <button class="action-btn print-btn" onclick="window.print()">🖨️ طباعة</button>
+    <button class="action-btn word-btn" id="export-word-btn">📄 تصدير وورد</button>
+    
+    <button class="action-btn" id="share-email-btn">📧 إرسال إيميل</button>
+    <button class="action-btn" id="share-whatsapp-btn">🟢 إرسال واتساب</button>
+    <button class="action-btn" id="share-telegram-btn">🔵 إرسال تيليجرام</button>
+    <a href="invoices.html" class="action-btn history-btn">📜 عرض المحفوظات</a>
+    <button class="action-btn new-invoice-btn" id="new-invoice-btn">📄 فاتورة جديدة</button>
+</div>
         <p id="save-status"></p>
 
         <div class="summary-and-options">
@@ -513,6 +528,55 @@ document.addEventListener('DOMContentLoaded', function() {
         loadInvoiceData(draft ? JSON.parse(draft) : {});
     }
 });
+
+
+
+
+function generateShareableText() {
+        const invoiceNum = document.getElementById('invoice-num').value;
+        const clientName = document.getElementById('client-name').value;
+        const totalAmount = document.getElementById('montant-ttc').textContent;
+        
+        let text = `مرحباً ${clientName || 'عميلنا العزيز'},\n\n`;
+        text += `تفاصيل الفاتورة رقم: ${invoiceNum}\n`;
+        text += "----------------------------------\n";
+
+        document.querySelectorAll("#invoice-table tbody tr").forEach(row => {
+            const name = row.querySelector(".product-name").value;
+            const quantity = row.querySelector(".quantity").value;
+            const price = row.querySelector(".unit-price").value;
+            const total = parseFloat(quantity) * parseFloat(price);
+            if(name) {
+                 text += `- المنتج: ${name} | الكمية: ${quantity} | الإجمالي: ${formatCurrency(total)} دج\n`;
+            }
+        });
+
+        text += "----------------------------------\n";
+        text += `المبلغ الإجمالي للدفع: ${totalAmount}\n\n`;
+        text += `شكراً لتعاملكم معنا.\nمؤسسة صالحي سليم`;
+        
+        return encodeURIComponent(text);
+    }
+
+    document.getElementById('share-whatsapp-btn').addEventListener('click', function() {
+        const text = generateShareableText();
+        const whatsappUrl = `https://api.whatsapp.com/send?text=${text}`;
+        window.open(whatsappUrl, '_blank');
+    });
+
+    document.getElementById('share-telegram-btn').addEventListener('click', function() {
+        const text = generateShareableText();
+        const telegramUrl = `https://t.me/share/url?url=&text=${text}`;
+        window.open(telegramUrl, '_blank');
+    });
+
+    document.getElementById('share-email-btn').addEventListener('click', function() {
+        const invoiceNum = document.getElementById('invoice-num').value;
+        const subject = `فاتورة رقم: ${invoiceNum}`;
+        const body = generateShareableText();
+        const mailtoUrl = `mailto:?subject=${subject}&body=${body}`;
+        window.location.href = mailtoUrl;
+    });
 </script>
 </body>
 </html>
