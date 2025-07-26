@@ -14,17 +14,13 @@
             --secondary-color: #f7f9fc;
             --border-color: #dee2e6;
             --danger-color: #dc3545;
+            --warning-color: #ffc107;
             --success-color: #28a745;
             --info-color: #17a2b8;
             --light-bg: #ffffff;
             --dark-text: #343a40;
             --gray-text: #6c757d;
-            --whatsapp-color: #25D366;
-            --telegram-color: #0088cc;
-            --email-color: #5a6268;
             --font-size-base: 1rem;
-            --font-size-sm: 0.9rem;
-            --font-size-lg: 1.25rem;
             --border-radius: 12px;
         }
 
@@ -37,7 +33,7 @@
         }
 
         .page-container {
-            max-width: 1200px;
+            max-width: 1300px;
             margin: 1rem auto;
             background: var(--light-bg);
             padding: clamp(1rem, 5vw, 2rem);
@@ -47,13 +43,13 @@
 
         .page-header {
             border-bottom: 2px solid var(--primary-color);
-            padding-bottom: 1rem;
-            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            margin-bottom: 1.5rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 1rem;
+            gap: 1.5rem;
         }
 
         .page-header h1 {
@@ -63,20 +59,26 @@
             font-size: clamp(1.5rem, 4vw, 2rem);
         }
 
-        .controls {
+        .controls-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .main-controls, .secondary-controls {
             display: flex;
             gap: 1rem;
             align-items: center;
             flex-wrap: wrap;
-            width: 100%;
         }
-
+        
         #search-box {
             padding: 0.75rem 1rem;
             border: 1px solid var(--border-color);
             border-radius: 8px;
             flex-grow: 1;
-            min-width: 200px;
+            min-width: 220px;
             transition: all 0.3s ease-in-out;
         }
 
@@ -86,7 +88,53 @@
             outline: none;
         }
 
-        .create-btn {
+        .custom-select {
+            position: relative;
+        }
+
+        #sort-by {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            padding: 0.75rem 2.5rem 0.75rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: white;
+            cursor: pointer;
+            min-width: 180px;
+        }
+        .custom-select::after {
+            content: '▼';
+            font-size: 0.8rem;
+            color: var(--gray-text);
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+        }
+
+        .summary-stats {
+            background-color: var(--primary-light);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            text-align: center;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .stat {
+            color: var(--primary-color);
+        }
+        .stat strong {
+            display: block;
+            font-size: 1.5rem;
+            color: var(--dark-text);
+        }
+
+        .action-btn, .create-btn {
             padding: 0.75rem 1.5rem;
             background-color: var(--primary-color);
             color: white;
@@ -101,45 +149,47 @@
             border: none;
             cursor: pointer;
         }
-
-        .create-btn:hover {
+        .action-btn:hover, .create-btn:hover {
             opacity: 0.9;
             transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0, 90, 156, 0.2);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
+        #delete-all-btn { background-color: var(--danger-color); }
+        #import-btn { background-color: var(--success-color); }
+        #export-btn { background-color: var(--info-color); }
+        
         #invoices-list {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 1.5rem;
         }
 
         .invoice-card {
             background: #fff;
-            border: 1px solid var(--border-color);
+            border-right: 5px solid var(--primary-color);
             border-radius: 10px;
             padding: 1.25rem;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             transition: box-shadow 0.3s, transform 0.3s;
             display: flex;
             flex-direction: column;
-            border-right: 5px solid var(--primary-color);
         }
 
         .invoice-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
         }
 
         .card-header {
             font-weight: 700;
-            font-size: var(--font-size-lg);
+            font-size: 1.2rem;
             color: var(--dark-text);
             margin-bottom: 1rem;
         }
         .card-header .invoice-num { color: var(--primary-color); }
-        .card-body { flex-grow: 1; }
-        .card-body p { margin: 0.5rem 0; color: var(--gray-text); font-size: var(--font-size-base); }
+        .card-body { flex-grow: 1; display: flex; flex-direction: column; gap: 0.75rem; }
+        .card-body p { margin: 0; color: var(--gray-text); }
         .card-body p strong { color: var(--dark-text); margin-left: 0.5rem; }
 
         .card-footer {
@@ -147,35 +197,13 @@
             padding-top: 1rem;
             border-top: 1px solid #eee;
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(2, 1fr);
             gap: 0.75rem;
         }
 
-        .action-btn {
-            padding: 0.7rem;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            color: white;
-            font-size: var(--font-size-sm);
-            font-weight: 600;
-            text-align: center;
-            transition: opacity 0.3s, transform 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-        .action-btn:hover { opacity: 0.85; transform: scale(1.03); }
-        .action-btn svg { width: 16px; height: 16px; fill: currentColor; }
-
-        .view-btn { background-color: var(--success-color); grid-column: 1 / -1; }
-        .whatsapp-btn { background-color: var(--whatsapp-color); }
-        .telegram-btn { background-color: var(--telegram-color); }
-        .email-btn { background-color: var(--email-color); }
-        .delete-btn { background-color: var(--danger-color); }
+        .view-btn { grid-column: 1 / -1; }
         
-        .no-invoices-container {
+        .message-container {
             text-align: center;
             padding: 3rem 1.5rem;
             background-color: var(--secondary-color);
@@ -184,30 +212,11 @@
             color: var(--gray-text);
             grid-column: 1 / -1;
         }
-        .no-invoices-container svg { width: 60px; height: 60px; margin-bottom: 1.5rem; opacity: 0.5; }
-        .no-invoices-container h2 { margin: 0 0 0.5rem 0; color: var(--dark-text); }
+        .message-container svg { width: 60px; height: 60px; margin-bottom: 1.5rem; opacity: 0.5; }
+        .message-container h2 { margin: 0 0 0.5rem 0; color: var(--dark-text); }
         
-        /* Responsive Adjustments */
-        @media (min-width: 768px) {
-            .controls { flex-wrap: nowrap; width: auto; }
-        }
-
-        @media (max-width: 600px) {
-            #invoices-list {
-                grid-template-columns: 1fr;
-            }
-            .page-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .controls {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .create-btn {
-                width: 100%;
-                justify-content: center;
-            }
+        @media (max-width: 768px) {
+            .main-controls, .secondary-controls { flex-direction: column; align-items: stretch; }
         }
     </style>
 </head>
@@ -216,17 +225,36 @@
 <div class="page-container">
     <header class="page-header">
         <h1>محفوظات الفواتير</h1>
-        <div class="controls">
+        <a href="invoice.html" class="create-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/></svg>
+            إنشاء فاتورة جديدة
+        </a>
+    </header>
+
+    <div class="controls-container">
+        <div class="main-controls">
             <input type="text" id="search-box" placeholder="🔎 ابحث بالاسم أو الرقم...">
-            <button id="import-btn" class="create-btn" style="background-color: #28a745;">📂 استيراد ملف</button>
-            <button id="export-btn" class="create-btn" style="background-color: #17a2b8;">💾 تصدير كملف</button>
-            <a href="invoice.html" class="create-btn">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/></svg>
-                إنشاء فاتورة جديدة
-            </a>
+            <div class="custom-select">
+                <select id="sort-by">
+                    <option value="newest">فرز حسب: الأحدث أولاً</option>
+                    <option value="oldest">فرز حسب: الأقدم أولاً</option>
+                    <option value="highest">فرز حسب: الأعلى مبلغاً</option>
+                    <option value="lowest">فرز حسب: الأقل مبلغاً</option>
+                </select>
+            </div>
+        </div>
+        <div class="secondary-controls">
+            <button id="import-btn" class="action-btn">📂 استيراد ملف</button>
+            <button id="export-btn" class="action-btn">💾 تصدير كملف</button>
+            <button id="delete-all-btn" class="action-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
+                حذف الكل
+            </button>
             <input type="file" id="import-file-input" accept=".json" style="display: none;">
         </div>
-    </header>
+    </div>
+    
+    <div class="summary-stats" id="summary-stats"></div>
 
     <main>
         <div id="invoices-list"></div>
@@ -235,28 +263,32 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+    // DOM Elements
     const listContainer = document.getElementById('invoices-list');
     const searchBox = document.getElementById('search-box');
+    const sortBy = document.getElementById('sort-by');
+    const summaryContainer = document.getElementById('summary-stats');
+    const importFileInput = document.getElementById('import-file-input');
+    
+    // State
     let allInvoices = [];
 
+    // --- UTILITY FUNCTIONS ---
     const formatCurrency = (num) => num.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
+    
     const calculateTotal = (invoice) => {
         const subtotal = invoice.rows.reduce((sum, row) => sum + (parseFloat(row.quantity) || 0) * (parseFloat(row.price) || 0), 0);
-        
         let discountAmount = 0;
         if (invoice.discount?.enabled) {
             const discountValue = parseFloat(invoice.discount.value) || 0;
             discountAmount = invoice.discount.type === 'percent' ? subtotal * (discountValue / 100) : discountValue;
         }
-        
         const montantHT = subtotal - discountAmount;
         const tva = montantHT * 0.19;
         return montantHT + tva;
     };
 
-    const generateShareText = (invoice) => {
-        const totalTTC = calculateTotal(invoice);
+    const generateShareText = (invoice, totalTTC) => {
         return `*فاتورة من مؤسسة صالحي سليم*\n\n` +
                `*العميل:* ${invoice.clientName}\n` +
                `*رقم الفاتورة:* ${invoice.invoiceNum}\n` +
@@ -265,68 +297,129 @@ document.addEventListener('DOMContentLoaded', () => {
                `شكراً لتعاملكم معنا.`;
     };
 
+    // --- RENDERING FUNCTIONS ---
+    const renderSummary = (invoices) => {
+        const totalAmount = invoices.reduce((sum, inv) => sum + calculateTotal(inv), 0);
+        const invoiceCount = invoices.length;
+        
+        summaryContainer.innerHTML = `
+            <div class="stat">
+                <span>إجمالي الفواتير</span>
+                <strong>${invoiceCount}</strong>
+            </div>
+            <div class="stat">
+                <span>المبلغ الإجمالي (TTC)</span>
+                <strong>${formatCurrency(totalAmount)} دج</strong>
+            </div>
+        `;
+    };
+
     const renderInvoices = (invoicesToRender) => {
         listContainer.innerHTML = '';
-        if (invoicesToRender.length === 0) {
-            listContainer.innerHTML = `
-                <div class="no-invoices-container">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
-                        <path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h13zM1 3.5a.5.5 0 0 0 0 1h14a.5.5 0 0 0 0-1H1zm0 3a.5.5 0 0 0 0 1h14a.5.5 0 0 0 0-1H1zm0 3a.5.5 0 0 0 0 1h14a.5.5 0 0 0 0-1H1z"/>
-                    </svg>
-                    <h2>لا توجد فواتير محفوظة</h2>
-                    <p>ليس لديك أي فواتير حاليًا. انقر على الزر أعلاه لبدء إضافة فاتورة جديدة.</p>
-                </div>`;
+        
+        if (allInvoices.length === 0) {
+            listContainer.innerHTML = createMessageHTML('no-invoices');
             return;
         }
-        
-        invoicesToRender.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+        if (invoicesToRender.length === 0) {
+            listContainer.innerHTML = createMessageHTML('no-results');
+            return;
+        }
 
         invoicesToRender.forEach(invoice => {
             const totalTTC = calculateTotal(invoice);
             const card = document.createElement('div');
             card.className = 'invoice-card';
             card.dataset.timestamp = invoice.timestamp;
-
-            card.innerHTML = `
-                <div class="card-header">
-                    <span class="invoice-num">فاتورة رقم: ${invoice.invoiceNum || 'N/A'}</span>
-                </div>
-                <div class="card-body">
-                    <p><strong>العميل:</strong> ${invoice.clientName || 'غير محدد'}</p>
-                    <p><strong>التاريخ:</strong> ${invoice.invoiceDate || 'غير محدد'}</p>
-                    <p><strong>الإجمالي (TTC):</strong> ${formatCurrency(totalTTC)} دج</p>
-                </div>
-                <div class="card-footer">
-                    <button class="action-btn view-btn" data-action="view">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.816 1.221-2.25 2.226-3.821 2.85C9.879 11.832 8.12 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.133 13.133 0 0 1 1.172 8z"/><path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/></svg>
-                        عرض وتعديل
-                    </button>
-                    <button class="action-btn whatsapp-btn" data-action="whatsapp">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/></svg>
-                        واتساب
-                    </button>
-                    <button class="action-btn telegram-btn" data-action="telegram">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.287 5.906c-.778.324-2.334.994-4.666 2.01-.378.15-.577.298-.595.442-.03.243.275.339.69.47l.175.055c.408.133.958.288 1.243.294.26.006.549-.1.868-.32 2.179-1.471 3.304-2.214 3.374-2.23.05-.012.12-.026.166.016.047.041.042.12.037.141-.03.129-1.227 1.241-1.846 1.817-.193.18-.33.307-.358.336a.508.508 0 0 0-.012.042c-.016.076.01.145.043.199.034.052.072.094.12.127.142.095.27.187.402.26.223.125.432.25.64.354.225.108.414.192.593.265.228.093.437.185.626.258.32.125.592.225.804.292.244.076.47.13.67.158.253.035.47.01.65-.046.18-.058.31-.15.39-.27.08-.12.1-.25.09-.37a.99.99 0 0 0-.01-1.095c-.011-.044-.243-.923-1.07-1.774z"/></svg>
-                        تيليجرام
-                    </button>
-                    <button class="action-btn email-btn" data-action="email">
-                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2Zm13 2.383-4.708 2.825L15 11.105V5.383Zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741ZM1 11.105l4.708-2.897L1 5.383v5.722Z"/></svg>
-                        بريد
-                    </button>
-                    <button class="action-btn delete-btn" data-action="delete">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/><path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/></svg>
-                        حذف
-                    </button>
-                </div>
-            `;
+            card.dataset.total = totalTTC;
+            
+            card.innerHTML = createInvoiceCardHTML(invoice, totalTTC);
             listContainer.appendChild(card);
         });
-    }
+    };
     
-const handleAction = (e) => {
-        // ابحث عن أقرب عنصر أب لديه كلاس .action-btn
+    const createMessageHTML = (type) => {
+        const messages = {
+            'no-invoices': {
+                icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h13zM1 3.5a.5.5 0 0 0 0 1h14a.5.5 0 0 0 0-1H1zm0 3a.5.5 0 0 0 0 1h14a.5.5 0 0 0 0-1H1zm0 3a.5.5 0 0 0 0 1h14a.5.5 0 0 0 0-1H1z"/></svg>`,
+                title: 'لا توجد فواتير محفوظة',
+                text: 'ليس لديك أي فواتير حاليًا. انقر على زر "إنشاء فاتورة جديدة" للبدء.'
+            },
+            'no-results': {
+                icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/></svg>`,
+                title: 'لا توجد نتائج مطابقة',
+                text: 'لم يتم العثور على فواتير تطابق بحثك. حاول استخدام كلمات أخرى.'
+            }
+        };
+        const msg = messages[type];
+        return `<div class="message-container">${msg.icon}<h2>${msg.title}</h2><p>${msg.text}</p></div>`;
+    };
+
+    const createInvoiceCardHTML = (invoice, totalTTC) => `
+        <div class="card-header">
+            <span class="invoice-num">فاتورة رقم: ${invoice.invoiceNum || 'N/A'}</span>
+        </div>
+        <div class="card-body">
+            <p><strong>العميل:</strong> ${invoice.clientName || 'غير محدد'}</p>
+            <p><strong>التاريخ:</strong> ${invoice.invoiceDate || 'غير محدد'}</p>
+            <p><strong>الإجمالي (TTC):</strong> ${formatCurrency(totalTTC)} دج</p>
+        </div>
+        <div class="card-footer">
+            <button class="action-btn view-btn" data-action="view" style="background-color: var(--primary-color);">عرض وتعديل</button>
+            <button class="action-btn" data-action="whatsapp" style="background-color: #25D366;">واتساب</button>
+            <button class="action-btn" data-action="telegram" style="background-color: #0088cc;">تيليجرام</button>
+            <button class="action-btn" data-action="email" style="background-color: #5a6268;">بريد</button>
+            <button class="action-btn" data-action="delete" style="background-color: var(--danger-color);">حذف</button>
+        </div>
+    `;
+
+    // --- DATA HANDLING ---
+    const loadInvoices = () => {
+        try {
+            allInvoices = JSON.parse(localStorage.getItem('invoicesHistory')) || [];
+        } catch (error) {
+            console.error("Error parsing invoices from localStorage:", error);
+            allInvoices = [];
+            alert("حدث خطأ أثناء تحميل الفواتير المحفوظة.");
+        }
+    };
+
+    const saveInvoices = () => {
+        localStorage.setItem('invoicesHistory', JSON.stringify(allInvoices));
+        updateDisplay();
+    };
+
+    const updateDisplay = () => {
+        const query = searchBox.value.toLowerCase().trim();
+        let filtered = allInvoices;
+
+        if (query) {
+            filtered = allInvoices.filter(invoice => 
+                (invoice.clientName || '').toLowerCase().includes(query) || 
+                (invoice.invoiceNum || '').toLowerCase().includes(query)
+            );
+        }
+
+        const sortValue = sortBy.value;
+        filtered.sort((a, b) => {
+            switch (sortValue) {
+                case 'oldest': return new Date(a.timestamp) - new Date(b.timestamp);
+                case 'highest': return calculateTotal(b) - calculateTotal(a);
+                case 'lowest': return calculateTotal(a) - calculateTotal(b);
+                case 'newest':
+                default:
+                    return new Date(b.timestamp) - new Date(a.timestamp);
+            }
+        });
+
+        renderInvoices(filtered);
+        renderSummary(allInvoices);
+    };
+
+    // --- EVENT HANDLERS ---
+    const handleCardAction = (e) => {
         const button = e.target.closest('.action-btn');
-        if (!button) return; // إذا لم يتم النقر على زر، اخرج من الدالة
+        if (!button) return;
 
         const card = button.closest('.invoice-card');
         if (!card) return;
@@ -335,8 +428,8 @@ const handleAction = (e) => {
         const invoice = allInvoices.find(inv => inv.timestamp === timestamp);
         if (!invoice) return;
 
-        // احصل على نوع الإجراء من الخاصية data-action
         const action = button.dataset.action;
+        const totalTTC = calculateTotal(invoice);
 
         switch (action) {
             case 'view':
@@ -344,59 +437,37 @@ const handleAction = (e) => {
                 window.location.href = 'invoice.html';
                 break;
             case 'delete':
-                if (confirm(`هل أنت متأكد من حذف فاتورة العميل "${invoice.clientName}"؟ لا يمكن التراجع عن هذا الإجراء.`)) {
+                if (confirm(`هل أنت متأكد من حذف فاتورة العميل "${invoice.clientName}"؟`)) {
                     allInvoices = allInvoices.filter(inv => inv.timestamp !== timestamp);
-                    localStorage.setItem('invoicesHistory', JSON.stringify(allInvoices));
-                    filterInvoices(); // أعد عرض الفواتير بعد الحذف
+                    saveInvoices();
                 }
                 break;
             case 'whatsapp': {
-                const text = encodeURIComponent(generateShareText(invoice));
+                const text = encodeURIComponent(generateShareText(invoice, totalTTC));
                 window.open(`https://wa.me/?text=${text}`, '_blank');
                 break;
             }
             case 'telegram': {
-                 const text = encodeURIComponent(generateShareText(invoice));
+                 const text = encodeURIComponent(generateShareText(invoice, totalTTC));
                  window.open(`https://t.me/share/url?url=&text=${text}`, '_blank');
                  break;
             }
             case 'email': {
                 const subject = `فاتورة رقم ${invoice.invoiceNum} من مؤسسة صالحي سليم`;
-                const body = generateShareText(invoice).replace(/\*/g, '');
+                const body = generateShareText(invoice, totalTTC).replace(/\*/g, '');
                 window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
                 break;
             }
         }
-    }
-    const filterInvoices = () => {
-        const query = searchBox.value.toLowerCase().trim();
-        if (!query) {
-            renderInvoices(allInvoices);
-            return;
-        }
-        const filtered = allInvoices.filter(invoice => 
-            (invoice.clientName || '').toLowerCase().includes(query) || 
-            (invoice.invoiceNum || '').toLowerCase().includes(query)
-        );
-        renderInvoices(filtered);
-    }
-
-    // Initial Load
-    try {
-        allInvoices = JSON.parse(localStorage.getItem('invoicesHistory')) || [];
-    } catch (error) {
-        console.error("Error parsing invoices from localStorage:", error);
-        allInvoices = [];
-    }
-    renderInvoices(allInvoices);
-
+    };
+    
     const handleExport = () => {
-        const invoices = localStorage.getItem('invoicesHistory');
-        if (!invoices || JSON.parse(invoices).length === 0) {
+        if (allInvoices.length === 0) {
             alert('لا توجد فواتير محفوظة لتصديرها.');
             return;
         }
-        const blob = new Blob([invoices], { type: 'application/json' });
+        const dataStr = JSON.stringify(allInvoices, null, 2);
+        const blob = new Blob([dataStr], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
@@ -416,29 +487,50 @@ const handleAction = (e) => {
         reader.onload = (e) => {
             try {
                 const importedInvoices = JSON.parse(e.target.result);
-                if (!Array.isArray(importedInvoices)) {
-                    throw new Error('الملف غير صالح.');
-                }
-                if (confirm(`هل أنت متأكد من استيراد ${importedInvoices.length} فاتورة؟ سيؤدي هذا إلى الكتابة فوق أي فواتير محفوظة حاليًا.`)) {
-                    localStorage.setItem('invoicesHistory', JSON.stringify(importedInvoices));
+                if (!Array.isArray(importedInvoices)) throw new Error('الملف غير صالح.');
+                
+                const confirmationMsg = allInvoices.length > 0
+                    ? `هل أنت متأكد من استيراد ${importedInvoices.length} فاتورة؟ سيؤدي هذا إلى الكتابة فوق جميع الفواتير الحالية.`
+                    : `هل أنت متأكد من استيراد ${importedInvoices.length} فاتورة؟`;
+
+                if (confirm(confirmationMsg)) {
+                    allInvoices = importedInvoices;
+                    saveInvoices();
                     alert('تم استيراد الفواتير بنجاح!');
-                    location.reload(); // إعادة تحميل الصفحة لعرض البيانات الجديدة
                 }
             } catch (error) {
-                alert('فشل استيراد الملف. يرجى التأكد من أنه ملف تصدير صالح.');
+                alert('فشل استيراد الملف. يرجى التأكد من أنه ملف تصدير صالح ومحتواه بصيغة JSON صحيحة.');
+            } finally {
+                event.target.value = null; 
             }
         };
         reader.readAsText(file);
-        // إعادة تعيين الإدخال للسماح بتحميل نفس الملف مرة أخرى
-        event.target.value = null; 
     };
 
+    const handleDeleteAll = () => {
+        if (allInvoices.length === 0) {
+            alert("لا توجد فواتير لحذفها.");
+            return;
+        }
+        if (confirm("تحذير! هل أنت متأكد من حذف جميع الفواتير؟ لا يمكن التراجع عن هذا الإجراء.")) {
+            allInvoices = [];
+            saveInvoices();
+            alert("تم حذف جميع الفواتير بنجاح.");
+        }
+    };
+
+    // --- INITIALIZATION ---
+    loadInvoices();
+    updateDisplay();
+    
     // Event Listeners
+    searchBox.addEventListener('input', updateDisplay);
+    sortBy.addEventListener('change', updateDisplay);
+    listContainer.addEventListener('click', handleCardAction);
     document.getElementById('export-btn').addEventListener('click', handleExport);
-    document.getElementById('import-btn').addEventListener('click', () => document.getElementById('import-file-input').click());
-    document.getElementById('import-file-input').addEventListener('change', handleImport);
-    listContainer.addEventListener('click', handleAction);
-    searchBox.addEventListener('input', filterInvoices);
+    document.getElementById('import-btn').addEventListener('click', () => importFileInput.click());
+    importFileInput.addEventListener('change', handleImport);
+    document.getElementById('delete-all-btn').addEventListener('click', handleDeleteAll);
 });
 </script>
 
