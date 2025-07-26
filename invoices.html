@@ -319,10 +319,11 @@ document.addEventListener('DOMContentLoaded', () => {
             listContainer.appendChild(card);
         });
     }
-
-    const handleAction = (e) => {
+    
+const handleAction = (e) => {
+        // ابحث عن أقرب عنصر أب لديه كلاس .action-btn
         const button = e.target.closest('.action-btn');
-        if (!button) return;
+        if (!button) return; // إذا لم يتم النقر على زر، اخرج من الدالة
 
         const card = button.closest('.invoice-card');
         if (!card) return;
@@ -331,6 +332,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const invoice = allInvoices.find(inv => inv.timestamp === timestamp);
         if (!invoice) return;
 
+        // احصل على نوع الإجراء من الخاصية data-action
         const action = button.dataset.action;
 
         switch (action) {
@@ -342,7 +344,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (confirm(`هل أنت متأكد من حذف فاتورة العميل "${invoice.clientName}"؟ لا يمكن التراجع عن هذا الإجراء.`)) {
                     allInvoices = allInvoices.filter(inv => inv.timestamp !== timestamp);
                     localStorage.setItem('invoicesHistory', JSON.stringify(allInvoices));
-                    filterInvoices(); // Re-render the filtered list
+                    filterInvoices(); // أعد عرض الفواتير بعد الحذف
                 }
                 break;
             case 'whatsapp': {
@@ -363,7 +365,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     }
-
     const filterInvoices = () => {
         const query = searchBox.value.toLowerCase().trim();
         if (!query) {
