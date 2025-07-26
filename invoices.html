@@ -261,7 +261,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         
-        invoicesToRender.sort((a, b) => new Date(b.timestamp) - new Date(a.toimestamp));
+        invoicesToRender.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
         invoicesToRender.forEach(invoice => {
             const totalTTC = calculateTotal(invoice);
@@ -303,7 +303,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (button.classList.contains('view-btn')) {
             sessionStorage.setItem('invoiceToLoad', JSON.stringify(invoice));
-            // --- تصحيح هنا: تغيير الرابط إلى invoice.html ---
             window.location.href = 'invoice.html';
         } else if (button.classList.contains('delete-btn')) {
             if (confirm(`هل أنت متأكد من حذف فاتورة العميل "${invoice.clientName}"؟ لا يمكن التراجع عن هذا الإجراء.`)) {
