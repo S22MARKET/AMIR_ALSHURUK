@@ -23,7 +23,6 @@
             --font-size-base: 1rem;
             --border-radius: 12px;
         }
-
         body {
             font-family: 'Cairo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
@@ -31,7 +30,6 @@
             background-color: var(--secondary-color);
             direction: rtl;
         }
-
         .page-container {
             max-width: 1300px;
             margin: 1rem auto;
@@ -40,7 +38,6 @@
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
             border-radius: var(--border-radius);
         }
-
         .page-header {
             border-bottom: 2px solid var(--primary-color);
             padding-bottom: 1.5rem;
@@ -51,28 +48,24 @@
             flex-wrap: wrap;
             gap: 1.5rem;
         }
-
         .page-header h1 {
             color: var(--primary-color);
             margin: 0;
             font-weight: 700;
             font-size: clamp(1.5rem, 4vw, 2rem);
         }
-
         .controls-container {
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
             margin-bottom: 2rem;
         }
-
         .main-controls, .secondary-controls {
             display: flex;
             gap: 1rem;
             align-items: center;
             flex-wrap: wrap;
         }
-        
         #search-box {
             padding: 0.75rem 1rem;
             border: 1px solid var(--border-color);
@@ -81,17 +74,14 @@
             min-width: 220px;
             transition: all 0.3s ease-in-out;
         }
-
         #search-box:focus {
             border-color: var(--primary-color);
             box-shadow: 0 0 0 3px rgba(0, 90, 156, 0.15);
             outline: none;
         }
-
         .custom-select {
             position: relative;
         }
-
         #sort-by {
             -webkit-appearance: none;
             -moz-appearance: none;
@@ -113,7 +103,6 @@
             transform: translateY(-50%);
             pointer-events: none;
         }
-
         .summary-stats {
             background-color: var(--primary-light);
             border-radius: var(--border-radius);
@@ -124,7 +113,6 @@
             flex-wrap: wrap;
             gap: 1rem;
         }
-
         .stat {
             color: var(--primary-color);
         }
@@ -133,7 +121,6 @@
             font-size: 1.5rem;
             color: var(--dark-text);
         }
-
         .action-btn, .create-btn {
             padding: 0.75rem 1.5rem;
             background-color: var(--primary-color);
@@ -142,7 +129,7 @@
             border-radius: 8px;
             font-weight: 600;
             transition: all 0.3s;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
@@ -154,17 +141,14 @@
             transform: translateY(-2px);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
-
         #delete-all-btn { background-color: var(--danger-color); }
         #import-btn { background-color: var(--success-color); }
         #export-btn { background-color: var(--info-color); }
-        
         #invoices-list {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 1.5rem;
         }
-
         .invoice-card {
             background: #fff;
             border-right: 5px solid var(--primary-color);
@@ -175,12 +159,10 @@
             display: flex;
             flex-direction: column;
         }
-
         .invoice-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 25px rgba(0,0,0,0.1);
         }
-
         .card-header {
             font-weight: 700;
             font-size: 1.2rem;
@@ -191,7 +173,6 @@
         .card-body { flex-grow: 1; display: flex; flex-direction: column; gap: 0.75rem; }
         .card-body p { margin: 0; color: var(--gray-text); }
         .card-body p strong { color: var(--dark-text); margin-left: 0.5rem; }
-
         .card-footer {
             margin-top: 1.5rem;
             padding-top: 1rem;
@@ -200,9 +181,7 @@
             grid-template-columns: repeat(2, 1fr);
             gap: 0.75rem;
         }
-
         .view-btn { grid-column: 1 / -1; }
-        
         .message-container {
             text-align: center;
             padding: 3rem 1.5rem;
@@ -263,17 +242,14 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // DOM Elements
     const listContainer = document.getElementById('invoices-list');
     const searchBox = document.getElementById('search-box');
     const sortBy = document.getElementById('sort-by');
     const summaryContainer = document.getElementById('summary-stats');
     const importFileInput = document.getElementById('import-file-input');
     
-    // State
     let allInvoices = [];
 
-    // --- UTILITY FUNCTIONS ---
     const formatCurrency = (num) => num.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     
     const calculateTotal = (invoice) => {
@@ -285,30 +261,21 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         const montantHT = subtotal - discountAmount;
         const tva = montantHT * 0.19;
-        return montantHT + tva;
+        const timbreAmount = invoice.timbreEnabled ? (Math.ceil(montantHT / 100) * 1) : 0;
+        return montantHT + tva + timbreAmount;
     };
 
-    const generateShareText = (invoice, totalTTC) => {
-        return `*فاتورة من مؤسسة صالحي سليم*\n\n` +
-               `*العميل:* ${invoice.clientName}\n` +
-               `*رقم الفاتورة:* ${invoice.invoiceNum}\n` +
-               `*التاريخ:* ${invoice.invoiceDate}\n` +
-               `*المبلغ الإجمالي:* ${formatCurrency(totalTTC)} دج\n\n` +
-               `شكراً لتعاملكم معنا.`;
-    };
-
-    // --- RENDERING FUNCTIONS ---
     const renderSummary = (invoices) => {
         const totalAmount = invoices.reduce((sum, inv) => sum + calculateTotal(inv), 0);
         const invoiceCount = invoices.length;
         
         summaryContainer.innerHTML = `
             <div class="stat">
-                <span>إجمالي الفواتير</span>
+                <span>إجمالي عدد الفواتير</span>
                 <strong>${invoiceCount}</strong>
             </div>
             <div class="stat">
-                <span>المبلغ الإجمالي (TTC)</span>
+                <span>المبلغ الإجمالي للفواتير (TTC)</span>
                 <strong>${formatCurrency(totalAmount)} دج</strong>
             </div>
         `;
@@ -331,8 +298,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const card = document.createElement('div');
             card.className = 'invoice-card';
             card.dataset.timestamp = invoice.timestamp;
-            card.dataset.total = totalTTC;
-            
             card.innerHTML = createInvoiceCardHTML(invoice, totalTTC);
             listContainer.appendChild(card);
         });
@@ -366,14 +331,10 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
         <div class="card-footer">
             <button class="action-btn view-btn" data-action="view" style="background-color: var(--primary-color);">عرض وتعديل</button>
-            <button class="action-btn" data-action="whatsapp" style="background-color: #25D366;">واتساب</button>
-            <button class="action-btn" data-action="telegram" style="background-color: #0088cc;">تيليجرام</button>
-            <button class="action-btn" data-action="email" style="background-color: #5a6268;">بريد</button>
             <button class="action-btn" data-action="delete" style="background-color: var(--danger-color);">حذف</button>
         </div>
     `;
 
-    // --- DATA HANDLING ---
     const loadInvoices = () => {
         try {
             allInvoices = JSON.parse(localStorage.getItem('invoicesHistory')) || [];
@@ -402,13 +363,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const sortValue = sortBy.value;
         filtered.sort((a, b) => {
+            const totalA = calculateTotal(a);
+            const totalB = calculateTotal(b);
             switch (sortValue) {
                 case 'oldest': return new Date(a.timestamp) - new Date(b.timestamp);
-                case 'highest': return calculateTotal(b) - calculateTotal(a);
-                case 'lowest': return calculateTotal(a) - calculateTotal(b);
+                case 'highest': return totalB - totalA;
+                case 'lowest': return totalA - totalB;
                 case 'newest':
                 default:
-                    return new Date(b.timestamp) - new Date(a.timestamp);
+                    const dateA = a.timestamp ? new Date(a.timestamp) : 0;
+                    const dateB = b.timestamp ? new Date(b.timestamp) : 0;
+                    return dateB - dateA;
             }
         });
 
@@ -416,47 +381,24 @@ document.addEventListener('DOMContentLoaded', () => {
         renderSummary(allInvoices);
     };
 
-    // --- EVENT HANDLERS ---
     const handleCardAction = (e) => {
         const button = e.target.closest('.action-btn');
         if (!button) return;
 
         const card = button.closest('.invoice-card');
-        if (!card) return;
-
-        const timestamp = card.dataset.timestamp;
+        const timestamp = card?.dataset.timestamp;
         const invoice = allInvoices.find(inv => inv.timestamp === timestamp);
         if (!invoice) return;
 
         const action = button.dataset.action;
-        const totalTTC = calculateTotal(invoice);
 
-        switch (action) {
-            case 'view':
-                sessionStorage.setItem('invoiceToLoad', JSON.stringify(invoice));
-                window.location.href = 'invoice.html';
-                break;
-            case 'delete':
-                if (confirm(`هل أنت متأكد من حذف فاتورة العميل "${invoice.clientName}"؟`)) {
-                    allInvoices = allInvoices.filter(inv => inv.timestamp !== timestamp);
-                    saveInvoices();
-                }
-                break;
-            case 'whatsapp': {
-                const text = encodeURIComponent(generateShareText(invoice, totalTTC));
-                window.open(`https://wa.me/?text=${text}`, '_blank');
-                break;
-            }
-            case 'telegram': {
-                 const text = encodeURIComponent(generateShareText(invoice, totalTTC));
-                 window.open(`https://t.me/share/url?url=&text=${text}`, '_blank');
-                 break;
-            }
-            case 'email': {
-                const subject = `فاتورة رقم ${invoice.invoiceNum} من مؤسسة صالحي سليم`;
-                const body = generateShareText(invoice, totalTTC).replace(/\*/g, '');
-                window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-                break;
+        if (action === 'view') {
+            sessionStorage.setItem('invoiceToLoad', JSON.stringify(invoice));
+            window.location.href = 'invoice.html';
+        } else if (action === 'delete') {
+            if (confirm(`هل أنت متأكد من حذف فاتورة العميل "${invoice.clientName}"؟`)) {
+                allInvoices = allInvoices.filter(inv => inv.timestamp !== timestamp);
+                saveInvoices();
             }
         }
     };
@@ -471,7 +413,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `backup-invoices-${new Date().toISOString().slice(0, 10)}.json`;
+        a.download = `invoices-backup-${new Date().toISOString().slice(0, 10)}.json`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -489,17 +431,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 const importedInvoices = JSON.parse(e.target.result);
                 if (!Array.isArray(importedInvoices)) throw new Error('الملف غير صالح.');
                 
-                const confirmationMsg = allInvoices.length > 0
-                    ? `هل أنت متأكد من استيراد ${importedInvoices.length} فاتورة؟ سيؤدي هذا إلى الكتابة فوق جميع الفواتير الحالية.`
-                    : `هل أنت متأكد من استيراد ${importedInvoices.length} فاتورة؟`;
-
+                const confirmationMsg = `هل أنت متأكد من استيراد ${importedInvoices.length} فاتورة؟ سيتم دمجها مع الفواتير الحالية.`;
                 if (confirm(confirmationMsg)) {
-                    allInvoices = importedInvoices;
+                    const existingTimestamps = new Set(allInvoices.map(inv => inv.timestamp));
+                    const newInvoices = importedInvoices.filter(inv => !existingTimestamps.has(inv.timestamp));
+                    allInvoices.push(...newInvoices);
                     saveInvoices();
-                    alert('تم استيراد الفواتير بنجاح!');
+                    alert(`تم استيراد ${newInvoices.length} فاتورة جديدة بنجاح!`);
                 }
             } catch (error) {
-                alert('فشل استيراد الملف. يرجى التأكد من أنه ملف تصدير صالح ومحتواه بصيغة JSON صحيحة.');
+                alert('فشل استيراد الملف. يرجى التأكد من أنه ملف تصدير صالح.');
             } finally {
                 event.target.value = null; 
             }
@@ -523,7 +464,6 @@ document.addEventListener('DOMContentLoaded', () => {
     loadInvoices();
     updateDisplay();
     
-    // Event Listeners
     searchBox.addEventListener('input', updateDisplay);
     sortBy.addEventListener('change', updateDisplay);
     listContainer.addEventListener('click', handleCardAction);

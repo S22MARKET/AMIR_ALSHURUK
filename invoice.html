@@ -34,13 +34,14 @@
         .logo-container label:hover { background-color: var(--light-bg); border-color: var(--primary-color); }
         .company-info { flex: 3; min-width: 300px; }
         .company-info h1 { margin: 0 0 10px; font-size: 1.8em; color: var(--primary-color); }
-        .company-details p { margin: 5px 0; font-size: 0.9em; color: #555; display: flex; align-items: center; }
+        .company-details p { margin: 5px 0; font-size: 0.9em; color: #555; display: flex; align-items: center; gap: 5px;}
         .company-details p strong { color: var(--dark-text); min-width: 110px; display: inline-block; }
-        .company-details .editable-value, .company-details .custom-value { flex-grow: 1; }
+        .company-details .editable-value, .custom-value { flex-grow: 1; }
         .company-details input { display: none; border: 1px solid #ccc; padding: 4px; font-size: 0.95em; border-radius: 4px; flex-grow: 1; }
         .edit-mode .editable-value { display: none; }
         .edit-mode input { display: inline-block; }
-        .edit-company-btn { font-size: 0.8em; cursor: pointer; border: 1px solid #ccc; border-radius: 5px; padding: 3px 8px; margin-right: 15px; background: #fff; }
+        .edit-company-btn { font-size: 0.8em; cursor: pointer; border: 1px solid #ccc; border-radius: 5px; padding: 4px 10px; margin-right: 15px; background: #fff; }
+        .delete-custom-field-btn { background: none; border: none; color: var(--danger-color); font-size: 1.1em; cursor: pointer; padding: 0 5px; }
 
         .invoice-meta { flex: 2; text-align: left; min-width: 260px; }
         .meta-item { display: flex; align-items: center; justify-content: flex-end; gap: 10px; margin-bottom: 12px; }
@@ -64,8 +65,9 @@
         .action-btn { padding: 12px 18px; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 1em; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; justify-content: center; transition: background-color 0.3s; }
         .action-btn:hover { opacity: 0.9; }
         .add-row-btn { background-color: var(--success-color); }
-        .delete-history-btn { background-color: var(--danger-color); }
+        .new-invoice-btn { background-color: var(--warning-color); color: var(--dark-text); }
         .print-btn { background-color: #007bff; }
+        .save-btn { background-color: var(--info-color); }
         .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 24px; }
@@ -73,13 +75,16 @@
         input:checked + .slider { background-color: var(--success-color); }
         input:checked + .slider:before { transform: translateX(20px); }
         .amount-in-words-container { position: relative; }
-        .amount-in-words { margin-top: 25px; padding: 15px; background-color: #eaf2f8; border-right: 4px solid var(--purple-color); border-radius: 5px; font-weight: bold; color: var(--purple-color); }
+        .amount-in-words { margin-top: 20px; padding: 15px; background-color: #eaf2f8; border-right: 4px solid var(--purple-color); border-radius: 5px; font-weight: bold; color: var(--purple-color); }
+        .edit-amount-btn { position: absolute; top: 50%; transform: translateY(-50%); left: 10px; cursor: pointer; font-size: 1.2em; opacity: 0.7; }
+        div[contenteditable="true"]:focus { outline: 2px solid var(--warning-color); background-color: #fff; }
         .hidden { display: none !important; }
+        .invoice-footer { display: none; }
 
         @media print {
             body { background-color: #fff; padding: 0; margin: 0; -webkit-print-color-adjust: exact; color-adjust: exact; }
             .page-container { box-shadow: none; margin: 0; max-width: 100%; border-radius: 0; padding: 20px; }
-            .controls, .delete-row-btn, .delete-header-cell, .options-section, .edit-company-btn, .logo-container label { display: none; }
+            .controls, .delete-row-btn, .delete-header-cell, .options-section, .edit-company-btn, .logo-container label, .edit-amount-btn, .delete-custom-field-btn, #add-custom-field-btn, .save-btn { display: none; }
             .inactive-for-print { display: none !important; }
             input { border: none !important; background: transparent !important; padding: 2px 0 !important; font-weight: bold; color: #000; width: auto; }
             .client-details input { padding: 5px 0; }
@@ -88,8 +93,13 @@
             .invoice-header { border-bottom-color: var(--primary-color) !important; }
             .amount-in-words { border-right-color: var(--purple-color) !important; color: var(--purple-color) !important; background-color: #eaf2f8 !important;}
             #grand-total { background-color: var(--primary-color) !important; color: white !important; }
-            .company-details .editable-value { display: inline-block !important; }
+            .company-details .editable-value, .custom-value { display: inline-block !important; }
             .company-details input { display: none !important; }
+            .invoice-footer {
+                display: flex; justify-content: space-between; align-items: flex-start;
+                margin-top: 80px; padding-top: 20px; border-top: 1px solid #ccc;
+            }
+            .footer-section { width: 200px; text-align: center; font-weight: bold; }
         }
         @media (max-width: 800px) {
             .invoice-header, .summary-and-options, .client-details { flex-direction: column; }
@@ -112,12 +122,15 @@
         <div class="company-info">
             <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                 <h1>مؤسسة صالحي سليم</h1>
-                <button id="edit-company-btn" class="edit-company-btn">تعديل ✏️</button>
+                <button id="edit-company-btn" class="edit-company-btn">تعديل البيانات ✏️</button>
             </div>
             <div class="company-details" id="company-details-section">
-                <p id="p-c-activity"><strong>النشاط:</strong> <span class="editable-value" id="c-activity-val">للتجارة بالجملة للآليات والأدوات الصناعية والفلاحية والمكتبية</span><input type="text" id="c-activity-input"></p>
-                <p id="p-c-address"><strong>العنوان:</strong> <span class="editable-value" id="c-address-val">تخصيص الفيض، سيدي قاسي، ابن مهيدي، الطارف</span><input type="text" id="c-address-input"></p>
-                <p id="p-c-tax"><strong>رقم جبائي:</strong> <span class="editable-value" id="c-tax-val">18136030080117100000</span><input type="text" id="c-tax-input"></p>
+                <p id="p-c-activity"><strong>النشاط:</strong> <span class="editable-value" id="c-activity-val"></span><input type="text" id="c-activity-input"></p>
+                <p id="p-c-address"><strong>العنوان:</strong> <span class="editable-value" id="c-address-val"></span><input type="text" id="c-address-input"></p>
+                <p id="p-c-tax"><strong>رقم جبائي:</strong> <span class="editable-value" id="c-tax-val"></span><input type="text" id="c-tax-input"></p>
+                <p id="p-c-cr"><strong>سجل تجاري:</strong> <span class="editable-value" id="c-cr-val"></span><input type="text" id="c-cr-input"></p>
+                <p id="p-c-bank"><strong>حساب بنكي:</strong> <span class="editable-value" id="c-bank-val"></span><input type="text" id="c-bank-input"></p>
+                <div id="custom-fields-container"></div>
             </div>
         </div>
         <div class="invoice-meta">
@@ -143,9 +156,10 @@
         </table>
         <div class="controls">
             <button class="action-btn add-row-btn" onclick="addRow()">+ إضافة سطر</button>
-            <a href="invoices.html" class="action-btn" style="background-color: #6c757d;">📜 عرض المحفوظات</a>
+            <button class="action-btn save-btn" id="save-invoice-btn">💾 حفظ في المحفوظات</button>
+            <button class="action-btn new-invoice-btn" id="new-invoice-btn">📄 فاتورة جديدة</button>
             <button class="action-btn print-btn" onclick="window.print()">🖨️ طباعة</button>
-            <button class="action-btn delete-history-btn" id="delete-history-btn">🗑️ حذف كل المحفوظات</button>
+            <a href="invoices.html" class="action-btn" style="background-color: #6c757d;">📜 عرض المحفوظات</a>
         </div>
 
         <div class="summary-and-options">
@@ -153,10 +167,17 @@
                  <h4 style="margin-top:0; padding-bottom:10px; border-bottom:1px solid #eee;">خيارات الفاتورة</h4>
                 <div class="option-row"><span class="option-label">لون الفاتورة</span><input type="color" id="color-picker" value="#005a9c"></div>
                 <div class="option-row"><span class="option-label">إظهار المبلغ بالعربية</span><label class="switch"><input type="checkbox" id="arabic-text-toggle" checked><span class="slider"></span></label></div>
+                <div class="option-row"><span class="option-label">إظهار المبلغ بالفرنسية</span><label class="switch"><input type="checkbox" id="french-text-toggle"><span class="slider"></span></label></div>
+
                 <h4 style="margin-top:15px; padding-bottom:10px; border-bottom:1px solid #eee;">إظهار بيانات المؤسسة</h4>
-                <div class="option-row"><span class="option-label">إظهار النشاط</span><label class="switch"><input type="checkbox" data-target="p-c-activity" checked><span class="slider"></span></label></div>
-                <div class="option-row"><span class="option-label">إظهار العنوان</span><label class="switch"><input type="checkbox" data-target="p-c-address" checked><span class="slider"></span></label></div>
+                <div class="option-row"><span class="option-label">النشاط</span><label class="switch"><input type="checkbox" data-target="p-c-activity" checked><span class="slider"></span></label></div>
+                <div class="option-row"><span class="option-label">العنوان</span><label class="switch"><input type="checkbox" data-target="p-c-address" checked><span class="slider"></span></label></div>
                 <div class="option-row"><span class="option-label">الرقم الجبائي</span><label class="switch"><input type="checkbox" data-target="p-c-tax" checked><span class="slider"></span></label></div>
+                <div class="option-row"><span class="option-label">السجل التجاري</span><label class="switch"><input type="checkbox" data-target="p-c-cr" checked><span class="slider"></span></label></div>
+                <div class="option-row"><span class="option-label">الحساب البنكي</span><label class="switch"><input type="checkbox" data-target="p-c-bank" checked><span class="slider"></span></label></div>
+                <div id="custom-fields-options-container"></div>
+                <button id="add-custom-field-btn" class="action-btn" style="width: 100%; margin-top: 15px; background-color: var(--success-color);">+ إضافة حقل مخصص</button>
+
             </div>
             <div class="total-section">
                 <div class="total-row"><span class="total-label">المجموع الفرعي</span><span id="subtotal">0.00 دج</span></div>
@@ -174,31 +195,44 @@
             </div>
         </div>
         <div class="amount-in-words-container hidden" id="arabic-container">
-            <div class="amount-in-words" id="amount-in-arabic"></div>
+            <div class="amount-in-words" id="amount-in-arabic" contenteditable="false"></div>
+            <span class="edit-amount-btn" id="edit-arabic-btn">✏️</span>
         </div>
+        <div class="amount-in-words-container hidden" id="french-container">
+            <div class="amount-in-words" id="amount-in-french" contenteditable="false"></div>
+            <span class="edit-amount-btn" id="edit-french-btn">✏️</span>
+        </div>
+
+        <footer class="invoice-footer">
+            <div class="footer-section">الختم</div>
+            <div class="footer-section">الإمضاء</div>
+        </footer>
     </main>
 </div>
 
 <script>
-// مكتبة تحويل الأرقام إلى كلمات (عربي)
+// Libraries for number to words
 var Tafqeet=(function(){"use strict";const e=["","واحد","اثنان","ثلاثة","أربعة","خمسة","ستة","سبعة","ثمانية","تسعة"],t=["","عشرة","عشرون","ثلاثون","أربعون","خمسون","ستون","سبعون","ثمانون","تسعون"],n=["","مئة","مئتان","ثلاثمئة","أربعمئة","خمسمئة","ستمئة","سبعمئة","ثمانمئة","تسعمئة"],r=["","ألف","ألفان","آلاف"],o=["","مليون","مليونان","ملايين"],a=["","مليار","ملياران","مليارات"],i=["","تريليون","تريليونان","تريليونات"];function c(c){let r=Math.floor(c/100),o=Math.floor(c%100/10),a=c%10,i="";return r>0&&(i+=n[r]+(o>0||a>0?" و ":"")),a>0&&o>0?i+=e[a]+" و "+t[o]:a>0?i+=e[a]:o>0&&(i+=t[o]),i}return{convert:function(l){if(l=String(l).split(".")[0],"0"==l)return"صفر";let s=parseInt(l,10);if(isNaN(s))return"";let u=[];const d=Math.floor(s/1e12),f=Math.floor(s%1e12/1e9),m=Math.floor(s%1e9/1e6),p=Math.floor(s%1e6/1e3),g=s%1e3;return d>0&&u.push(c(d)+" "+(1==d?i[1]:2==d?i[2]:d>=3&&d<=10?i[3]:i[1])),f>0&&u.push(c(f)+" "+(1==f?a[1]:2==f?a[2]:f>=3&&f<=10?a[3]:a[1])),m>0&&u.push(c(m)+" "+(1==m?o[1]:2==m?o[2]:m>=3&&m<=10?o[3]:o[1])),p>0&&(1===p?u.push(r[1]):2===p?u.push(r[2]):u.push(c(p)+" "+(p>=3&&p<=10?r[3]:r[1]))),g>0&&u.push(c(g)),u.join(" و ")}}})();
+function numberToWordsFr(n){if(n===0)return"Zéro";const a=["","un","deux","trois","quatre","cinq","six","sept","huit","neuf","dix","onze","douze","treize","quatorze","quinze","seize","dix-sept","dix-huit","dix-neuf"],e=["","dix","vingt","trente","quarante","cinquante","soixante","soixante-dix","quatre-vingt","quatre-vingt-dix"];function r(n){if(n<20)return a[n];if(n<100){const t=Math.floor(n/10),o=n%10;return e[t]+(1==o&&t<8?" et un":"-")+a[o]}return""}let t="",o=Math.floor(n);if(o>=1e6)t+=r(Math.floor(o/1e6))+" million"+(o>=2e6?"s":" ")+" ",o%=1e6;if(o>=1e3)t+=(o<2e3?"mille":r(Math.floor(o/1e3))+"-mille")+" ",o%=1e3;t+=r(o);let c=Math.round(100*(n-Math.floor(n)));return t.trim().replace(/-$/, "").replace("quatre-vingt-un", "quatre-vingt-et-un")+(c>0?` et ${r(c)} centimes`:"")}
 
 document.addEventListener('DOMContentLoaded', function() {
+    let currentInvoiceTimestamp = null;
+
     const DOM = {
         tableBody: document.querySelector("#invoice-table tbody"),
         container: document.querySelector(".page-container"),
-        discountToggle: document.getElementById('discount-toggle'),
-        discountControls: document.getElementById('discount-controls'),
-        discountRow: document.getElementById('discount-row-container'),
-        timbreToggle: document.getElementById('timbre-toggle'),
-        timbreRow: document.getElementById('timbre-row-container'),
-        arabicContainer: document.getElementById('arabic-container'),
-        colorPicker: document.getElementById('color-picker'),
-        logoUpload: document.getElementById('logo-upload'),
-        logoImg: document.getElementById('company-logo-img'),
-        logoLabel: document.getElementById('logo-upload-label'),
-        productDatalist: document.getElementById('product-suggestions'),
-        deleteHistoryBtn: document.getElementById('delete-history-btn'),
+        customFieldsContainer: document.getElementById('custom-fields-container'),
+        customFieldsOptionsContainer: document.getElementById('custom-fields-options-container'),
+        companyDetailsSection: document.getElementById('company-details-section'),
+        // ... add other common elements if needed
+    };
+
+    const companyFields = {
+        activity: { val: 'c-activity-val', input: 'c-activity-input', p: 'p-c-activity', default: 'للتجارة بالجملة للآليات والأدوات' },
+        address:  { val: 'c-address-val',  input: 'c-address-input',  p: 'p-c-address',  default: 'تخصيص الفيض، سيدي قاسي، ابن مهيدي، الطارف' },
+        tax:      { val: 'c-tax-val',      input: 'c-tax-input',      p: 'p-c-tax',      default: '18136030080117100000' },
+        cr:       { val: 'c-cr-val',       input: 'c-cr-input',       p: 'p-c-cr',       default: '36/00-3451123ا21' },
+        bank:     { val: 'c-bank-val',     input: 'c-bank-input',     p: 'p-c-bank',     default: '00500231400236854088' },
     };
 
     const formatCurrency = (num) => num.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -207,12 +241,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let productCatalog = new Set(JSON.parse(localStorage.getItem('productCatalog')) || []);
 
     function updateProductDatalist() {
-        DOM.productDatalist.innerHTML = '';
-        productCatalog.forEach(product => {
-            const option = document.createElement('option');
-            option.value = product;
-            DOM.productDatalist.appendChild(option);
-        });
+        document.getElementById('product-suggestions').innerHTML = Array.from(productCatalog).map(p => `<option value="${p}"></option>`).join('');
     }
 
     window.addRow = function(product = { name: '', quantity: 1, price: 0.00 }) {
@@ -231,15 +260,17 @@ document.addEventListener('DOMContentLoaded', function() {
             subtotal += totalPrice;
         });
 
+        const discountToggle = document.getElementById('discount-toggle');
         let discountAmount = 0;
-        if (DOM.discountToggle.checked) {
+        if (discountToggle.checked) {
             const discountValue = parseFloat(document.getElementById('discount-value').value) || 0;
             discountAmount = document.getElementById('discount-type').value === 'percent' ? subtotal * (discountValue / 100) : discountValue;
         }
         
         const montantHT = subtotal - discountAmount;
         const tva = montantHT * 0.19;
-        const timbreAmount = DOM.timbreToggle.checked ? (Math.ceil(montantHT / 100) * 1) : 0; // 1 DA per 100 DA
+        const timbreToggle = document.getElementById('timbre-toggle');
+        const timbreAmount = timbreToggle.checked ? (Math.ceil(montantHT / 100) * 1) : 0;
         const montantTTC = montantHT + tva + timbreAmount;
 
         document.getElementById("subtotal").textContent = formatCurrency(subtotal) + ' دج';
@@ -252,68 +283,117 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function updateDisplay(montantTTC) {
-        DOM.discountControls.style.display = DOM.discountToggle.checked ? 'flex' : 'none';
-        DOM.discountRow.classList.toggle('inactive-for-print', !DOM.discountToggle.checked);
-        DOM.timbreRow.classList.toggle('inactive-for-print', !DOM.timbreToggle.checked);
+        document.getElementById('discount-controls').style.display = document.getElementById('discount-toggle').checked ? 'flex' : 'none';
+        
+        const [integerPart, decimalPart] = montantTTC.toFixed(2).split('.');
 
         const arabicToggle = document.getElementById('arabic-text-toggle');
-        if (arabicToggle.checked) {
-            const [integerPart, decimalPart] = montantTTC.toFixed(2).split('.');
-            let fullText = `أوقفت هذه الفاتورة عند مبلغ: ${Tafqeet.convert(integerPart)} دينار جزائري`;
-            if (parseInt(decimalPart, 10) > 0) {
-                 fullText += ` و ${Tafqeet.convert(decimalPart)} سنتيم`;
-            }
-            fullText += ".";
-            document.getElementById('amount-in-arabic').textContent = fullText;
-            DOM.arabicContainer.classList.remove('hidden');
-        } else {
-            DOM.arabicContainer.classList.add('hidden');
+        const arabicContainer = document.getElementById('arabic-container');
+        if (arabicToggle.checked && document.getElementById('amount-in-arabic').contentEditable !== 'true') {
+            let text = `أوقفت هذه الفاتورة عند مبلغ: ${Tafqeet.convert(integerPart)} دينار جزائري`;
+            if (parseInt(decimalPart, 10) > 0) text += ` و ${Tafqeet.convert(decimalPart)} سنتيم`;
+            document.getElementById('amount-in-arabic').textContent = text + ".";
         }
+        arabicContainer.classList.toggle('hidden', !arabicToggle.checked);
+        
+        const frenchToggle = document.getElementById('french-text-toggle');
+        const frenchContainer = document.getElementById('french-container');
+        if (frenchToggle.checked && document.getElementById('amount-in-french').contentEditable !== 'true') {
+            let text = `Arrêtée la présente facture à la somme de : ${numberToWordsFr(montantTTC)}`;
+            document.getElementById('amount-in-french').textContent = (text.charAt(0).toUpperCase() + text.slice(1)).replace(" et Zéro centimes", "") + ".";
+        }
+        frenchContainer.classList.toggle('hidden', !frenchToggle.checked);
     }
+    
+    function addCustomField(fieldData) {
+        const fieldId = fieldData ? fieldData.id : `custom-field-${Date.now()}`;
+        const label = fieldData ? fieldData.label : prompt("أدخل اسم الحقل (مثال: الهاتف):");
+        if (!fieldData && (!label || !label.trim())) return;
+        
+        const value = fieldData ? fieldData.value : prompt(`أدخل قيمة الحقل "${label}":`, '');
+        if (!fieldData && value === null) return;
 
-    function saveDraft() {
-        const data = getInvoiceData();
-        localStorage.setItem('invoiceDraft', JSON.stringify(data));
-        // Save product names to catalog
-        data.rows.forEach(row => row.name.trim() && productCatalog.add(row.name.trim()));
-        localStorage.setItem('productCatalog', JSON.stringify(Array.from(productCatalog)));
-        updateProductDatalist();
+        const isVisible = fieldData ? fieldData.isVisible : true;
+
+        const p = document.createElement('p');
+        p.id = fieldId;
+        p.className = 'custom-field';
+        p.style.display = isVisible ? 'flex' : 'none';
+        p.innerHTML = `<strong>${label}:</strong><span class="custom-value">${value}</span><button class="delete-custom-field-btn" title="حذف الحقل">🗑️</button>`;
+        DOM.customFieldsContainer.appendChild(p);
+
+        const optionDiv = document.createElement('div');
+        optionDiv.className = 'option-row';
+        optionDiv.innerHTML = `<span class="option-label">${label}</span><label class="switch"><input type="checkbox" data-target="${fieldId}" ${isVisible ? 'checked' : ''}><span class="slider"></span></label>`;
+        DOM.customFieldsOptionsContainer.appendChild(optionDiv);
+
+        if (!fieldData) saveDraft();
     }
 
     function getInvoiceData() {
-        return {
-            companyInfo: {
-                activity: document.getElementById('c-activity-val').textContent,
-                address: document.getElementById('c-address-val').textContent,
-                tax: document.getElementById('c-tax-val').textContent,
-            },
+        const data = {
+            timestamp: currentInvoiceTimestamp || new Date().toISOString(),
+            companyInfo: {},
+            customCompanyFields: [],
+            options: {},
+            rows: Array.from(DOM.tableBody.querySelectorAll('tr')).map(r => ({ name: r.querySelector('.product-name').value, quantity: r.querySelector('.quantity').value, price: r.querySelector('.unit-price').value })),
             invoiceNum: document.getElementById('invoice-num').value,
             invoiceDate: document.getElementById('invoice-date').value,
             clientName: document.getElementById('client-name').value,
             clientAddress: document.getElementById('client-address').value,
-            discount: { enabled: DOM.discountToggle.checked, type: document.getElementById('discount-type').value, value: document.getElementById('discount-value').value },
-            timbreEnabled: DOM.timbreToggle.checked,
-            options: {
-                showArabic: document.getElementById('arabic-text-toggle').checked,
-                showActivity: document.querySelector('[data-target="p-c-activity"]').checked,
-                showAddress: document.querySelector('[data-target="p-c-address"]').checked,
-                showTax: document.querySelector('[data-target="p-c-tax"]').checked,
-                themeColor: DOM.colorPicker.value,
-            },
-            logo: DOM.logoImg.src,
-            rows: Array.from(DOM.tableBody.querySelectorAll('tr')).map(r => ({ name: r.querySelector('.product-name').value, quantity: r.querySelector('.quantity').value, price: r.querySelector('.unit-price').value })),
+            discount: { enabled: document.getElementById('discount-toggle').checked, type: document.getElementById('discount-type').value, value: document.getElementById('discount-value').value },
+            timbreEnabled: document.getElementById('timbre-toggle').checked,
+            logo: document.getElementById('company-logo-img').src,
         };
+
+        for (const key in companyFields) {
+            data.companyInfo[key] = document.getElementById(companyFields[key].val).textContent;
+            const toggle = document.querySelector(`[data-target="${companyFields[key].p}"]`);
+            if (toggle) data.options[`show${key.charAt(0).toUpperCase() + key.slice(1)}`] = toggle.checked;
+        }
+
+        document.querySelectorAll('#custom-fields-container .custom-field').forEach(p => {
+            const fieldId = p.id;
+            const toggle = document.querySelector(`input[data-target="${fieldId}"]`);
+            data.customCompanyFields.push({
+                id: fieldId,
+                label: p.querySelector('strong').textContent.replace(':', '').trim(),
+                value: p.querySelector('.custom-value').textContent,
+                isVisible: toggle ? toggle.checked : true
+            });
+        });
+        
+        data.options.showArabic = document.getElementById('arabic-text-toggle').checked;
+        data.options.showFrench = document.getElementById('french-text-toggle').checked;
+        data.options.themeColor = document.getElementById('color-picker').value;
+        return data;
     }
         
     function loadInvoiceData(data) {
-        if (!data) data = {};
+        data = data || {};
+        currentInvoiceTimestamp = data.timestamp || null;
         const info = data.companyInfo || {};
-        document.getElementById('c-activity-val').textContent = info.activity || 'للتجارة بالجملة للآليات والأدوات الصناعية والفلاحية والمكتبية';
-        document.getElementById('c-activity-input').value = info.activity || 'للتجارة بالجملة للآليات والأدوات الصناعية والفلاحية والمكتبية';
-        document.getElementById('c-address-val').textContent = info.address || 'تخصيص الفيض، سيدي قاسي، ابن مهيدي، الطارف';
-        document.getElementById('c-address-input').value = info.address || 'تخصيص الفيض، سيدي قاسي، ابن مهيدي، الطارف';
-        document.getElementById('c-tax-val').textContent = info.tax || '18136030080117100000';
-        document.getElementById('c-tax-input').value = info.tax || '18136030080117100000';
+        const options = data.options || {};
+        
+        for (const key in companyFields) {
+            const field = companyFields[key];
+            const value = info[key] !== undefined ? info[key] : field.default;
+            document.getElementById(field.val).textContent = value;
+            document.getElementById(field.input).value = value;
+            const toggle = document.querySelector(`[data-target="${field.p}"]`);
+            if (toggle) {
+                const optionKey = `show${key.charAt(0).toUpperCase() + key.slice(1)}`;
+                const isChecked = options[optionKey] !== false;
+                toggle.checked = isChecked;
+                document.getElementById(field.p).style.display = isChecked ? 'flex' : 'none';
+            }
+        }
+        
+        DOM.customFieldsContainer.innerHTML = '';
+        DOM.customFieldsOptionsContainer.innerHTML = '';
+        if (data.customCompanyFields) {
+            data.customCompanyFields.forEach(field => addCustomField(field));
+        }
 
         document.getElementById('invoice-num').value = data.invoiceNum || '001/2025';
         document.getElementById('invoice-date').value = data.invoiceDate || getTodaysDate();
@@ -321,30 +401,29 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('client-address').value = data.clientAddress || '';
 
         if(data.discount) {
-            DOM.discountToggle.checked = data.discount.enabled;
+            document.getElementById('discount-toggle').checked = data.discount.enabled;
             document.getElementById('discount-type').value = data.discount.type;
             document.getElementById('discount-value').value = data.discount.value;
         }
-        DOM.timbreToggle.checked = data.timbreEnabled || false;
+        document.getElementById('timbre-toggle').checked = data.timbreEnabled || false;
         
-        const options = data.options || {};
         document.getElementById('arabic-text-toggle').checked = options.showArabic !== false;
-        ['p-c-activity', 'p-c-address', 'p-c-tax'].forEach((targetId, i) => {
-            const optionKey = ['showActivity', 'showAddress', 'showTax'][i];
-            const isChecked = options[optionKey] !== false;
-            document.querySelector(`[data-target="${targetId}"]`).checked = isChecked;
-            document.getElementById(targetId).style.display = isChecked ? 'flex' : 'none';
-        });
-        
+        document.getElementById('french-text-toggle').checked = options.showFrench === true;
+
         if (options.themeColor) {
-            DOM.colorPicker.value = options.themeColor;
+            document.getElementById('color-picker').value = options.themeColor;
             document.documentElement.style.setProperty('--primary-color', options.themeColor);
         }
 
+        const logoImg = document.getElementById('company-logo-img');
         if (data.logo && data.logo.startsWith('data:image')) {
-            DOM.logoImg.src = data.logo;
-            DOM.logoImg.style.display = 'block';
-            DOM.logoLabel.textContent = '🔄 تغيير الشعار';
+            logoImg.src = data.logo;
+            logoImg.style.display = 'block';
+            document.getElementById('logo-upload-label').textContent = '🔄 تغيير الشعار';
+        } else {
+            logoImg.style.display = 'none';
+            logoImg.src = '';
+            document.getElementById('logo-upload-label').textContent = '➕ رفع شعار';
         }
 
         DOM.tableBody.innerHTML = '';
@@ -357,23 +436,67 @@ document.addEventListener('DOMContentLoaded', function() {
         updateProductDatalist();
     }
     
+    function saveDraft() {
+        const data = getInvoiceData();
+        localStorage.setItem('invoiceDraft', JSON.stringify(data));
+        data.rows.forEach(row => row.name.trim() && productCatalog.add(row.name.trim()));
+        localStorage.setItem('productCatalog', JSON.stringify(Array.from(productCatalog)));
+        updateProductDatalist();
+    }
+
+    function startNewInvoice() {
+        if (confirm('هل أنت متأكد؟ سيتم حذف بيانات الفاتورة الحالية والبدء من جديد.')) {
+            localStorage.removeItem('invoiceDraft');
+            loadInvoiceData(null);
+        }
+    }
+    
+    function saveToHistory() {
+        const data = getInvoiceData();
+        if (!data.clientName || !data.rows.some(r => r.name)) {
+            alert('الرجاء إدخال اسم العميل ومنتج واحد على الأقل قبل الحفظ.');
+            return;
+        }
+        let history = JSON.parse(localStorage.getItem('invoicesHistory')) || [];
+        const existingIndex = history.findIndex(inv => inv.timestamp === data.timestamp);
+        if (existingIndex > -1) {
+            history[existingIndex] = data; // Update existing
+        } else {
+            history.push(data); // Add new
+        }
+        localStorage.setItem('invoicesHistory', JSON.stringify(history));
+        alert('تم حفظ الفاتورة في المحفوظات بنجاح!');
+    }
+
     // --- Event Listeners ---
-    DOM.container.addEventListener('input', (e) => {
-        if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') {
+    document.querySelector('.page-container').addEventListener('input', (e) => {
+       if (e.target.matches('input, select')) {
            updateCalculations();
            saveDraft();
-        }
+       }
     });
     
     document.querySelector('.options-section').addEventListener('change', e => {
         if (e.target.matches('input[type="checkbox"][data-target]')) {
-            document.getElementById(e.target.dataset.target).style.display = e.target.checked ? 'flex' : 'none';
+            const pElement = document.getElementById(e.target.dataset.target);
+            if (pElement) pElement.style.display = e.target.checked ? 'flex' : 'none';
+            saveDraft();
         }
-        updateCalculations();
-        saveDraft();
     });
 
-    DOM.tableBody.addEventListener('click', (e) => {
+    DOM.companyDetailsSection.addEventListener('click', e => {
+        if (e.target.classList.contains('delete-custom-field-btn')) {
+            const p = e.target.closest('p.custom-field');
+            if (p) {
+                const fieldId = p.id;
+                document.querySelector(`.option-row input[data-target="${fieldId}"]`)?.closest('.option-row').remove();
+                p.remove();
+                saveDraft();
+            }
+        }
+    });
+    
+    DOM.tableBody.addEventListener('click', e => {
         if (e.target.closest('.delete-row-btn')) {
             e.target.closest('tr').remove();
             if (DOM.tableBody.rows.length === 0) addRow();
@@ -383,46 +506,53 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     document.getElementById('edit-company-btn').addEventListener('click', () => {
-        const section = document.getElementById('company-details-section');
-        const isEditing = section.classList.toggle('edit-mode');
-        document.getElementById('edit-company-btn').textContent = isEditing ? 'حفظ ✓' : 'تعديل ✏️';
+        const isEditing = DOM.companyDetailsSection.classList.toggle('edit-mode');
+        document.getElementById('edit-company-btn').textContent = isEditing ? 'حفظ البيانات ✓' : 'تعديل البيانات ✏️';
         if (!isEditing) {
-            document.getElementById('c-activity-val').textContent = document.getElementById('c-activity-input').value;
-            document.getElementById('c-address-val').textContent = document.getElementById('c-address-input').value;
-            document.getElementById('c-tax-val').textContent = document.getElementById('c-tax-input').value;
+            for (const key in companyFields) {
+                document.getElementById(companyFields[key].val).textContent = document.getElementById(companyFields[key].input).value;
+            }
             saveDraft();
         }
     });
 
-    DOM.logoUpload.addEventListener('change', e => {
+    ['edit-arabic-btn', 'edit-french-btn'].forEach(id => {
+        document.getElementById(id)?.addEventListener('click', e => {
+            const targetDiv = document.getElementById(id.replace('edit-', '').replace('-btn', '-in-'));
+            const isEditable = targetDiv.contentEditable === 'true';
+            targetDiv.contentEditable = !isEditable;
+            targetDiv.focus();
+            e.target.textContent = isEditable ? '✏️' : '✓';
+        });
+    });
+
+    document.getElementById('logo-upload').addEventListener('change', e => {
         const file = e.target.files[0];
         if (file) {
             const reader = new FileReader();
-            reader.onload = function(event) {
-                DOM.logoImg.src = event.target.result;
-                DOM.logoImg.style.display = 'block';
-                DOM.logoLabel.textContent = '🔄 تغيير الشعار';
+            reader.onload = (event) => {
+                document.getElementById('company-logo-img').src = event.target.result;
+                document.getElementById('company-logo-img').style.display = 'block';
+                document.getElementById('logo-upload-label').textContent = '🔄 تغيير الشعار';
                 saveDraft();
             }
             reader.readAsDataURL(file);
         }
     });
 
-    DOM.colorPicker.addEventListener('input', e => {
-        document.documentElement.style.setProperty('--primary-color', e.target.value);
-        // No need for separate saveDraft() call, it's handled by the main input listener
-    });
-
-    DOM.deleteHistoryBtn.addEventListener('click', () => {
-        if (confirm('هل أنت متأكد من رغبتك في حذف جميع الفواتير المحفوظة؟ لا يمكن التراجع عن هذا الإجراء.')) {
-            localStorage.removeItem('invoicesHistory');
-            alert('تم حذف جميع المحفوظات بنجاح.');
-        }
-    });
+    document.getElementById('new-invoice-btn').addEventListener('click', startNewInvoice);
+    document.getElementById('save-invoice-btn').addEventListener('click', saveToHistory);
+    document.getElementById('add-custom-field-btn').addEventListener('click', () => addCustomField(null));
 
     // --- Initial Load ---
-    const draft = localStorage.getItem('invoiceDraft');
-    loadInvoiceData(draft ? JSON.parse(draft) : null);
+    const invoiceToLoad = sessionStorage.getItem('invoiceToLoad');
+    if (invoiceToLoad) {
+        loadInvoiceData(JSON.parse(invoiceToLoad));
+        sessionStorage.removeItem('invoiceToLoad');
+    } else {
+        const draft = localStorage.getItem('invoiceDraft');
+        loadInvoiceData(draft ? JSON.parse(draft) : null);
+    }
 });
 </script>
 </body>
