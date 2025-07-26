@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة الموظف</title>
+    <style>
+        :root {
+            --primary-color: #007bff; --secondary-color: #6c757d; --bg-color: #f8f9fa;
+            --card-bg: #ffffff; --text-color: #333; --border-color: #dee2e6;
+            --success-color: #28a745; --danger-color: #dc3545; --warning-color: #ffc107;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color);
+            color: var(--text-color); margin: 0; padding: 20px; direction: rtl;
+        }
+        .container {
+            max-width: 900px; margin: 0 auto; padding: 20px;
+            background: var(--card-bg); border-radius: 10px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        header {
+            text-align: center; border-bottom: 2px solid var(--border-color);
+            padding-bottom: 20px; margin-bottom: 20px;
+        }
+        header h1 { color: var(--primary-color); margin: 0; }
+        .card {
+            background: #fff; border: 1px solid var(--border-color); border-radius: 8px;
+            padding: 20px; margin-bottom: 20px;
+        }
+        h2 { color: var(--primary-color); border-bottom: 1px solid #eee; padding-bottom: 10px; margin-top: 0;}
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: bold; font-size: 1.1em; }
+        .form-group input {
+            width: 100%; padding: 12px; border: 1px solid var(--border-color);
+            border-radius: 5px; box-sizing: border-box; font-size: 1em;
+        }
+        .form-inline { display: flex; gap: 15px; align-items: flex-end; }
+        .form-inline .form-group { flex: 1; }
+        .btn {
+            padding: 12px 18px; border: none; border-radius: 5px; cursor: pointer;
+            font-weight: bold; color: #fff; background-color: var(--secondary-color);
+            transition: background-color 0.3s; font-size: 1em; width: 100%;
+        }
+        .btn:hover { opacity: 0.9; }
+        .primary-btn { background-color: var(--primary-color); }
+        .success-btn { background-color: var(--success-color); }
+        .danger-btn { background-color: var(--danger-color); }
+        #employee-summary p { font-size: 1.1em; line-height: 1.8; }
+        #employee-summary strong { min-width: 180px; display: inline-block; color: #555; }
+        #final-salary { color: var(--success-color); font-weight: bold; font-size: 1.4em; }
+        #deductions-list { list-style-type: none; padding: 0; }
+        #deductions-list li {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px; border: 1px solid #eee; border-radius: 5px; margin-bottom: 8px;
+            background-color: #fdfdfd;
+        }
+        .delete-deduction-btn {
+            background: none; border: none; color: var(--danger-color); cursor: pointer; font-size: 1.2em;
+        }
+        .alert {
+            padding: 15px; margin-top: 15px; border-radius: 5px; color: #fff;
+            text-align: center; opacity: 0; transition: opacity 0.5s;
+        }
+        .alert.show { opacity: 1; }
+        .alert-success { background-color: var(--success-color); }
+        @media (max-width: 600px) {
+            .form-inline { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1 id="employee-name-header">...</h1>
+        </header>
+
+        <section class="card">
+            <h2>📊 ملخص الموظف</h2>
+            <div id="employee-summary">
+                <p>جاري تحميل البيانات...</p>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>💵 إدارة الراتب</h2>
+            <div class="form-group">
+                <label for="daily-rate">الأجر اليومي (دج)</label>
+                <input type="number" id="daily-rate" placeholder="أدخل الأجر اليومي للموظف">
+            </div>
+            <button id="save-rate-btn" class="btn primary-btn">حفظ الأجر اليومي</button>
+        </section>
+
+        <section class="card">
+            <h2>🗓️ تسجيل الحضور</h2>
+            <div class="form-inline">
+                <div class="form-group">
+                    <label for="full-days">أيام عمل كاملة</label>
+                    <input type="number" id="full-days" placeholder="أدخل عدد الأيام الكاملة">
+                </div>
+                <div class="form-group">
+                    <label for="half-days">أنصاف أيام عمل</label>
+                    <input type="number" id="half-days" placeholder="أدخل عدد أنصاف الأيام">
+                </div>
+            </div>
+            <button id="save-attendance-btn" class="btn primary-btn" style="margin-top:10px;">حفظ بيانات الحضور</button>
+        </section>
+
+        <section class="card">
+            <h2>💸 إدارة السلفيات</h2>
+            <div id="deductions-section">
+                <h4>قائمة السلفيات</h4>
+                <ul id="deductions-list">
+                    </ul>
+                <hr>
+                <h4>إضافة سلفة جديدة</h4>
+                <div class="form-inline">
+                    <div class="form-group">
+                        <label for="deduction-amount">مبلغ السلفة (دج)</label>
+                        <input type="number" id="deduction-amount" placeholder="أدخل مبلغ السلفة">
+                    </div>
+                    <div class="form-group">
+                        <label for="deduction-date">تاريخ السلفة</label>
+                        <input type="date" id="deduction-date">
+                    </div>
+                </div>
+                <button id="add-deduction-btn" class="btn success-btn" style="margin-top:10px;">+ إضافة سلفة</button>
+            </div>
+        </section>
+        
+        <div id="save-status" class="alert"></div>
+
+        <a href="dashboard.html" class="btn" style="margin-top: 20px; display: inline-block; width: auto; background-color: var(--secondary-color);">العودة إلى اللوحة الرئيسية</a>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const params = new URLSearchParams(window.location.search);
+    const employeeId = parseInt(params.get('id'));
+
+    // عناصر الواجهة
+    const elements = {
+        nameHeader: document.getElementById('employee-name-header'),
+        summaryContainer: document.getElementById('employee-summary'),
+        dailyRateInput: document.getElementById('daily-rate'),
+        fullDaysInput: document.getElementById('full-days'),
+        halfDaysInput: document.getElementById('half-days'),
+        deductionAmountInput: document.getElementById('deduction-amount'),
+        deductionDateInput: document.getElementById('deduction-date'),
+        deductionsList: document.getElementById('deductions-list'),
+        saveStatus: document.getElementById('save-status'),
+        // الأزرار
+        saveRateBtn: document.getElementById('save-rate-btn'),
+        saveAttendanceBtn: document.getElementById('save-attendance-btn'),
+        addDeductionBtn: document.getElementById('add-deduction-btn')
+    };
+
+    let employees = [];
+    let currentEmployee = null;
+
+    function loadEmployeeData() {
+        employees = JSON.parse(localStorage.getItem('employees')) || [];
+        currentEmployee = employees.find(emp => emp.id === employeeId);
+
+        if (currentEmployee) {
+            // تهيئة الخصائص الجديدة إذا لم تكن موجودة
+            if (currentEmployee.dailyRate === undefined) currentEmployee.dailyRate = 0;
+            if (!Array.isArray(currentEmployee.advances)) currentEmployee.advances = [];
+            if (currentEmployee.fullDays === undefined) currentEmployee.fullDays = 0;
+            if (currentEmployee.halfDays === undefined) currentEmployee.halfDays = 0;
+
+            displayEmployeeDetails();
+        } else {
+            elements.nameHeader.textContent = 'خطأ';
+            elements.summaryContainer.innerHTML = '<p>لم يتم العثور على الموظف. قد يكون قد تم حذفه.</p>';
+            // إخفاء أقسام الإدارة
+            document.querySelectorAll('.card').forEach(c => c.style.display = 'none');
+        }
+    }
+
+    function displayEmployeeDetails() {
+        elements.nameHeader.textContent = `إدارة الموظف: ${currentEmployee.name}`;
+        
+        // عرض المدخلات الحالية
+        elements.dailyRateInput.value = currentEmployee.dailyRate;
+        elements.fullDaysInput.value = currentEmployee.fullDays;
+        elements.halfDaysInput.value = currentEmployee.halfDays;
+        elements.deductionDateInput.value = new Date().toISOString().slice(0, 10);
+
+        // حساب الإجماليات
+        const totalDeductions = currentEmployee.advances.reduce((sum, item) => sum + item.amount, 0);
+        const grossSalary = (currentEmployee.fullDays * currentEmployee.dailyRate) + (currentEmployee.halfDays * currentEmployee.dailyRate / 2);
+        const finalSalary = grossSalary - totalDeductions;
+
+        // عرض الملخص
+        elements.summaryContainer.innerHTML = `
+            <p><strong>الاسم:</strong> ${currentEmployee.name}</p>
+            <p><strong>الأجر اليومي:</strong> ${currentEmployee.dailyRate.toFixed(2)} دج</p>
+            <p><strong>إجمالي أيام العمل الكاملة:</strong> ${currentEmployee.fullDays}</p>
+            <p><strong>إجمالي أنصاف أيام العمل:</strong> ${currentEmployee.halfDays}</p>
+            <p><strong>إجمالي السلفيات:</strong> ${totalDeductions.toFixed(2)} دج</p>
+            <hr>
+            <p><strong>الراتب الصافي المستحق:</strong> <span id="final-salary">${finalSalary.toFixed(2)} دج</span></p>
+        `;
+
+        renderDeductionsList();
+    }
+    
+    function renderDeductionsList() {
+        elements.deductionsList.innerHTML = '';
+        if (currentEmployee.advances.length === 0) {
+            elements.deductionsList.innerHTML = '<li>لا توجد سلفيات مسجلة.</li>';
+            return;
+        }
+        currentEmployee.advances.forEach((deduction, index) => {
+            const li = document.createElement('li');
+            li.innerHTML = `
+                <span>${deduction.amount.toFixed(2)} دج - بتاريخ: ${deduction.date}</span>
+                <button class="delete-deduction-btn" data-index="${index}">🗑️</button>
+            `;
+            elements.deductionsList.appendChild(li);
+        });
+    }
+
+    function saveAndReload() {
+        // تحديث الموظف الحالي في مصفوفة الموظفين
+        const employeeIndex = employees.findIndex(emp => emp.id === employeeId);
+        if (employeeIndex !== -1) {
+            employees[employeeIndex] = currentEmployee;
+        }
+        localStorage.setItem('employees', JSON.stringify(employees));
+        displayEmployeeDetails();
+        showStatusMessage('تم حفظ التغييرات بنجاح!', 'success');
+    }
+    
+    function showStatusMessage(message, type) {
+        elements.saveStatus.textContent = message;
+        elements.saveStatus.className = `alert alert-${type}`;
+        elements.saveStatus.classList.add('show');
+        setTimeout(() => {
+            elements.saveStatus.classList.remove('show');
+        }, 3000);
+    }
+
+    // --- ربط الأحداث ---
+
+    elements.saveRateBtn.addEventListener('click', () => {
+        const newRate = parseFloat(elements.dailyRateInput.value);
+        if (!isNaN(newRate) && newRate >= 0) {
+            currentEmployee.dailyRate = newRate;
+            saveAndReload();
+        } else {
+            alert('الرجاء إدخال أجر يومي صحيح.');
+        }
+    });
+    
+    elements.saveAttendanceBtn.addEventListener('click', () => {
+        const fullDays = parseInt(elements.fullDaysInput.value) || 0;
+        const halfDays = parseInt(elements.halfDaysInput.value) || 0;
+        currentEmployee.fullDays = fullDays;
+        currentEmployee.halfDays = halfDays;
+        saveAndReload();
+    });
+
+    elements.addDeductionBtn.addEventListener('click', () => {
+        const amount = parseFloat(elements.deductionAmountInput.value);
+        const date = elements.deductionDateInput.value;
+
+        if (isNaN(amount) || amount <= 0 || !date) {
+            alert('الرجاء إدخال مبلغ وتاريخ صحيحين للسلفة.');
+            return;
+        }
+        
+        // إضافة السلفة الجديدة إلى بداية القائمة
+        currentEmployee.advances.unshift({ amount, date });
+        saveAndReload();
+        
+        // تفريغ حقول الإدخال
+        elements.deductionAmountInput.value = '';
+    });
+    
+    elements.deductionsList.addEventListener('click', (e) => {
+        if (e.target.classList.contains('delete-deduction-btn')) {
+            if (confirm('هل أنت متأكد من حذف هذه السلفة؟')) {
+                const index = parseInt(e.target.dataset.index);
+                currentEmployee.advances.splice(index, 1);
+                saveAndReload();
+            }
+        }
+    });
+
+
+    // التحميل الأولي للبيانات
+    loadEmployeeData();
+});
+</script>
+</body>
+</html>

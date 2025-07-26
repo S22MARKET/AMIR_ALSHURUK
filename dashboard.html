@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام إدارة الرواتب المطور</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #50e3c2;
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-color: #333;
+            --border-color: #e0e0e0;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            direction: rtl;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            color: var(--primary-color);
+            margin: 0;
+            font-size: 2.5em;
+        }
+        
+        header p {
+            font-size: 1.1em;
+            color: #777;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+            border-top: 4px solid var(--primary-color);
+        }
+
+        .card h2 {
+            margin-top: 0;
+            color: var(--primary-color);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="date"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            color: #fff;
+            background-color: var(--primary-color);
+            transition: all 0.3s;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .primary-btn {
+            width: 100%;
+            font-size: 1.2em;
+            background-image: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+        }
+
+        .delete-btn { background-color: var(--danger-color); }
+        .reset-btn { background-color: #6c757d; }
+        
+        .attendance-btn {
+            padding: 5px 10px;
+            font-size: 0.9em;
+            margin: 0 2px;
+        }
+        .full-day-btn { background-color: var(--success-color); }
+        .half-day-btn { background-color: var(--warning-color); }
+        .absent-btn { background-color: var(--danger-color); }
+        .attendance-btn.active {
+             border: 2px solid #fff;
+             box-shadow: 0 0 5px 2px #333;
+        }
+
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+
+        thead {
+            background-color: #eef5ff;
+        }
+        
+        th {
+            color: var(--primary-color);
+        }
+
+        td input[type="number"] {
+            width: 90px;
+            text-align: center;
+        }
+
+        #results-section {
+            border-top-color: var(--success-color);
+        }
+        #results-section h2 { color: var(--success-color); }
+
+        #total-payout {
+            color: var(--success-color);
+            font-size: 1.4em;
+            font-weight: bold;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        .action-buttons .btn { flex-grow: 1; }
+        
+        .inline-form {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .inline-form input { flex-grow: 1; }
+
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .inline-form { flex-direction: column; align-items: stretch; }
+            .btn, .inline-form .btn { width: 100%; }
+            header h1 { font-size: 2em; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>📊 نظام إدارة الرواتب المطور</h1>
+            <p>سجّل الحضور اليومي، واحسب الرواتب، وصدّر التقارير بكل سهولة.</p>
+        </header>
+        
+        <section class="card">
+            <h2>⚙️ الإعدادات الأساسية (دج)</h2>
+            <div class="inline-form">
+                <div class="form-group" style="flex:1;">
+                    <label for="full-day-rate">أجرة اليوم الكامل:</label>
+                    <input type="number" id="full-day-rate" placeholder="مثال: 2000" min="0">
+                </div>
+                <div class="form-group" style="flex:1;">
+                    <label for="half-day-rate">أجرة نصف اليوم:</label>
+                    <input type="number" id="half-day-rate" placeholder="مثال: 1000" min="0">
+                </div>
+            </div>
+        </section>
+        
+        <section class="card">
+            <h2>➕ إضافة موظف جديد</h2>
+            <div class="form-group inline-form">
+                <input type="text" id="employee-name-input" placeholder="اكتب اسم الموظف هنا...">
+                <button id="add-employee-btn" class="btn">إضافة موظف</button>
+            </div>
+        </section>
+        
+        <section class="card">
+            <h2>📅 تسجيل الحضور اليومي</h2>
+            <div class="form-group">
+                <label for="attendance-date">تاريخ الحضور:</label>
+                <input type="date" id="attendance-date">
+            </div>
+            <div class="table-container">
+                <table id="attendance-table">
+                    <thead>
+                        <tr>
+                            <th>اسم الموظف</th>
+                            <th>حالة الحضور</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        </tbody>
+                </table>
+            </div>
+        </section>
+
+        <main class="card">
+            <h2>👥 قائمة الموظفين والرواتب</h2>
+            <div class="form-group">
+                 <input type="text" id="search-input" placeholder="🔍 ابحث عن موظف...">
+            </div>
+            <div class="table-container">
+                <table id="employees-table">
+                    <thead>
+                        <tr>
+                            <th>اسم الموظف</th>
+                            <th>أيام كاملة</th>
+                            <th>أنصاف أيام</th>
+                            <th>مكافآت (دج)</th>
+                            <th>خصومات (دج)</th>
+                            <th>إجراء</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        </tbody>
+                </table>
+            </div>
+            <br>
+            <button id="calculate-btn" class="btn primary-btn">🧮 تجميع الحضور وحساب الرواتب</button>
+        </main>
+
+        <section id="results-section" class="card" style="display: none;">
+            <h2>📄 النتائج النهائية</h2>
+            <div id="results-container">
+                 <h3 id="report-title" style="text-align:center;"></h3>
+                 <div class="table-container">
+                    <table id="results-table">
+                        <thead>
+                            <tr>
+                                <th>اسم الموظف</th>
+                                <th>الراتب الصافي (دج)</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                        <tfoot>
+                            <tr>
+                                <td><strong>المجموع الإجمالي</strong></td>
+                                <td id="total-payout"><strong>0.00 دج</strong></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button id="save-pdf-btn" class="btn">📄 حفظ كـ PDF</button>
+                <button id="share-btn" class="btn">🔗 مشاركة التقرير</button>
+                 <button id="reset-data-btn" class="btn reset-btn">🔄 إعادة تعيين كل البيانات</button>
+            </div>
+        </section>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // ---- DOM Elements ----
+        const fullDayRateInput = document.getElementById('full-day-rate');
+        const halfDayRateInput = document.getElementById('half-day-rate');
+        const employeeNameInput = document.getElementById('employee-name-input');
+        const addEmployeeBtn = document.getElementById('add-employee-btn');
+        const searchInput = document.getElementById('search-input');
+        const employeesTableBody = document.querySelector('#employees-table tbody');
+        const attendanceDateInput = document.getElementById('attendance-date');
+        const attendanceTableBody = document.querySelector('#attendance-table tbody');
+        const calculateBtn = document.getElementById('calculate-btn');
+        const resultsSection = document.getElementById('results-section');
+        const resultsTableBody = document.querySelector('#results-table tbody');
+        const totalPayoutEl = document.getElementById('total-payout');
+        const reportTitleEl = document.getElementById('report-title');
+        const savePdfBtn = document.getElementById('save-pdf-btn');
+        const shareBtn = document.getElementById('share-btn');
+        const resetDataBtn = document.getElementById('reset-data-btn');
+
+        // ---- State & LocalStorage Keys ----
+        const STORAGE_KEYS = {
+            EMPLOYEES: 'payroll_employees_v2',
+            ATTENDANCE: 'payroll_attendance_v2',
+            SETTINGS: 'payroll_settings_v2'
+        };
+        let employees = [];
+        let attendance = {}; // { empId: { 'YYYY-MM-DD': 'full' | 'half' | 'absent' } }
+
+        // ---- Core Functions ----
+        const saveData = () => {
+            const settings = {
+                fullDayRate: fullDayRateInput.value,
+                halfDayRate: halfDayRateInput.value
+            };
+            localStorage.setItem(STORAGE_KEYS.EMPLOYEES, JSON.stringify(employees));
+            localStorage.setItem(STORAGE_KEYS.ATTENDANCE, JSON.stringify(attendance));
+            localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(settings));
+        };
+
+        const loadData = () => {
+            employees = JSON.parse(localStorage.getItem(STORAGE_KEYS.EMPLOYEES)) || [];
+            attendance = JSON.parse(localStorage.getItem(STORAGE_KEYS.ATTENDANCE)) || {};
+            const settings = JSON.parse(localStorage.getItem(STORAGE_KEYS.SETTINGS)) || {};
+            fullDayRateInput.value = settings.fullDayRate || '';
+            halfDayRateInput.value = settings.halfDayRate || '';
+        };
+
+        const renderEmployeesTable = (filter = '') => {
+            employeesTableBody.innerHTML = '';
+            const filteredEmployees = employees.filter(emp => emp.name.toLowerCase().includes(filter.toLowerCase()));
+            
+            if (filteredEmployees.length === 0) {
+                employeesTableBody.innerHTML = `<tr><td colspan="6">لم يتم إضافة أي موظفين بعد أو لا يوجد تطابق في البحث.</td></tr>`;
+                return;
+            }
+
+            filteredEmployees.forEach(emp => {
+                const row = document.createElement('tr');
+                row.dataset.employeeId = emp.id;
+                row.innerHTML = `
+                    <td>${emp.name}</td>
+                    <td><input type="number" data-field="fullDays" value="${emp.fullDays || 0}" min="0"></td>
+                    <td><input type="number" data-field="halfDays" value="${emp.halfDays || 0}" min="0"></td>
+                    <td><input type="number" data-field="bonus" value="${emp.bonus || 0}" min="0" placeholder="0"></td>
+                    <td><input type="number" data-field="deduction" value="${emp.deduction || 0}" min="0" placeholder="0"></td>
+                    <td><button class="btn delete-btn" data-id="${emp.id}">حذف</button></td>
+                `;
+                employeesTableBody.appendChild(row);
+            });
+        };
+        
+        const renderDailyAttendance = () => {
+            attendanceTableBody.innerHTML = '';
+            const selectedDate = attendanceDateInput.value;
+            
+            if (employees.length === 0) {
+                attendanceTableBody.innerHTML = `<tr><td colspan="2">الرجاء إضافة موظفين أولاً.</td></tr>`;
+                return;
+            }
+
+            employees.forEach(emp => {
+                const row = document.createElement('tr');
+                const status = attendance[emp.id]?.[selectedDate] || 'none';
+                
+                row.innerHTML = `
+                    <td>${emp.name}</td>
+                    <td>
+                        <button class="btn attendance-btn full-day-btn ${status === 'full' ? 'active' : ''}" data-id="${emp.id}" data-status="full">يوم كامل</button>
+                        <button class="btn attendance-btn half-day-btn ${status === 'half' ? 'active' : ''}" data-id="${emp.id}" data-status="half">نصف يوم</button>
+                        <button class="btn attendance-btn absent-btn ${status === 'absent' ? 'active' : ''}" data-id="${emp.id}" data-status="absent">غياب</button>
+                    </td>
+                `;
+                attendanceTableBody.appendChild(row);
+            });
+        };
+
+        const tallyAttendanceForMonth = () => {
+            const currentMonth = new Date().getMonth();
+            const currentYear = new Date().getFullYear();
+
+            employees.forEach(emp => {
+                emp.fullDays = 0;
+                emp.halfDays = 0;
+                
+                if(attendance[emp.id]) {
+                    for(const dateStr in attendance[emp.id]) {
+                        const date = new Date(dateStr);
+                        if(date.getMonth() === currentMonth && date.getFullYear() === currentYear) {
+                            const status = attendance[emp.id][dateStr];
+                            if(status === 'full') emp.fullDays++;
+                            if(status === 'half') emp.halfDays++;
+                        }
+                    }
+                }
+            });
+            renderEmployeesTable(); // Update the main table with tallied days
+            alert('تم تجميع الحضور للشهر الحالي بنجاح. يمكنك الآن مراجعة الأيام والمكافآت والخصومات قبل حساب الرواتب النهائية.');
+        };
+
+        const calculateAndDisplaySalaries = () => {
+            const fullDayRate = parseFloat(fullDayRateInput.value) || 0;
+            const halfDayRate = parseFloat(halfDayRateInput.value) || 0;
+
+            if (fullDayRate === 0 || halfDayRate === 0) {
+                alert('الرجاء إدخال أجرة اليوم الكامل ونصف اليوم في الإعدادات.');
+                return;
+            }
+            if (employees.length === 0) {
+                 alert('الرجاء إضافة موظفين أولاً.');
+                 return;
+            }
+
+            let totalPayout = 0;
+            resultsTableBody.innerHTML = '';
+
+            employees.forEach(emp => {
+                const grossSalary = (emp.fullDays * fullDayRate) + (emp.halfDays * halfDayRate);
+                emp.salary = grossSalary + (emp.bonus || 0) - (emp.deduction || 0);
+                totalPayout += emp.salary;
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${emp.name}</td>
+                    <td>${emp.salary.toFixed(2)} دج</td>
+                `;
+                resultsTableBody.appendChild(row);
+            });
+
+            const reportDate = new Date();
+            reportTitleEl.textContent = `تقرير الرواتب لشهر ${reportDate.toLocaleString('ar-DZ', { month: 'long', year: 'numeric' })}`;
+            totalPayoutEl.innerHTML = `<strong>${totalPayout.toFixed(2)} دج</strong>`;
+            resultsSection.style.display = 'block';
+            resultsSection.scrollIntoView({ behavior: 'smooth' });
+            saveData();
+        };
+
+        // ---- Event Listeners ----
+        addEmployeeBtn.addEventListener('click', () => {
+            const name = employeeNameInput.value.trim();
+            if (name) {
+                const newEmployee = {
+                    id: Date.now(),
+                    name: name,
+                    fullDays: 0, halfDays: 0,
+                    bonus: 0, deduction: 0,
+                    salary: 0
+                };
+                employees.push(newEmployee);
+                employeeNameInput.value = '';
+                saveData();
+                renderEmployeesTable();
+                renderDailyAttendance();
+            } else {
+                alert('الرجاء إدخال اسم الموظف.');
+            }
+        });
+        
+        employeesTableBody.addEventListener('change', (e) => {
+            if (e.target.tagName === 'INPUT') {
+                const id = parseInt(e.target.closest('tr').dataset.employeeId);
+                const field = e.target.dataset.field;
+                const value = parseFloat(e.target.value) || 0;
+                
+                const emp = employees.find(emp => emp.id === id);
+                if (emp) {
+                    emp[field] = value;
+                    saveData();
+                }
+            }
+        });
+
+        employeesTableBody.addEventListener('click', (e) => {
+            if (e.target.classList.contains('delete-btn')) {
+                const id = parseInt(e.target.dataset.id);
+                if (confirm('هل أنت متأكد من حذف هذا الموظف؟ سيتم حذف سجل الحضور الخاص به أيضًا.')) {
+                    employees = employees.filter(emp => emp.id !== id);
+                    delete attendance[id];
+                    saveData();
+                    renderEmployeesTable();
+                    renderDailyAttendance();
+                }
+            }
+        });
+        
+        attendanceDateInput.addEventListener('change', renderDailyAttendance);
+
+        attendanceTableBody.addEventListener('click', (e) => {
+            if(e.target.classList.contains('attendance-btn')) {
+                const id = parseInt(e.target.dataset.id);
+                const status = e.target.dataset.status;
+                const date = attendanceDateInput.value;
+
+                if(!date) {
+                    alert('الرجاء اختيار تاريخ أولاً.');
+                    return;
+                }
+
+                if (!attendance[id]) {
+                    attendance[id] = {};
+                }
+
+                // Toggle functionality: if clicking same button again, mark as absent
+                if(attendance[id][date] === status) {
+                     attendance[id][date] = 'absent';
+                } else {
+                     attendance[id][date] = status;
+                }
+               
+                saveData();
+                renderDailyAttendance();
+            }
+        });
+        
+        calculateBtn.addEventListener('click', () => {
+             tallyAttendanceForMonth();
+             calculateAndDisplaySalaries();
+        });
+
+        savePdfBtn.addEventListener('click', () => {
+            const { jsPDF } = window.jspdf;
+            const resultsContainer = document.getElementById('results-container');
+            
+            html2canvas(resultsContainer, { scale: 2 }).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                const doc = new jsPDF('p', 'mm', 'a4');
+                const imgProps = doc.getImageProperties(imgData);
+                const pdfWidth = doc.internal.pageSize.getWidth() - 20; // with margin
+                const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+                
+                doc.addFont('https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/fonts/lato-bold/lato-bold.ttf', 'Cairo', 'normal'); // Add Arabic font support
+                doc.setFont('Cairo');
+                doc.addImage(imgData, 'PNG', 10, 10, pdfWidth, pdfHeight);
+                doc.save(`report-salaries-${new Date().toISOString().slice(0,10)}.pdf`);
+            });
+        });
+        
+        shareBtn.addEventListener('click', () => {
+            let reportText = `${reportTitleEl.textContent}\n\n`;
+            employees.forEach(emp => {
+                if (emp.salary !== undefined) {
+                    reportText += `${emp.name}: ${emp.salary.toFixed(2)} دج\n`;
+                }
+            });
+            reportText += `\n${totalPayoutEl.innerText}`;
+
+            if (navigator.share) {
+                navigator.share({
+                    title: 'تقرير الرواتب',
+                    text: reportText,
+                }).catch(console.error);
+            } else {
+                navigator.clipboard.writeText(reportText).then(() => {
+                    alert('تم نسخ التقرير إلى الحافظة!');
+                });
+            }
+        });
+        
+        searchInput.addEventListener('input', (e) => {
+            renderEmployeesTable(e.target.value);
+        });
+        
+        resetDataBtn.addEventListener('click', () => {
+             if (confirm('تحذير: هل أنت متأكد من رغبتك في حذف جميع البيانات؟ لا يمكن التراجع عن هذا الإجراء.')) {
+                 localStorage.removeItem(STORAGE_KEYS.EMPLOYEES);
+                 localStorage.removeItem(STORAGE_KEYS.ATTENDANCE);
+                 localStorage.removeItem(STORAGE_KEYS.SETTINGS);
+                 // Reload the page to clear state
+                 window.location.reload();
+             }
+        });
+
+        // ---- Initialization ----
+        const init = () => {
+            loadData();
+            attendanceDateInput.valueAsDate = new Date(); // Set to today
+            renderEmployeesTable();
+            renderDailyAttendance();
+        };
+
+        init();
+    });
+    </script>
+</body>
+</html>
