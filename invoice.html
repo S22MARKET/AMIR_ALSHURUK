@@ -60,6 +60,7 @@
         .total-row, .option-row { display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; margin-bottom: 12px; border-bottom: 1px solid #eee; }
         .total-row:last-child, .option-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
         .total-label, .option-label { font-weight: bold; color: var(--dark-text); }
+        .total-label input { text-align: center; font-weight: bold; border-radius: 4px; border: 1px solid #ccc; padding: 2px 0; }
         #grand-total { background-color: var(--primary-color); color: white; padding: 15px; margin: 10px -20px -20px; border-radius: 0 0 8px 8px; font-size: 1.3em; }
         .controls { margin: 30px 0 15px; display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
         .action-btn { padding: 12px 18px; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 1em; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; justify-content: center; transition: background-color 0.3s; }
@@ -88,6 +89,7 @@
             .inactive-for-print { display: none !important; }
             input { border: none !important; background: transparent !important; padding: 2px 0 !important; font-weight: bold; color: #000; width: auto; }
             .client-details input { padding: 5px 0; }
+            #adjustment-value { padding: 5px 0 !important; }
             .total-section { border: none; background-color: transparent !important; }
             .summary-and-options { flex-direction: column; }
             .invoice-header { border-bottom-color: var(--primary-color) !important; }
@@ -95,6 +97,7 @@
             #grand-total { background-color: var(--primary-color) !important; color: white !important; }
             .company-details .editable-value, .custom-value { display: inline-block !important; }
             .company-details input { display: none !important; }
+            #tva-row-container[style*="display: none;"], #adjustment-row-container[style*="display: none;"] { display: none !important; }
             .invoice-footer {
                 display: flex; justify-content: space-between; align-items: flex-start;
                 margin-top: 80px; padding-top: 20px; border-top: 1px solid #ccc;
@@ -166,6 +169,8 @@
             <div class="options-section">
                  <h4 style="margin-top:0; padding-bottom:10px; border-bottom:1px solid #eee;">خيارات الفاتورة</h4>
                 <div class="option-row"><span class="option-label">لون الفاتورة</span><input type="color" id="color-picker" value="#005a9c"></div>
+                <div class="option-row"><span class="option-label">تفعيل الضريبة (TVA)</span><label class="switch"><input type="checkbox" id="tva-toggle" checked><span class="slider"></span></label></div>
+                <div class="option-row"><span class="option-label">تفعيل التعديل اليدوي</span><label class="switch"><input type="checkbox" id="adjustment-toggle"><span class="slider"></span></label></div>
                 <div class="option-row"><span class="option-label">إظهار المبلغ بالعربية</span><label class="switch"><input type="checkbox" id="arabic-text-toggle" checked><span class="slider"></span></label></div>
                 <div class="option-row"><span class="option-label">إظهار المبلغ بالفرنسية</span><label class="switch"><input type="checkbox" id="french-text-toggle"><span class="slider"></span></label></div>
 
@@ -186,10 +191,17 @@
                     <div id="discount-controls" style="display:none;"><input type="number" id="discount-value" value="0" min="0" style="width:70px;"><select id="discount-type" style="width:60px;"><option value="amount">دج</option><option value="percent">%</option></select></div>
                 </div>
                 <div class="total-row"><span class="total-label">المبلغ الصافي (HT)</span><span id="montant-ht">0.00 دج</span></div>
-                <div class="total-row"><span class="total-label">ضريبة (19%)</span><span id="tva">0.00 دج</span></div>
+                <div class="total-row" id="tva-row-container">
+                    <span class="total-label">ضريبة (<input type="number" id="tva-rate" value="19" min="0" step="1" style="width: 50px;">%)</span>
+                    <span id="tva">0.00 دج</span>
+                </div>
                 <div class="total-row inactive-for-print" id="timbre-row-container">
                      <span class="total-label">رسم الطابع <label class="switch"><input type="checkbox" id="timbre-toggle"><span class="slider"></span></label></span>
                     <span id="timbre-amount">0.00 دج</span>
+                </div>
+                <div class="total-row" id="adjustment-row-container" style="display: none;">
+                    <span class="total-label">مبلغ التعديل</span>
+                    <input type="number" id="adjustment-value" value="0" step="any" style="width: 120px; text-align: right; font-weight: bold; border: 1px solid rgb(204, 204, 204); padding: 5px; border-radius: 4px;">
                 </div>
                 <div class="total-row" id="grand-total"><span class="total-label">الإجمالي للدفع (TTC)</span><span id="montant-ttc">0.00 دج</span></div>
             </div>
@@ -212,19 +224,152 @@
 
 <script>
 // Libraries for number to words
-var Tafqeet=(function(){"use strict";const e=["","واحد","اثنان","ثلاثة","أربعة","خمسة","ستة","سبعة","ثمانية","تسعة"],t=["","عشرة","عشرون","ثلاثون","أربعون","خمسون","ستون","سبعون","ثمانون","تسعون"],n=["","مئة","مئتان","ثلاثمئة","أربعمئة","خمسمئة","ستمئة","سبعمئة","ثمانمئة","تسعمئة"],r=["","ألف","ألفان","آلاف"],o=["","مليون","مليونان","ملايين"],a=["","مليار","ملياران","مليارات"],i=["","تريليون","تريليونان","تريليونات"];function c(c){let r=Math.floor(c/100),o=Math.floor(c%100/10),a=c%10,i="";return r>0&&(i+=n[r]+(o>0||a>0?" و ":"")),a>0&&o>0?i+=e[a]+" و "+t[o]:a>0?i+=e[a]:o>0&&(i+=t[o]),i}return{convert:function(l){if(l=String(l).split(".")[0],"0"==l)return"صفر";let s=parseInt(l,10);if(isNaN(s))return"";let u=[];const d=Math.floor(s/1e12),f=Math.floor(s%1e12/1e9),m=Math.floor(s%1e9/1e6),p=Math.floor(s%1e6/1e3),g=s%1e3;return d>0&&u.push(c(d)+" "+(1==d?i[1]:2==d?i[2]:d>=3&&d<=10?i[3]:i[1])),f>0&&u.push(c(f)+" "+(1==f?a[1]:2==f?a[2]:f>=3&&f<=10?a[3]:a[1])),m>0&&u.push(c(m)+" "+(1==m?o[1]:2==m?o[2]:m>=3&&m<=10?o[3]:o[1])),p>0&&(1===p?u.push(r[1]):2===p?u.push(r[2]):u.push(c(p)+" "+(p>=3&&p<=10?r[3]:r[1]))),g>0&&u.push(c(g)),u.join(" و ")}}})();
-function numberToWordsFr(n){if(n===0)return"Zéro";const a=["","un","deux","trois","quatre","cinq","six","sept","huit","neuf","dix","onze","douze","treize","quatorze","quinze","seize","dix-sept","dix-huit","dix-neuf"],e=["","dix","vingt","trente","quarante","cinquante","soixante","soixante-dix","quatre-vingt","quatre-vingt-dix"];function r(n){if(n<20)return a[n];if(n<100){const t=Math.floor(n/10),o=n%10;return e[t]+(1==o&&t<8?" et un":"-")+a[o]}return""}let t="",o=Math.floor(n);if(o>=1e6)t+=r(Math.floor(o/1e6))+" million"+(o>=2e6?"s":" ")+" ",o%=1e6;if(o>=1e3)t+=(o<2e3?"mille":r(Math.floor(o/1e3))+"-mille")+" ",o%=1e3;t+=r(o);let c=Math.round(100*(n-Math.floor(n)));return t.trim().replace(/-$/, "").replace("quatre-vingt-un", "quatre-vingt-et-un")+(c>0?` et ${r(c)} centimes`:"")}
+var Tafqeet = (function() {
+    "use strict";
+    const ones = ["", "واحد", "اثنان", "ثلاثة", "أربعة", "خمسة", "ستة", "سبعة", "ثمانية", "تسعة"];
+    const tens = ["", "عشرة", "عشرون", "ثلاثون", "أربعون", "خمسون", "ستون", "سبعون", "ثمانون", "تسعون"];
+    const hundreds = ["", "مئة", "مئتان", "ثلاثمئة", "أربعمئة", "خمسمئة", "ستمئة", "سبعمئة", "ثمانمئة", "تسعمئة"];
+    const thousands = ["", "ألف", "ألفان", "آلاف"];
+    const millions = ["", "مليون", "مليونان", "ملايين"];
+    const billions = ["", "مليار", "ملياران", "مليارات"];
+    const trillions = ["", "تريليون", "تريليونان", "تريليونات"];
+
+    function convertLessThanOneThousand(number) {
+        let soFar = "";
+        const hundred = Math.floor(number / 100);
+        const ten = Math.floor((number % 100) / 10);
+        const one = number % 10;
+
+        if (hundred > 0) {
+            soFar += hundreds[hundred] + (ten > 0 || one > 0 ? " و " : "");
+        }
+        if (ten > 0 && one > 0) {
+            soFar += ones[one] + " و " + tens[ten];
+        } else if (one > 0) {
+            soFar += ones[one];
+        } else if (ten > 0) {
+            soFar += tens[ten];
+        }
+        return soFar;
+    }
+
+    function convertNumber(number) {
+        if (number === 0) return "صفر";
+        if (typeof number !== 'number' || isNaN(number)) return "";
+
+        let numStr = String(Math.floor(number));
+        let result = [];
+
+        const trillion = Math.floor(number / 1e12);
+        const billion = Math.floor((number % 1e12) / 1e9);
+        const million = Math.floor((number % 1e9) / 1e6);
+        const thousand = Math.floor((number % 1e6) / 1e3);
+        const remainder = number % 1e3;
+
+        if (trillion > 0) {
+            result.push(convertLessThanOneThousand(trillion) + " " + (trillion === 1 ? trillions[1] : trillion === 2 ? trillions[2] : (trillion >= 3 && trillion <= 10) ? trillions[3] : trillions[1]));
+        }
+        if (billion > 0) {
+            result.push(convertLessThanOneThousand(billion) + " " + (billion === 1 ? billions[1] : billion === 2 ? billions[2] : (billion >= 3 && billion <= 10) ? billions[3] : billions[1]));
+        }
+        if (million > 0) {
+            result.push(convertLessThanOneThousand(million) + " " + (million === 1 ? millions[1] : million === 2 ? millions[2] : (million >= 3 && million <= 10) ? millions[3] : millions[1]));
+        }
+        if (thousand > 0) {
+            if (thousand === 1) result.push(thousands[1]);
+            else if (thousand === 2) result.push(thousands[2]);
+            else result.push(convertLessThanOneThousand(thousand) + " " + ((thousand >= 3 && thousand <= 10) ? thousands[3] : thousands[1]));
+        }
+        if (remainder > 0) {
+            result.push(convertLessThanOneThousand(remainder));
+        }
+        return result.join(" و ");
+    }
+    
+    // ✨ ADDITION: New function to handle currency text generation
+    function convertWithCurrency(number) {
+        if (typeof number !== 'number' || isNaN(number)) {
+            return "مبلغ غير صحيح.";
+        }
+        
+        const integerPart = Math.floor(number);
+        const decimalPart = Math.round((number - integerPart) * 100);
+
+        if (integerPart === 0 && decimalPart === 0) {
+            return "أوقفت هذه الفاتورة عند مبلغ: صفر دينار جزائري.";
+        }
+
+        let text = "أوقفت هذه الفاتورة عند مبلغ: ";
+        text += convertNumber(integerPart) + " دينار جزائري";
+
+        if (decimalPart > 0) {
+            text += " و " + convertNumber(decimalPart) + " سنتيم";
+        }
+        
+        return text + ".";
+    }
+
+    return { convert: convertNumber, convertWithCurrency: convertWithCurrency };
+})();
+
+// ✨ ADDITION: New, cleaner function for French currency text
+function numberToWordsFrCurrency(n) {
+    if (typeof n !== 'number' || isNaN(n)) {
+        return "Montant invalide.";
+    }
+    const units = ["", "un", "deux", "trois", "quatre", "cinq", "six", "sept", "huit", "neuf", "dix", "onze", "douze", "treize", "quatorze", "quinze", "seize", "dix-sept", "dix-huit", "dix-neuf"];
+    const tens = ["", "dix", "vingt", "trente", "quarante", "cinquante", "soixante", "soixante-dix", "quatre-vingt", "quatre-vingt-dix"];
+    
+    function convert(num) {
+        if (num < 20) return units[num];
+        if (num < 70) {
+            const ten = Math.floor(num / 10);
+            const one = num % 10;
+            return tens[ten] + (one > 0 ? (ten === 1 || one === 1 ? " et " : "-") + units[one] : "");
+        }
+        if (num < 80) return tens[6] + "-" + convert(num - 60);
+        if (num < 100) {
+            const ten = Math.floor(num / 10);
+            const one = num % 10;
+            return tens[ten] + (one > 0 ? "-" + units[one] : "s");
+        }
+        if (num < 200) return "cent" + (num > 100 ? " " + convert(num % 100) : "");
+        if (num < 1000) return units[Math.floor(num / 100)] + "-cents" + (num % 100 > 0 ? " " + convert(num % 100) : "");
+        if (num < 2000) return "mille" + (num > 1000 ? " " + convert(num % 1000) : "");
+        if (num < 1000000) return convert(Math.floor(num / 1000)) + "-mille" + (num % 1000 > 0 ? " " + convert(num % 1000) : "");
+        const million = Math.floor(num / 1e6);
+        const million_rem = num % 1e6;
+        return convert(million) + " million" + (million > 1 ? "s" : "") + (million_rem > 0 ? " " + convert(million_rem) : "");
+    }
+    
+    const integerPart = Math.floor(n);
+    const decimalPart = Math.round((n - integerPart) * 100);
+
+    if (integerPart === 0 && decimalPart === 0) {
+        return "Arrêtée la présente facture à la somme de : Zéro dinar algérien.";
+    }
+
+    let text = "Arrêtée la présente facture à la somme de : ";
+    let dinarsText = convert(integerPart);
+    text += dinarsText.charAt(0).toUpperCase() + dinarsText.slice(1);
+    text += " dinar" + (integerPart > 1 ? "s" : "") + " algérien" + (integerPart > 1 ? "s" : "");
+
+    if (decimalPart > 0) {
+        text += " et " + convert(decimalPart) + " centime" + (decimalPart > 1 ? "s" : "");
+    }
+    
+    return text.replace(/-s /g, "s ").replace(/s-mille/g, 's').replace("un-cents", "cent").trim() + ".";
+}
+
 
 document.addEventListener('DOMContentLoaded', function() {
     let currentInvoiceTimestamp = null;
 
     const DOM = {
         tableBody: document.querySelector("#invoice-table tbody"),
-        container: document.querySelector(".page-container"),
         customFieldsContainer: document.getElementById('custom-fields-container'),
         customFieldsOptionsContainer: document.getElementById('custom-fields-options-container'),
         companyDetailsSection: document.getElementById('company-details-section'),
-        // ... add other common elements if needed
     };
 
     const companyFields = {
@@ -268,10 +413,28 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         const montantHT = subtotal - discountAmount;
-        const tva = montantHT * 0.19;
+        
+        const tvaToggle = document.getElementById('tva-toggle');
+        const tvaContainer = document.getElementById('tva-row-container');
+        let tva = 0;
+        tvaContainer.style.display = tvaToggle.checked ? 'flex' : 'none';
+        if (tvaToggle.checked) {
+            const tvaRate = parseFloat(document.getElementById('tva-rate').value) || 0;
+            tva = montantHT * (tvaRate / 100);
+        }
+
         const timbreToggle = document.getElementById('timbre-toggle');
         const timbreAmount = timbreToggle.checked ? (Math.ceil(montantHT / 100) * 1) : 0;
-        const montantTTC = montantHT + tva + timbreAmount;
+
+        const adjustmentToggle = document.getElementById('adjustment-toggle');
+        const adjustmentContainer = document.getElementById('adjustment-row-container');
+        let adjustmentValue = 0;
+        adjustmentContainer.style.display = adjustmentToggle.checked ? 'flex' : 'none';
+        if (adjustmentToggle.checked) {
+            adjustmentValue = parseFloat(document.getElementById('adjustment-value').value) || 0;
+        }
+
+        const montantTTC = montantHT + tva + timbreAmount + adjustmentValue;
 
         document.getElementById("subtotal").textContent = formatCurrency(subtotal) + ' دج';
         document.getElementById("montant-ht").textContent = formatCurrency(montantHT) + ' دج';
@@ -285,24 +448,25 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateDisplay(montantTTC) {
         document.getElementById('discount-controls').style.display = document.getElementById('discount-toggle').checked ? 'flex' : 'none';
         
-        const [integerPart, decimalPart] = montantTTC.toFixed(2).split('.');
-
+        // --- Arabic Text ---
         const arabicToggle = document.getElementById('arabic-text-toggle');
         const arabicContainer = document.getElementById('arabic-container');
-        if (arabicToggle.checked && document.getElementById('amount-in-arabic').contentEditable !== 'true') {
-            let text = `أوقفت هذه الفاتورة عند مبلغ: ${Tafqeet.convert(integerPart)} دينار جزائري`;
-            if (parseInt(decimalPart, 10) > 0) text += ` و ${Tafqeet.convert(decimalPart)} سنتيم`;
-            document.getElementById('amount-in-arabic').textContent = text + ".";
-        }
+        const amountInArabicDiv = document.getElementById('amount-in-arabic');
         arabicContainer.classList.toggle('hidden', !arabicToggle.checked);
+        if (arabicToggle.checked && amountInArabicDiv.dataset.locked !== 'true') {
+            // ✨ CHANGE: Using the new, cleaner function
+            amountInArabicDiv.textContent = Tafqeet.convertWithCurrency(montantTTC);
+        }
         
+        // --- French Text ---
         const frenchToggle = document.getElementById('french-text-toggle');
         const frenchContainer = document.getElementById('french-container');
-        if (frenchToggle.checked && document.getElementById('amount-in-french').contentEditable !== 'true') {
-            let text = `Arrêtée la présente facture à la somme de : ${numberToWordsFr(montantTTC)}`;
-            document.getElementById('amount-in-french').textContent = (text.charAt(0).toUpperCase() + text.slice(1)).replace(" et Zéro centimes", "") + ".";
-        }
+        const amountInFrenchDiv = document.getElementById('amount-in-french');
         frenchContainer.classList.toggle('hidden', !frenchToggle.checked);
+        if (frenchToggle.checked && amountInFrenchDiv.dataset.locked !== 'true') {
+            // ✨ CHANGE: Using the new, cleaner function
+            amountInFrenchDiv.textContent = numberToWordsFrCurrency(montantTTC);
+        }
     }
     
     function addCustomField(fieldData) {
@@ -342,8 +506,12 @@ document.addEventListener('DOMContentLoaded', function() {
             clientName: document.getElementById('client-name').value,
             clientAddress: document.getElementById('client-address').value,
             discount: { enabled: document.getElementById('discount-toggle').checked, type: document.getElementById('discount-type').value, value: document.getElementById('discount-value').value },
+            tva: { enabled: document.getElementById('tva-toggle').checked, rate: document.getElementById('tva-rate').value },
             timbreEnabled: document.getElementById('timbre-toggle').checked,
+            adjustment: { enabled: document.getElementById('adjustment-toggle').checked, value: document.getElementById('adjustment-value').value },
             logo: document.getElementById('company-logo-img').src,
+            amountInArabic: { locked: document.getElementById('amount-in-arabic').dataset.locked === 'true', text: document.getElementById('amount-in-arabic').textContent },
+            amountInFrench: { locked: document.getElementById('amount-in-french').dataset.locked === 'true', text: document.getElementById('amount-in-french').textContent },
         };
 
         for (const key in companyFields) {
@@ -405,10 +573,40 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('discount-type').value = data.discount.type;
             document.getElementById('discount-value').value = data.discount.value;
         }
+        
+        if (data.adjustment) {
+            document.getElementById('adjustment-toggle').checked = data.adjustment.enabled;
+            document.getElementById('adjustment-value').value = data.adjustment.value;
+        } else {
+             document.getElementById('adjustment-toggle').checked = false;
+             document.getElementById('adjustment-value').value = 0;
+        }
+        
+        if (data.tva) {
+            document.getElementById('tva-toggle').checked = data.tva.enabled !== false;
+            document.getElementById('tva-rate').value = data.tva.rate || '19';
+        } else {
+            document.getElementById('tva-toggle').checked = data.tvaEnabled !== false;
+            document.getElementById('tva-rate').value = '19';
+        }
+
         document.getElementById('timbre-toggle').checked = data.timbreEnabled || false;
         
         document.getElementById('arabic-text-toggle').checked = options.showArabic !== false;
         document.getElementById('french-text-toggle').checked = options.showFrench === true;
+
+        if (data.amountInArabic && data.amountInArabic.locked) {
+            const div = document.getElementById('amount-in-arabic');
+            div.textContent = data.amountInArabic.text;
+            div.dataset.locked = 'true';
+            document.getElementById('edit-arabic-btn').textContent = '🔄';
+        }
+        if (data.amountInFrench && data.amountInFrench.locked) {
+            const div = document.getElementById('amount-in-french');
+            div.textContent = data.amountInFrench.text;
+            div.dataset.locked = 'true';
+            document.getElementById('edit-french-btn').textContent = '🔄';
+        }
 
         if (options.themeColor) {
             document.getElementById('color-picker').value = options.themeColor;
@@ -447,6 +645,10 @@ document.addEventListener('DOMContentLoaded', function() {
     function startNewInvoice() {
         if (confirm('هل أنت متأكد؟ سيتم حذف بيانات الفاتورة الحالية والبدء من جديد.')) {
             localStorage.removeItem('invoiceDraft');
+            document.getElementById('edit-arabic-btn').textContent = '✏️';
+            document.getElementById('edit-french-btn').textContent = '✏️';
+            delete document.getElementById('amount-in-arabic').dataset.locked;
+            delete document.getElementById('amount-in-french').dataset.locked;
             loadInvoiceData(null);
         }
     }
@@ -460,17 +662,50 @@ document.addEventListener('DOMContentLoaded', function() {
         let history = JSON.parse(localStorage.getItem('invoicesHistory')) || [];
         const existingIndex = history.findIndex(inv => inv.timestamp === data.timestamp);
         if (existingIndex > -1) {
-            history[existingIndex] = data; // Update existing
+            history[existingIndex] = data;
         } else {
-            history.push(data); // Add new
+            history.push(data);
         }
         localStorage.setItem('invoicesHistory', JSON.stringify(history));
         alert('تم حفظ الفاتورة في المحفوظات بنجاح!');
     }
 
+    function setupEditAmountButtons() {
+        ['edit-arabic-btn', 'edit-french-btn'].forEach(id => {
+            const button = document.getElementById(id);
+            if (!button) return;
+
+            button.addEventListener('click', () => {
+                const targetDivId = id.replace('edit-', '').replace('-btn', '-in-');
+                const targetDiv = document.getElementById(targetDivId);
+
+                if (button.textContent === '✏️') {
+                    button.textContent = '✓';
+                    targetDiv.contentEditable = true;
+                    targetDiv.focus();
+                }
+                else if (button.textContent === '✓') {
+                    button.textContent = '🔄';
+                    targetDiv.dataset.locked = 'true';
+                    targetDiv.contentEditable = false;
+                    saveDraft(); 
+                }
+                else if (button.textContent === '🔄') {
+                    button.textContent = '✏️';
+                    delete targetDiv.dataset.locked;
+                    updateCalculations();
+                    saveDraft();
+                }
+            });
+        });
+    }
+
     // --- Event Listeners ---
     document.querySelector('.page-container').addEventListener('input', (e) => {
        if (e.target.matches('input, select')) {
+           if (e.target.id === 'color-picker') {
+               document.documentElement.style.setProperty('--primary-color', e.target.value);
+           }
            updateCalculations();
            saveDraft();
        }
@@ -480,8 +715,9 @@ document.addEventListener('DOMContentLoaded', function() {
         if (e.target.matches('input[type="checkbox"][data-target]')) {
             const pElement = document.getElementById(e.target.dataset.target);
             if (pElement) pElement.style.display = e.target.checked ? 'flex' : 'none';
-            saveDraft();
         }
+        updateCalculations();
+        saveDraft();
     });
 
     DOM.companyDetailsSection.addEventListener('click', e => {
@@ -516,16 +752,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    ['edit-arabic-btn', 'edit-french-btn'].forEach(id => {
-        document.getElementById(id)?.addEventListener('click', e => {
-            const targetDiv = document.getElementById(id.replace('edit-', '').replace('-btn', '-in-'));
-            const isEditable = targetDiv.contentEditable === 'true';
-            targetDiv.contentEditable = !isEditable;
-            targetDiv.focus();
-            e.target.textContent = isEditable ? '✏️' : '✓';
-        });
-    });
-
     document.getElementById('logo-upload').addEventListener('change', e => {
         const file = e.target.files[0];
         if (file) {
@@ -545,6 +771,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('add-custom-field-btn').addEventListener('click', () => addCustomField(null));
 
     // --- Initial Load ---
+    setupEditAmountButtons();
     const invoiceToLoad = sessionStorage.getItem('invoiceToLoad');
     if (invoiceToLoad) {
         loadInvoiceData(JSON.parse(invoiceToLoad));
