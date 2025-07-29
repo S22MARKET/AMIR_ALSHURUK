@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>مولد الفواتير المطور - مؤسسة صالحي سليم</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
     <style>
         :root {
             --primary-color: #005a9c; --secondary-color: #f4f6f9; --border-color: #dee2e6;
@@ -68,6 +71,7 @@
         .add-row-btn { background-color: var(--success-color); }
         .new-invoice-btn { background-color: var(--warning-color); color: var(--dark-text); }
         .print-btn { background-color: #007bff; }
+        .pdf-btn { background-color: #dc3545; }
         .save-btn { background-color: var(--info-color); }
         .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
         .switch input { opacity: 0; width: 0; height: 0; }
@@ -78,9 +82,25 @@
         .amount-in-words-container { position: relative; }
         .amount-in-words { margin-top: 20px; padding: 15px; background-color: #eaf2f8; border-right: 4px solid var(--purple-color); border-radius: 5px; font-weight: bold; color: var(--purple-color); }
         .edit-amount-btn { position: absolute; top: 50%; transform: translateY(-50%); left: 10px; cursor: pointer; font-size: 1.2em; opacity: 0.7; }
-        div[contenteditable="true"]:focus { outline: 2px solid var(--warning-color); background-color: #fff; }
         .hidden { display: none !important; }
         .invoice-footer { display: none; }
+        
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); z-index: 100;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .modal-content {
+            background: #fff; padding: 25px; border-radius: 8px; width: 90%; max-width: 600px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3); text-align: right;
+        }
+        .modal-content h3 { margin-top: 0; color: var(--primary-color); }
+        .modal-content textarea {
+            width: 100%; height: 120px; margin-bottom: 15px; padding: 10px;
+            border: 1px solid #ccc; border-radius: 5px; font-size: 1.1em;
+            box-sizing: border-box;
+        }
+        .modal-buttons { display: flex; gap: 10px; justify-content: flex-end; }
 
         @media print {
             body { background-color: #fff; padding: 0; margin: 0; -webkit-print-color-adjust: exact; color-adjust: exact; }
@@ -115,7 +135,19 @@
 </head>
 <body>
 <datalist id="product-suggestions"></datalist>
-<div class="page-container">
+
+<div id="edit-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+        <h3>تعديل النص يدوياً</h3>
+        <textarea id="modal-textarea"></textarea>
+        <div class="modal-buttons">
+            <button id="modal-cancel" class="action-btn" style="background-color: #6c757d;">إلغاء</button>
+            <button id="modal-save" class="action-btn" style="background-color: var(--success-color);">حفظ التغييرات</button>
+        </div>
+    </div>
+</div>
+
+<div class="page-container" id="invoice-to-print">
     <header class="invoice-header">
         <div class="logo-container">
             <img id="company-logo-img" src="" alt="شعار المؤسسة" style="display:none;">
@@ -162,6 +194,7 @@
             <button class="action-btn save-btn" id="save-invoice-btn">💾 حفظ في المحفوظات</button>
             <button class="action-btn new-invoice-btn" id="new-invoice-btn">📄 فاتورة جديدة</button>
             <button class="action-btn print-btn" onclick="window.print()">🖨️ طباعة</button>
+            <button class="action-btn pdf-btn" id="download-pdf-btn">📥 تحميل PDF</button>
             <a href="invoices.html" class="action-btn" style="background-color: #6c757d;">📜 عرض المحفوظات</a>
         </div>
 
@@ -207,11 +240,11 @@
             </div>
         </div>
         <div class="amount-in-words-container hidden" id="arabic-container">
-            <div class="amount-in-words" id="amount-in-arabic" contenteditable="false"></div>
+            <div class="amount-in-words" id="amount-in-arabic"></div>
             <span class="edit-amount-btn" id="edit-arabic-btn">✏️</span>
         </div>
         <div class="amount-in-words-container hidden" id="french-container">
-            <div class="amount-in-words" id="amount-in-french" contenteditable="false"></div>
+            <div class="amount-in-words" id="amount-in-french"></div>
             <span class="edit-amount-btn" id="edit-french-btn">✏️</span>
         </div>
 
@@ -286,7 +319,6 @@ var Tafqeet = (function() {
         return result.join(" و ");
     }
     
-    // ✨ ADDITION: New function to handle currency text generation
     function convertWithCurrency(number) {
         if (typeof number !== 'number' || isNaN(number)) {
             return "مبلغ غير صحيح.";
@@ -312,7 +344,6 @@ var Tafqeet = (function() {
     return { convert: convertNumber, convertWithCurrency: convertWithCurrency };
 })();
 
-// ✨ ADDITION: New, cleaner function for French currency text
 function numberToWordsFrCurrency(n) {
     if (typeof n !== 'number' || isNaN(n)) {
         return "Montant invalide.";
@@ -363,6 +394,12 @@ function numberToWordsFrCurrency(n) {
 
 
 document.addEventListener('DOMContentLoaded', function() {
+    const editModal = document.getElementById('edit-modal');
+    const modalTextarea = document.getElementById('modal-textarea');
+    const modalSaveBtn = document.getElementById('modal-save');
+    const modalCancelBtn = document.getElementById('modal-cancel');
+    const downloadPdfBtn = document.getElementById('download-pdf-btn');
+    let activeEditTarget = null;
     let currentInvoiceTimestamp = null;
 
     const DOM = {
@@ -409,6 +446,7 @@ document.addEventListener('DOMContentLoaded', function() {
         let discountAmount = 0;
         if (discountToggle.checked) {
             const discountValue = parseFloat(document.getElementById('discount-value').value) || 0;
+            // ✨ --- هذا هو السطر الذي تم تصحيحه --- ✨
             discountAmount = document.getElementById('discount-type').value === 'percent' ? subtotal * (discountValue / 100) : discountValue;
         }
         
@@ -448,23 +486,19 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateDisplay(montantTTC) {
         document.getElementById('discount-controls').style.display = document.getElementById('discount-toggle').checked ? 'flex' : 'none';
         
-        // --- Arabic Text ---
         const arabicToggle = document.getElementById('arabic-text-toggle');
         const arabicContainer = document.getElementById('arabic-container');
         const amountInArabicDiv = document.getElementById('amount-in-arabic');
         arabicContainer.classList.toggle('hidden', !arabicToggle.checked);
         if (arabicToggle.checked && amountInArabicDiv.dataset.locked !== 'true') {
-            // ✨ CHANGE: Using the new, cleaner function
             amountInArabicDiv.textContent = Tafqeet.convertWithCurrency(montantTTC);
         }
         
-        // --- French Text ---
         const frenchToggle = document.getElementById('french-text-toggle');
         const frenchContainer = document.getElementById('french-container');
         const amountInFrenchDiv = document.getElementById('amount-in-french');
         frenchContainer.classList.toggle('hidden', !frenchToggle.checked);
         if (frenchToggle.checked && amountInFrenchDiv.dataset.locked !== 'true') {
-            // ✨ CHANGE: Using the new, cleaner function
             amountInFrenchDiv.textContent = numberToWordsFrCurrency(montantTTC);
         }
     }
@@ -670,7 +704,7 @@ document.addEventListener('DOMContentLoaded', function() {
         alert('تم حفظ الفاتورة في المحفوظات بنجاح!');
     }
 
-    function setupEditAmountButtons() {
+    function setupEditAmountModal() {
         ['edit-arabic-btn', 'edit-french-btn'].forEach(id => {
             const button = document.getElementById(id);
             if (!button) return;
@@ -678,25 +712,76 @@ document.addEventListener('DOMContentLoaded', function() {
             button.addEventListener('click', () => {
                 const targetDivId = id.replace('edit-', '').replace('-btn', '-in-');
                 const targetDiv = document.getElementById(targetDivId);
+                activeEditTarget = { button, div: targetDiv };
 
                 if (button.textContent === '✏️') {
-                    button.textContent = '✓';
-                    targetDiv.contentEditable = true;
-                    targetDiv.focus();
-                }
-                else if (button.textContent === '✓') {
-                    button.textContent = '🔄';
-                    targetDiv.dataset.locked = 'true';
-                    targetDiv.contentEditable = false;
-                    saveDraft(); 
-                }
-                else if (button.textContent === '🔄') {
-                    button.textContent = '✏️';
+                    modalTextarea.value = targetDiv.textContent;
+                    editModal.classList.remove('hidden');
+                } else if (button.textContent === '🔄') {
                     delete targetDiv.dataset.locked;
+                    button.textContent = '✏️';
                     updateCalculations();
                     saveDraft();
                 }
             });
+        });
+
+        modalSaveBtn.addEventListener('click', () => {
+            if (activeEditTarget) {
+                activeEditTarget.div.textContent = modalTextarea.value;
+                activeEditTarget.div.dataset.locked = 'true';
+                activeEditTarget.button.textContent = '🔄';
+                editModal.classList.add('hidden');
+                activeEditTarget = null;
+                saveDraft();
+            }
+        });
+
+        modalCancelBtn.addEventListener('click', () => {
+            editModal.classList.add('hidden');
+            activeEditTarget = null;
+        });
+    }
+
+    function downloadPDF() {
+        const invoiceElement = document.getElementById('invoice-to-print');
+        const invoiceNumber = document.getElementById('invoice-num').value.replace(/[\/\\]/g, '-'); // Replace slashes for filename
+        
+        html2canvas(invoiceElement, {
+            scale: 2,
+            useCORS: true,
+            logging: false,
+        }).then(canvas => {
+            const imgData = canvas.toDataURL('image/png');
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF({
+                orientation: 'portrait',
+                unit: 'pt',
+                format: 'a4'
+            });
+
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = pdf.internal.pageSize.getHeight();
+            const canvasAspectRatio = canvas.width / canvas.height;
+            const pdfAspectRatio = pdfWidth / pdfHeight;
+
+            let imgWidth = pdfWidth;
+            let imgHeight = pdfWidth / canvasAspectRatio;
+            let pageHeight = pdfHeight;
+            let heightLeft = imgHeight;
+            let position = 0;
+
+            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+
+            while (heightLeft > 0) {
+                position = heightLeft - imgHeight;
+                pdf.addPage();
+                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+            }
+
+            pdf.save(`Facture-${invoiceNumber}.pdf`);
         });
     }
 
@@ -769,9 +854,10 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('new-invoice-btn').addEventListener('click', startNewInvoice);
     document.getElementById('save-invoice-btn').addEventListener('click', saveToHistory);
     document.getElementById('add-custom-field-btn').addEventListener('click', () => addCustomField(null));
+    downloadPdfBtn.addEventListener('click', downloadPDF);
 
     // --- Initial Load ---
-    setupEditAmountButtons();
+    setupEditAmountModal(); 
     const invoiceToLoad = sessionStorage.getItem('invoiceToLoad');
     if (invoiceToLoad) {
         loadInvoiceData(JSON.parse(invoiceToLoad));
