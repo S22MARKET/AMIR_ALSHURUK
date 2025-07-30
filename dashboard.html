@@ -96,7 +96,7 @@
             body * { visibility: hidden; }
             #report-section, #report-section * { visibility: visible; }
             #report-section { position: absolute; left: 0; top: 0; width: 100%; margin: 0; padding: 0; box-shadow: none; border: none; }
-            .btn, #report-actions { display: none; }
+            .btn, #report-actions, header { display: none; }
         }
         /* Responsive Design */
         @media (max-width: 768px) {
@@ -121,6 +121,10 @@
         <header>
             <h1>نظام إدارة الحضور المتقدم</h1>
             <p>حل متكامل لتتبع حضور العمال، إنشاء التقارير، وحفظ الملاحظات.</p>
+            <button id="refresh-btn" class="btn outline no-hide-span" style="margin-top: 15px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+                <span>تحديث الصفحة</span>
+            </button>
         </header>
 
         <div class="card">
@@ -164,6 +168,10 @@
             <div class="grid-container">
                 <div><h3>مقياس الحضور العام</h3><div id="gauge-wrapper"><canvas id="overall-gauge-chart"></canvas><div id="gauge-text"></div></div></div>
                 <div><h3>ملخص الحالات</h3><canvas id="overall-pie-chart"></canvas></div>
+            </div>
+            <div style="margin-top: 40px;">
+                <h3 style="text-align: center; margin-bottom: 20px; color: var(--primary-dark);">منحنى الحضور خلال الفترة</h3>
+                <canvas id="attendance-trend-chart"></canvas>
             </div>
         </div>
 
@@ -209,19 +217,20 @@ document.addEventListener('DOMContentLoaded', () => {
         employeeModal: document.getElementById('employee-modal'), modalCloseBtn: document.getElementById('modal-close-btn'),
         modalTitle: document.getElementById('modal-title'), modalEmployeeName: document.getElementById('modal-employee-name'),
         modalEmployeeId: document.getElementById('modal-employee-id'), 
-        modalEmployeeNotes: document.getElementById('modal-employee-notes'), // ** NEW **
+        modalEmployeeNotes: document.getElementById('modal-employee-notes'),
         saveModalBtn: document.getElementById('save-modal-btn'),
         detailsModal: document.getElementById('details-modal'), detailsCloseBtn: document.getElementById('details-close-btn'),
         detailsTitle: document.getElementById('details-title'), detailsPresent: document.getElementById('details-present'),
         detailsAbsent: document.getElementById('details-absent'), detailsTotal: document.getElementById('details-total'),
         gaugeText: document.getElementById('gauge-text'),
+        refreshBtn: document.getElementById('refresh-btn'), // ** NEW **
     };
 
     // STATE & HELPERS
     let state = { employees: [], attendance: {}, currentEditingId: null };
     let chartInstances = {};
     let lastReportData = [];
-    const STORAGE_KEY = 'attendance_app_v6'; // ** Updated version
+    const STORAGE_KEY = 'attendance_app_v6';
     const { jsPDF } = window.jspdf;
 
     const saveState = () => localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
@@ -229,12 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const stored = localStorage.getItem(STORAGE_KEY);
         if (stored) {
             const parsedState = JSON.parse(stored);
-            // Ensure every employee has a notes field to avoid errors with old data
-            parsedState.employees.forEach(emp => {
-                if (emp.notes === undefined) {
-                    emp.notes = '';
-                }
-            });
+            parsedState.employees.forEach(emp => { if (emp.notes === undefined) { emp.notes = ''; } });
             state = parsedState;
         }
     };
@@ -288,23 +292,31 @@ document.addEventListener('DOMContentLoaded', () => {
         lastReportData = state.employees.map(emp => {
             let present = 0, absent = 0;
             const dailyData = [];
-            if (state.attendance[emp.id]) {
-                for (let d = new Date(start); d <= new Date(end); d.setDate(d.getDate() + 1)) {
-                    const isoDate = getISODate(d);
-                    const status = state.attendance[emp.id][isoDate];
-                    if (status === 'full') {
-                        present++;
-                        dailyData.push({ date: isoDate, status: 1 });
-                    } else if (status === 'absent') {
-                        absent++;
-                        dailyData.push({ date: isoDate, status: -1 });
-                    } else {
-                        dailyData.push({ date: isoDate, status: 0 });
-                    }
+            for (let d = new Date(start); d <= new Date(end); d.setDate(d.getDate() + 1)) {
+                const isoDate = getISODate(d);
+                const status = state.attendance[emp.id]?.[isoDate];
+                if (status === 'full') {
+                    present++;
+                    dailyData.push({ date: isoDate, status: 1 });
+                } else if (status === 'absent') {
+                    absent++;
+                    dailyData.push({ date: isoDate, status: -1 });
+                } else {
+                    dailyData.push({ date: isoDate, status: 0 });
                 }
             }
             return { id: emp.id, name: emp.name, present, absent, total: present + absent, dailyData };
         });
+
+        const trendData = { labels: [], data: [] };
+        for (let d = new Date(start); d <= new Date(end); d.setDate(d.getDate() + 1)) {
+            const isoDate = getISODate(d);
+            trendData.labels.push(formatDate(isoDate));
+            let dailyPresentCount = state.employees.reduce((count, emp) => {
+                return count + (state.attendance[emp.id]?.[isoDate] === 'full' ? 1 : 0);
+            }, 0);
+            trendData.data.push(dailyPresentCount);
+        }
 
         DOMElements.reportTableBody.innerHTML = lastReportData.map(d => `
             <tr><td>${d.name}</td><td>${d.present}</td><td>${d.absent}</td><td><strong>${d.total}</strong></td>
@@ -314,7 +326,7 @@ document.addEventListener('DOMContentLoaded', () => {
         DOMElements.reportTitle.textContent = `تقرير من ${formatDate(start)} إلى ${formatDate(end)}`;
         DOMElements.reportSection.style.display = 'block';
         DOMElements.chartsSection.style.display = 'block';
-        renderOverallCharts(lastReportData);
+        renderOverallCharts(lastReportData, trendData); // ** UPDATED **
         updateShareLinks(generateShareText());
         DOMElements.reportSection.scrollIntoView({ behavior: 'smooth' });
     };
@@ -322,7 +334,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // CHARTING
     const destroyCharts = () => { Object.values(chartInstances).forEach(c => c?.destroy()); chartInstances = {}; };
 
-    const renderOverallCharts = (data) => {
+    const renderOverallCharts = (data, trendData) => { // ** UPDATED **
         destroyCharts();
         const totalPresent = data.reduce((sum, d) => sum + d.present, 0);
         const totalAbsent = data.reduce((sum, d) => sum + d.absent, 0);
@@ -331,15 +343,31 @@ document.addEventListener('DOMContentLoaded', () => {
         
         chartInstances.gauge = new Chart(document.getElementById('overall-gauge-chart'), {
             type: 'doughnut',
-            data: { datasets: [{ data: [attendancePercentage, 100 - attendancePercentage], backgroundColor: [var(--success-color), var(--border-color)], borderWidth: 0 }] },
+            data: { datasets: [{ data: [attendancePercentage, 100 - attendancePercentage], backgroundColor: ['var(--success-color)', 'var(--border-color)'], borderWidth: 0 }] },
             options: { rotation: -90, circumference: 180, cutout: '70%', responsive: true, tooltips: { enabled: false } }
         });
         DOMElements.gaugeText.textContent = `${attendancePercentage}%`;
 
         chartInstances.pie = new Chart(document.getElementById('overall-pie-chart'), {
             type: 'pie',
-            data: { labels: ['حضور', 'غياب'], datasets: [{ data: [totalPresent, totalAbsent], backgroundColor: [var(--success-color), var(--danger-color)] }] },
+            data: { labels: ['حضور', 'غياب'], datasets: [{ data: [totalPresent, totalAbsent], backgroundColor: ['var(--success-color)', 'var(--danger-color)'] }] },
             options: { responsive: true, plugins: { legend: { position: 'top' } } }
+        });
+
+        // ** NEW **: Line Chart for Attendance Trend
+        chartInstances.trend = new Chart(document.getElementById('attendance-trend-chart'), {
+            type: 'line',
+            data: {
+                labels: trendData.labels,
+                datasets: [{
+                    label: 'عدد الحاضرين يومياً',
+                    data: trendData.data,
+                    borderColor: 'var(--primary-color)',
+                    backgroundColor: 'rgba(13, 110, 253, 0.1)',
+                    fill: true, tension: 0.3, borderWidth: 2
+                }]
+            },
+            options: { responsive: true, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }, plugins: { legend: { display: false } } }
         });
     };
     
@@ -350,7 +378,7 @@ document.addEventListener('DOMContentLoaded', () => {
         DOMElements.modalTitle.textContent = id ? `تعديل بيانات: ${emp.name}` : 'إضافة عامل جديد';
         DOMElements.modalEmployeeName.value = emp?.name || '';
         DOMElements.modalEmployeeId.value = emp?.customId || '';
-        DOMElements.modalEmployeeNotes.value = emp?.notes || ''; // ** NEW **
+        DOMElements.modalEmployeeNotes.value = emp?.notes || '';
         DOMElements.employeeModal.style.display = 'flex';
     };
 
@@ -358,21 +386,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const name = DOMElements.modalEmployeeName.value.trim();
         if (!name) return alert('الرجاء إدخال اسم العامل.');
         const customId = DOMElements.modalEmployeeId.value.trim();
-        const notes = DOMElements.modalEmployeeNotes.value.trim(); // ** NEW **
+        const notes = DOMElements.modalEmployeeNotes.value.trim();
 
         if (state.currentEditingId) {
             const emp = state.employees.find(e => e.id === state.currentEditingId);
-            emp.name = name;
-            emp.customId = customId;
-            emp.notes = notes; // ** NEW **
+            emp.name = name; emp.customId = customId; emp.notes = notes;
         } else {
-            const newEmp = { id: Date.now(), name, customId, notes }; // ** NEW **
-            state.employees.push(newEmp);
-            state.attendance[newEmp.id] = {};
+            const newEmp = { id: Date.now(), name, customId, notes };
+            state.employees.push(newEmp); state.attendance[newEmp.id] = {};
         }
-        saveState();
-        renderEmployeesTable();
-        renderDailyAttendance();
+        saveState(); renderEmployeesTable(); renderDailyAttendance();
         DOMElements.employeeModal.style.display = 'none';
     };
 
@@ -387,7 +410,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (chartInstances.detailsPie) chartInstances.detailsPie.destroy();
         chartInstances.detailsPie = new Chart(document.getElementById('details-pie-chart'), {
             type: 'doughnut',
-            data: { labels: ['حضور', 'غياب'], datasets: [{ data: [data.present, data.absent], backgroundColor: [var(--success-color), var(--danger-color)] }] }
+            data: { labels: ['حضور', 'غياب'], datasets: [{ data: [data.present, data.absent], backgroundColor: ['var(--success-color)', 'var(--danger-color)'] }] }
         });
 
         if (chartInstances.detailsBar) chartInstances.detailsBar.destroy();
@@ -398,7 +421,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 datasets: [{ 
                     label: 'سجل الحضور', 
                     data: data.dailyData.map(d => d.status),
-                    backgroundColor: data.dailyData.map(d => d.status === 1 ? var(--success-color) : d.status === -1 ? var(--danger-color) : var(--border-color)),
+                    backgroundColor: data.dailyData.map(d => d.status === 1 ? 'var(--success-color)' : d.status === -1 ? 'var(--danger-color)' : 'var(--border-color)'),
                 }]
             },
             options: { scales: { y: { ticks: { display: false }, grid: { display: false } } }, plugins: { legend: { display: false } } }
@@ -437,8 +460,7 @@ document.addEventListener('DOMContentLoaded', () => {
             pdf.addImage(imgData, 'PNG', 10, 10, pdfWidth - 20, pdfHeight - 20);
             pdf.save(`report_${getISODate()}.pdf`);
         } catch (e) {
-            alert('حدث خطأ أثناء إنشاء ملف PDF.');
-            console.error(e);
+            alert('حدث خطأ أثناء إنشاء ملف PDF.'); console.error(e);
         } finally {
             DOMElements.pdfBtn.innerHTML = `<span>حفظ PDF</span>`;
         }
@@ -453,6 +475,7 @@ document.addEventListener('DOMContentLoaded', () => {
         DOMElements.searchInput.addEventListener('input', (e) => renderEmployeesTable(e.target.value));
         DOMElements.attendanceDate.addEventListener('change', renderDailyAttendance);
         DOMElements.generateReportBtn.addEventListener('click', generateReport);
+        DOMElements.refreshBtn.addEventListener('click', () => location.reload()); // ** NEW **
         DOMElements.employeesTableBody.addEventListener('click', (e) => {
             const target = e.target.closest('button');
             if (!target) return;
@@ -462,9 +485,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (confirm('هل أنت متأكد من حذف هذا العامل وكل سجلاته؟')) {
                     state.employees = state.employees.filter(e => e.id !== id);
                     delete state.attendance[id];
-                    saveState();
-                    renderEmployeesTable();
-                    renderDailyAttendance();
+                    saveState(); renderEmployeesTable(); renderDailyAttendance();
                 }
             }
         });
