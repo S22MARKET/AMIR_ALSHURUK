@@ -488,16 +488,16 @@
             </div>
             <div class="search-container">
                 <i class="fas fa-search"></i>
-                <input type="text" id="search-input" placeholder="ابحث بالاسم أو الرقم التعريفي..." aria-label="بحث عن العاملين">
+                <input type="text" id="search-input" placeholder="ابحث بالاسم أو رقم الهاتف..." aria-label="بحث عن العاملين">
             </div>
             <div class="table-wrapper">
                 <table id="employees-table">
                     <thead>
                         <tr>
                             <th>الاسم</th>
-                            <th>الرقم التعريفي</th>
+                            <th>رقم الهاتف </th>
                             <th>الحالة</th>
-                            <th>إجراءات</th>
+                            <th>إجراءات</th>ال
                         </tr>
                     </thead>
                     <tbody></tbody>
@@ -625,8 +625,8 @@
                 <input type="text" id="modal-employee-name" aria-label="اسم العامل">
             </div>
             <div class="form-group">
-                <label for="modal-employee-id">الرقم التعريفي</label>
-                <input type="text" id="modal-employee-id" aria-label="الرقم التعريفي للعامل">
+                <label for="modal-employee-id">رقم الهاتف</label>
+                <input type="text" id="modal-employee-id" aria-label="رقم الهاتف للعامل">
             </div>
             <div class="form-group">
                 <label for="modal-employee-notes">ملاحظات (المفكرة)</label>
@@ -771,7 +771,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return `
                 <tr data-id="${emp.id}">
                     <td data-label="الاسم">${emp.name}</td>
-                    <td data-label="الرقم التعريفي">${emp.customId || 'N/A'}</td>
+                    <td data-label="رقم الهاتف">${emp.customId || 'N/A'}</td>
                     <td data-label="الحالة">
                         <span class="status-badge ${status.class}">${status.text}</span>
                     </td>
