@@ -508,14 +508,14 @@
             </div>
             <div class="search-container">
                 <i class="fas fa-search"></i>
-                <input type="text" id="search-input" placeholder="ابحث بالاسم أو الرقم التعريفي..." aria-label="بحث عن العاملين">
+                <input type="text" id="search-input" placeholder="ابحث بالاسم أو رقم الهاتف او بطاقة التعريف..." aria-label="بحث عن العاملين">
             </div>
             <div class="table-wrapper">
                 <table id="employees-table">
                     <thead>
                         <tr>
                             <th>الاسم</th>
-                            <th>الرقم التعريفي</th>
+                            <th>رقم الهاتف او بطاقة التعريف</th>
                             <th>الحالة اليوم</th>
                             <th>إجراءات</th>
                         </tr>
@@ -658,8 +658,8 @@
                 <input type="text" id="modal-employee-name" aria-label="اسم العامل">
             </div>
             <div class="form-group">
-                <label for="modal-employee-id">الرقم التعريفي</label>
-                <input type="text" id="modal-employee-id" aria-label="الرقم التعريفي للعامل">
+                <label for="modal-employee-id">رقم الهاتف او بطاقة التعريف</label>
+                <input type="text" id="modal-employee-id" aria-label="رقم الهاتف او بطاقة التعريف للعامل">
             </div>
             <div class="form-group">
                 <label for="modal-employee-notes">ملاحظات (المفكرة)</label>
@@ -757,7 +757,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return `
                 <tr data-id="${emp.id}">
                     <td data-label="الاسم">${emp.name}</td>
-                    <td data-label="الرقم التعريفي">${emp.customId || 'N/A'}</td>
+                    <td data-label="رقم الهاتف او بطاقة التعريف">${emp.customId || 'N/A'}</td>
                     <td data-label="الحالة اليوم"><span class="status-badge ${status.class}">${status.text}</span></td>
                     <td data-label="إجراءات" class="action-buttons">
                         <button class="btn warning edit-btn" aria-label="تعديل ${emp.name}"><i class="fas fa-edit"></i> تعديل</button>
@@ -1053,4 +1053,4 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 </body>
-</html>
+</html>ب
