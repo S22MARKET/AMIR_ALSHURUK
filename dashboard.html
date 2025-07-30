@@ -3,516 +3,1317 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام إدارة الحضور المتقدم - مع مفكرة</title>
+    <title>نظام إدارة الحضور المطور</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #0d6efd; --primary-dark: #0a58ca; --bg-color: #f8f9fa;
-            --card-bg: #ffffff; --text-color: #212529; --border-color: #dee2e6;
-            --success-color: #198754; --danger-color: #dc3545; --warning-color: #ffc107;
-            --info-color: #0dcaf0; --shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            --primary-color: #0d6efd; --primary-dark: #0a58ca;
+            --bg-color: #f0f2f5; --card-bg: #ffffff; --text-color: #212529;
+            --border-color: #dee2e6; --shadow: 0 8px 25px rgba(0, 0, 0, 0.07);
+            --success-color: #198754; --danger-color: #dc3545;
+            --warning-color: #ffc107; --info-color: #0dcaf0; --share-color: #6f42c1;
         }
-        /* General Styles */
+        body.dark-theme {
+            --primary-color: #5372F0; --primary-dark: #3a52b1;
+            --bg-color: #121212; --card-bg: #1e1e1e; --text-color: #e0e0e0;
+            --border-color: #333; --shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            --success-color: #4CAF50; --danger-color: #f44336;
+            --warning-color: #FF9800; --info-color: #00BCD4; --share-color: #9b59b6;
+        }
+        *, *::before, *::after { 
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; 
+            box-sizing: border-box; 
+        }
         body {
-            font-family: 'Cairo', sans-serif; background-color: var(--bg-color);
-            color: var(--text-color); margin: 0; padding: 15px;
+            font-family: 'Cairo', sans-serif; 
+            background-color: var(--bg-color);
+            color: var(--text-color); 
+            margin: 0; 
+            padding: 15px;
+            min-height: 100vh;
         }
-        .container { max-width: 1200px; margin: auto; }
-        header { text-align: center; margin-bottom: 40px; }
-        header h1 { color: var(--primary-color); font-size: 2.6em; font-weight: 800; margin: 0; }
-        header p { font-size: 1.2em; color: #6c757d; }
-        .card {
-            background: var(--card-bg); border-radius: 16px; padding: 30px;
-            margin-bottom: 25px; box-shadow: var(--shadow); border: 1px solid var(--border-color);
+        .container { 
+            max-width: 1300px; 
+            margin: auto; 
+            padding-bottom: 30px;
         }
-        .card-header {
-            display: flex; flex-wrap: wrap; gap: 15px; justify-content: space-between;
-            align-items: center; margin-bottom: 20px;
+        header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            text-align: center; 
+            margin-bottom: 30px; 
+            flex-wrap: wrap; 
+            gap: 15px; 
+            padding-top: 15px;
         }
-        .card-header h2 {
-            margin: 0; color: var(--primary-color); font-size: 1.8em;
-            border-bottom: 3px solid var(--primary-color); padding-bottom: 10px;
+        .header-title { 
+            flex-grow: 1; 
+            min-width: 250px;
         }
-        /* Buttons */
-        .btn {
-            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-            padding: 12px 22px; border: 1px solid transparent; border-radius: 8px;
-            cursor: pointer; font-weight: 700; color: #fff;
-            transition: all 0.25s ease; font-family: 'Cairo', sans-serif; font-size: 1em;
+        header h1 { 
+            color: var(--primary-color); 
+            font-size: clamp(1.8em, 4vw, 2.4em); 
+            font-weight: 800; 
+            margin: 0; 
         }
-        .btn:hover { transform: translateY(-3px); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
-        .btn-icon { width: 22px; height: 22px; stroke-width: 2; }
-        .btn.primary { background-color: var(--primary-color); }
+        header p { 
+            font-size: clamp(0.9em, 2vw, 1.1em); 
+            color: #6c757d; 
+            margin-top: 5px;
+        }
+        .card { 
+            background: var(--card-bg); 
+            border-radius: 16px; 
+            padding: 20px; 
+            margin-bottom: 20px; 
+            box-shadow: var(--shadow); 
+            border: 1px solid var(--border-color); 
+        }
+        .card-header { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 15px; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 20px; 
+            border-bottom: 1px solid var(--border-color); 
+            padding-bottom: 15px; 
+        }
+        .card-header h2 { 
+            margin: 0; 
+            color: var(--primary-color); 
+            font-size: 1.5em; 
+            font-weight: 700;
+        }
+        .grid-container { 
+            display: grid; 
+            gap: 20px; 
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
+        }
+        .btn { 
+            display: inline-flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 8px; 
+            padding: 10px 16px; 
+            border: 1px solid transparent; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-weight: 700; 
+            color: #fff; 
+            transition: all 0.25s ease; 
+            font-family: 'Cairo', sans-serif; 
+            font-size: 0.9em; 
+            text-decoration: none;
+            white-space: nowrap;
+        }
+        .btn:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
+        }
+        .btn:active {
+            transform: translateY(0);
+        }
+        .btn-icon { 
+            width: 18px; 
+            height: 18px; 
+        }
+        .btn.primary { background-color: var(--primary-color); } 
         .btn.primary:hover { background-color: var(--primary-dark); }
-        .btn.success { background-color: var(--success-color); }
+        .btn.success { background-color: var(--success-color); } 
         .btn.danger { background-color: var(--danger-color); }
-        .btn.warning { background-color: var(--warning-color); color: var(--text-color); }
-        .btn.info { background-color: var(--info-color); color: var(--text-color); }
-        .btn.outline { background-color: transparent; color: var(--text-color); border-color: var(--border-color); }
-        .btn.outline:hover { background-color: var(--bg-color); color: var(--primary-color); border-color: var(--primary-color); }
-        /* Forms & Tables */
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 8px; font-weight: 700; }
-        input, textarea {
-            width: 100%; padding: 12px; border: 1px solid var(--border-color);
-            border-radius: 8px; box-sizing: border-box; transition: all 0.3s;
-            font-family: 'Cairo', sans-serif;
+        .btn.warning { background-color: var(--warning-color); color: #000; } 
+        .btn.info { background-color: var(--info-color); color: #000; }
+        .btn.share { background-color: var(--share-color); }
+        .btn.outline { 
+            background-color: transparent; 
+            color: var(--primary-color); 
+            border-color: var(--primary-color); 
         }
-        textarea { resize: vertical; min-height: 100px; }
-        input:focus, textarea:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.25); }
-        .table-wrapper { overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; min-width: 550px; }
-        th, td { padding: 14px; text-align: center; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
-        thead th { background-color: #e9ecef; color: var(--primary-dark); font-size: 1.1em; font-weight: 700; }
-        tbody tr:hover { background-color: #e9ecef; }
-        .action-buttons { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
-        /* Modals */
-        .modal {
-            display: none; position: fixed; z-index: 1000; left: 0; top: 0;
-            width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.7);
-            align-items: center; justify-content: center; backdrop-filter: blur(5px);
+        .btn.outline:hover { 
+            background-color: var(--primary-color); 
+            color: var(--card-bg); 
         }
-        .modal-content {
-            background-color: var(--card-bg); margin: auto; padding: 30px;
-            border: 1px solid var(--border-color); width: 90%; max-width: 600px;
-            border-radius: 16px; animation: slideDown 0.4s;
+        #theme-toggle { 
+            font-size: 1.1rem; 
+            padding: 8px 12px; 
+            min-width: 44px;
+            min-height: 44px;
         }
-        @keyframes slideDown { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        .close-btn { color: #aaa; float: left; font-size: 32px; font-weight: bold; cursor: pointer; }
-        /* Report & Charts */
-        #report-actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 25px; }
-        #gauge-wrapper { position: relative; width: 100%; max-width: 300px; margin: auto; }
-        #gauge-text {
-            position: absolute; top: 65%; left: 50%; transform: translate(-50%, -50%);
-            font-size: 2.5em; font-weight: 800; color: var(--primary-dark);
+        #theme-icon-moon { display: none; } 
+        body.dark-theme #theme-icon-moon { display: block; } 
+        body.dark-theme #theme-icon-sun { display: none; }
+        .form-group { 
+            margin-bottom: 15px;
         }
-        /* Print Styles */
+        .form-group label { 
+            display: block; 
+            margin-bottom: 8px; 
+            font-weight: 700; 
+            font-size: 0.95em;
+        }
+        input, textarea, select { 
+            width: 100%; 
+            padding: 12px; 
+            border: 1px solid var(--border-color); 
+            border-radius: 8px; 
+            background-color: var(--card-bg); 
+            color: var(--text-color); 
+            font-family: 'Cairo', sans-serif; 
+            font-size: 0.95em;
+        }
+        input:focus, textarea:focus, select:focus { 
+            outline: none; 
+            border-color: var(--primary-color); 
+            box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary-color) 25%, transparent); 
+        }
+        .table-wrapper { 
+            overflow-x: auto; 
+            -webkit-overflow-scrolling: touch;
+            margin-top: 15px;
+        }
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            min-width: 600px; 
+        }
+        th, td { 
+            padding: 12px; 
+            text-align: center; 
+            border-bottom: 1px solid var(--border-color); 
+            vertical-align: middle; 
+        }
+        thead th { 
+            background-color: color-mix(in srgb, var(--primary-color) 10%, var(--card-bg)); 
+            color: var(--primary-dark); 
+            font-size: 1em; 
+            font-weight: 700;
+            position: sticky;
+            top: 0;
+        }
+        body.dark-theme thead th { 
+            color: var(--primary-color); 
+        }
+        tbody tr:hover { 
+            background-color: color-mix(in srgb, var(--primary-color) 5%, var(--card-bg)); 
+        }
+        td pre { 
+            white-space: pre-wrap; 
+            word-wrap: break-word; 
+            text-align: right; 
+            font-family: 'Cairo', sans-serif; 
+            font-size: 0.9em; 
+            max-width: 250px; 
+            margin: auto; 
+            background-color: color-mix(in srgb, var(--primary-color) 5%, transparent);
+            padding: 8px;
+            border-radius: 6px;
+        }
+        .modal { 
+            display: none; 
+            position: fixed; 
+            z-index: 1000; 
+            left: 0; 
+            top: 0; 
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgba(0,0,0,0.7); 
+            align-items: center; 
+            justify-content: center; 
+            backdrop-filter: blur(5px); 
+            padding: 15px;
+        }
+        .modal-content { 
+            background-color: var(--card-bg); 
+            margin: auto; 
+            padding: 20px; 
+            border: 1px solid var(--border-color); 
+            width: 100%; 
+            max-width: 600px; 
+            border-radius: 16px; 
+            animation: slideDown 0.4s; 
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        @keyframes slideDown { 
+            from { transform: translateY(-50px); opacity: 0; } 
+            to { transform: translateY(0); opacity: 1; } 
+        }
+        .close-btn { 
+            color: #aaa; 
+            float: left; 
+            font-size: 28px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            padding: 5px;
+            line-height: 1;
+        }
+        #gauge-wrapper { 
+            position: relative; 
+            width: 100%; 
+            max-width: 250px; 
+            margin: auto;
+            /* MODIFIED: Use aspect ratio for consistent shape */
+            aspect-ratio: 2 / 1;
+        }
+        #gauge-text { 
+            position: absolute; 
+            top: 75%; /* Adjusted for new aspect ratio */
+            left: 50%; 
+            transform: translate(-50%, -50%); 
+            font-size: clamp(1.8em, 8vw, 2.2em);
+            font-weight: 800; 
+            color: var(--primary-color); 
+        }
+        /* MODIFIED: Improved responsive chart container */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            /* Set aspect ratio to control height relative to width */
+            aspect-ratio: 16 / 10; /* A good default for bar/line charts */
+            max-height: 400px; /* Prevent it from becoming too tall on large screens */
+            margin: 0 auto; /* Center the container */
+        }
+        /* Trend chart can be wider */
+        #attendance-trend-chart-container {
+            aspect-ratio: 16 / 8;
+            max-height: 350px;
+        }
+        #details-bar-chart-container {
+             aspect-ratio: 16 / 8;
+        }
+        #charts-section h3 { 
+            text-align: center; 
+            margin: 15px 0; 
+            color: var(--primary-color);
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        .status-present {
+            background-color: color-mix(in srgb, var(--success-color) 20%, transparent);
+            color: var(--success-color);
+        }
+        .status-absent {
+            background-color: color-mix(in srgb, var(--danger-color) 20%, transparent);
+            color: var(--danger-color);
+        }
+        .status-none {
+            background-color: color-mix(in srgb, var(--warning-color) 20%, transparent);
+            color: var(--warning-color);
+        }
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .action-buttons .btn {
+            flex: 1 1 auto;
+            min-width: 80px;
+        }
+        .loading {
+            position: relative;
+            pointer-events: none;
+            opacity: 0.7;
+        }
+        .loading::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin {
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        .no-data {
+            text-align: center;
+            padding: 20px;
+            color: #6c757d;
+            font-size: 1.1em;
+        }
+        .search-container {
+            position: relative;
+            margin-bottom: 15px;
+        }
+        .search-container i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+        }
+        .search-container input {
+            padding-left: 40px;
+        }
+
         @media print {
+            body, .container { padding: 0; margin: 0; }
             body * { visibility: hidden; }
-            #report-section, #report-section * { visibility: visible; }
-            #report-section { position: absolute; left: 0; top: 0; width: 100%; margin: 0; padding: 0; box-shadow: none; border: none; }
-            .btn, #report-actions, header { display: none; }
+            #printable-report-content, #printable-report-content * { visibility: visible; }
+            #printable-report-content { 
+                position: absolute; 
+                left: 0; 
+                top: 0; 
+                width: 100%; 
+                margin: 0; 
+                padding: 10px; 
+                box-shadow: none; 
+                border: none; 
+                background: white;
+                color: black;
+            }
+            .card { 
+                box-shadow: none; 
+                border: 1px solid #ddd; 
+                page-break-inside: avoid;
+            }
+            .chart-container {
+                page-break-inside: avoid;
+            }
+            #report-actions {
+                display: none !important;
+            }
         }
-        /* Responsive Design */
         @media (max-width: 768px) {
             body { padding: 10px; }
-            header h1 { font-size: 2em; }
-            .card { padding: 20px; }
-            .card-header h2 { font-size: 1.4em; }
-            .btn { padding: 10px 15px; font-size: 0.9em; }
-            .modal-content { padding: 20px; }
+            header { justify-content: center; }
+            .card { padding: 15px; }
+            .card-header { flex-direction: column; align-items: stretch; gap: 15px; }
+            .card-header h2 { text-align: center; }
+            .table-wrapper { border: none; }
+            table, thead, tbody, th, td, tr { display: block; }
+            thead { display: none; }
+            tbody tr { 
+                margin-bottom: 15px; 
+                border: 1px solid var(--border-color); 
+                border-radius: 12px; 
+                padding: 10px; 
+            }
+            td { 
+                display: flex; 
+                justify-content: space-between; 
+                align-items: center; 
+                padding: 10px 5px; 
+                text-align: right; 
+                border-bottom: 1px dashed var(--border-color); 
+            }
+            tr td:last-child { border-bottom: none; }
+            td::before { 
+                content: attr(data-label); 
+                font-weight: bold; 
+                flex-shrink: 0; 
+                padding-left: 15px; 
+                color: var(--primary-color); 
+                font-size: 0.9em;
+            }
+            td.action-buttons { 
+                flex-direction: column; 
+                gap: 8px; 
+                padding: 15px 5px 5px; 
+            }
+            td.action-buttons > * { width: 100%; }
+            #report-table td pre { max-width: 100%; }
+            .modal-content {
+                padding: 15px;
+            }
+            .grid-container {
+                grid-template-columns: 1fr;
+            }
         }
         @media (max-width: 480px) {
-            .btn span { display: none; } /* Hide text on small screens */
-            .btn.no-hide-span span { display: inline; } /* Keep text for important buttons */
-            .action-buttons { flex-direction: column; align-items: stretch; }
-            .action-buttons .btn { width: 100%; justify-content: center; }
-            .action-buttons .btn span { display: inline; } /* Show text again when stacked */
+            .btn {
+                padding: 8px 12px;
+                font-size: 0.85em;
+            }
+            .card-header h2 {
+                font-size: 1.3em;
+            }
+            input, textarea, select {
+                padding: 10px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>نظام إدارة الحضور المتقدم</h1>
-            <p>حل متكامل لتتبع حضور العمال، إنشاء التقارير، وحفظ الملاحظات.</p>
-            <button id="refresh-btn" class="btn outline no-hide-span" style="margin-top: 15px;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-                <span>تحديث الصفحة</span>
+            <div class="header-title">
+                <h1>نظام إدارة الحضور المطور</h1>
+                <p>تتبع متكامل للحضور مع تقارير ورسوم بيانية تفاعلية</p>
+            </div>
+            <button id="theme-toggle" class="btn outline" title="تبديل الثيم" aria-label="تبديل وضع السطوع/الظلام">
+                <svg id="theme-icon-sun" class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="5"/>
+                    <line x1="12" y1="1" x2="12" y2="3"/>
+                    <line x1="12" y1="21" x2="12" y2="23"/>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                    <line x1="1" y1="12" x2="3" y2="12"/>
+                    <line x1="21" y1="12" x2="23" y2="12"/>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                </svg>
+                <svg id="theme-icon-moon" class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                </svg>
             </button>
         </header>
 
         <div class="card">
-            <div class="card-header"><h2>👥 قائمة العمال</h2>
-                <button id="add-employee-btn" class="btn primary no-hide-span">
-                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor"><path d="M12 4V20M4 12H20" stroke-linecap="round"/></svg>
-                    <span>إضافة عامل</span>
+            <div class="card-header">
+                <h2><i class="fas fa-users"></i> قائمة العمال</h2>
+                <button id="add-employee-btn" class="btn primary">
+                    <i class="fas fa-user-plus"></i> <span>إضافة عامل</span>
                 </button>
             </div>
-            <input type="text" id="search-input" placeholder="🔍 ابحث بالاسم أو الرقم التعريفي...">
-            <div class="table-wrapper" style="margin-top:20px;"><table id="employees-table"><thead><tr><th>الاسم</th><th>الرقم التعريفي</th><th>إجراءات</th></tr></thead><tbody></tbody></table></div>
+            <div class="search-container">
+                <i class="fas fa-search"></i>
+                <input type="text" id="search-input" placeholder="ابحث بالاسم أو الرقم التعريفي..." aria-label="بحث عن العاملين">
+            </div>
+            <div class="table-wrapper">
+                <table id="employees-table">
+                    <thead>
+                        <tr>
+                            <th>الاسم</th>
+                            <th>الرقم التعريفي</th>
+                            <th>الحالة</th>
+                            <th>إجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
         </div>
 
         <div class="card">
-            <div class="card-header"><h2>🗓️ تسجيل الحضور اليومي</h2></div>
-            <div class="form-group" style="max-width: 300px;"><label for="attendance-date">اختر اليوم:</label><input type="date" id="attendance-date"></div>
-            <div class="table-wrapper" style="margin-top:20px;"><table id="attendance-table"><thead><tr><th>الاسم</th><th>حالة الحضور</th></tr></thead><tbody></tbody></table></div>
+            <div class="card-header">
+                <h2><i class="fas fa-calendar-day"></i> تسجيل الحضور اليومي</h2>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
+                    <button id="mark-all-present" class="btn success">
+                        <i class="fas fa-check-circle"></i> الكل حاضر
+                    </button>
+                    <button id="mark-all-absent" class="btn danger">
+                        <i class="fas fa-times-circle"></i> الكل غائب
+                    </button>
+                </div>
+            </div>
+            <div class="form-group" style="max-width: 300px; margin: 15px auto;">
+                <label for="attendance-date">اختر اليوم:</label>
+                <input type="date" id="attendance-date" aria-label="تاريخ تسجيل الحضور">
+            </div>
+            <div class="table-wrapper">
+                <table id="attendance-table">
+                    <thead>
+                        <tr>
+                            <th>الاسم</th>
+                            <th>حالة الحضور</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
         </div>
         
         <div class="card">
-            <div class="card-header"><h2>🚀 إنشاء تقرير</h2></div>
-            <div class="grid-container"><div class="form-group"><label for="start-date">من تاريخ:</label><input type="date" id="start-date"></div><div class="form-group"><label for="end-date">إلى تاريخ:</label><input type="date" id="end-date"></div></div>
-            <button id="generate-report-btn" class="btn success no-hide-span" style="width:100%; font-size: 1.3em; padding: 15px; margin-top: 15px;"><span>عرض التقرير</span></button>
+            <div class="card-header">
+                <h2><i class="fas fa-file-alt"></i> إنشاء تقرير</h2>
+            </div>
+            <div class="grid-container">
+                <div class="form-group">
+                    <label for="start-date">من تاريخ:</label>
+                    <input type="date" id="start-date" aria-label="تاريخ بداية التقرير">
+                </div>
+                <div class="form-group">
+                    <label for="end-date">إلى تاريخ:</label>
+                    <input type="date" id="end-date" aria-label="تاريخ نهاية التقرير">
+                </div>
+            </div>
+            <button id="generate-report-btn" class="btn success" style="width:100%; padding: 12px; margin-top: 10px;">
+                <i class="fas fa-chart-bar"></i> <span>عرض التقرير المتكامل</span>
+            </button>
         </div>
         
         <div id="report-section" class="card" style="display:none;">
-            <div class="card-header"><h2 id="report-title">📄 تقرير الحضور</h2></div>
-            <div class="table-wrapper"><table id="report-table"><thead><tr><th>الاسم</th><th>حضور</th><th>غياب</th><th>الإجمالي</th><th>تفاصيل</th></tr></thead><tbody></tbody></table></div>
-            <div id="report-actions">
-                <button id="print-btn" class="btn info"><span>طباعة</span></button>
-                <button id="pdf-btn" class="btn danger"><span>حفظ PDF</span></button>
-                <button id="copy-btn" class="btn warning"><span>نسخ النص</span></button>
-                <a id="whatsapp-share" class="btn" style="background-color:#25D366;" href="#" target="_blank"><span>WhatsApp</span></a>
-                <a id="telegram-share" class="btn" style="background-color:#0088cc;" href="#" target="_blank"><span>Telegram</span></a>
-                <a id="email-share" class="btn" style="background-color:#6c757d;" href="#"><span>Email</span></a>
+            <div class="card-header">
+                <h2 id="report-title"><i class="fas fa-file-contract"></i> تقرير الحضور</h2>
+            </div>
+            
+            <div id="printable-report-content">
+                <div class="table-wrapper">
+                    <table id="report-table">
+                        <thead>
+                            <tr>
+                                <th>الاسم</th>
+                                <th>حضور</th>
+                                <th>غياب</th>
+                                <th>الإجمالي</th>
+                                <th>ملاحظات</th>
+                                <th>تفاصيل</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div id="charts-section">
+                     <h2 style="text-align:center; color: var(--primary-color); margin-top: 30px; border-top: 1px solid var(--border-color); padding-top: 20px;">
+                         <i class="fas fa-chart-pie"></i> ملخص الرسوم البيانية
+                     </h2>
+                     <div class="grid-container">
+                        <div class="chart-container">
+                            <h3>مقياس الحضور العام</h3>
+                            <div id="gauge-wrapper">
+                                <canvas id="overall-gauge-chart" aria-label="مخطط قياس الحضور العام"></canvas>
+                                <div id="gauge-text"></div>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <h3>ملخص الحالات</h3>
+                            <canvas id="overall-summary-chart" aria-label="مخطط ملخص الحضور والغياب"></canvas>
+                        </div>
+                    </div>
+                    <div id="attendance-trend-chart-container" class="chart-container" style="margin-top: 30px;">
+                        <h3>منحنى الحضور خلال الفترة</h3>
+                        <canvas id="attendance-trend-chart" aria-label="مخطط منحنى الحضور"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div id="report-actions" style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 25px; border-top: 1px solid var(--border-color); padding-top: 20px;">
+                <button id="print-btn" class="btn info">
+                    <i class="fas fa-print"></i> <span>طباعة</span>
+                </button>
+                <button id="pdf-btn" class="btn danger">
+                    <i class="fas fa-file-pdf"></i> <span>حفظ PDF</span>
+                </button>
+                <button id="copy-btn" class="btn warning">
+                    <i class="fas fa-copy"></i> <span>نسخ النص</span>
+                </button>
+                <button id="share-btn" class="btn share">
+                    <i class="fas fa-share-alt"></i> <span>مشاركة</span>
+                </button>
             </div>
         </div>
 
-        <div id="charts-section" class="card" style="display:none;">
-            <div class="card-header"><h2>📊 ملخص الرسوم البيانية</h2></div>
-            <div class="grid-container">
-                <div><h3>مقياس الحضور العام</h3><div id="gauge-wrapper"><canvas id="overall-gauge-chart"></canvas><div id="gauge-text"></div></div></div>
-                <div><h3>ملخص الحالات</h3><canvas id="overall-pie-chart"></canvas></div>
-            </div>
-            <div style="margin-top: 40px;">
-                <h3 style="text-align: center; margin-bottom: 20px; color: var(--primary-dark);">منحنى الحضور خلال الفترة</h3>
-                <canvas id="attendance-trend-chart"></canvas>
-            </div>
-        </div>
+    </div> 
 
-    </div> <div id="employee-modal" class="modal"><div class="modal-content">
-        <span class="close-btn" id="modal-close-btn">&times;</span><h2 id="modal-title"></h2>
-        <div class="form-group"><label for="modal-employee-name">اسم العامل</label><input type="text" id="modal-employee-name"></div>
-        <div class="form-group"><label for="modal-employee-id">الرقم التعريفي</label><input type="text" id="modal-employee-id"></div>
-        <div class="form-group">
-            <label for="modal-employee-notes">ملاحظات (المفكرة)</label>
-            <textarea id="modal-employee-notes" rows="4" placeholder="اكتب ملاحظاتك هنا... مثل: تم تسليمه عهدة بتاريخ كذا، أداءه ممتاز، الخ."></textarea>
+    <div id="employee-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal-content">
+            <span class="close-btn" id="modal-close-btn" role="button" aria-label="إغلاق">&times;</span>
+            <h2 id="modal-title"></h2>
+            <div class="form-group">
+                <label for="modal-employee-name">اسم العامل</label>
+                <input type="text" id="modal-employee-name" aria-label="اسم العامل">
+            </div>
+            <div class="form-group">
+                <label for="modal-employee-id">الرقم التعريفي</label>
+                <input type="text" id="modal-employee-id" aria-label="الرقم التعريفي للعامل">
+            </div>
+            <div class="form-group">
+                <label for="modal-employee-notes">ملاحظات (المفكرة)</label>
+                <textarea id="modal-employee-notes" rows="4" placeholder="اكتب ملاحظاتك هنا..." aria-label="ملاحظات عن العامل"></textarea>
+            </div>
+            <button id="save-modal-btn" class="btn primary" style="width:100%; margin-top:15px;">
+                <i class="fas fa-save"></i> <span>حفظ</span>
+            </button>
         </div>
-        <button id="save-modal-btn" class="btn primary" style="width:100%; margin-top:20px;">حفظ</button>
-    </div></div>
+    </div>
     
-    <div id="details-modal" class="modal"><div class="modal-content">
-        <span class="close-btn" id="details-close-btn">&times;</span>
-        <h2 id="details-title" style="text-align:center; border:none; margin-bottom: 20px;"></h2>
-        <div class="grid-container" style="align-items: center;">
-            <div><canvas id="details-pie-chart"></canvas></div>
-            <div>
-                <p>✅ **أيام الحضور:** <strong id="details-present"></strong></p>
-                <p>❌ **أيام الغياب:** <strong id="details-absent"></strong></p>
-                <p>🔢 **الإجمالي:** <strong id="details-total"></strong></p>
+    <div id="details-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="details-title">
+        <div class="modal-content">
+            <span class="close-btn" id="details-close-btn" role="button" aria-label="إغلاق">&times;</span>
+            <h2 id="details-title" style="text-align:center; border:none; margin-bottom: 15px;"></h2>
+            <div class="grid-container" style="align-items: center;">
+                <div class="chart-container">
+                    <canvas id="details-summary-chart" aria-label="مخطط ملخص الحضور والغياب للعامل"></canvas>
+                </div>
+                <div>
+                    <p><i class="fas fa-check-circle" style="color: var(--success-color);"></i> <strong>أيام الحضور:</strong> <strong id="details-present"></strong></p>
+                    <p><i class="fas fa-times-circle" style="color: var(--danger-color);"></i> <strong>أيام الغياب:</strong> <strong id="details-absent"></strong></p>
+                    <p><i class="fas fa-calendar-alt" style="color: var(--primary-color);"></i> <strong>الإجمالي:</strong> <strong id="details-total"></strong></p>
+                </div>
+            </div>
+            <h3 style="text-align:center; margin-top:25px;">
+                <i class="fas fa-chart-line"></i> سجل الحضور اليومي
+            </h3>
+            <div id="details-bar-chart-container" class="chart-container">
+                <canvas id="details-bar-chart" aria-label="مخطط زمني لحضور العامل"></canvas>
             </div>
         </div>
-        <h3 style="text-align:center; margin-top:30px;">سجل الحضور اليومي</h3>
-        <canvas id="details-bar-chart"></canvas>
-    </div></div>
+    </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // DOM ELEMENTS
+    // --- DOM Elements Reference ---
     const DOMElements = {
-        startDate: document.getElementById('start-date'), endDate: document.getElementById('end-date'),
-        addEmployeeBtn: document.getElementById('add-employee-btn'), searchInput: document.getElementById('search-input'),
-        employeesTableBody: document.querySelector('#employees-table tbody'), attendanceTableBody: document.querySelector('#attendance-table tbody'),
-        attendanceDate: document.getElementById('attendance-date'), generateReportBtn: document.getElementById('generate-report-btn'),
-        reportSection: document.getElementById('report-section'), reportTitle: document.getElementById('report-title'),
-        reportTableBody: document.querySelector('#report-table tbody'), chartsSection: document.getElementById('charts-section'),
-        printBtn: document.getElementById('print-btn'), pdfBtn: document.getElementById('pdf-btn'),
-        copyBtn: document.getElementById('copy-btn'), whatsappShare: document.getElementById('whatsapp-share'),
-        telegramShare: document.getElementById('telegram-share'), emailShare: document.getElementById('email-share'),
-        employeeModal: document.getElementById('employee-modal'), modalCloseBtn: document.getElementById('modal-close-btn'),
-        modalTitle: document.getElementById('modal-title'), modalEmployeeName: document.getElementById('modal-employee-name'),
+        themeToggle: document.getElementById('theme-toggle'), 
+        addEmployeeBtn: document.getElementById('add-employee-btn'), 
+        searchInput: document.getElementById('search-input'),
+        employeesTableBody: document.querySelector('#employees-table tbody'), 
+        attendanceTableBody: document.querySelector('#attendance-table tbody'),
+        attendanceDate: document.getElementById('attendance-date'), 
+        generateReportBtn: document.getElementById('generate-report-btn'),
+        markAllPresentBtn: document.getElementById('mark-all-present'), 
+        markAllAbsentBtn: document.getElementById('mark-all-absent'),
+        reportSection: document.getElementById('report-section'), 
+        reportTitle: document.getElementById('report-title'),
+        reportTableBody: document.querySelector('#report-table tbody'),
+        printBtn: document.getElementById('print-btn'), 
+        pdfBtn: document.getElementById('pdf-btn'), 
+        copyBtn: document.getElementById('copy-btn'), 
+        shareBtn: document.getElementById('share-btn'),
+        employeeModal: document.getElementById('employee-modal'), 
+        modalCloseBtn: document.getElementById('modal-close-btn'),
+        modalTitle: document.getElementById('modal-title'), 
+        modalEmployeeName: document.getElementById('modal-employee-name'),
         modalEmployeeId: document.getElementById('modal-employee-id'), 
-        modalEmployeeNotes: document.getElementById('modal-employee-notes'),
+        modalEmployeeNotes: document.getElementById('modal-employee-notes'), 
         saveModalBtn: document.getElementById('save-modal-btn'),
-        detailsModal: document.getElementById('details-modal'), detailsCloseBtn: document.getElementById('details-close-btn'),
-        detailsTitle: document.getElementById('details-title'), detailsPresent: document.getElementById('details-present'),
-        detailsAbsent: document.getElementById('details-absent'), detailsTotal: document.getElementById('details-total'),
-        gaugeText: document.getElementById('gauge-text'),
-        refreshBtn: document.getElementById('refresh-btn'), // ** NEW **
+        detailsModal: document.getElementById('details-modal'), 
+        detailsCloseBtn: document.getElementById('details-close-btn'),
+        detailsTitle: document.getElementById('details-title'), 
+        detailsPresent: document.getElementById('details-present'),
+        detailsAbsent: document.getElementById('details-absent'), 
+        detailsTotal: document.getElementById('details-total'),
+        gaugeText: document.getElementById('gauge-text'), 
+        startDate: document.getElementById('start-date'), 
+        endDate: document.getElementById('end-date'),
     };
 
-    // STATE & HELPERS
     let state = { employees: [], attendance: {}, currentEditingId: null };
-    let chartInstances = {};
-    let lastReportData = [];
-    const STORAGE_KEY = 'attendance_app_v6';
+    let chartInstances = {}; // Central object for all chart instances
+    let lastReportData = null;
+    const STORAGE_KEY = 'attendance_app_v12'; // Version bump for new structure
     const { jsPDF } = window.jspdf;
 
-    const saveState = () => localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    const loadState = () => {
-        const stored = localStorage.getItem(STORAGE_KEY);
-        if (stored) {
-            const parsedState = JSON.parse(stored);
-            parsedState.employees.forEach(emp => { if (emp.notes === undefined) { emp.notes = ''; } });
-            state = parsedState;
+    // --- State & Utility Functions ---
+    const saveState = () => {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    };
+
+    const loadState = () => { 
+        const stored = localStorage.getItem(STORAGE_KEY); 
+        if (stored) { 
+            state = JSON.parse(stored); 
+            if (!state.employees) state = { employees: [], attendance: {} }; 
+        } 
+    };
+
+    const getISODate = (d = new Date()) => d.toISOString().split('T')[0];
+    
+    const formatDate = (iso) => {
+        const date = new Date(iso);
+        return date.toLocaleDateString('ar-DZ', { 
+            day: '2-digit', 
+            month: 'short', 
+            year: 'numeric' 
+        });
+    };
+
+    const setTheme = (theme) => {
+        localStorage.setItem('theme', theme); 
+        document.body.className = theme === 'dark' ? 'dark-theme' : ''; 
+        // Re-render charts with new theme colors
+        if (lastReportData) { 
+            renderOverallCharts(lastReportData.summary, lastReportData.trend); 
         }
     };
-    const getISODate = (d = new Date()) => d.toISOString().split('T')[0];
-    const formatDate = (iso) => new Date(iso).toLocaleDateString('ar-EG', { day: '2-digit', month: 'short', year: 'numeric' });
 
-    // RENDER FUNCTIONS
+    const getEmployeeStatus = (empId) => {
+        const today = getISODate();
+        const status = state.attendance[empId]?.[today];
+        
+        if (status === 'full') return { text: 'حاضر', class: 'status-present' };
+        if (status === 'absent') return { text: 'غائب', class: 'status-absent' };
+        return { text: 'لم يسجل', class: 'status-none' };
+    };
+
+    // --- Core Rendering Functions ---
     const renderEmployeesTable = (filter = '') => {
         const lowerFilter = filter.toLowerCase();
-        const employees = state.employees.filter(e => e.name.toLowerCase().includes(lowerFilter) || e.customId?.toString().includes(lowerFilter));
-        DOMElements.employeesTableBody.innerHTML = employees.map(emp => `
-            <tr data-id="${emp.id}">
-                <td>${emp.name}</td><td>${emp.customId || 'N/A'}</td>
-                <td class="action-buttons">
-                    <button class="btn warning edit-btn" title="تعديل"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.4-9.4a2 2 0 112.8 2.8L11.8 15H9v-2.8l8.6-8.6z" /></svg><span>تعديل</span></button>
-                    <button class="btn danger delete-btn" title="حذف"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" d="M19 7l-.86 12.1A2 2 0 0116.1 21H7.8a2 2 0 01-2-1.8L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg><span>حذف</span></button>
-                </td>
-            </tr>
-        `).join('') || `<tr><td colspan="3">لا يوجد عمال. الرجاء إضافة عامل جديد.</td></tr>`;
+        const filteredEmployees = state.employees.filter(e => 
+            e.name.toLowerCase().includes(lowerFilter) || 
+            e.customId?.toString().toLowerCase().includes(lowerFilter)
+        );
+        
+        if (filteredEmployees.length === 0) {
+            DOMElements.employeesTableBody.innerHTML = `
+                <tr>
+                    <td colspan="4" class="no-data">
+                        <i class="fas fa-user-slash" style="font-size: 1.5em; display: block; margin-bottom: 10px;"></i>
+                        لا يوجد عمال مسجلين
+                    </td>
+                </tr>`;
+            return;
+        }
+
+        DOMElements.employeesTableBody.innerHTML = filteredEmployees.map(emp => {
+            const status = getEmployeeStatus(emp.id);
+            return `
+                <tr data-id="${emp.id}">
+                    <td data-label="الاسم">${emp.name}</td>
+                    <td data-label="الرقم التعريفي">${emp.customId || 'N/A'}</td>
+                    <td data-label="الحالة">
+                        <span class="status-badge ${status.class}">${status.text}</span>
+                    </td>
+                    <td data-label="إجراءات" class="action-buttons">
+                        <button class="btn warning edit-btn" aria-label="تعديل بيانات ${emp.name}">
+                            <i class="fas fa-edit"></i> تعديل
+                        </button>
+                        <button class="btn danger delete-btn" aria-label="حذف ${emp.name}">
+                            <i class="fas fa-trash-alt"></i> حذف
+                        </button>
+                    </td>
+                </tr>`;
+        }).join('');
     };
 
     const renderDailyAttendance = () => {
         const date = DOMElements.attendanceDate.value;
+        if (!date) return;
+        
+        if (state.employees.length === 0) {
+            DOMElements.attendanceTableBody.innerHTML = `
+                <tr>
+                    <td colspan="2" class="no-data">
+                        <i class="fas fa-user-plus" style="font-size: 1.5em; display: block; margin-bottom: 10px;"></i>
+                        الرجاء إضافة عمال أولاً
+                    </td>
+                </tr>`;
+            return;
+        }
+
         DOMElements.attendanceTableBody.innerHTML = state.employees.map(emp => {
             const status = state.attendance[emp.id]?.[date] || 'none';
             return `
-                <tr><td>${emp.name}</td>
-                    <td class="action-buttons">
-                        <button class="btn att-btn ${status === 'full' ? 'success' : 'outline'}" data-id="${emp.id}" data-status="full">حاضر</button>
-                        <button class="btn att-btn ${status === 'absent' ? 'danger' : 'outline'}" data-id="${emp.id}" data-status="absent">غائب</button>
+                <tr>
+                    <td data-label="الاسم">${emp.name}</td>
+                    <td data-label="حالة الحضور" class="action-buttons">
+                        <button class="btn ${status === 'full' ? 'success' : 'outline'}" 
+                                onclick="updateAttendance(${emp.id}, '${date}', 'full')"
+                                aria-label="تسجيل حضور ${emp.name}">
+                            <i class="fas fa-check"></i> حاضر
+                        </button>
+                        <button class="btn ${status === 'absent' ? 'danger' : 'outline'}" 
+                                onclick="updateAttendance(${emp.id}, '${date}', 'absent')"
+                                aria-label="تسجيل غياب ${emp.name}">
+                            <i class="fas fa-times"></i> غائب
+                        </button>
                     </td>
-                </tr>
-            `;
-        }).join('') || `<tr><td colspan="2">الرجاء إضافة عمال أولاً.</td></tr>`;
+                </tr>`;
+        }).join('');
     };
 
-    // CORE LOGIC
-    const updateAttendance = (empId, date, status) => {
-        if (!date) return alert('الرجاء اختيار تاريخ.');
-        state.attendance[empId] = state.attendance[empId] || {};
-        state.attendance[empId][date] = state.attendance[empId][date] === status ? 'none' : status;
-        saveState();
+    // --- Attendance Functions ---
+    window.updateAttendance = (empId, date, status) => { 
+        if (!date) return;
+        
+        state.attendance[empId] = state.attendance[empId] || {}; 
+        state.attendance[empId][date] = state.attendance[empId][date] === status ? 'none' : status; 
+        saveState(); 
         renderDailyAttendance();
+        renderEmployeesTable(DOMElements.searchInput.value);
     };
 
-    const generateReport = () => {
-        const { value: start } = DOMElements.startDate;
-        const { value: end } = DOMElements.endDate;
-        if (!start || !end || new Date(start) > new Date(end)) return alert('الرجاء تحديد فترة تقرير صحيحة.');
+    const bulkUpdateAttendance = (status) => { 
+        const date = DOMElements.attendanceDate.value; 
+        if (!date) return alert('الرجاء اختيار تاريخ أولاً.'); 
+        
+        state.employees.forEach(emp => { 
+            state.attendance[emp.id] = state.attendance[emp.id] || {}; 
+            state.attendance[emp.id][date] = status; 
+        }); 
+        
+        saveState(); 
+        renderDailyAttendance();
+        renderEmployeesTable(DOMElements.searchInput.value);
+    };
 
-        lastReportData = state.employees.map(emp => {
-            let present = 0, absent = 0;
-            const dailyData = [];
+    // --- Report Functions ---
+    const generateReport = () => {
+        const start = DOMElements.startDate.value;
+        const end = DOMElements.endDate.value;
+        
+        if (!start || !end || new Date(start) > new Date(end)) {
+            return alert('الرجاء تحديد فترة تقرير صحيحة (تاريخ البداية يجب أن يكون قبل تاريخ النهاية).');
+        }
+
+        const summary = state.employees.map(emp => {
+            let present = 0, absent = 0, dailyData = [];
+            
             for (let d = new Date(start); d <= new Date(end); d.setDate(d.getDate() + 1)) {
                 const isoDate = getISODate(d);
                 const status = state.attendance[emp.id]?.[isoDate];
-                if (status === 'full') {
-                    present++;
-                    dailyData.push({ date: isoDate, status: 1 });
-                } else if (status === 'absent') {
-                    absent++;
-                    dailyData.push({ date: isoDate, status: -1 });
-                } else {
-                    dailyData.push({ date: isoDate, status: 0 });
+                
+                if (status === 'full') { 
+                    present++; 
+                    dailyData.push({ date: isoDate, status: 1 }); 
+                }
+                else if (status === 'absent') { 
+                    absent++; 
+                    dailyData.push({ date: isoDate, status: -1 }); 
+                }
+                else { 
+                    dailyData.push({ date: isoDate, status: 0 }); 
                 }
             }
-            return { id: emp.id, name: emp.name, present, absent, total: present + absent, dailyData };
+            
+            return { 
+                id: emp.id, 
+                name: emp.name, 
+                present, 
+                absent, 
+                total: present + absent, 
+                dailyData, 
+                notes: emp.notes || '' 
+            };
         });
 
-        const trendData = { labels: [], data: [] };
+        const trend = { labels: [], data: [] };
+        
         for (let d = new Date(start); d <= new Date(end); d.setDate(d.getDate() + 1)) {
-            const isoDate = getISODate(d);
-            trendData.labels.push(formatDate(isoDate));
-            let dailyPresentCount = state.employees.reduce((count, emp) => {
-                return count + (state.attendance[emp.id]?.[isoDate] === 'full' ? 1 : 0);
-            }, 0);
-            trendData.data.push(dailyPresentCount);
+            const isoDate = getISODate(d); 
+            trend.labels.push(formatDate(isoDate));
+            trend.data.push(state.employees.reduce((count, emp) => 
+                count + (state.attendance[emp.id]?.[isoDate] === 'full' ? 1 : 0), 0));
         }
 
-        DOMElements.reportTableBody.innerHTML = lastReportData.map(d => `
-            <tr><td>${d.name}</td><td>${d.present}</td><td>${d.absent}</td><td><strong>${d.total}</strong></td>
-            <td><button class="btn info details-btn" data-id="${d.id}">عرض التفاصيل</button></td></tr>
-        `).join('');
-
-        DOMElements.reportTitle.textContent = `تقرير من ${formatDate(start)} إلى ${formatDate(end)}`;
+        lastReportData = { summary, trend, start, end };
+        
+        if (summary.length === 0) {
+            DOMElements.reportTableBody.innerHTML = `
+                <tr>
+                    <td colspan="6" class="no-data">
+                        <i class="fas fa-info-circle" style="font-size: 1.5em; display: block; margin-bottom: 10px;"></i>
+                        لا توجد بيانات لعرضها في الفترة المحددة
+                    </td>
+                </tr>`;
+        } else {
+            DOMElements.reportTableBody.innerHTML = summary.map(data => `
+                <tr>
+                    <td data-label="الاسم">${data.name}</td>
+                    <td data-label="حضور">${data.present}</td>
+                    <td data-label="غياب">${data.absent}</td>
+                    <td data-label="الإجمالي"><strong>${data.total}</strong></td>
+                    <td data-label="ملاحظات"><pre>${data.notes}</pre></td>
+                    <td data-label="تفاصيل">
+                        <button class="btn info details-btn" data-id="${data.id}" aria-label="عرض تفاصيل ${data.name}">
+                            <i class="fas fa-info-circle"></i> التفاصيل
+                        </button>
+                    </td>
+                </tr>`).join('');
+        }
+        
+        DOMElements.reportTitle.innerHTML = `<i class="fas fa-calendar-alt"></i> تقرير من ${formatDate(start)} إلى ${formatDate(end)}`;
         DOMElements.reportSection.style.display = 'block';
-        DOMElements.chartsSection.style.display = 'block';
-        renderOverallCharts(lastReportData, trendData); // ** UPDATED **
-        updateShareLinks(generateShareText());
+        renderOverallCharts(summary, trend);
         DOMElements.reportSection.scrollIntoView({ behavior: 'smooth' });
     };
 
-    // CHARTING
-    const destroyCharts = () => { Object.values(chartInstances).forEach(c => c?.destroy()); chartInstances = {}; };
+    // --- Charting Functions ---
+    // ADDED: Central function for destroying all chart instances
+    const destroyAllCharts = () => { 
+        Object.keys(chartInstances).forEach(key => {
+            if(chartInstances[key]) {
+                chartInstances[key].destroy();
+                chartInstances[key] = null;
+            }
+        });
+    };
 
-    const renderOverallCharts = (data, trendData) => { // ** UPDATED **
-        destroyCharts();
-        const totalPresent = data.reduce((sum, d) => sum + d.present, 0);
-        const totalAbsent = data.reduce((sum, d) => sum + d.absent, 0);
-        const totalPossible = totalPresent + totalAbsent;
-        const attendancePercentage = totalPossible > 0 ? Math.round((totalPresent / totalPossible) * 100) : 0;
+    // ADDED: Helper function for base chart options to reduce repetition
+    const getChartBaseOptions = () => {
+        const style = getComputedStyle(document.body);
+        const textColor = style.getPropertyValue('--text-color').trim();
+        const gridColor = style.getPropertyValue('--border-color').trim();
         
+        return {
+            responsive: true,
+            maintainAspectRatio: false, // Important for aspect-ratio CSS to work
+            plugins: {
+                legend: {
+                    labels: {
+                        color: textColor,
+                        font: { family: 'Cairo', size: 12 }
+                    }
+                },
+                tooltip: {
+                    titleFont: { family: 'Cairo', weight: 'bold', size: 14 },
+                    bodyFont: { family: 'Cairo', size: 12 }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { color: textColor, precision: 0, font: { family: 'Cairo' } },
+                    grid: { color: gridColor }
+                },
+                x: {
+                    ticks: { color: textColor, font: { family: 'Cairo' } },
+                    grid: { color: gridColor }
+                }
+            }
+        };
+    };
+
+    const renderOverallCharts = (summaryData, trendData) => {
+        destroyAllCharts(); // Destroy all previous charts before rendering new ones
+        
+        const totalPresent = summaryData.reduce((sum, data) => sum + data.present, 0);
+        const totalAbsent = summaryData.reduce((sum, data) => sum + data.absent, 0);
+        const totalDays = totalPresent + totalAbsent;
+        const attendancePercentage = totalDays > 0 ? Math.round((totalPresent / totalDays) * 100) : 0;
+        
+        // 1. Gauge Chart
+        const gaugeBaseOptions = getChartBaseOptions();
         chartInstances.gauge = new Chart(document.getElementById('overall-gauge-chart'), {
             type: 'doughnut',
-            data: { datasets: [{ data: [attendancePercentage, 100 - attendancePercentage], backgroundColor: ['var(--success-color)', 'var(--border-color)'], borderWidth: 0 }] },
-            options: { rotation: -90, circumference: 180, cutout: '70%', responsive: true, tooltips: { enabled: false } }
+            data: { 
+                datasets: [{
+                    data: [attendancePercentage, 100 - attendancePercentage], 
+                    backgroundColor: ['var(--success-color)', 'var(--border-color)'], 
+                    borderWidth: 0 
+                }] 
+            }, 
+            options: {
+                ...gaugeBaseOptions,
+                rotation: -90, 
+                circumference: 180, 
+                cutout: '70%',
+                plugins: { ...gaugeBaseOptions.plugins, tooltip: { enabled: false } },
+                scales: {} // No scales for doughnut
+            } 
         });
         DOMElements.gaugeText.textContent = `${attendancePercentage}%`;
 
-        chartInstances.pie = new Chart(document.getElementById('overall-pie-chart'), {
-            type: 'pie',
-            data: { labels: ['حضور', 'غياب'], datasets: [{ data: [totalPresent, totalAbsent], backgroundColor: ['var(--success-color)', 'var(--danger-color)'] }] },
-            options: { responsive: true, plugins: { legend: { position: 'top' } } }
-        });
-
-        // ** NEW **: Line Chart for Attendance Trend
-        chartInstances.trend = new Chart(document.getElementById('attendance-trend-chart'), {
-            type: 'line',
-            data: {
-                labels: trendData.labels,
-                datasets: [{
-                    label: 'عدد الحاضرين يومياً',
-                    data: trendData.data,
-                    borderColor: 'var(--primary-color)',
-                    backgroundColor: 'rgba(13, 110, 253, 0.1)',
-                    fill: true, tension: 0.3, borderWidth: 2
-                }]
-            },
-            options: { responsive: true, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }, plugins: { legend: { display: false } } }
-        });
-    };
-    
-    // MODALS
-    const openEmployeeModal = (id = null) => {
-        state.currentEditingId = id;
-        const emp = id ? state.employees.find(e => e.id === id) : null;
-        DOMElements.modalTitle.textContent = id ? `تعديل بيانات: ${emp.name}` : 'إضافة عامل جديد';
-        DOMElements.modalEmployeeName.value = emp?.name || '';
-        DOMElements.modalEmployeeId.value = emp?.customId || '';
-        DOMElements.modalEmployeeNotes.value = emp?.notes || '';
-        DOMElements.employeeModal.style.display = 'flex';
-    };
-
-    const saveEmployee = () => {
-        const name = DOMElements.modalEmployeeName.value.trim();
-        if (!name) return alert('الرجاء إدخال اسم العامل.');
-        const customId = DOMElements.modalEmployeeId.value.trim();
-        const notes = DOMElements.modalEmployeeNotes.value.trim();
-
-        if (state.currentEditingId) {
-            const emp = state.employees.find(e => e.id === state.currentEditingId);
-            emp.name = name; emp.customId = customId; emp.notes = notes;
-        } else {
-            const newEmp = { id: Date.now(), name, customId, notes };
-            state.employees.push(newEmp); state.attendance[newEmp.id] = {};
-        }
-        saveState(); renderEmployeesTable(); renderDailyAttendance();
-        DOMElements.employeeModal.style.display = 'none';
-    };
-
-    const openDetailsModal = (empId) => {
-        const data = lastReportData.find(d => d.id === empId);
-        if (!data) return;
-        DOMElements.detailsTitle.textContent = `تقرير مفصل لـ: ${data.name}`;
-        DOMElements.detailsPresent.textContent = data.present;
-        DOMElements.detailsAbsent.textContent = data.absent;
-        DOMElements.detailsTotal.textContent = data.total;
-
-        if (chartInstances.detailsPie) chartInstances.detailsPie.destroy();
-        chartInstances.detailsPie = new Chart(document.getElementById('details-pie-chart'), {
-            type: 'doughnut',
-            data: { labels: ['حضور', 'غياب'], datasets: [{ data: [data.present, data.absent], backgroundColor: ['var(--success-color)', 'var(--danger-color)'] }] }
-        });
-
-        if (chartInstances.detailsBar) chartInstances.detailsBar.destroy();
-        chartInstances.detailsBar = new Chart(document.getElementById('details-bar-chart'), {
+        // 2. Summary Bar Chart
+        const summaryBaseOptions = getChartBaseOptions();
+        chartInstances.summaryBar = new Chart(document.getElementById('overall-summary-chart'), {
             type: 'bar',
             data: {
-                labels: data.dailyData.map(d => formatDate(d.date)),
-                datasets: [{ 
-                    label: 'سجل الحضور', 
-                    data: data.dailyData.map(d => d.status),
-                    backgroundColor: data.dailyData.map(d => d.status === 1 ? 'var(--success-color)' : d.status === -1 ? 'var(--danger-color)' : 'var(--border-color)'),
+                labels: ['إجمالي الحضور', 'إجمالي الغياب'],
+                datasets: [{
+                    label: 'عدد الأيام',
+                    data: [totalPresent, totalAbsent],
+                    backgroundColor: ['var(--success-color)', 'var(--danger-color)'],
+                    maxBarThickness: 80
                 }]
             },
-            options: { scales: { y: { ticks: { display: false }, grid: { display: false } } }, plugins: { legend: { display: false } } }
-        });
-        
-        DOMElements.detailsModal.style.display = 'flex';
-    };
-
-    // EXPORT & SHARE
-    const generateShareText = () => {
-        const { value: start } = DOMElements.startDate;
-        const { value: end } = DOMElements.endDate;
-        let text = `📄 *تقرير الحضور*\n*الفترة:* من ${formatDate(start)} إلى ${formatDate(end)}\n\n`;
-        lastReportData.forEach(d => { text += `*${d.name}*: ✅حضور: ${d.present}, ❌غياب: ${d.absent}\n`; });
-        return text;
-    };
-    
-    const updateShareLinks = (text) => {
-        const encoded = encodeURIComponent(text);
-        DOMElements.whatsappShare.href = `https://wa.me/?text=${encoded}`;
-        DOMElements.telegramShare.href = `https://t.me/share/url?url=&text=${encoded}`;
-        DOMElements.emailShare.href = `mailto:?subject=تقرير الحضور&body=${encoded}`;
-    };
-
-    const printReport = () => window.print();
-    const copyReportText = () => navigator.clipboard.writeText(generateShareText()).then(() => alert('تم نسخ نص التقرير!'), () => alert('فشل النسخ.'));
-    const exportToPDF = async () => {
-        DOMElements.pdfBtn.textContent = 'جاري التجهيز...';
-        const reportEl = document.getElementById('report-section');
-        try {
-            const canvas = await html2canvas(reportEl, { scale: 2, useCORS: true });
-            const imgData = canvas.toDataURL('image/png');
-            const pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
-            const pdfWidth = pdf.internal.pageSize.getWidth();
-            const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-            pdf.addImage(imgData, 'PNG', 10, 10, pdfWidth - 20, pdfHeight - 20);
-            pdf.save(`report_${getISODate()}.pdf`);
-        } catch (e) {
-            alert('حدث خطأ أثناء إنشاء ملف PDF.'); console.error(e);
-        } finally {
-            DOMElements.pdfBtn.innerHTML = `<span>حفظ PDF</span>`;
-        }
-    };
-
-    // EVENT LISTENERS
-    const setupEventListeners = () => {
-        DOMElements.addEmployeeBtn.addEventListener('click', () => openEmployeeModal());
-        DOMElements.modalCloseBtn.addEventListener('click', () => DOMElements.employeeModal.style.display = 'none');
-        DOMElements.detailsCloseBtn.addEventListener('click', () => DOMElements.detailsModal.style.display = 'none');
-        DOMElements.saveModalBtn.addEventListener('click', saveEmployee);
-        DOMElements.searchInput.addEventListener('input', (e) => renderEmployeesTable(e.target.value));
-        DOMElements.attendanceDate.addEventListener('change', renderDailyAttendance);
-        DOMElements.generateReportBtn.addEventListener('click', generateReport);
-        DOMElements.refreshBtn.addEventListener('click', () => location.reload()); // ** NEW **
-        DOMElements.employeesTableBody.addEventListener('click', (e) => {
-            const target = e.target.closest('button');
-            if (!target) return;
-            const id = parseInt(target.closest('tr').dataset.id);
-            if (target.classList.contains('edit-btn')) openEmployeeModal(id);
-            if (target.classList.contains('delete-btn')) {
-                if (confirm('هل أنت متأكد من حذف هذا العامل وكل سجلاته؟')) {
-                    state.employees = state.employees.filter(e => e.id !== id);
-                    delete state.attendance[id];
-                    saveState(); renderEmployeesTable(); renderDailyAttendance();
+            options: { 
+                ...summaryBaseOptions,
+                plugins: { ...summaryBaseOptions.plugins, legend: { display: false } },
+                scales: {
+                    ...summaryBaseOptions.scales,
+                    x: { ...summaryBaseOptions.scales.x, grid: { display: false } }
                 }
             }
         });
-        DOMElements.attendanceTableBody.addEventListener('click', (e) => {
-            if (e.target.classList.contains('att-btn')) {
-                updateAttendance(parseInt(e.target.dataset.id), DOMElements.attendanceDate.value, e.target.dataset.status);
+
+        // 3. Trend Line Chart
+        const trendBaseOptions = getChartBaseOptions();
+        chartInstances.trend = new Chart(document.getElementById('attendance-trend-chart'), {
+            type: 'line', 
+            data: { 
+                labels: trendData.labels, 
+                datasets: [{
+                    label: 'عدد الحاضرين', 
+                    data: trendData.data, 
+                    borderColor: 'var(--primary-color)', 
+                    backgroundColor: 'color-mix(in srgb, var(--primary-color) 15%, transparent)', 
+                    fill: true, 
+                    tension: 0.3,
+                    pointBackgroundColor: 'var(--card-bg)',
+                    pointBorderColor: 'var(--primary-color)',
+                    pointBorderWidth: 2
+                }] 
+            }, 
+            options: trendBaseOptions
+        });
+    };
+
+    // --- Modal Functions ---
+    const openEmployeeModal = (id = null) => { 
+        state.currentEditingId = id; 
+        const employee = id ? state.employees.find(e => e.id === id) : null; 
+        
+        DOMElements.modalTitle.innerHTML = id ? 
+            `<i class="fas fa-user-edit"></i> تعديل بيانات: ${employee.name}` : 
+            '<i class="fas fa-user-plus"></i> إضافة عامل جديد';
+            
+        DOMElements.modalEmployeeName.value = employee?.name || ''; 
+        DOMElements.modalEmployeeId.value = employee?.customId || ''; 
+        DOMElements.modalEmployeeNotes.value = employee?.notes || ''; 
+        DOMElements.employeeModal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    };
+
+    const saveEmployee = () => { 
+        const name = DOMElements.modalEmployeeName.value.trim(); 
+        if (!name) return alert('الرجاء إدخال اسم العامل.'); 
+        
+        const customId = DOMElements.modalEmployeeId.value.trim(); 
+        const notes = DOMElements.modalEmployeeNotes.value.trim(); 
+        
+        if (state.currentEditingId) { 
+            const employee = state.employees.find(e => e.id === state.currentEditingId);
+            employee.name = name; 
+            employee.customId = customId; 
+            employee.notes = notes; 
+        } else { 
+            const newEmployee = { id: Date.now(), name, customId, notes }; 
+            state.employees.push(newEmployee); 
+            state.attendance[newEmployee.id] = {}; 
+        } 
+        
+        saveState(); 
+        renderEmployeesTable(DOMElements.searchInput.value); 
+        renderDailyAttendance(); 
+        DOMElements.employeeModal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    };
+    
+    const openDetailsModal = (empId) => {
+        const data = lastReportData?.summary.find(d => d.id === empId); 
+        if (!data) return;
+        
+        DOMElements.detailsTitle.innerHTML = `<i class="fas fa-user-circle"></i> تقرير مفصل لـ: ${data.name}`; 
+        DOMElements.detailsPresent.textContent = data.present; 
+        DOMElements.detailsAbsent.textContent = data.absent; 
+        DOMElements.detailsTotal.textContent = data.total;
+        
+        // Destroy only detail charts if they exist
+        if(chartInstances.detailsSummary) chartInstances.detailsSummary.destroy();
+        if(chartInstances.detailsBar) chartInstances.detailsBar.destroy();
+        
+        // 1. Details Summary Chart
+        const detailsSummaryOptions = getChartBaseOptions();
+        chartInstances.detailsSummary = new Chart(document.getElementById('details-summary-chart'), {
+            type: 'bar',
+            data: { 
+                labels: ['حضور', 'غياب'], 
+                datasets: [{
+                    label: 'الأيام', 
+                    data: [data.present, data.absent], 
+                    backgroundColor: ['var(--success-color)', 'var(--danger-color)'], 
+                    maxBarThickness: 50 
+                }] 
+            },
+            options: { 
+                ...detailsSummaryOptions, 
+                indexAxis: 'y', 
+                plugins: { ...detailsSummaryOptions.plugins, legend: { display: false } },
+                scales: {
+                    ...detailsSummaryOptions.scales,
+                    y: { ...detailsSummaryOptions.scales.y, grid: { display: false } },
+                }
             }
         });
+
+        // 2. Daily Timeline Bar Chart
+        const dailyLabels = data.dailyData.map(d => formatDate(d.date));
+        const dailyValues = data.dailyData.map(() => 1);
+        const dailyColors = data.dailyData.map(d => {
+            if (d.status === 1) return 'var(--success-color)';
+            if (d.status === -1) return 'var(--danger-color)';
+            return 'color-mix(in srgb, var(--border-color) 50%, transparent)';
+        });
+        const detailsBarOptions = getChartBaseOptions();
+        chartInstances.detailsBar = new Chart(document.getElementById('details-bar-chart'), {
+            type: 'bar',
+            data: { 
+                labels: dailyLabels, 
+                datasets: [{
+                    label: 'سجل الحضور', 
+                    data: dailyValues, 
+                    backgroundColor: dailyColors 
+                }] 
+            },
+            options: { 
+                ...detailsBarOptions, 
+                plugins: { 
+                    ...detailsBarOptions.plugins,
+                    legend: { display: false }, 
+                    tooltip: { 
+                        ...detailsBarOptions.plugins.tooltip,
+                        callbacks: { 
+                            label: (ctx) => { 
+                                const statusVal = data.dailyData[ctx.dataIndex].status; 
+                                if (statusVal === 1) return 'الحالة: حاضر'; 
+                                if (statusVal === -1) return 'الحالة: غائب'; 
+                                return 'الحالة: لم يسجل'; 
+                            } 
+                        } 
+                    } 
+                }, 
+                scales: { y: { display: false }, x: { ...detailsBarOptions.scales.x, grid: { display: false } } }
+            }
+        });
+        
+        DOMElements.detailsModal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    };
+
+    // --- Report Export/Share Functions ---
+    const generateShareText = () => { 
+        if (!lastReportData) return '';
+        const { summary, start, end } = lastReportData; 
+        let text = `📄 *تقرير الحضور المفصل*\n*الفترة:* من ${formatDate(start)} إلى ${formatDate(end)}\n\n`; 
+        summary.forEach(data => { 
+            text += `👤 *${data.name}*:\n   ✅ حضور: ${data.present}, ❌ غياب: ${data.absent}\n${data.notes ? `   📝 ملاحظات: ${data.notes}\n` : ''}\n`; 
+        }); 
+        return text; 
+    };
+
+    const printReport = () => {
+        if (!lastReportData) return;
+        window.print();
+    };
+
+    const copyReportText = () => {
+        if (!lastReportData) return;
+        navigator.clipboard.writeText(generateShareText())
+            .then(() => alert('تم نسخ نص التقرير إلى الحافظة!'))
+            .catch(() => alert('فشل في نسخ النص. يرجى المحاولة مرة أخرى.'));
+    };
+
+    const shareReport = async () => {
+        if (!lastReportData) return;
+        const shareData = {
+            title: 'تقرير الحضور',
+            text: generateShareText(),
+            url: window.location.href
+        };
+        if (navigator.share) {
+            try { await navigator.share(shareData); } catch (err) { console.error("فشلت المشاركة:", err); }
+        } else {
+            alert('المشاركة غير مدعومة في هذا المتصفح. يمكنك نسخ النص يدوياً.');
+        }
+    };
+
+    const exportToPDF = async () => {
+        if (!lastReportData) return;
+        const btn = DOMElements.pdfBtn; 
+        btn.classList.add('loading');
+        btn.disabled = true;
+        const reportEl = document.getElementById('printable-report-content');
+        const isDarkTheme = document.body.classList.contains('dark-theme');
+        try {
+            const canvas = await html2canvas(reportEl, { 
+                scale: 2, 
+                useCORS: true, 
+                backgroundColor: isDarkTheme ? '#1e1e1e' : '#ffffff',
+                logging: false,
+                allowTaint: true
+            });
+            const imgData = canvas.toDataURL('image/png', 1.0);
+            const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+            const pdfWidth = pdf.internal.pageSize.getWidth() - 20;
+            const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+            pdf.addImage(imgData, 'PNG', 10, 10, pdfWidth, pdfHeight);
+            pdf.save(`تقرير_حضور_${getISODate()}.pdf`);
+        } catch (error) {
+            console.error('Error generating PDF:', error);
+            alert('حدث خطأ أثناء إنشاء ملف PDF. يرجى المحاولة مرة أخرى.');
+        } finally {
+            btn.classList.remove('loading');
+            btn.disabled = false;
+        }
+    };
+
+    // --- Event Listeners ---
+    const setupEventListeners = () => {
+        DOMElements.themeToggle.addEventListener('click', () => 
+            setTheme(document.body.classList.contains('dark-theme') ? 'light' : 'dark')
+        );
+        DOMElements.addEmployeeBtn.addEventListener('click', () => openEmployeeModal());
+        DOMElements.modalCloseBtn.addEventListener('click', () => {
+            DOMElements.employeeModal.style.display = 'none'; document.body.style.overflow = 'auto';
+        });
+        DOMElements.detailsCloseBtn.addEventListener('click', () => {
+            DOMElements.detailsModal.style.display = 'none'; document.body.style.overflow = 'auto';
+        });
+        DOMElements.saveModalBtn.addEventListener('click', saveEmployee);
+        DOMElements.searchInput.addEventListener('input', (e) => renderEmployeesTable(e.target.value));
+        DOMElements.attendanceDate.addEventListener('change', renderDailyAttendance);
+        DOMElements.markAllPresentBtn.addEventListener('click', () => bulkUpdateAttendance('full'));
+        DOMElements.markAllAbsentBtn.addEventListener('click', () => bulkUpdateAttendance('absent'));
+        DOMElements.employeesTableBody.addEventListener('click', (e) => {
+            const target = e.target.closest('button'); if (!target) return;
+            const row = target.closest('tr'); if (!row) return;
+            const id = parseInt(row.dataset.id); if (isNaN(id)) return;
+            if (target.classList.contains('edit-btn')) {
+                openEmployeeModal(id);
+            } else if (target.classList.contains('delete-btn')) {
+                if (confirm('هل أنت متأكد من حذف هذا العامل وكل سجلات الحضور الخاصة به؟')) {
+                    state.employees = state.employees.filter(e => e.id !== id); 
+                    delete state.attendance[id];
+                    saveState(); 
+                    renderEmployeesTable(DOMElements.searchInput.value); 
+                    renderDailyAttendance();
+                }
+            }
+        });
+        DOMElements.generateReportBtn.addEventListener('click', generateReport);
         DOMElements.reportTableBody.addEventListener('click', (e) => {
-            if (e.target.classList.contains('details-btn')) {
-                openDetailsModal(parseInt(e.target.dataset.id));
+            if (e.target.closest('.details-btn')) {
+                openDetailsModal(parseInt(e.target.closest('.details-btn').dataset.id));
             }
         });
         DOMElements.printBtn.addEventListener('click', printReport);
         DOMElements.pdfBtn.addEventListener('click', exportToPDF);
         DOMElements.copyBtn.addEventListener('click', copyReportText);
+        DOMElements.shareBtn.addEventListener('click', shareReport);
+        window.addEventListener('click', (e) => {
+            if (e.target === DOMElements.employeeModal) {
+                DOMElements.employeeModal.style.display = 'none'; document.body.style.overflow = 'auto';
+            }
+            if (e.target === DOMElements.detailsModal) {
+                DOMElements.detailsModal.style.display = 'none'; document.body.style.overflow = 'auto';
+            }
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                if (DOMElements.employeeModal.style.display === 'flex') {
+                    DOMElements.employeeModal.style.display = 'none'; document.body.style.overflow = 'auto';
+                }
+                if (DOMElements.detailsModal.style.display === 'flex') {
+                    DOMElements.detailsModal.style.display = 'none'; document.body.style.overflow = 'auto';
+                }
+            }
+        });
     };
 
-    // INITIALIZATION
+    // --- Initialization ---
     const init = () => {
-        loadState();
-        const today = getISODate();
-        DOMElements.startDate.value = today.substring(0, 8) + '01';
-        DOMElements.endDate.value = today;
-        DOMElements.attendanceDate.value = today;
-        setupEventListeners();
-        renderEmployeesTable();
+        loadState(); 
+        const today = new Date();
+        const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+        DOMElements.startDate.value = getISODate(firstDayOfMonth);
+        DOMElements.endDate.value = getISODate(today);
+        DOMElements.attendanceDate.value = getISODate(today);
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        setTheme(savedTheme);
+        setupEventListeners(); 
+        renderEmployeesTable(); 
         renderDailyAttendance();
     };
 
