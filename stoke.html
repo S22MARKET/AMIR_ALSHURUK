@@ -160,6 +160,8 @@
             <div class="main-grid">
                 <div>
                     <div class="form-group"><label for="sale-client">اسم العميل</label><input type="text" id="sale-client" placeholder="عميل نقدي"></div>
+                    <div class="form-group"><label for="sale-bon-id">رقم الفاتورة</label><input type="text" id="sale-bon-id"></div>
+                    <hr>
                     <div class="form-group"><label for="sale-product">المنتج</label><select id="sale-product"></select></div>
                     <div class="form-group"><label for="sale-type">نوع السعر</label><select id="sale-type"><option value="gros">جملة</option><option value="superGros">شبه جملة</option></select></div>
                     <div class="form-group"><label for="sale-price">سعر الوحدة (د.ج)</label><input type="number" id="sale-price" min="0"></div>
@@ -432,6 +434,13 @@
                     if (products[productId].stock < quantity) {
                         return showToast(`المخزون غير كاف! المتوفر: ${products[productId].stock}`, 'error');
                     }
+                    
+                    if (currentBon.length === 0) {
+                        const bonIdInput = document.getElementById('sale-bon-id');
+                        if (bonIdInput.value.trim() === '') {
+                             bonIdInput.value = `BON-${Date.now()}`;
+                        }
+                    }
 
                     currentBon.push({
                         productId,
@@ -454,12 +463,24 @@
                     if (e.target.tagName === 'BUTTON' && e.target.dataset.index) {
                         currentBon.splice(parseInt(e.target.dataset.index), 1);
                         renderBonItems();
+                        if (currentBon.length === 0) {
+                            document.getElementById('sale-bon-id').value = '';
+                        }
                     }
                 }
 
                 function handleConfirmSale() {
                     if (currentBon.length === 0) return showToast('الفاتورة فارغة.', 'error');
-                    const bonId = `BON-${Date.now()}`;
+                    
+                    const bonIdInput = document.getElementById('sale-bon-id');
+                    const bonId = bonIdInput.value.trim();
+
+                    if(bonId === '') {
+                        showToast('الرجاء إدخال رقم الفاتورة.', 'error');
+                        bonIdInput.focus();
+                        return;
+                    }
+
                     const clientName = document.getElementById('sale-client').value.trim() || 'عميل نقدي';
                     const updates = {};
                     const bonTotal = currentBon.reduce((sum, item) => sum + item.total, 0);
@@ -477,6 +498,7 @@
                             currentBon = [];
                             renderBonItems();
                             document.getElementById('sale-client').value = '';
+                            bonIdInput.value = '';
                         })
                         .catch(handleFirebaseError);
                 }
@@ -547,7 +569,7 @@
                         const bonId = e.target.dataset.bonId;
                         const password = prompt(`لحذف الفاتورة ${bonId}، الرجاء إدخال كلمة المرور:\nسيتم إرجاع كافة الكميات المباعة في هذه الفاتورة إلى المخزون.`);
                         
-                        if (password === null) return; // User cancelled
+                        if (password === null) return;
 
                         if (password === CORRECT_PASSWORD) {
                              if (confirm(`هل أنت متأكد من حذف الفاتورة ${bonId}؟ هذا الإجراء نهائي.`)) {
@@ -633,7 +655,6 @@
                     printWindow.document.close();
                     printWindow.focus();
                     setTimeout(() => { 
-                        // The following styles ensure the printout is black and white and respects the layout.
                         const style = printWindow.document.createElement('style');
                         style.innerHTML = `@media print { 
                             body { -webkit-print-color-adjust: exact; color-adjust: exact; color: #000 !important; } 
