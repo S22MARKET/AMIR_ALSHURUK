@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة المخزون والمبيعات</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #0056b3;
+            --secondary-color: #f8f9fa;
+            --dark-color: #343a40;
+            --light-color: #ffffff;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --border-radius: 8px;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #e9ecef;
+            color: var(--dark-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            background: var(--light-color);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        h1, h2 {
+            color: var(--primary-color);
+            text-align: center;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+            margin-bottom: 25px;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        .card {
+            background-color: var(--secondary-color);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            border: 1px solid #dee2e6;
+        }
+
+        .card h3 {
+            margin-top: 0;
+            color: var(--dark-color);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            border-radius: var(--border-radius);
+            border: 1px solid #ced4da;
+            font-family: 'Cairo', sans-serif;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: var(--light-color);
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-weight: 700;
+        }
+
+        button.success { background-color: var(--success-color); }
+        button.danger { background-color: var(--danger-color); }
+        button.warning { background-color: var(--warning-color); color: var(--dark-color); }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        #stock-list .product {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        #stock-list .product:last-child {
+            border-bottom: none;
+        }
+
+        .product-name {
+            font-weight: 600;
+        }
+
+        .product-stock {
+            font-size: 18px;
+            font-weight: 700;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        .stock-ok { background-color: #d4edda; color: #155724; }
+        .stock-low { background-color: #fff3cd; color: #856404; }
+        .stock-out { background-color: #f8d7da; color: #721c24; }
+        
+        #reports-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ccc;
+        }
+        
+        .report-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: flex-end;
+            margin-bottom: 20px;
+        }
+        
+        .report-controls .form-group {
+            flex-grow: 1;
+        }
+
+        .report-summary {
+            display: flex;
+            justify-content: space-around;
+            background: var(--primary-color);
+            color: var(--light-color);
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .summary-item h4 {
+            margin: 0 0 5px 0;
+        }
+        .summary-item p {
+            margin: 0;
+            font-size: 1.5em;
+            font-weight: 700;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 12px;
+            text-align: right;
+        }
+
+        thead {
+            background-color: var(--dark-color);
+            color: var(--light-color);
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: var(--secondary-color);
+        }
+        
+        .type-production { color: var(--success-color); font-weight: bold; }
+        .type-sale { color: var(--danger-color); font-weight: bold; }
+        
+        .price-input-container {
+            display: flex;
+            gap: 10px;
+        }
+        .price-input-container input {
+            flex: 1;
+        }
+        
+        @media print {
+            body {
+                padding: 0;
+                font-size: 12pt;
+            }
+            .container {
+                box-shadow: none;
+                padding: 0;
+            }
+            .main-grid, .report-controls, #product-editor-card {
+                display: none;
+            }
+            #reports-section {
+                margin-top: 0;
+                padding-top: 0;
+                border-top: none;
+            }
+            h1 { font-size: 18pt; }
+            h2 { font-size: 16pt; }
+            table, thead, tbody, th, td, tr {
+                display: block;
+            }
+            table {
+                border: 1px solid #ccc;
+            }
+            thead { display: none; }
+            tr {
+                border-bottom: 1px solid #ccc;
+                padding-bottom: 10px;
+                margin-bottom: 10px;
+            }
+             td {
+                display: block;
+                text-align: right;
+                border: none;
+                position: relative;
+                padding-left: 50%;
+            }
+            td:before {
+                position: absolute;
+                left: 6px;
+                width: 45%;
+                padding-right: 10px;
+                white-space: nowrap;
+                text-align: left;
+                font-weight: bold;
+                content: attr(data-label);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="app">
+        <h1>نظام إدارة المخزون والمبيعات</h1>
+
+        <div class="main-grid">
+            <div class="card" id="stock-card">
+                <h3>حالة المخزون الحالية</h3>
+                <div id="stock-list">
+                    </div>
+            </div>
+            <div class="card" id="operations-card">
+                <h3>تسجيل العمليات</h3>
+                <div id="production-form">
+                    <h4>تسجيل إنتاج جديد</h4>
+                    <div class="form-group">
+                        <label for="prod-product">المنتج</label>
+                        <select id="prod-product"></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="prod-quantity">الكمية المصنعة</label>
+                        <input type="number" id="prod-quantity" min="1" placeholder="أدخل الكمية">
+                    </div>
+                    <button id="add-production-btn" class="success">إضافة للإنتاج</button>
+                </div>
+                <hr style="margin: 20px 0;">
+                <div id="sales-form">
+                    <h4>تسجيل عملية بيع</h4>
+                    <div class="form-group">
+                        <label for="sale-product">المنتج</label>
+                        <select id="sale-product"></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="sale-quantity">الكمية المباعة</label>
+                        <input type="number" id="sale-quantity" min="1" placeholder="أدخل الكمية">
+                    </div>
+                    <div class="form-group">
+                        <label for="sale-type">نوع السعر</label>
+                        <select id="sale-type">
+                            <option value="gros">سعر الجملة</option>
+                            <option value="superGros">شبه جملة</option>
+                        </select>
+                    </div>
+                    <button id="add-sale-btn" class="danger">تسجيل البيع</button>
+                </div>
+            </div>
+             <div class="card" id="product-editor-card">
+                <h3>إدارة أسعار المنتجات</h3>
+                <div class="form-group">
+                    <label for="edit-product-select">اختر المنتج للتعديل</label>
+                    <select id="edit-product-select"></select>
+                </div>
+                <div class="form-group">
+                    <label>أسعار المنتج</label>
+                    <div class="price-input-container">
+                        <input type="number" id="edit-gros-price" placeholder="سعر الجملة">
+                        <input type="number" id="edit-supergros-price" placeholder="شبه جملة">
+                    </div>
+                </div>
+                <button id="save-price-btn" class="warning">حفظ التعديلات</button>
+            </div>
+        </div>
+
+        <section id="reports-section">
+            <h2>التقارير والإحصائيات</h2>
+            <div class="report-controls">
+                <div class="form-group">
+                    <label for="start-date">من تاريخ</label>
+                    <input type="date" id="start-date">
+                </div>
+                <div class="form-group">
+                    <label for="end-date">إلى تاريخ</label>
+                    <input type="date" id="end-date">
+                </div>
+                <button id="filter-btn">عرض التقرير</button>
+                <button id="print-btn" class="warning">طباعة التقرير</button>
+            </div>
+
+            <div class="report-summary">
+                <div class="summary-item">
+                    <h4>إجمالي الدخل</h4>
+                    <p id="total-revenue">0.00 د.ج</p>
+                </div>
+                <div class="summary-item">
+                    <h4>إجمالي المبيعات</h4>
+                    <p id="total-sales-count">0</p>
+                </div>
+                <div class="summary-item">
+                    <h4>إجمالي الإنتاج</h4>
+                    <p id="total-production-count">0</p>
+                </div>
+            </div>
+
+            <h3>سجل العمليات</h3>
+            <div style="overflow-x:auto;">
+                <table id="transactions-table">
+                    <thead>
+                        <tr>
+                            <th>التاريخ والوقت</th>
+                            <th>نوع العملية</th>
+                            <th>المنتج</th>
+                            <th>الكمية</th>
+                            <th>سعر الوحدة</th>
+                            <th>الإجمالي</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const app = {
+            data: {
+                products: [],
+                transactions: []
+            },
+
+            // تعريف عناصر الواجهة
+            elements: {
+                stockList: document.getElementById('stock-list'),
+                prodProductSelect: document.getElementById('prod-product'),
+                prodQuantityInput: document.getElementById('prod-quantity'),
+                addProductionBtn: document.getElementById('add-production-btn'),
+                saleProductSelect: document.getElementById('sale-product'),
+                saleQuantityInput: document.getElementById('sale-quantity'),
+                saleTypeSelect: document.getElementById('sale-type'),
+                addSaleBtn: document.getElementById('add-sale-btn'),
+                transactionsTableBody: document.querySelector('#transactions-table tbody'),
+                startDateInput: document.getElementById('start-date'),
+                endDateInput: document.getElementById('end-date'),
+                filterBtn: document.getElementById('filter-btn'),
+                printBtn: document.getElementById('print-btn'),
+                totalRevenueEl: document.getElementById('total-revenue'),
+                totalSalesCountEl: document.getElementById('total-sales-count'),
+                totalProductionCountEl: document.getElementById('total-production-count'),
+                editProductSelect: document.getElementById('edit-product-select'),
+                editGrosPriceInput: document.getElementById('edit-gros-price'),
+                editSupergrosPriceInput: document.getElementById('edit-supergros-price'),
+                savePriceBtn: document.getElementById('save-price-btn')
+            },
+
+            // تهيئة التطبيق
+            init() {
+                this.loadData();
+                this.bindEvents();
+                this.renderAll();
+                this.setDefaultDates();
+                this.filterTransactions();
+            },
+
+            // تحميل البيانات من localStorage
+            loadData() {
+                const productsData = localStorage.getItem('stockAppProducts');
+                const transactionsData = localStorage.getItem('stockAppTransactions');
+
+                if (productsData) {
+                    this.data.products = JSON.parse(productsData);
+                } else {
+                    // بيانات أولية إذا لم توجد بيانات محفوظة
+                    this.data.products = [
+                        { id: 1, name: 'جافيل 5 لتر', gros: 125.00, superGros: 135.00, stock: 0 },
+                        { id: 2, name: 'جافيل 1 لتر', gros: 35.00, superGros: 42.00, stock: 0 },
+                        { id: 3, name: 'صانيبون 5 لتر', gros: 155.00, superGros: 165.00, stock: 0 },
+                        { id: 4, name: 'صانيبون 1 لتر', gros: 75.00, superGros: 85.00, stock: 0 },
+                        { id: 5, name: 'منظف الأرضيات 1 لتر', gros: 85.50, superGros: 95.00, stock: 0 },
+                        { id: 6, name: 'سائل الأواني 5 لتر', gros: 290.00, superGros: 310.00, stock: 0 },
+                        { id: 7, name: 'سائل الأواني 1 لتر', gros: 90.00, superGros: 105.00, stock: 0 },
+                        { id: 8, name: 'سائل الأواني 450 مل', gros: 65.00, superGros: 57.00, stock: 0 },
+                        { id: 9, name: 'جافيل 2 لتر', gros: 85.00, superGros: 75.00, stock: 0 },
+                    ];
+                }
+
+                if (transactionsData) {
+                    this.data.transactions = JSON.parse(transactionsData);
+                }
+            },
+
+            // حفظ البيانات في localStorage
+            saveData() {
+                localStorage.setItem('stockAppProducts', JSON.stringify(this.data.products));
+                localStorage.setItem('stockAppTransactions', JSON.stringify(this.data.transactions));
+            },
+
+            // ربط الأحداث بالأزرار والعناصر
+            bindEvents() {
+                this.elements.addProductionBtn.addEventListener('click', () => this.recordProduction());
+                this.elements.addSaleBtn.addEventListener('click', () => this.recordSale());
+                this.elements.filterBtn.addEventListener('click', () => this.filterTransactions());
+                this.elements.printBtn.addEventListener('click', () => window.print());
+                this.elements.editProductSelect.addEventListener('change', (e) => this.populateEditForm(e.target.value));
+                this.elements.savePriceBtn.addEventListener('click', () => this.savePriceChanges());
+            },
+
+            // عرض كل شيء
+            renderAll() {
+                this.renderProductSelectors();
+                this.renderStockList();
+                this.renderTransactions(this.data.transactions);
+                this.populateEditForm(this.data.products[0]?.id);
+            },
+            
+            // عرض قوائم اختيار المنتجات
+            renderProductSelectors() {
+                const optionsHTML = this.data.products.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+                this.elements.prodProductSelect.innerHTML = optionsHTML;
+                this.elements.saleProductSelect.innerHTML = optionsHTML;
+                this.elements.editProductSelect.innerHTML = optionsHTML;
+            },
+
+            // عرض قائمة المخزون
+            renderStockList() {
+                this.elements.stockList.innerHTML = this.data.products.map(p => {
+                    let stockClass = 'stock-ok';
+                    if (p.stock === 0) stockClass = 'stock-out';
+                    else if (p.stock < 10) stockClass = 'stock-low';
+                    return `
+                        <div class="product">
+                            <span class="product-name">${p.name}</span>
+                            <span class="product-stock ${stockClass}">${p.stock}</span>
+                        </div>
+                    `;
+                }).join('');
+            },
+
+            // عرض جدول العمليات
+            renderTransactions(transactions) {
+                this.elements.transactionsTableBody.innerHTML = transactions
+                    .sort((a, b) => new Date(b.date) - new Date(a.date)) // Sort by most recent
+                    .map(t => {
+                        const product = this.findProductById(t.productId);
+                        const typeClass = t.type === 'production' ? 'type-production' : 'type-sale';
+                        const typeText = t.type === 'production' ? 'إنتاج' : 'بيع';
+                        return `
+                            <tr>
+                                <td data-label="التاريخ">${new Date(t.date).toLocaleString('ar-DZ')}</td>
+                                <td data-label="العملية" class="${typeClass}">${typeText}</td>
+                                <td data-label="المنتج">${product ? product.name : 'منتج محذوف'}</td>
+                                <td data-label="الكمية">${t.quantity}</td>
+                                <td data-label="السعر">${t.pricePerUnit > 0 ? t.pricePerUnit.toFixed(2) + ' د.ج' : '-'}</td>
+                                <td data-label="الإجمالي">${t.total > 0 ? t.total.toFixed(2) + ' د.ج' : '-'}</td>
+                            </tr>
+                        `;
+                }).join('');
+            },
+
+            // تسجيل الإنتاج
+            recordProduction() {
+                const productId = parseInt(this.elements.prodProductSelect.value);
+                const quantity = parseInt(this.elements.prodQuantityInput.value);
+
+                if (!productId || !quantity || quantity <= 0) {
+                    alert('يرجى إدخال منتج وكمية صحيحة.');
+                    return;
+                }
+
+                const product = this.findProductById(productId);
+                product.stock += quantity;
+
+                this.data.transactions.push({
+                    id: Date.now(),
+                    date: new Date().toISOString(),
+                    type: 'production',
+                    productId: productId,
+                    quantity: quantity,
+                    pricePerUnit: 0,
+                    total: 0
+                });
+
+                this.saveAndRender();
+                this.elements.prodQuantityInput.value = '';
+                alert(`تم إضافة ${quantity} وحدة من ${product.name} إلى المخزون.`);
+            },
+
+            // تسجيل المبيعات
+            recordSale() {
+                const productId = parseInt(this.elements.saleProductSelect.value);
+                const quantity = parseInt(this.elements.saleQuantityInput.value);
+                const saleType = this.elements.saleTypeSelect.value;
+
+                if (!productId || !quantity || quantity <= 0) {
+                    alert('يرجى إدخال منتج وكمية صحيحة.');
+                    return;
+                }
+
+                const product = this.findProductById(productId);
+
+                if (product.stock < quantity) {
+                    alert(`المخزون غير كاف! الكمية المتوفرة من ${product.name} هي ${product.stock} فقط.`);
+                    return;
+                }
+
+                product.stock -= quantity;
+                const pricePerUnit = product[saleType];
+                const total = pricePerUnit * quantity;
+
+                this.data.transactions.push({
+                    id: Date.now(),
+                    date: new Date().toISOString(),
+                    type: 'sale',
+                    productId: productId,
+                    quantity: quantity,
+                    pricePerUnit: pricePerUnit,
+                    total: total
+                });
+
+                this.saveAndRender();
+                this.elements.saleQuantityInput.value = '';
+                alert(`تم بيع ${quantity} وحدة من ${product.name} بسعر ${total.toFixed(2)} د.ج.`);
+            },
+
+            // فلترة وعرض التقارير
+            filterTransactions() {
+                const start = this.elements.startDateInput.value ? new Date(this.elements.startDateInput.value).setHours(0, 0, 0, 0) : null;
+                const end = this.elements.endDateInput.value ? new Date(this.elements.endDateInput.value).setHours(23, 59, 59, 999) : null;
+
+                const filtered = this.data.transactions.filter(t => {
+                    const tDate = new Date(t.date);
+                    const isAfterStart = start ? tDate >= start : true;
+                    const isBeforeEnd = end ? tDate <= end : true;
+                    return isAfterStart && isBeforeEnd;
+                });
+
+                this.renderTransactions(filtered);
+                this.updateReportSummary(filtered);
+            },
+            
+            // تحديث ملخص التقرير
+            updateReportSummary(transactions) {
+                const summary = transactions.reduce((acc, t) => {
+                    if (t.type === 'sale') {
+                        acc.revenue += t.total;
+                        acc.salesCount += t.quantity;
+                    } else if (t.type === 'production') {
+                        acc.productionCount += t.quantity;
+                    }
+                    return acc;
+                }, { revenue: 0, salesCount: 0, productionCount: 0 });
+
+                this.elements.totalRevenueEl.textContent = `${summary.revenue.toFixed(2)} د.ج`;
+                this.elements.totalSalesCountEl.textContent = summary.salesCount;
+                this.elements.totalProductionCountEl.textContent = summary.productionCount;
+            },
+            
+             // ملء نموذج تعديل السعر
+            populateEditForm(productId) {
+                if (!productId) return;
+                const product = this.findProductById(parseInt(productId));
+                if(product) {
+                    this.elements.editGrosPriceInput.value = product.gros;
+                    this.elements.editSupergrosPriceInput.value = product.superGros;
+                }
+            },
+
+            // حفظ الأسعار المعدلة
+            savePriceChanges() {
+                const productId = parseInt(this.elements.editProductSelect.value);
+                const newGrosPrice = parseFloat(this.elements.editGrosPriceInput.value);
+                const newSupergrosPrice = parseFloat(this.elements.editSupergrosPriceInput.value);
+
+                if (!productId || isNaN(newGrosPrice) || isNaN(newSupergrosPrice)) {
+                    alert('الرجاء إدخال أسعار صحيحة.');
+                    return;
+                }
+
+                const product = this.findProductById(productId);
+                product.gros = newGrosPrice;
+                product.superGros = newSupergrosPrice;
+                
+                this.saveData();
+                alert(`تم تحديث أسعار منتج: ${product.name}`);
+            },
+            
+            // أدوات مساعدة
+            findProductById(id) {
+                return this.data.products.find(p => p.id === id);
+            },
+
+            saveAndRender() {
+                this.saveData();
+                this.renderStockList();
+                this.filterTransactions(); // Refresh report view
+            },
+            
+            setDefaultDates() {
+                const today = new Date().toISOString().split('T')[0];
+                this.elements.startDateInput.value = today;
+                this.elements.endDateInput.value = today;
+            }
+        };
+
+        app.init();
+    });
+    </script>
+</body>
+</html>
