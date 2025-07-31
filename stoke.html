@@ -3,204 +3,197 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>إدارة المخزون والمبيعات - مؤسسة أمير الشروق</title>
+    <title>إدارة المخزون والمبيعات PRO - مؤسسة أمير الشروق</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #0056b3; --secondary-color: #f8f9fa; --dark-color: #343a40;
-            --light-color: #ffffff; --success-color: #28a745; --danger-color: #dc3545;
-            --warning-color: #ffc107; --border-radius: 8px;
+            --primary-color: #0d6efd; --secondary-color: #6c757d; --success-color: #198754;
+            --danger-color: #dc3545; --warning-color: #ffc107; --info-color: #0dcaf0;
+            --light-color: #f8f9fa; --dark-color: #212529; --border-radius: 0.5rem;
+            --box-shadow: 0 4px 12px rgba(0,0,0,0.08);
         }
+        *, *::before, *::after { box-sizing: border-box; }
         body {
-            font-family: 'Cairo', sans-serif; background-color: #e9ecef; color: var(--dark-color); margin: 0; padding: 20px;
+            font-family: 'Cairo', sans-serif; background-color: #eef2f6; color: var(--dark-color);
+            margin: 0; font-size: 16px; line-height: 1.6;
         }
-        .container { max-width: 1400px; margin: auto; background: var(--light-color); padding: 25px; border-radius: var(--border-radius); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        h1, h2 { color: var(--primary-color); text-align: center; border-bottom: 2px solid var(--primary-color); padding-bottom: 10px; margin-bottom: 25px; }
-        .main-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 25px; }
-        .card { background-color: var(--secondary-color); padding: 20px; border-radius: var(--border-radius); border: 1px solid #dee2e6; display: flex; flex-direction: column; }
-        .card h3 { margin-top: 0; color: var(--dark-color); }
+        .container { max-width: 1600px; margin: 0 auto; padding: 15px; }
+        h1, h2, h3 { line-height: 1.3; margin-top: 0; }
+        h1 { font-size: 1.75rem; text-align: center; color: var(--primary-color); margin-bottom: 20px; }
+        h2 { font-size: 1.5rem; border-bottom: 2px solid var(--primary-color); padding-bottom: 10px; margin-bottom: 20px; }
+        h3 { font-size: 1.2rem; margin-bottom: 15px; }
+        .card {
+            background: #fff; padding: 20px; border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow); margin-bottom: 20px;
+        }
+        .main-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+        @media (min-width: 992px) { .main-grid { grid-template-columns: repeat(3, 1fr); } }
         .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: 600; }
-        input, select, button { width: 100%; padding: 12px; border-radius: var(--border-radius); border: 1px solid #ced4da; font-family: 'Cairo', sans-serif; font-size: 16px; box-sizing: border-box; }
-        button { background-color: var(--primary-color); color: var(--light-color); border: none; cursor: pointer; transition: background-color 0.3s; font-weight: 700; }
-        button:disabled { background-color: #6c757d; cursor: not-allowed; }
-        button.success { background-color: var(--success-color); }
-        button.danger { background-color: var(--danger-color); }
-        button.warning { background-color: var(--warning-color); color: var(--dark-color); }
-        button:hover:not(:disabled) { opacity: 0.9; }
-        #stock-list { max-height: 400px; overflow-y: auto; }
-        #stock-list .product { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #dee2e6; }
-        .product-name { font-weight: 600; }
-        .product-stock { font-size: 18px; font-weight: 700; padding: 5px 10px; border-radius: 5px; }
-        .stock-ok { background-color: #d4edda; color: #155724; }
-        .stock-low { background-color: #fff3cd; color: #856404; }
-        .stock-out { background-color: #f8d7da; color: #721c24; }
-        #reports-section, #bon-section { margin-top: 30px; padding-top: 20px; border-top: 1px solid #ccc; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid #dee2e6; padding: 12px; text-align: right; }
-        thead { background-color: var(--dark-color); color: var(--light-color); }
-        /* --- Login Overlay --- */
-        #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; justify-content: center; align-items: center; z-index: 1000; transition: opacity 0.3s; }
-        #login-box { background: var(--light-color); padding: 40px; border-radius: var(--border-radius); text-align: center; width: 350px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        label { display: block; margin-bottom: 8px; font-weight: 600; }
+        input, select, button {
+            width: 100%; padding: 12px; border-radius: var(--border-radius);
+            border: 1px solid #ced4da; font-family: inherit; font-size: 1rem;
+        }
+        button {
+            border: none; cursor: pointer; transition: all 0.2s ease-in-out;
+            font-weight: 700; color: #fff;
+        }
+        button:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+        button:disabled { background-color: var(--secondary-color); cursor: not-allowed; }
+        .btn-primary { background-color: var(--primary-color); }
+        .btn-success { background-color: var(--success-color); }
+        .btn-danger { background-color: var(--danger-color); }
+        .btn-warning { background-color: var(--warning-color); color: var(--dark-color); }
+        .btn-outline-danger { background: transparent; border: 1px solid var(--danger-color); color: var(--danger-color); }
+        .btn-outline-danger:hover { background: var(--danger-color); color: #fff; }
+
+        /* Login */
+        #login-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: flex; justify-content: center; align-items: center; z-index: 1000; }
+        #login-box { background: #fff; padding: 30px; border-radius: var(--border-radius); text-align: center; width: 90%; max-width: 400px; }
         #login-error { color: var(--danger-color); margin-top: 15px; font-weight: bold; min-height: 24px; }
         #app-container { display: none; }
-        /* --- Print Styles for BON --- */
+
+        /* Dashboard */
+        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+        .dashboard-item { background: var(--light-color); padding: 15px; border-radius: var(--border-radius); text-align: center; border: 1px solid #eee; }
+        .dashboard-item .value { font-size: 1.8rem; font-weight: 700; color: var(--primary-color); }
+        .dashboard-item .label { font-size: 0.9rem; color: var(--secondary-color); font-weight: 600; }
+
+        /* Stock List */
+        #stock-search { margin-bottom: 15px; }
+        #stock-list .product { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #eee; }
+        #stock-list .product:last-child { border-bottom: none; }
+        .product-stock { font-size: 1.1rem; font-weight: 700; padding: 5px 10px; border-radius: 5px; }
+        .stock-ok { background-color: #d1e7dd; color: #0f5132; }
+        .stock-low { background-color: #fff3cd; color: #664d03; }
+        .stock-out { background-color: #f8d7da; color: #842029; }
+        
+        /* Tables */
+        .table-wrapper { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { border: 1px solid #dee2e6; padding: 12px; text-align: right; vertical-align: middle; }
+        thead { background-color: var(--dark-color); color: var(--light-color); }
+        tbody tr:nth-child(even) { background-color: var(--light-color); }
+
+        /* Custom Alert/Toast */
+        #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 2000; display: flex; flex-direction: column; gap: 10px; }
+        .toast { padding: 15px 25px; border-radius: var(--border-radius); color: #fff; font-weight: 600; box-shadow: 0 5px 15px rgba(0,0,0,0.2); opacity: 0; transform: translateY(-20px); transition: all 0.3s ease-in-out; }
+        .toast.show { opacity: 1; transform: translateY(0); }
+        .toast-success { background-color: var(--success-color); }
+        .toast-error { background-color: var(--danger-color); }
+
+        /* Print Styles */
         #bon-to-print { display: none; }
         @media print {
             body * { visibility: hidden; }
             #bon-to-print, #bon-to-print * { visibility: visible; }
-            #bon-to-print {
-                position: absolute; left: 0; top: 0; width: 100%; padding: 20px; font-family: 'Cairo', sans-serif; direction: rtl;
-            }
-            .bon-header { text-align: center; margin-bottom: 40px; }
-            .bon-header h1 { font-size: 24pt; color: black; border: none; margin: 0; }
-            .bon-header p { font-size: 12pt; margin: 5px 0; }
-            .bon-meta { display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 12pt; }
-            .bon-table { width: 100%; border-collapse: collapse; font-size: 12pt; }
-            .bon-table th, .bon-table td { border: 1px solid #333; padding: 8px; text-align: right; color: black; }
-            .bon-table th { background-color: #eee; }
-            .bon-total { text-align: left; margin-top: 20px; font-size: 14pt; font-weight: bold; }
-            .bon-footer { margin-top: 80px; display: flex; justify-content: space-between; font-size: 12pt; }
+            #bon-to-print { position: absolute; left: 0; top: 0; width: 100%; padding: 20px; font-family: 'Cairo', sans-serif; direction: rtl; }
+            .bon-header h1 { font-size: 24pt; color: black; border: none; }
+            .bon-table th, .bon-table td { color: black; }
         }
     </style>
 </head>
 <body>
-
-    <!-- Login Overlay -->
+    <div id="toast-container"></div>
     <div id="login-overlay">
         <div id="login-box">
             <h2>تسجيل الدخول</h2>
             <p>الرجاء إدخال كلمة المرور للوصول للنظام.</p>
-            <div class="form-group">
-                <label for="password">كلمة المرور</label>
-                <input type="password" id="password" placeholder="********">
-            </div>
-            <button id="login-btn">دخول</button>
+            <div class="form-group"><input type="password" id="password" placeholder="********"></div>
+            <button id="login-btn" class="btn-primary">دخول</button>
             <div id="login-error"></div>
         </div>
     </div>
 
-    <!-- Main App Container -->
     <div class="container" id="app-container">
-        <h1>نظام إدارة المخزون والمبيعات - مؤسسة أمير الشروق</h1>
+        <h1>نظام إدارة المخزون - مؤسسة أمير الشروق</h1>
+        
+        <div class="card">
+            <h2>لوحة المعلومات</h2>
+            <div class="dashboard-grid">
+                <div class="dashboard-item"><div id="db-product-count" class="value">0</div><div class="label">عدد المنتجات</div></div>
+                <div class="dashboard-item"><div id="db-stock-value" class="value">0</div><div class="label">إجمالي المخزون</div></div>
+                <div class="dashboard-item"><div id="db-best-seller" class="value">-</div><div class="label">المنتج الأكثر مبيعاً</div></div>
+            </div>
+        </div>
+
         <div class="main-grid">
-            <!-- Stock Status Card -->
             <div class="card">
-                <h3>حالة المخزون الحالية</h3>
+                <h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg> حالة المخزون</h3>
+                <input type="search" id="stock-search" placeholder="ابحث عن منتج...">
                 <div id="stock-list"></div>
             </div>
-            <!-- Operations Card -->
             <div class="card">
-                <h3>تسجيل العمليات</h3>
-                <h4><span style="color: var(--success-color);">+</span> تسجيل إنتاج جديد</h4>
+                <h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg> إدارة المنتجات</h3>
+                <div id="product-form">
+                    <h4>إضافة منتج جديد</h4>
+                    <div class="form-group"><label for="new-product-name">اسم المنتج</label><input type="text" id="new-product-name"></div>
+                    <div class="form-group"><label for="new-gros-price">سعر الجملة (د.ج)</label><input type="number" id="new-gros-price"></div>
+                    <div class="form-group"><label for="new-supergros-price">شبه جملة (د.ج)</label><input type="number" id="new-supergros-price"></div>
+                    <button id="add-product-btn" class="btn-success">إضافة المنتج</button>
+                    <hr style="margin: 20px 0;">
+                    <h4>تعديل / حذف منتج</h4>
+                    <div class="form-group"><label for="edit-product-select">اختر منتج</label><select id="edit-product-select"></select></div>
+                    <button id="delete-product-btn" class="btn-outline-danger">حذف المنتج المحدد</button>
+                </div>
+            </div>
+            <div class="card">
+                <h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V10"></path><path d="M18 20V4"></path><path d="M6 20V16"></path></svg> تسجيل العمليات</h3>
+                <h4><span style="color: var(--success-color);">+</span> تسجيل إنتاج</h4>
                 <div class="form-group"><label for="prod-product">المنتج</label><select id="prod-product"></select></div>
-                <div class="form-group"><label for="prod-quantity">الكمية المصنعة</label><input type="number" id="prod-quantity" min="1"></div>
-                <button id="add-production-btn" class="success">إضافة إنتاج</button>
-                <hr style="margin: 20px 0;">
-                <h4><span style="color: var(--danger-color);">-</span> تسجيل عملية بيع</h4>
-                <div class="form-group"><label for="sale-client">اسم العميل</label><input type="text" id="sale-client" placeholder="أدخل اسم العميل (اختياري)"></div>
-                <div class="form-group"><label for="sale-product">المنتج</label><select id="sale-product"></select></div>
-                <div class="form-group"><label for="sale-type">نوع السعر</label><select id="sale-type"><option value="gros">جملة</option><option value="superGros">شبه جملة</option></select></div>
-                <div class="form-group"><label for="sale-price">سعر الوحدة (د.ج)</label><input type="number" id="sale-price" min="0"></div>
-                <div class="form-group"><label for="sale-quantity">الكمية المباعة</label><input type="number" id="sale-quantity" min="1"></div>
-                <button id="add-to-bon-btn" class="warning">إضافة إلى الفاتورة</button>
-            </div>
-            <!-- Product Management Card -->
-            <div class="card">
-                <h3>إدارة المنتجات والأسعار</h3>
-                <div class="form-group"><label for="edit-product-select">اختر منتج للتعديل</label><select id="edit-product-select"></select></div>
-                <div class="form-group"><label for="edit-gros-price">سعر الجملة (د.ج)</label><input type="number" id="edit-gros-price"></div>
-                <div class="form-group"><label for="edit-supergros-price">سعر شبه الجملة (د.ج)</label><input type="number" id="edit-supergros-price"></div>
-                <button id="save-price-btn" class="primary">حفظ تعديل السعر</button>
-                <hr style="margin: 20px 0;">
-                <h4>إضافة منتج جديد</h4>
-                <div class="form-group"><label for="new-product-name">اسم المنتج الجديد</label><input type="text" id="new-product-name"></div>
-                <div class="form-group"><label for="new-gros-price">سعر الجملة (د.ج)</label><input type="number" id="new-gros-price"></div>
-                <div class="form-group"><label for="new-supergros-price">سعر شبه الجملة (د.ج)</label><input type="number" id="new-supergros-price"></div>
-                <button id="add-product-btn" class="success">إضافة المنتج الجديد</button>
+                <div class="form-group"><label for="prod-quantity">الكمية</label><input type="number" id="prod-quantity" min="1"></div>
+                <button id="add-production-btn" class="btn-success">إضافة إنتاج</button>
             </div>
         </div>
 
-        <!-- Sales BON Section -->
-        <section id="bon-section">
-            <h2>فاتورة البيع الحالية</h2>
-            <table id="bon-items-table">
-                <thead><tr><th>المنتج</th><th>الكمية</th><th>سعر الوحدة</th><th>الإجمالي</th><th>حذف</th></tr></thead>
-                <tbody></tbody>
-            </table>
-            <h3 style="text-align: left; margin: 20px 0;" id="bon-total">الإجمالي: 0.00 د.ج</h3>
-            <button id="confirm-sale-btn" class="danger" style="width: 100%; padding: 15px; font-size: 18px;">تأكيد البيع وإنشاء الفاتورة</button>
-        </section>
-
-        <!-- Reports Section -->
-        <section id="reports-section">
-            <h2>التقارير وسجل العمليات</h2>
-            <div class="report-controls" style="display: flex; gap: 15px; align-items: flex-end; margin-bottom: 20px;">
-                <div class="form-group"><label for="start-date">من</label><input type="date" id="start-date"></div>
-                <div class="form-group"><label for="end-date">إلى</label><input type="date" id="end-date"></div>
-                <button id="filter-btn">عرض التقرير</button>
+        <div class="card">
+            <h2><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg> إنشاء فاتورة بيع (BON)</h2>
+            <div class="main-grid">
+                <div>
+                    <div class="form-group"><label for="sale-client">اسم العميل</label><input type="text" id="sale-client" placeholder="عميل نقدي"></div>
+                    <div class="form-group"><label for="sale-product">المنتج</label><select id="sale-product"></select></div>
+                    <div class="form-group"><label for="sale-type">نوع السعر</label><select id="sale-type"><option value="gros">جملة</option><option value="superGros">شبه جملة</option></select></div>
+                    <div class="form-group"><label for="sale-price">سعر الوحدة (د.ج)</label><input type="number" id="sale-price" min="0"></div>
+                    <div class="form-group"><label for="sale-quantity">الكمية</label><input type="number" id="sale-quantity" min="1"></div>
+                    <button id="add-to-bon-btn" class="btn-warning">إضافة إلى الفاتورة</button>
+                </div>
+                <div>
+                    <h3>عناصر الفاتورة الحالية</h3>
+                    <div class="table-wrapper">
+                        <table id="bon-items-table">
+                            <thead><tr><th>المنتج</th><th>الكمية</th><th>الإجمالي</th><th>حذف</th></tr></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                    <h3 style="text-align: left; margin: 20px 0;" id="bon-total">الإجمالي: 0.00 د.ج</h3>
+                    <button id="confirm-sale-btn" class="btn-danger" style="width: 100%; padding: 15px; font-size: 18px;">تأكيد البيع والطباعة</button>
+                </div>
             </div>
-            <h3>سجل العمليات المفصل</h3>
-            <div style="overflow-x:auto;">
-                <table id="transactions-table">
-                    <thead><tr><th>التاريخ</th><th>العملية</th><th>المنتج</th><th>الكمية</th><th>سعر الوحدة</th><th>الإجمالي</th><th>العميل</th><th>رقم الفاتورة</th></tr></thead>
-                    <tbody></tbody>
-                </table>
-            </div>
-        </section>
+        </div>
+        <!-- Printable BON Template is now generated dynamically in JS -->
     </div>
 
-    <!-- Printable BON Template (Hidden) -->
-    <div id="bon-to-print">
-        <div class="bon-header">
-            <h1>مؤسسة أمير الشروق</h1>
-            <p>لصناعة مواد التنظيف والتطهير</p>
-        </div>
-        <div class="bon-meta">
-            <div id="bon-client-info"></div>
-            <div id="bon-date-info"></div>
-        </div>
-        <h3>فاتورة توزيع (Bon de Distribution)</h3>
-        <table class="bon-table">
-            <thead><tr><th>المنتج</th><th>الكمية</th><th>سعر الوحدة</th><th>السعر الإجمالي</th></tr></thead>
-            <tbody id="bon-print-items"></tbody>
-        </table>
-        <div class="bon-total" id="bon-print-total"></div>
-        <div class="bon-footer">
-            <span>إمضاء وختم المؤسسة</span>
-            <span>إمضاء واستلام العميل</span>
-        </div>
-    </div>
-
-    <!-- Firebase SDK - Modern (ESM) -->
     <script type="module">
-        // Import functions from the Firebase SDKs
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
-        import { getDatabase, ref, onValue, push, set, update } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+        import { getDatabase, ref, onValue, push, set, update, remove } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
 
-        // Your web app's Firebase configuration (provided by you)
         const firebaseConfig = {
-          apiKey: "AIzaSyA1VBBOZQOUwnHp8x487g7lkn14x6Sp-7g",
-          authDomain: "stoke-c650a.firebaseapp.com",
-          projectId: "stoke-c650a",
-          storageBucket: "stoke-c650a.firebasestorage.app",
-          messagingSenderId: "464151163343",
-          appId: "1:464151163343:web:c623edc70dae8023c822ba",
-          measurementId: "G-SM4R26SMLF",
-          // The databaseURL is important for Realtime Database
-          databaseURL: "https://stoke-c650a-default-rtdb.firebaseio.com"
+            apiKey: "AIzaSyA1VBBOZQOUwnHp8x487g7lkn14x6Sp-7g",
+            authDomain: "stoke-c650a.firebaseapp.com",
+            databaseURL: "https://stoke-c650a-default-rtdb.firebaseio.com",
+            projectId: "stoke-c650a",
+            storageBucket: "stoke-c650a.appspot.com",
+            messagingSenderId: "464151163343",
+            appId: "1:464151163343:web:c623edc70dae8023c822ba",
+            measurementId: "G-SM4R26SMLF"
         };
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // --- Main Application Logic ---
         document.addEventListener('DOMContentLoaded', () => {
-
-            // --- Login Logic ---
             const loginOverlay = document.getElementById('login-overlay');
             const appContainer = document.getElementById('app-container');
             const passwordInput = document.getElementById('password');
@@ -209,84 +202,95 @@
             const CORRECT_PASSWORD = "SIDIKASI";
             let failedAttempts = 0;
 
-            loginBtn.addEventListener('click', () => {
+            loginBtn.addEventListener('click', handleLogin);
+            passwordInput.addEventListener('keyup', (e) => { if (e.key === 'Enter') handleLogin(); });
+
+            function handleLogin() {
+                if (loginBtn.disabled) return;
                 if (passwordInput.value === CORRECT_PASSWORD) {
-                    loginOverlay.style.opacity = '0';
-                    setTimeout(() => {
-                        loginOverlay.style.display = 'none';
-                        appContainer.style.display = 'block';
-                        initApp(); // Start the main app after login
-                    }, 300);
+                    loginOverlay.style.display = 'none';
+                    appContainer.style.display = 'block';
+                    initApp();
                 } else {
                     failedAttempts++;
                     passwordInput.value = '';
                     if (failedAttempts >= 5) {
-                        loginError.textContent = 'تم تجاوز عدد المحاولات. الرجاء الانتظار.';
+                        loginError.textContent = 'تم تجاوز المحاولات. انتظر دقيقة.';
                         loginBtn.disabled = true;
-                        passwordInput.disabled = true;
                         setTimeout(() => {
                             failedAttempts = 0;
-                            loginError.textContent = 'يمكنك المحاولة الآن.';
+                            loginError.textContent = '';
                             loginBtn.disabled = false;
-                            passwordInput.disabled = false;
-                        }, 60000); // 1 minute wait
+                        }, 60000);
                     } else {
-                        loginError.textContent = `كلمة مرور خاطئة! المحاولة ${failedAttempts} من 5.`;
+                        loginError.textContent = `كلمة مرور خاطئة! (${failedAttempts}/5)`;
                     }
                 }
-            });
-            
-            // --- Main App Initialization ---
+            }
+
             function initApp() {
-                // State
                 let products = {};
                 let transactions = {};
                 let currentBon = [];
 
-                // Elements
+                // --- UI Elements ---
                 const stockList = document.getElementById('stock-list');
                 const prodProductSelect = document.getElementById('prod-product');
                 const saleProductSelect = document.getElementById('sale-product');
                 const editProductSelect = document.getElementById('edit-product-select');
-                
-                // --- DATA LISTENERS (Real-time Sync) ---
-                const productsRef = ref(db, 'products');
-                onValue(productsRef, (snapshot) => {
+
+                // --- Toast Notification ---
+                const toastContainer = document.getElementById('toast-container');
+                function showToast(message, type = 'success') {
+                    const toast = document.createElement('div');
+                    toast.className = `toast toast-${type}`;
+                    toast.textContent = message;
+                    toastContainer.appendChild(toast);
+                    setTimeout(() => toast.classList.add('show'), 10);
+                    setTimeout(() => {
+                        toast.classList.remove('show');
+                        setTimeout(() => toast.remove(), 300);
+                    }, 4000);
+                }
+
+                // --- Firebase Listeners ---
+                onValue(ref(db, 'products'), (snapshot) => {
                     products = snapshot.val() || {};
                     renderAll();
                 });
-
-                const transactionsRef = ref(db, 'transactions');
-                onValue(transactionsRef, (snapshot) => {
+                onValue(ref(db, 'transactions'), (snapshot) => {
                     transactions = snapshot.val() || {};
-                    filterTransactions();
+                    updateDashboard();
                 });
-                
-                // --- RENDER FUNCTIONS ---
+
+                // --- Render Functions ---
                 function renderAll() {
                     renderProductSelectors();
                     renderStockList();
-                    populateEditForm();
+                    updateDashboard();
                 }
 
                 function renderProductSelectors() {
-                    const productOptions = Object.keys(products).map(key =>
-                        `<option value="${key}">${products[key].name}</option>`
-                    ).join('');
+                    const productOptions = Object.keys(products)
+                        .sort((a, b) => products[a].name.localeCompare(products[b].name))
+                        .map(key => `<option value="${key}">${products[key].name}</option>`)
+                        .join('');
                     prodProductSelect.innerHTML = productOptions;
                     saleProductSelect.innerHTML = productOptions;
                     editProductSelect.innerHTML = productOptions;
-                    updateSalePrice(); // Update price for default selection
+                    updateSalePrice();
                 }
 
-                function renderStockList() {
-                    stockList.innerHTML = Object.keys(products).sort((a,b) => products[a].name.localeCompare(products[b].name)).map(key => {
+                function renderStockList(filter = '') {
+                    const filteredKeys = Object.keys(products).filter(key => products[key].name.toLowerCase().includes(filter.toLowerCase()));
+                    stockList.innerHTML = filteredKeys.map(key => {
                         const p = products[key];
                         let stockClass = 'stock-ok';
-                        if (p.stock === 0) stockClass = 'stock-out';
+                        if (p.stock <= 0) stockClass = 'stock-out';
                         else if (p.stock < 10) stockClass = 'stock-low';
                         return `<div class="product"><span class="product-name">${p.name}</span><span class="product-stock ${stockClass}">${p.stock}</span></div>`;
                     }).join('');
+                    if (filteredKeys.length === 0) stockList.innerHTML = '<p style="text-align:center; color: #888;">لا توجد منتجات مطابقة.</p>';
                 }
 
                 function renderBonItems() {
@@ -294,57 +298,56 @@
                     let total = 0;
                     bonTableBody.innerHTML = currentBon.map((item, index) => {
                         total += item.total;
-                        return `
-                            <tr>
-                                <td>${item.productName}</td>
-                                <td>${item.quantity}</td>
-                                <td>${item.pricePerUnit.toFixed(2)} د.ج</td>
-                                <td>${item.total.toFixed(2)} د.ج</td>
-                                <td><button class="danger" data-index="${index}">X</button></td>
-                            </tr>
-                        `;
+                        return `<tr><td>${item.productName}</td><td>${item.quantity}</td><td>${item.total.toFixed(2)}</td><td><button class="btn-outline-danger" data-index="${index}">X</button></td></tr>`;
                     }).join('');
                     document.getElementById('bon-total').textContent = `الإجمالي: ${total.toFixed(2)} د.ج`;
                 }
                 
-                document.querySelector('#bon-items-table').addEventListener('click', (e) => {
-                    if (e.target.tagName === 'BUTTON' && e.target.dataset.index) {
-                        currentBon.splice(parseInt(e.target.dataset.index), 1);
-                        renderBonItems();
-                    }
-                });
+                function updateDashboard() {
+                    const productCount = Object.keys(products).length;
+                    const stockValue = Object.keys(products).reduce((sum, key) => sum + (products[key].stock || 0), 0);
+                    
+                    const sales = Object.values(transactions).filter(t => t.type === 'sale');
+                    const salesCount = {};
+                    sales.forEach(sale => {
+                        salesCount[sale.productName] = (salesCount[sale.productName] || 0) + sale.quantity;
+                    });
+                    const bestSeller = Object.keys(salesCount).reduce((a, b) => salesCount[a] > salesCount[b] ? a : b, 'لا يوجد');
 
-                // --- EVENT LISTENERS ---
+                    document.getElementById('db-product-count').textContent = productCount;
+                    document.getElementById('db-stock-value').textContent = stockValue;
+                    document.getElementById('db-best-seller').textContent = bestSeller;
+                }
+
+                // --- Event Listeners ---
+                document.getElementById('stock-search').addEventListener('input', (e) => renderStockList(e.target.value));
+
                 document.getElementById('add-product-btn').addEventListener('click', () => {
-                    const name = document.getElementById('new-product-name').value;
+                    const name = document.getElementById('new-product-name').value.trim();
                     const gros = parseFloat(document.getElementById('new-gros-price').value);
                     const superGros = parseFloat(document.getElementById('new-supergros-price').value);
 
                     if (name && gros > 0 && superGros > 0) {
-                        const newProductRef = push(ref(db, 'products'));
-                        set(newProductRef, {
-                            name: name,
-                            gros: gros,
-                            superGros: superGros,
-                            stock: 0
-                        });
-                        document.getElementById('new-product-name').value = '';
-                        document.getElementById('new-gros-price').value = '';
-                        document.getElementById('new-supergros-price').value = '';
+                        set(push(ref(db, 'products')), { name, gros, superGros, stock: 0 })
+                            .then(() => {
+                                showToast('تمت إضافة المنتج بنجاح.');
+                                document.getElementById('new-product-name').value = '';
+                                document.getElementById('new-gros-price').value = '';
+                                document.getElementById('new-supergros-price').value = '';
+                            })
+                            .catch(handleFirebaseError);
                     } else {
-                        alert('يرجى ملء جميع حقول المنتج الجديد ببيانات صحيحة.');
+                        showToast('يرجى ملء جميع الحقول ببيانات صحيحة.', 'error');
                     }
                 });
-
-                editProductSelect.addEventListener('change', populateEditForm);
                 
-                document.getElementById('save-price-btn').addEventListener('click', () => {
+                document.getElementById('delete-product-btn').addEventListener('click', () => {
                     const key = editProductSelect.value;
-                    const gros = parseFloat(document.getElementById('edit-gros-price').value);
-                    const superGros = parseFloat(document.getElementById('edit-supergros-price').value);
-                    if (key && gros > 0 && superGros > 0) {
-                        update(ref(db, 'products/' + key), { gros, superGros });
-                        alert('تم تحديث السعر بنجاح.');
+                    if (!key) return;
+                    if (confirm(`هل أنت متأكد من حذف المنتج "${products[key].name}"؟ لا يمكن التراجع عن هذا الإجراء.`)) {
+                        remove(ref(db, `products/${key}`))
+                            .then(() => showToast('تم حذف المنتج.'))
+                            .catch(handleFirebaseError);
                     }
                 });
 
@@ -352,158 +355,110 @@
                     const key = prodProductSelect.value;
                     const quantity = parseInt(document.getElementById('prod-quantity').value);
                     if (key && quantity > 0) {
-                        const currentStock = products[key].stock;
-                        update(ref(db, 'products/' + key), { stock: currentStock + quantity });
-
-                        const newTransactionRef = push(ref(db, 'transactions'));
-                        set(newTransactionRef, {
-                            type: 'production',
-                            productId: key,
-                            productName: products[key].name,
-                            quantity: quantity,
-                            date: new Date().toISOString()
-                        });
-                        document.getElementById('prod-quantity').value = '';
+                        const updates = {};
+                        updates[`/products/${key}/stock`] = (products[key].stock || 0) + quantity;
+                        updates[`/transactions/${push(ref(db, 'transactions')).key}`] = {
+                            type: 'production', productName: products[key].name, quantity, date: new Date().toISOString()
+                        };
+                        update(ref(db), updates)
+                            .then(() => {
+                                showToast('تم تسجيل الإنتاج.');
+                                document.getElementById('prod-quantity').value = '';
+                            })
+                            .catch(handleFirebaseError);
                     }
                 });
-                
+
                 saleProductSelect.addEventListener('change', updateSalePrice);
                 document.getElementById('sale-type').addEventListener('change', updateSalePrice);
 
                 document.getElementById('add-to-bon-btn').addEventListener('click', () => {
-                    const productId = saleProductSelect.value;
-                    const quantity = parseInt(document.getElementById('sale-quantity').value);
-                    const pricePerUnit = parseFloat(document.getElementById('sale-price').value);
-
-                    if (!productId || !(quantity > 0) || !(pricePerUnit >= 0)) {
-                        alert('يرجى إدخال بيانات صحيحة لإضافتها للفاتورة.');
-                        return;
-                    }
-                    
-                    if (products[productId].stock < quantity) {
-                        alert(`المخزون غير كاف! الكمية المتوفرة: ${products[productId].stock}`);
-                        return;
-                    }
-
-                    currentBon.push({
-                        productId: productId,
-                        productName: products[productId].name,
-                        quantity: quantity,
-                        pricePerUnit: pricePerUnit,
-                        total: quantity * pricePerUnit
-                    });
+                    const productId = saleProductSelect.value, quantity = parseInt(document.getElementById('sale-quantity').value), pricePerUnit = parseFloat(document.getElementById('sale-price').value);
+                    if (!productId || !(quantity > 0) || !(pricePerUnit >= 0)) return showToast('بيانات غير صحيحة.', 'error');
+                    if (products[productId].stock < quantity) return showToast(`المخزون غير كاف! المتوفر: ${products[productId].stock}`, 'error');
+                    currentBon.push({ productId, productName: products[productId].name, quantity, pricePerUnit, total: quantity * pricePerUnit });
                     renderBonItems();
                     document.getElementById('sale-quantity').value = '';
                 });
 
-                document.getElementById('confirm-sale-btn').addEventListener('click', () => {
-                    if (currentBon.length === 0) {
-                        alert('لا توجد عناصر في الفاتورة لتأكيدها.');
-                        return;
+                document.querySelector('#bon-items-table').addEventListener('click', (e) => {
+                    if (e.target.tagName === 'BUTTON' && e.target.dataset.index) {
+                        currentBon.splice(parseInt(e.target.dataset.index), 1);
+                        renderBonItems();
                     }
+                });
 
-                    const bonId = `BON-${Date.now()}`;
-                    const clientName = document.getElementById('sale-client').value || 'عميل نقدي';
-                    const updates = {};
-                    let bonTotal = 0;
-
+                document.getElementById('confirm-sale-btn').addEventListener('click', () => {
+                    if (currentBon.length === 0) return showToast('الفاتورة فارغة.', 'error');
+                    const bonId = `BON-${Date.now()}`, clientName = document.getElementById('sale-client').value.trim() || 'عميل نقدي';
+                    const updates = {}, bonTotal = currentBon.reduce((sum, item) => sum + item.total, 0);
                     currentBon.forEach(item => {
-                        const newTransactionRef = push(ref(db, 'transactions'));
-                        updates[`/transactions/${newTransactionRef.key}`] = {
-                            type: 'sale',
-                            productId: item.productId,
-                            productName: item.productName,
-                            quantity: item.quantity,
-                            pricePerUnit: item.pricePerUnit,
-                            total: item.total,
-                            client: clientName,
-                            bonId: bonId,
-                            date: new Date().toISOString()
-                        };
-                        const newStock = products[item.productId].stock - item.quantity;
-                        updates[`/products/${item.productId}/stock`] = newStock;
-                        bonTotal += item.total;
+                        updates[`/products/${item.productId}/stock`] = products[item.productId].stock - item.quantity;
+                        updates[`/transactions/${push(ref(db, 'transactions')).key}`] = { ...item, type: 'sale', client: clientName, bonId, date: new Date().toISOString() };
                     });
-                    
                     update(ref(db), updates)
                         .then(() => {
+                            showToast('تم تأكيد البيع بنجاح.');
                             printBon(bonId, clientName, bonTotal);
                             currentBon = [];
                             renderBonItems();
                             document.getElementById('sale-client').value = '';
                         })
-                        .catch((error) => console.error("Error confirming sale: ", error));
+                        .catch(handleFirebaseError);
                 });
 
-                document.getElementById('filter-btn').addEventListener('click', filterTransactions);
-                setDefaultDates();
-
-                // --- HELPER FUNCTIONS ---
-                function populateEditForm() {
-                    const key = editProductSelect.value;
-                    if (key && products[key]) {
-                        document.getElementById('edit-gros-price').value = products[key].gros;
-                        document.getElementById('edit-supergros-price').value = products[key].superGros;
-                    }
-                }
-                
+                // --- Helper Functions ---
                 function updateSalePrice() {
-                    const key = saleProductSelect.value;
-                    const type = document.getElementById('sale-type').value;
-                    if (key && products[key]) {
-                        document.getElementById('sale-price').value = products[key][type];
-                    }
+                    const key = saleProductSelect.value, type = document.getElementById('sale-type').value;
+                    if (key && products[key]) document.getElementById('sale-price').value = products[key][type];
                 }
                 
+                function handleFirebaseError(error) {
+                    console.error("Firebase Error: ", error);
+                    let message = 'فشل الحفظ. تحقق من اتصالك بالإنترنت.';
+                    if (error.code === 'PERMISSION_DENIED') {
+                        message = 'فشل الحفظ: ليس لديك إذن للكتابة في قاعدة البيانات. يرجى مراجعة قواعد الأمان في Firebase.';
+                    }
+                    showToast(message, 'error');
+                }
+
                 function printBon(bonId, clientName, total) {
-                    document.getElementById('bon-client-info').innerHTML = `<strong>العميل:</strong> ${clientName}<br><strong>رقم الفاتورة:</strong> ${bonId}`;
-                    document.getElementById('bon-date-info').innerHTML = `<strong>التاريخ:</strong> ${new Date().toLocaleDateString('ar-EG')}`;
-                    
-                    document.getElementById('bon-print-items').innerHTML = currentBon.map(item => `
-                        <tr>
-                            <td>${item.productName}</td>
-                            <td>${item.quantity}</td>
-                            <td>${item.pricePerUnit.toFixed(2)} د.ج</td>
-                            <td>${item.total.toFixed(2)} د.ج</td>
-                        </tr>
-                    `).join('');
-
-                    document.getElementById('bon-print-total').textContent = `المبلغ الإجمالي: ${total.toFixed(2)} د.ج`;
-
-                    window.print();
-                }
-
-                function setDefaultDates() {
-                    const today = new Date().toISOString().split('T')[0];
-                    document.getElementById('start-date').value = today;
-                    document.getElementById('end-date').value = today;
-                }
-
-                function filterTransactions() {
-                    const start = new Date(document.getElementById('start-date').value).setHours(0, 0, 0, 0);
-                    const end = new Date(document.getElementById('end-date').value).setHours(23, 59, 59, 999);
-                    const tableBody = document.querySelector('#transactions-table tbody');
-
-                    const allTrans = Object.values(transactions);
-                    const filtered = allTrans.filter(t => {
-                        const tDate = new Date(t.date);
-                        return tDate >= start && tDate <= end;
-                    });
-
-                    tableBody.innerHTML = filtered
-                        .sort((a, b) => new Date(b.date) - new Date(a.date))
-                        .map(t => `
-                        <tr>
-                            <td>${new Date(t.date).toLocaleString('ar-DZ')}</td>
-                            <td style="color:${t.type === 'sale' ? 'var(--danger-color)' : 'var(--success-color)'}; font-weight:bold;">${t.type === 'sale' ? 'بيع' : 'إنتاج'}</td>
-                            <td>${t.productName}</td>
-                            <td>${t.quantity}</td>
-                            <td>${t.pricePerUnit ? t.pricePerUnit.toFixed(2) + ' د.ج' : '-'}</td>
-                            <td>${t.total ? t.total.toFixed(2) + ' د.ج' : '-'}</td>
-                            <td>${t.client || '-'}</td>
-                            <td>${t.bonId || '-'}</td>
-                        </tr>
-                    `).join('');
+                    const printContent = `
+                        <div id="bon-to-print" style="font-family:'Cairo',sans-serif; direction:rtl;">
+                            <div class="bon-header" style="text-align:center; margin-bottom:40px;">
+                                <h1 style="font-size:24pt; color:black; border:none; margin:0;">مؤسسة أمير الشروق</h1>
+                                <p style="font-size:12pt; margin:5px 0;">لصناعة مواد التنظيف والتطهير</p>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; margin-bottom:20px; font-size:12pt;">
+                                <div><strong>العميل:</strong> ${clientName}<br><strong>رقم الفاتورة:</strong> ${bonId}</div>
+                                <div><strong>التاريخ:</strong> ${new Date().toLocaleDateString('ar-EG')}</div>
+                            </div>
+                            <h3>فاتورة توزيع (Bon de Distribution)</h3>
+                            <table class="bon-table" style="width:100%; border-collapse:collapse; font-size:12pt;">
+                                <thead><tr><th style="border:1px solid #333; padding:8px; background:#eee;">المنتج</th><th style="border:1px solid #333; padding:8px; background:#eee;">الكمية</th><th style="border:1px solid #333; padding:8px; background:#eee;">سعر الوحدة</th><th style="border:1px solid #333; padding:8px; background:#eee;">الإجمالي</th></tr></thead>
+                                <tbody>
+                                    ${currentBon.map(item => `
+                                        <tr>
+                                            <td style="border:1px solid #333; padding:8px;">${item.productName}</td>
+                                            <td style="border:1px solid #333; padding:8px;">${item.quantity}</td>
+                                            <td style="border:1px solid #333; padding:8px;">${item.pricePerUnit.toFixed(2)} د.ج</td>
+                                            <td style="border:1px solid #333; padding:8px;">${item.total.toFixed(2)} د.ج</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                            <div style="text-align:left; margin-top:20px; font-size:14pt; font-weight:bold;">المبلغ الإجمالي: ${total.toFixed(2)} د.ج</div>
+                            <div style="margin-top:80px; display:flex; justify-content:space-between; font-size:12pt;">
+                                <span>إمضاء وختم المؤسسة</span>
+                                <span>إمضاء واستلام العميل</span>
+                            </div>
+                        </div>
+                    `;
+                    const printWindow = window.open('', '_blank');
+                    printWindow.document.write(printContent);
+                    printWindow.document.close();
+                    printWindow.focus();
+                    setTimeout(() => { printWindow.print(); printWindow.close(); }, 250);
                 }
             }
         });
