@@ -115,7 +115,8 @@
             <div class="dashboard-grid">
                 <div class="dashboard-item"><div id="db-product-count" class="value">0</div><div class="label">عدد المنتجات</div></div>
                 <div class="dashboard-item"><div id="db-stock-value" class="value">0</div><div class="label">إجمالي المخزون</div></div>
-                <div class="dashboard-item"><div id="db-best-seller" class="value">-</div><div class="label">المنتج الأكثر مبيعاً</div></div>
+                <div class="dashboard-item"><div id="db-best-seller" class="value">-</div><div class="label">الأكثر مبيعاً</div></div>
+                <div class="dashboard-item"><div id="db-total-revenue" class="value">0</div><div class="label">إجمالي الدخل</div></div>
             </div>
         </div>
 
@@ -130,13 +131,18 @@
                 <div id="product-form">
                     <h4>إضافة منتج جديد</h4>
                     <div class="form-group"><label for="new-product-name">اسم المنتج</label><input type="text" id="new-product-name"></div>
-                    <div class="form-group"><label for="new-gros-price">سعر الجملة (د.ج)</label><input type="number" id="new-gros-price"></div>
-                    <div class="form-group"><label for="new-supergros-price">شبه جملة (د.ج)</label><input type="number" id="new-supergros-price"></div>
+                    <div class="form-group"><label for="new-gros-price">سعر الجملة (د.ج)</label><input type="number" id="new-gros-price" min="0"></div>
+                    <div class="form-group"><label for="new-supergros-price">شبه جملة (د.ج)</label><input type="number" id="new-supergros-price" min="0"></div>
                     <button id="add-product-btn" class="btn-success">إضافة المنتج</button>
                     <hr style="margin: 20px 0;">
                     <h4>تعديل / حذف منتج</h4>
                     <div class="form-group"><label for="edit-product-select">اختر منتج</label><select id="edit-product-select"></select></div>
-                    <button id="delete-product-btn" class="btn-outline-danger">حذف المنتج المحدد</button>
+                    <div id="edit-fields-container" style="display: none;">
+                        <div class="form-group"><label for="edit-gros-price">سعر الجملة (د.ج)</label><input type="number" id="edit-gros-price" min="0"></div>
+                        <div class="form-group"><label for="edit-supergros-price">شبه جملة (د.ج)</label><input type="number" id="edit-supergros-price" min="0"></div>
+                        <button id="save-price-btn" class="btn-primary">حفظ تعديل السعر</button>
+                    </div>
+                    <button id="delete-product-btn" class="btn-outline-danger" style="margin-top: 10px;">حذف المنتج المحدد</button>
                 </div>
             </div>
             <div class="card">
@@ -172,13 +178,40 @@
                 </div>
             </div>
         </div>
-        <!-- Printable BON Template is now generated dynamically in JS -->
+        
+        <div class="card">
+            <h2><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg> سجل العمليات والتقارير</h2>
+            <div class="main-grid" style="grid-template-columns: 1fr 1fr auto; align-items: flex-end;">
+                 <div class="form-group"><label for="start-date">من تاريخ</label><input type="date" id="start-date"></div>
+                 <div class="form-group"><label for="end-date">إلى تاريخ</label><input type="date" id="end-date"></div>
+                 <button id="filter-btn" class="btn-primary">فلترة</button>
+            </div>
+            <div class="table-wrapper">
+                <table id="transactions-table">
+                    <thead><tr><th>التاريخ</th><th>العملية</th><th>المنتج</th><th>الكمية</th><th>سعر الوحدة</th><th>الإجمالي</th><th>العميل</th><th>رقم الفاتورة</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
         import { getDatabase, ref, onValue, push, set, update, remove } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
 
+        // =================================================================================================
+        // !! تنبيه هام !!
+        // إذا لم يعمل زر "إضافة منتج" وظهرت رسالة خطأ تقول "فشل الحفظ: ليس لديك إذن..."
+        // فهذا يعني أن قواعد الأمان في Firebase تمنع الكتابة.
+        // لحل المشكلة، اذهب إلى مشروعك في Firebase -> Realtime Database -> Rules
+        // وغير القواعد إلى ما يلي للسماح بالقراءة والكتابة للجميع (هذا مناسب لمرحلة التطوير):
+        // {
+        //   "rules": {
+        //     ".read": "true",
+        //     ".write": "true"
+        //   }
+        // }
+        // =================================================================================================
         const firebaseConfig = {
             apiKey: "AIzaSyA1VBBOZQOUwnHp8x487g7lkn14x6Sp-7g",
             authDomain: "stoke-c650a.firebaseapp.com",
@@ -260,14 +293,14 @@
                 });
                 onValue(ref(db, 'transactions'), (snapshot) => {
                     transactions = snapshot.val() || {};
-                    updateDashboard();
+                    filterAndRenderTransactions();
                 });
 
                 // --- Render Functions ---
                 function renderAll() {
                     renderProductSelectors();
                     renderStockList();
-                    updateDashboard();
+                    filterAndRenderTransactions();
                 }
 
                 function renderProductSelectors() {
@@ -279,6 +312,7 @@
                     saleProductSelect.innerHTML = productOptions;
                     editProductSelect.innerHTML = productOptions;
                     updateSalePrice();
+                    populateEditForm();
                 }
 
                 function renderStockList(filter = '') {
@@ -303,7 +337,7 @@
                     document.getElementById('bon-total').textContent = `الإجمالي: ${total.toFixed(2)} د.ج`;
                 }
                 
-                function updateDashboard() {
+                function updateDashboard(filteredTransactions) {
                     const productCount = Object.keys(products).length;
                     const stockValue = Object.keys(products).reduce((sum, key) => sum + (products[key].stock || 0), 0);
                     
@@ -313,20 +347,34 @@
                         salesCount[sale.productName] = (salesCount[sale.productName] || 0) + sale.quantity;
                     });
                     const bestSeller = Object.keys(salesCount).reduce((a, b) => salesCount[a] > salesCount[b] ? a : b, 'لا يوجد');
+                    
+                    const totalRevenue = (filteredTransactions || sales).reduce((sum, t) => sum + (t.total || 0), 0);
 
                     document.getElementById('db-product-count').textContent = productCount;
                     document.getElementById('db-stock-value').textContent = stockValue;
                     document.getElementById('db-best-seller').textContent = bestSeller;
+                    document.getElementById('db-total-revenue').textContent = `${totalRevenue.toFixed(2)} د.ج`;
                 }
 
                 // --- Event Listeners ---
                 document.getElementById('stock-search').addEventListener('input', (e) => renderStockList(e.target.value));
-
-                document.getElementById('add-product-btn').addEventListener('click', () => {
+                document.getElementById('add-product-btn').addEventListener('click', handleAddProduct);
+                document.getElementById('delete-product-btn').addEventListener('click', handleDeleteProduct);
+                editProductSelect.addEventListener('change', populateEditForm);
+                document.getElementById('save-price-btn').addEventListener('click', handleSavePrice);
+                document.getElementById('add-production-btn').addEventListener('click', handleAddProduction);
+                saleProductSelect.addEventListener('change', updateSalePrice);
+                document.getElementById('sale-type').addEventListener('change', updateSalePrice);
+                document.getElementById('add-to-bon-btn').addEventListener('click', handleAddToBon);
+                document.querySelector('#bon-items-table').addEventListener('click', handleRemoveFromBon);
+                document.getElementById('confirm-sale-btn').addEventListener('click', handleConfirmSale);
+                document.getElementById('filter-btn').addEventListener('click', filterAndRenderTransactions);
+                
+                // --- Handlers ---
+                function handleAddProduct() {
                     const name = document.getElementById('new-product-name').value.trim();
                     const gros = parseFloat(document.getElementById('new-gros-price').value);
                     const superGros = parseFloat(document.getElementById('new-supergros-price').value);
-
                     if (name && gros > 0 && superGros > 0) {
                         set(push(ref(db, 'products')), { name, gros, superGros, stock: 0 })
                             .then(() => {
@@ -339,9 +387,9 @@
                     } else {
                         showToast('يرجى ملء جميع الحقول ببيانات صحيحة.', 'error');
                     }
-                });
-                
-                document.getElementById('delete-product-btn').addEventListener('click', () => {
+                }
+
+                function handleDeleteProduct() {
                     const key = editProductSelect.value;
                     if (!key) return;
                     if (confirm(`هل أنت متأكد من حذف المنتج "${products[key].name}"؟ لا يمكن التراجع عن هذا الإجراء.`)) {
@@ -349,9 +397,22 @@
                             .then(() => showToast('تم حذف المنتج.'))
                             .catch(handleFirebaseError);
                     }
-                });
+                }
 
-                document.getElementById('add-production-btn').addEventListener('click', () => {
+                function handleSavePrice() {
+                    const key = editProductSelect.value;
+                    const gros = parseFloat(document.getElementById('edit-gros-price').value);
+                    const superGros = parseFloat(document.getElementById('edit-supergros-price').value);
+                    if (key && gros > 0 && superGros > 0) {
+                        update(ref(db, 'products/' + key), { gros, superGros })
+                            .then(() => showToast('تم تحديث السعر بنجاح.'))
+                            .catch(handleFirebaseError);
+                    } else {
+                        showToast('الرجاء إدخال أسعار صحيحة.', 'error');
+                    }
+                }
+
+                function handleAddProduction() {
                     const key = prodProductSelect.value;
                     const quantity = parseInt(document.getElementById('prod-quantity').value);
                     if (key && quantity > 0) {
@@ -367,28 +428,25 @@
                             })
                             .catch(handleFirebaseError);
                     }
-                });
+                }
 
-                saleProductSelect.addEventListener('change', updateSalePrice);
-                document.getElementById('sale-type').addEventListener('change', updateSalePrice);
-
-                document.getElementById('add-to-bon-btn').addEventListener('click', () => {
+                function handleAddToBon() {
                     const productId = saleProductSelect.value, quantity = parseInt(document.getElementById('sale-quantity').value), pricePerUnit = parseFloat(document.getElementById('sale-price').value);
                     if (!productId || !(quantity > 0) || !(pricePerUnit >= 0)) return showToast('بيانات غير صحيحة.', 'error');
                     if (products[productId].stock < quantity) return showToast(`المخزون غير كاف! المتوفر: ${products[productId].stock}`, 'error');
                     currentBon.push({ productId, productName: products[productId].name, quantity, pricePerUnit, total: quantity * pricePerUnit });
                     renderBonItems();
                     document.getElementById('sale-quantity').value = '';
-                });
+                }
 
-                document.querySelector('#bon-items-table').addEventListener('click', (e) => {
+                function handleRemoveFromBon(e) {
                     if (e.target.tagName === 'BUTTON' && e.target.dataset.index) {
                         currentBon.splice(parseInt(e.target.dataset.index), 1);
                         renderBonItems();
                     }
-                });
+                }
 
-                document.getElementById('confirm-sale-btn').addEventListener('click', () => {
+                function handleConfirmSale() {
                     if (currentBon.length === 0) return showToast('الفاتورة فارغة.', 'error');
                     const bonId = `BON-${Date.now()}`, clientName = document.getElementById('sale-client').value.trim() || 'عميل نقدي';
                     const updates = {}, bonTotal = currentBon.reduce((sum, item) => sum + item.total, 0);
@@ -405,12 +463,53 @@
                             document.getElementById('sale-client').value = '';
                         })
                         .catch(handleFirebaseError);
-                });
+                }
 
                 // --- Helper Functions ---
+                function populateEditForm() {
+                    const key = editProductSelect.value;
+                    const container = document.getElementById('edit-fields-container');
+                    if (key && products[key]) {
+                        document.getElementById('edit-gros-price').value = products[key].gros;
+                        document.getElementById('edit-supergros-price').value = products[key].superGros;
+                        container.style.display = 'block';
+                    } else {
+                        container.style.display = 'none';
+                    }
+                }
+
                 function updateSalePrice() {
                     const key = saleProductSelect.value, type = document.getElementById('sale-type').value;
                     if (key && products[key]) document.getElementById('sale-price').value = products[key][type];
+                }
+
+                function filterAndRenderTransactions() {
+                    const start = new Date(document.getElementById('start-date').value).setHours(0, 0, 0, 0);
+                    const end = new Date(document.getElementById('end-date').value).setHours(23, 59, 59, 999);
+                    const tableBody = document.querySelector('#transactions-table tbody');
+                    const allTrans = Object.values(transactions);
+
+                    const filtered = allTrans.filter(t => {
+                        const tDate = new Date(t.date);
+                        return tDate >= start && tDate <= end;
+                    });
+
+                    tableBody.innerHTML = filtered
+                        .sort((a, b) => new Date(b.date) - new Date(a.date))
+                        .map(t => `
+                        <tr>
+                            <td>${new Date(t.date).toLocaleString('ar-DZ')}</td>
+                            <td style="color:${t.type === 'sale' ? 'var(--danger-color)' : 'var(--success-color)'}; font-weight:bold;">${t.type === 'sale' ? 'بيع' : 'إنتاج'}</td>
+                            <td>${t.productName || 'غير متوفر'}</td>
+                            <td>${t.quantity}</td>
+                            <td>${t.pricePerUnit ? t.pricePerUnit.toFixed(2) + ' د.ج' : '-'}</td>
+                            <td>${t.total ? t.total.toFixed(2) + ' د.ج' : '-'}</td>
+                            <td>${t.client || '-'}</td>
+                            <td>${t.bonId || '-'}</td>
+                        </tr>
+                    `).join('');
+                    
+                    updateDashboard(filtered.filter(t => t.type === 'sale'));
                 }
                 
                 function handleFirebaseError(error) {
@@ -460,6 +559,12 @@
                     printWindow.focus();
                     setTimeout(() => { printWindow.print(); printWindow.close(); }, 250);
                 }
+                
+                // Initial Load
+                const today = new Date();
+                const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+                document.getElementById('start-date').valueAsDate = firstDayOfMonth;
+                document.getElementById('end-date').valueAsDate = today;
             }
         });
     </script>
