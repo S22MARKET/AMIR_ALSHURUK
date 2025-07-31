@@ -189,7 +189,7 @@
             </div>
             <div class="table-wrapper">
                 <table id="transactions-table">
-                    <thead><tr><th>التاريخ</th><th>العملية</th><th>المنتج</th><th>الكمية</th><th>سعر الوحدة</th><th>الإجمالي</th><th>العميل</th><th>رقم الفاتورة</th></tr></thead>
+                    <thead><tr><th>التاريخ</th><th>العملية</th><th>المنتج</th><th>الكمية</th><th>سعر الوحدة</th><th>الإجمالي</th><th>العميل</th><th>رقم الفاتورة</th><th>إجراء</th></tr></thead>
                     <tbody></tbody>
                 </table>
             </div>
@@ -200,19 +200,6 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
         import { getDatabase, ref, onValue, push, set, update, remove } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
 
-        // =================================================================================================
-        // !! تنبيه هام !!
-        // إذا لم يعمل زر "إضافة منتج" وظهرت رسالة خطأ تقول "فشل الحفظ: ليس لديك إذن..."
-        // فهذا يعني أن قواعد الأمان في Firebase تمنع الكتابة.
-        // لحل المشكلة، اذهب إلى مشروعك في Firebase -> Realtime Database -> Rules
-        // وغير القواعد إلى ما يلي للسماح بالقراءة والكتابة للجميع (هذا مناسب لمرحلة التطوير):
-        // {
-        //   "rules": {
-        //     ".read": "true",
-        //     ".write": "true"
-        //   }
-        // }
-        // =================================================================================================
         const firebaseConfig = {
             apiKey: "AIzaSyA1VBBOZQOUwnHp8x487g7lkn14x6Sp-7g",
             authDomain: "stoke-c650a.firebaseapp.com",
@@ -267,13 +254,6 @@
                 let transactions = {};
                 let currentBon = [];
 
-                // --- UI Elements ---
-                const stockList = document.getElementById('stock-list');
-                const prodProductSelect = document.getElementById('prod-product');
-                const saleProductSelect = document.getElementById('sale-product');
-                const editProductSelect = document.getElementById('edit-product-select');
-
-                // --- Toast Notification ---
                 const toastContainer = document.getElementById('toast-container');
                 function showToast(message, type = 'success') {
                     const toast = document.createElement('div');
@@ -287,7 +267,6 @@
                     }, 4000);
                 }
 
-                // --- Firebase Listeners ---
                 onValue(ref(db, 'products'), (snapshot) => {
                     products = snapshot.val() || {};
                     renderAll();
@@ -296,8 +275,7 @@
                     transactions = snapshot.val() || {};
                     filterAndRenderTransactions();
                 });
-
-                // --- Render Functions ---
+                
                 function renderAll() {
                     renderProductSelectors();
                     renderStockList();
@@ -309,14 +287,15 @@
                         .sort((a, b) => products[a].name.localeCompare(products[b].name))
                         .map(key => `<option value="${key}">${products[key].name}</option>`)
                         .join('');
-                    prodProductSelect.innerHTML = productOptions;
-                    saleProductSelect.innerHTML = productOptions;
-                    editProductSelect.innerHTML = productOptions;
+                    document.getElementById('prod-product').innerHTML = productOptions;
+                    document.getElementById('sale-product').innerHTML = productOptions;
+                    document.getElementById('edit-product-select').innerHTML = productOptions;
                     updateSalePrice();
                     populateEditForm();
                 }
 
                 function renderStockList(filter = '') {
+                    const stockList = document.getElementById('stock-list');
                     const filteredKeys = Object.keys(products).filter(key => products[key].name.toLowerCase().includes(filter.toLowerCase()));
                     stockList.innerHTML = filteredKeys.map(key => {
                         const p = products[key];
@@ -342,36 +321,44 @@
                     const productCount = Object.keys(products).length;
                     const stockValue = Object.keys(products).reduce((sum, key) => sum + (products[key].stock || 0), 0);
                     
-                    const sales = Object.values(transactions).filter(t => t.type === 'sale');
+                    const allSales = Object.values(transactions).filter(t => t.type === 'sale');
                     const salesCount = {};
-                    sales.forEach(sale => {
+                    allSales.forEach(sale => {
                         salesCount[sale.productName] = (salesCount[sale.productName] || 0) + sale.quantity;
                     });
-                    const bestSeller = Object.keys(salesCount).reduce((a, b) => salesCount[a] > salesCount[b] ? a : b, 'لا يوجد');
+                    const bestSeller = Object.keys(salesCount).length > 0 ? Object.keys(salesCount).reduce((a, b) => salesCount[a] > salesCount[b] ? a : b) : 'لا يوجد';
                     
-                    const totalRevenue = (filteredTransactions || sales).reduce((sum, t) => sum + (t.total || 0), 0);
+                    const totalRevenue = (filteredTransactions || allSales).reduce((sum, t) => sum + (t.total || 0), 0);
 
                     document.getElementById('db-product-count').textContent = productCount;
                     document.getElementById('db-stock-value').textContent = stockValue;
                     document.getElementById('db-best-seller').textContent = bestSeller;
                     document.getElementById('db-total-revenue').textContent = `${totalRevenue.toFixed(2)} د.ج`;
                 }
-
-                // --- Event Listeners ---
+                
                 document.getElementById('stock-search').addEventListener('input', (e) => renderStockList(e.target.value));
                 document.getElementById('add-product-btn').addEventListener('click', handleAddProduct);
                 document.getElementById('delete-product-btn').addEventListener('click', handleDeleteProduct);
-                editProductSelect.addEventListener('change', populateEditForm);
+                document.getElementById('edit-product-select').addEventListener('change', populateEditForm);
                 document.getElementById('save-price-btn').addEventListener('click', handleSavePrice);
                 document.getElementById('add-production-btn').addEventListener('click', handleAddProduction);
-                saleProductSelect.addEventListener('change', updateSalePrice);
+                document.getElementById('sale-product').addEventListener('change', updateSalePrice);
                 document.getElementById('sale-type').addEventListener('change', updateSalePrice);
                 document.getElementById('add-to-bon-btn').addEventListener('click', handleAddToBon);
                 document.querySelector('#bon-items-table').addEventListener('click', handleRemoveFromBon);
                 document.getElementById('confirm-sale-btn').addEventListener('click', handleConfirmSale);
                 document.getElementById('filter-btn').addEventListener('click', filterAndRenderTransactions);
-                
-                // --- Handlers ---
+                document.querySelector('#transactions-table tbody').addEventListener('click', handleTransactionTableClick);
+
+                function handleFirebaseError(error) {
+                    console.error("Firebase Error: ", error);
+                    let message = 'فشل الحفظ. تحقق من اتصالك بالإنترنت.';
+                    if (error.code === 'PERMISSION_DENIED') {
+                        message = 'فشل الحفظ: ليس لديك إذن للكتابة في قاعدة البيانات. يرجى مراجعة قواعد الأمان في Firebase.';
+                    }
+                    showToast(message, 'error');
+                }
+
                 function handleAddProduct() {
                     const name = document.getElementById('new-product-name').value.trim();
                     const gros = parseFloat(document.getElementById('new-gros-price').value);
@@ -391,7 +378,7 @@
                 }
 
                 function handleDeleteProduct() {
-                    const key = editProductSelect.value;
+                    const key = document.getElementById('edit-product-select').value;
                     if (!key) return;
                     if (confirm(`هل أنت متأكد من حذف المنتج "${products[key].name}"؟ لا يمكن التراجع عن هذا الإجراء.`)) {
                         remove(ref(db, `products/${key}`))
@@ -401,7 +388,7 @@
                 }
 
                 function handleSavePrice() {
-                    const key = editProductSelect.value;
+                    const key = document.getElementById('edit-product-select').value;
                     const gros = parseFloat(document.getElementById('edit-gros-price').value);
                     const superGros = parseFloat(document.getElementById('edit-supergros-price').value);
                     if (key && gros > 0 && superGros > 0) {
@@ -414,7 +401,7 @@
                 }
 
                 function handleAddProduction() {
-                    const key = prodProductSelect.value;
+                    const key = document.getElementById('prod-product').value;
                     const quantity = parseInt(document.getElementById('prod-quantity').value);
                     if (key && quantity > 0) {
                         const updates = {};
@@ -432,7 +419,9 @@
                 }
 
                 function handleAddToBon() {
-                    const productId = saleProductSelect.value, quantity = parseInt(document.getElementById('sale-quantity').value), pricePerUnit = parseFloat(document.getElementById('sale-price').value);
+                    const productId = document.getElementById('sale-product').value;
+                    const quantity = parseInt(document.getElementById('sale-quantity').value);
+                    const pricePerUnit = parseFloat(document.getElementById('sale-price').value);
                     if (!productId || !(quantity > 0) || !(pricePerUnit >= 0)) return showToast('بيانات غير صحيحة.', 'error');
                     if (products[productId].stock < quantity) return showToast(`المخزون غير كاف! المتوفر: ${products[productId].stock}`, 'error');
                     currentBon.push({ productId, productName: products[productId].name, quantity, pricePerUnit, total: quantity * pricePerUnit });
@@ -449,16 +438,21 @@
 
                 function handleConfirmSale() {
                     if (currentBon.length === 0) return showToast('الفاتورة فارغة.', 'error');
-                    const bonId = `BON-${Date.now()}`, clientName = document.getElementById('sale-client').value.trim() || 'عميل نقدي';
-                    const updates = {}, bonTotal = currentBon.reduce((sum, item) => sum + item.total, 0);
+                    const bonId = `BON-${Date.now()}`;
+                    const clientName = document.getElementById('sale-client').value.trim() || 'عميل نقدي';
+                    const updates = {};
+                    const bonTotal = currentBon.reduce((sum, item) => sum + item.total, 0);
+                    
                     currentBon.forEach(item => {
                         updates[`/products/${item.productId}/stock`] = products[item.productId].stock - item.quantity;
-                        updates[`/transactions/${push(ref(db, 'transactions')).key}`] = { ...item, type: 'sale', client: clientName, bonId, date: new Date().toISOString() };
+                        const transactionKey = push(ref(db, 'transactions')).key;
+                        updates[`/transactions/${transactionKey}`] = { ...item, type: 'sale', client: clientName, bonId, date: new Date().toISOString() };
                     });
+
                     update(ref(db), updates)
                         .then(() => {
                             showToast('تم تأكيد البيع بنجاح.');
-                            printBon(bonId, clientName, bonTotal);
+                            printBon(bonId, clientName, total);
                             currentBon = [];
                             renderBonItems();
                             document.getElementById('sale-client').value = '';
@@ -466,9 +460,8 @@
                         .catch(handleFirebaseError);
                 }
 
-                // --- Helper Functions ---
                 function populateEditForm() {
-                    const key = editProductSelect.value;
+                    const key = document.getElementById('edit-product-select').value;
                     const container = document.getElementById('edit-fields-container');
                     if (key && products[key]) {
                         document.getElementById('edit-gros-price').value = products[key].gros;
@@ -480,49 +473,100 @@
                 }
 
                 function updateSalePrice() {
-                    const key = saleProductSelect.value, type = document.getElementById('sale-type').value;
-                    if (key && products[key]) document.getElementById('sale-price').value = products[key][type];
+                    const key = document.getElementById('sale-product').value;
+                    const type = document.getElementById('sale-type').value;
+                    if (key && products[key]) document.getElementById('sale-price').value = products[key][type === 'gros' ? 'gros' : 'superGros'];
                 }
 
                 function filterAndRenderTransactions() {
-                    const start = new Date(document.getElementById('start-date').value).setHours(0, 0, 0, 0);
-                    const end = new Date(document.getElementById('end-date').value).setHours(23, 59, 59, 999);
+                    const startInput = document.getElementById('start-date').value;
+                    const endInput = document.getElementById('end-date').value;
+
+                    // Handle case where dates might be empty
+                    const start = startInput ? new Date(startInput).setHours(0, 0, 0, 0) : 0;
+                    const end = endInput ? new Date(endInput).setHours(23, 59, 59, 999) : Date.now();
+
                     const tableBody = document.querySelector('#transactions-table tbody');
                     const allTrans = Object.values(transactions);
 
                     const filtered = allTrans.filter(t => {
-                        const tDate = new Date(t.date);
+                        const tDate = new Date(t.date).getTime();
                         return tDate >= start && tDate <= end;
                     });
+                    
+                    // Keep track of rendered BON IDs to only show one delete button per BON
+                    const renderedBonIds = new Set();
 
                     tableBody.innerHTML = filtered
                         .sort((a, b) => new Date(b.date) - new Date(a.date))
-                        .map(t => `
-                        <tr>
-                            <td>${new Date(t.date).toLocaleString('ar-DZ')}</td>
-                            <td style="color:${t.type === 'sale' ? 'var(--danger-color)' : 'var(--success-color)'}; font-weight:bold;">${t.type === 'sale' ? 'بيع' : 'إنتاج'}</td>
-                            <td>${t.productName || 'غير متوفر'}</td>
-                            <td>${t.quantity}</td>
-                            <td>${t.pricePerUnit ? t.pricePerUnit.toFixed(2) + ' د.ج' : '-'}</td>
-                            <td>${t.total ? t.total.toFixed(2) + ' د.ج' : '-'}</td>
-                            <td>${t.client || '-'}</td>
-                            <td>${t.bonId || '-'}</td>
-                        </tr>
-                    `).join('');
+                        .map(t => {
+                            let actionButton = '-';
+                            if(t.type === 'sale' && t.bonId && !renderedBonIds.has(t.bonId)) {
+                                actionButton = `<button class="btn-outline-danger delete-bon-btn" data-bon-id="${t.bonId}">حذف الفاتورة</button>`;
+                                renderedBonIds.add(t.bonId);
+                            }
+
+                            return `
+                            <tr>
+                                <td>${new Date(t.date).toLocaleString('ar-DZ')}</td>
+                                <td style="color:${t.type === 'sale' ? 'var(--danger-color)' : 'var(--success-color)'}; font-weight:bold;">${t.type === 'sale' ? 'بيع' : 'إنتاج'}</td>
+                                <td>${t.productName || 'غير متوفر'}</td>
+                                <td>${t.quantity}</td>
+                                <td>${t.pricePerUnit ? t.pricePerUnit.toFixed(2) + ' د.ج' : '-'}</td>
+                                <td>${t.total ? t.total.toFixed(2) + ' د.ج' : '-'}</td>
+                                <td>${t.client || '-'}</td>
+                                <td>${t.bonId || '-'}</td>
+                                <td>${actionButton}</td>
+                            </tr>
+                        `}).join('');
                     
                     updateDashboard(filtered.filter(t => t.type === 'sale'));
                 }
-                
-                function handleFirebaseError(error) {
-                    console.error("Firebase Error: ", error);
-                    let message = 'فشل الحفظ. تحقق من اتصالك بالإنترنت.';
-                    if (error.code === 'PERMISSION_DENIED') {
-                        message = 'فشل الحفظ: ليس لديك إذن للكتابة في قاعدة البيانات. يرجى مراجعة قواعد الأمان في Firebase.';
+
+                function handleTransactionTableClick(e) {
+                    if (e.target.classList.contains('delete-bon-btn')) {
+                        const bonId = e.target.dataset.bonId;
+                        if (confirm(`هل أنت متأكد من حذف الفاتورة ${bonId}؟\nسيتم إرجاع كافة الكميات المباعة في هذه الفاتورة إلى المخزون.`)) {
+                            handleDeleteBon(bonId);
+                        }
                     }
-                    showToast(message, 'error');
+                }
+
+                function handleDeleteBon(bonId) {
+                    const updates = {};
+                    const transactionsToDelete = [];
+
+                    // Find all transactions associated with the bonId
+                    for (const txKey in transactions) {
+                        if (transactions[txKey].bonId === bonId) {
+                            transactionsToDelete.push({ key: txKey, data: transactions[txKey] });
+                        }
+                    }
+                    
+                    if (transactionsToDelete.length === 0) {
+                        showToast('لم يتم العثور على معاملات لهذه الفاتورة.', 'error');
+                        return;
+                    }
+
+                    // Prepare updates to restore stock and delete transactions
+                    transactionsToDelete.forEach(tx => {
+                        const { productId, quantity } = tx.data;
+                        if (productId && products[productId]) {
+                            const currentStock = products[productId].stock || 0;
+                            updates[`/products/${productId}/stock`] = currentStock + quantity;
+                        }
+                        updates[`/transactions/${tx.key}`] = null; // Mark transaction for deletion
+                    });
+
+                    update(ref(db), updates)
+                        .then(() => {
+                            showToast(`تم حذف الفاتورة ${bonId} وإعادة المخزون بنجاح.`, 'success');
+                        })
+                        .catch(handleFirebaseError);
                 }
 
                 function printBon(bonId, clientName, total) {
+                    // This function remains the same as before
                     const printContent = `
                         <div id="bon-to-print" style="font-family:'Cairo',sans-serif; direction:rtl;">
                             <div class="bon-header" style="text-align:center; margin-bottom:40px;">
@@ -547,7 +591,7 @@
                                     `).join('')}
                                 </tbody>
                             </table>
-                            <div style="text-align:left; margin-top:20px; font-size:14pt; font-weight:bold;">المبلغ الإجمالي: ${total.toFixed(2)} د.ج</div>
+                            <div style="text-align:left; margin-top:20px; font-size:14pt; font-weight:bold;">المبلغ الإجمالي: ${currentBon.reduce((sum, item) => sum + item.total, 0).toFixed(2)} د.ج</div>
                             <div style="margin-top:80px; display:flex; justify-content:space-between; font-size:12pt;">
                                 <span>إمضاء وختم المؤسسة</span>
                                 <span>إمضاء واستلام العميل</span>
@@ -566,6 +610,7 @@
                 const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
                 document.getElementById('start-date').valueAsDate = firstDayOfMonth;
                 document.getElementById('end-date').valueAsDate = today;
+                filterAndRenderTransactions(); // Initial render
             }
         });
     </script>
