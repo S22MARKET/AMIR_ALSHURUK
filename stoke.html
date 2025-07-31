@@ -46,6 +46,7 @@
         .btn-success { background-color: var(--success-color); }
         .btn-danger { background-color: var(--danger-color); }
         .btn-warning { background-color: var(--warning-color); color: var(--dark-color); }
+        .btn-secondary { background-color: var(--secondary-color); }
         .btn-outline-danger { background: transparent; border: 1px solid var(--danger-color); color: var(--danger-color); }
         .btn-outline-danger:hover { background: var(--danger-color); color: #fff; }
 
@@ -84,6 +85,29 @@
         .toast-success { background-color: var(--success-color); }
         .toast-error { background-color: var(--danger-color); }
 
+        /* Custom Modal Styles */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 3000; padding: 15px;
+            opacity: 0; visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .modal-overlay.visible {
+            opacity: 1; visibility: visible;
+        }
+        .modal-box {
+            background: #fff; padding: 25px; border-radius: var(--border-radius);
+            width: 100%; max-width: 450px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+        .modal-overlay.visible .modal-box { transform: scale(1); }
+        .modal-box h3 { margin-top: 0; color: var(--danger-color); }
+        .modal-error-text { color: var(--danger-color); font-size: 0.9rem; min-height: 1.2rem; margin-top: 5px; }
+        .modal-actions { margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
         /* Print Styles */
         #bon-to-print { display: none; }
         @media print {
@@ -99,31 +123,48 @@
     <div id="toast-container"></div>
     <div id="login-overlay">
         <div id="login-box">
-       
 
-            <h2 class="welcome-message">
+
+
+
+
+<h2 class="welcome-message">
   السلام عليكم ورحمة الله وبركاته<br>
-  مرحباً بالعم سليم في تطبيق إدارة المخزن<br>
-  يرجى تسجيل الدخول للمتابعة
+  مرحباً بـ<span class="highlight-name">العم سليم</span> في تطبيق إدارة المخزن<br>
+  <span class="sub-text">يرجى تسجيل الدخول للمتابعة</span>
 </h2>
 
 <style>
   .welcome-message {
-    font-size: 1.2rem; /* حجم خط متوسط */
-    line-height: 1.6;  /* تقليل المسافة بين الأسطر */
+    font-size: 1.1rem;
+    line-height: 1.4;
     text-align: center;
-    color: #333;
-    margin: 20px auto;
-    max-width: 600px;
-    background-color: #f8f9fa;
-    padding: 15px 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    color: #222;
+    margin: 30px auto;
+    max-width: 500px;
+    background-color: #f4f6f8;
+    padding: 12px 18px;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
     font-family: 'Cairo', sans-serif;
+  }
+
+  .highlight-name {
+    color: #007bff; /* أزرق مميز */
+    font-weight: bold;
+  }
+
+  .sub-text {
+    display: block;
+    margin-top: 8px;
+    font-size: 0.95rem;
+    color: #555;
   }
 </style>
 
-            
+
+
+
             <p>الرجاء إدخال كلمة المرور للوصول للنظام.</p>
             <div class="form-group"><input type="password" id="password" placeholder="********"></div>
             <button id="login-btn" class="btn-primary">دخول</button>
@@ -222,6 +263,22 @@
         </div>
     </div>
 
+    <div id="delete-confirm-modal" class="modal-overlay">
+        <div class="modal-box">
+            <h3 id="modal-title">تأكيد حذف الفاتورة</h3>
+            <p id="modal-text">لحذف هذه الفاتورة وإرجاع الكميات إلى المخزون، يرجى إدخال كلمة المرور.</p>
+            <div class="form-group">
+                <label for="modal-password">كلمة المرور</label>
+                <input type="password" id="modal-password" placeholder="********">
+                <div id="modal-error" class="modal-error-text"></div>
+            </div>
+            <div class="modal-actions">
+                <button id="modal-confirm-btn" class="btn-danger">تأكيد الحذف</button>
+                <button id="modal-cancel-btn" class="btn-secondary">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
         import { getDatabase, ref, onValue, push, set, update, remove } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
@@ -279,6 +336,48 @@
                 let products = {};
                 let transactions = {};
                 let currentBon = [];
+
+                // --- Modal Elements and Logic ---
+                const deleteModal = document.getElementById('delete-confirm-modal');
+                const modalConfirmBtn = document.getElementById('modal-confirm-btn');
+                const modalCancelBtn = document.getElementById('modal-cancel-btn');
+                const modalPasswordInput = document.getElementById('modal-password');
+                const modalError = document.getElementById('modal-error');
+                const modalText = document.getElementById('modal-text');
+                let currentModalConfirmHandler = null;
+                let currentModalCancelHandler = null;
+
+                function hideModal() {
+                    deleteModal.classList.remove('visible');
+                    modalPasswordInput.value = '';
+                    modalError.textContent = '';
+                    if (currentModalConfirmHandler) modalConfirmBtn.removeEventListener('click', currentModalConfirmHandler);
+                    if (currentModalCancelHandler) modalCancelBtn.removeEventListener('click', currentModalCancelHandler);
+                }
+
+                function showDeleteConfirmationModal(bonId) {
+                    modalText.textContent = `أنت على وشك حذف الفاتورة رقم ${bonId}. سيتم إرجاع كافة المنتجات إلى المخزون. هذا الإجراء نهائي. أدخل كلمة المرور للتأكيد.`;
+                    
+                    currentModalConfirmHandler = () => {
+                        const password = modalPasswordInput.value;
+                        if (password === CORRECT_PASSWORD) {
+                            handleDeleteBon(bonId);
+                            hideModal();
+                        } else {
+                            modalError.textContent = 'كلمة المرور غير صحيحة.';
+                            modalPasswordInput.focus();
+                        }
+                    };
+                    
+                    currentModalCancelHandler = () => hideModal();
+
+                    modalConfirmBtn.addEventListener('click', currentModalConfirmHandler);
+                    modalCancelBtn.addEventListener('click', currentModalCancelHandler);
+                    deleteModal.classList.add('visible');
+                    modalPasswordInput.focus();
+                }
+                // --- End of Modal Logic ---
+
 
                 const toastContainer = document.getElementById('toast-container');
                 function showToast(message, type = 'success') {
@@ -590,17 +689,7 @@
                 function handleTransactionTableClick(e) {
                     if (e.target.classList.contains('delete-bon-btn')) {
                         const bonId = e.target.dataset.bonId;
-                        const password = prompt(`لحذف الفاتورة ${bonId}، الرجاء إدخال كلمة المرور:\nسيتم إرجاع كافة الكميات المباعة في هذه الفاتورة إلى المخزون.`);
-                        
-                        if (password === null) return;
-
-                        if (password === CORRECT_PASSWORD) {
-                             if (confirm(`هل أنت متأكد من حذف الفاتورة ${bonId}؟ هذا الإجراء نهائي.`)) {
-                                handleDeleteBon(bonId);
-                            }
-                        } else {
-                            showToast('كلمة المرور غير صحيحة. فشل الحذف.', 'error');
-                        }
+                        showDeleteConfirmationModal(bonId);
                     }
                 }
 
@@ -640,7 +729,7 @@
                         <div id="bon-to-print" style="font-family:'Cairo',sans-serif; direction:rtl; color: black;">
                             <div class="bon-header" style="text-align:center; margin-bottom:40px;">
                                 <h1 style="font-size:24pt; color:black; border:none; margin:0;">مؤسسة أمير الشروق</h1>
-                                <p style="font-size:12pt; margin:5px 0;">لصناعة مواد وادوات التنظيف والتطهير</p>
+                                <p style="font-size:12pt; margin:5px 0;">لصناعة مواد التنظيف والتطهير</p>
                             </div>
                             <div style="display:flex; justify-content:space-between; margin-bottom:20px; font-size:12pt;">
                                 <div><strong>العميل:</strong> ${clientName}<br><strong>رقم الفاتورة:</strong> ${bonId}</div>
