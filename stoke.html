@@ -165,6 +165,7 @@
                     <div class="form-group"><label for="sale-price">سعر الوحدة (د.ج)</label><input type="number" id="sale-price" min="0"></div>
                     <div class="form-group"><label for="sale-quantity">الكمية</label><input type="number" id="sale-quantity" min="1"></div>
                     <button id="add-to-bon-btn" class="btn-warning">إضافة إلى الفاتورة</button>
+                    <button id="add-and-new-btn" class="btn-primary" style="margin-top: 10px;">إضافة + التالي</button>
                 </div>
                 <div>
                     <h3>عناصر الفاتورة الحالية</h3>
@@ -344,7 +345,8 @@
                 document.getElementById('add-production-btn').addEventListener('click', handleAddProduction);
                 document.getElementById('sale-product').addEventListener('change', updateSalePrice);
                 document.getElementById('sale-type').addEventListener('change', updateSalePrice);
-                document.getElementById('add-to-bon-btn').addEventListener('click', handleAddToBon);
+                document.getElementById('add-to-bon-btn').addEventListener('click', () => handleAddToBon(false));
+                document.getElementById('add-and-new-btn').addEventListener('click', () => handleAddToBon(true));
                 document.querySelector('#bon-items-table').addEventListener('click', handleRemoveFromBon);
                 document.getElementById('confirm-sale-btn').addEventListener('click', handleConfirmSale);
                 document.getElementById('filter-btn').addEventListener('click', filterAndRenderTransactions);
@@ -418,15 +420,34 @@
                     }
                 }
 
-                function handleAddToBon() {
+                function handleAddToBon(focusNext = false) {
                     const productId = document.getElementById('sale-product').value;
-                    const quantity = parseInt(document.getElementById('sale-quantity').value);
+                    const quantityInput = document.getElementById('sale-quantity');
+                    const quantity = parseInt(quantityInput.value);
                     const pricePerUnit = parseFloat(document.getElementById('sale-price').value);
-                    if (!productId || !(quantity > 0) || !(pricePerUnit >= 0)) return showToast('بيانات غير صحيحة.', 'error');
-                    if (products[productId].stock < quantity) return showToast(`المخزون غير كاف! المتوفر: ${products[productId].stock}`, 'error');
-                    currentBon.push({ productId, productName: products[productId].name, quantity, pricePerUnit, total: quantity * pricePerUnit });
+
+                    if (!productId || !(quantity > 0) || !(pricePerUnit >= 0)) {
+                        return showToast('بيانات غير صحيحة.', 'error');
+                    }
+                    if (products[productId].stock < quantity) {
+                        return showToast(`المخزون غير كاف! المتوفر: ${products[productId].stock}`, 'error');
+                    }
+
+                    currentBon.push({
+                        productId,
+                        productName: products[productId].name,
+                        quantity,
+                        pricePerUnit,
+                        total: quantity * pricePerUnit
+                    });
+
                     renderBonItems();
-                    document.getElementById('sale-quantity').value = '';
+                    quantityInput.value = '';
+
+                    if (focusNext) {
+                        document.getElementById('sale-product').focus();
+                        showToast('تمت الإضافة. اختر المنتج التالي.');
+                    }
                 }
 
                 function handleRemoveFromBon(e) {
@@ -452,7 +473,7 @@
                     update(ref(db), updates)
                         .then(() => {
                             showToast('تم تأكيد البيع بنجاح.');
-                            printBon(bonId, clientName, total);
+                            printBon(bonId, clientName, bonTotal);
                             currentBon = [];
                             renderBonItems();
                             document.getElementById('sale-client').value = '';
@@ -482,7 +503,6 @@
                     const startInput = document.getElementById('start-date').value;
                     const endInput = document.getElementById('end-date').value;
 
-                    // Handle case where dates might be empty
                     const start = startInput ? new Date(startInput).setHours(0, 0, 0, 0) : 0;
                     const end = endInput ? new Date(endInput).setHours(23, 59, 59, 999) : Date.now();
 
@@ -494,7 +514,6 @@
                         return tDate >= start && tDate <= end;
                     });
                     
-                    // Keep track of rendered BON IDs to only show one delete button per BON
                     const renderedBonIds = new Set();
 
                     tableBody.innerHTML = filtered
@@ -526,8 +545,16 @@
                 function handleTransactionTableClick(e) {
                     if (e.target.classList.contains('delete-bon-btn')) {
                         const bonId = e.target.dataset.bonId;
-                        if (confirm(`هل أنت متأكد من حذف الفاتورة ${bonId}؟\nسيتم إرجاع كافة الكميات المباعة في هذه الفاتورة إلى المخزون.`)) {
-                            handleDeleteBon(bonId);
+                        const password = prompt(`لحذف الفاتورة ${bonId}، الرجاء إدخال كلمة المرور:\nسيتم إرجاع كافة الكميات المباعة في هذه الفاتورة إلى المخزون.`);
+                        
+                        if (password === null) return; // User cancelled
+
+                        if (password === CORRECT_PASSWORD) {
+                             if (confirm(`هل أنت متأكد من حذف الفاتورة ${bonId}؟ هذا الإجراء نهائي.`)) {
+                                handleDeleteBon(bonId);
+                            }
+                        } else {
+                            showToast('كلمة المرور غير صحيحة. فشل الحذف.', 'error');
                         }
                     }
                 }
@@ -536,7 +563,6 @@
                     const updates = {};
                     const transactionsToDelete = [];
 
-                    // Find all transactions associated with the bonId
                     for (const txKey in transactions) {
                         if (transactions[txKey].bonId === bonId) {
                             transactionsToDelete.push({ key: txKey, data: transactions[txKey] });
@@ -548,14 +574,13 @@
                         return;
                     }
 
-                    // Prepare updates to restore stock and delete transactions
                     transactionsToDelete.forEach(tx => {
                         const { productId, quantity } = tx.data;
                         if (productId && products[productId]) {
                             const currentStock = products[productId].stock || 0;
                             updates[`/products/${productId}/stock`] = currentStock + quantity;
                         }
-                        updates[`/transactions/${tx.key}`] = null; // Mark transaction for deletion
+                        updates[`/transactions/${tx.key}`] = null;
                     });
 
                     update(ref(db), updates)
@@ -566,43 +591,58 @@
                 }
 
                 function printBon(bonId, clientName, total) {
-                    // This function remains the same as before
                     const printContent = `
-                        <div id="bon-to-print" style="font-family:'Cairo',sans-serif; direction:rtl;">
+                        <div id="bon-to-print" style="font-family:'Cairo',sans-serif; direction:rtl; color: black;">
                             <div class="bon-header" style="text-align:center; margin-bottom:40px;">
                                 <h1 style="font-size:24pt; color:black; border:none; margin:0;">مؤسسة أمير الشروق</h1>
                                 <p style="font-size:12pt; margin:5px 0;">لصناعة مواد التنظيف والتطهير</p>
                             </div>
                             <div style="display:flex; justify-content:space-between; margin-bottom:20px; font-size:12pt;">
                                 <div><strong>العميل:</strong> ${clientName}<br><strong>رقم الفاتورة:</strong> ${bonId}</div>
-                                <div><strong>التاريخ:</strong> ${new Date().toLocaleDateString('ar-EG')}</div>
+                                <div><strong>التاريخ:</strong> ${new Date().toLocaleDateString('ar-EG-u-nu-latn', {year: 'numeric', month: '2-digit', day: '2-digit'})}</div>
                             </div>
-                            <h3>فاتورة توزيع (Bon de Distribution)</h3>
-                            <table class="bon-table" style="width:100%; border-collapse:collapse; font-size:12pt;">
-                                <thead><tr><th style="border:1px solid #333; padding:8px; background:#eee;">المنتج</th><th style="border:1px solid #333; padding:8px; background:#eee;">الكمية</th><th style="border:1px solid #333; padding:8px; background:#eee;">سعر الوحدة</th><th style="border:1px solid #333; padding:8px; background:#eee;">الإجمالي</th></tr></thead>
+                            <h3 style="color: black;">فاتورة توزيع (Bon de Distribution)</h3>
+                            <table class="bon-table" style="width:100%; border-collapse:collapse; font-size:12pt; color: black;">
+                                <thead><tr><th style="border:1px solid #333; padding:8px; background:#eee; color: black;">المنتج</th><th style="border:1px solid #333; padding:8px; background:#eee; color: black;">الكمية</th><th style="border:1px solid #333; padding:8px; background:#eee; color: black;">سعر الوحدة</th><th style="border:1px solid #333; padding:8px; background:#eee; color: black;">الإجمالي</th></tr></thead>
                                 <tbody>
                                     ${currentBon.map(item => `
                                         <tr>
-                                            <td style="border:1px solid #333; padding:8px;">${item.productName}</td>
-                                            <td style="border:1px solid #333; padding:8px;">${item.quantity}</td>
-                                            <td style="border:1px solid #333; padding:8px;">${item.pricePerUnit.toFixed(2)} د.ج</td>
-                                            <td style="border:1px solid #333; padding:8px;">${item.total.toFixed(2)} د.ج</td>
+                                            <td style="border:1px solid #333; padding:8px; color: black;">${item.productName}</td>
+                                            <td style="border:1px solid #333; padding:8px; color: black;">${item.quantity}</td>
+                                            <td style="border:1px solid #333; padding:8px; color: black;">${item.pricePerUnit.toFixed(2)} د.ج</td>
+                                            <td style="border:1px solid #333; padding:8px; color: black;">${item.total.toFixed(2)} د.ج</td>
                                         </tr>
                                     `).join('')}
                                 </tbody>
                             </table>
-                            <div style="text-align:left; margin-top:20px; font-size:14pt; font-weight:bold;">المبلغ الإجمالي: ${currentBon.reduce((sum, item) => sum + item.total, 0).toFixed(2)} د.ج</div>
-                            <div style="margin-top:80px; display:flex; justify-content:space-between; font-size:12pt;">
-                                <span>إمضاء وختم المؤسسة</span>
-                                <span>إمضاء واستلام العميل</span>
+                            <div style="text-align:left; margin-top:20px; font-size:14pt; font-weight:bold; color: black;">المبلغ الإجمالي: ${total.toFixed(2)} د.ج</div>
+                            <div style="margin-top: 80px; padding-top: 20px; border-top: 1px dashed #666; display: flex; justify-content: space-around; font-size: 12pt; color: black;">
+                                <div style="text-align: center;">
+                                    <p><strong>إمضاء وختم المؤسسة</strong></p>
+                                    <p style="margin-top: 40px;">.........................</p>
+                                </div>
+                                <div style="text-align: center;">
+                                    <p><strong>إمضاء واستلام العميل</strong></p>
+                                    <p style="margin-top: 40px;">.........................</p>
+                                </div>
                             </div>
                         </div>
                     `;
                     const printWindow = window.open('', '_blank');
-                    printWindow.document.write(printContent);
+                    printWindow.document.write('<html><head><title>Print</title></head><body>' + printContent + '</body></html>');
                     printWindow.document.close();
                     printWindow.focus();
-                    setTimeout(() => { printWindow.print(); printWindow.close(); }, 250);
+                    setTimeout(() => { 
+                        // The following styles ensure the printout is black and white and respects the layout.
+                        const style = printWindow.document.createElement('style');
+                        style.innerHTML = `@media print { 
+                            body { -webkit-print-color-adjust: exact; color-adjust: exact; color: #000 !important; } 
+                            #bon-to-print, #bon-to-print * { color: #000 !important; }
+                        }`;
+                        printWindow.document.head.appendChild(style);
+                        printWindow.print(); 
+                        printWindow.close(); 
+                    }, 500);
                 }
                 
                 // Initial Load
@@ -610,7 +650,7 @@
                 const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
                 document.getElementById('start-date').valueAsDate = firstDayOfMonth;
                 document.getElementById('end-date').valueAsDate = today;
-                filterAndRenderTransactions(); // Initial render
+                filterAndRenderTransactions(); 
             }
         });
     </script>
