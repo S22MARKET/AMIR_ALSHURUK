@@ -10,9 +10,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800&display=swap" rel="stylesheet">
     
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
-
     <style>
         /* --- Root Variables for Theming --- */
         :root {
@@ -40,27 +37,11 @@
             color: var(--text-color); margin: 0; padding: 15px; min-height: 100vh;
         }
         .container { 
-            max-width: 1400px; margin: auto; padding-bottom: 30px; opacity: 0;
-            transition: opacity 0.5s ease-in-out; visibility: hidden;
+            max-width: 1400px; margin: auto; padding-bottom: 30px;
         }
-        .container.visible { opacity: 1; visibility: visible; }
         .full-width { width: 100%; }
         .mt-15 { margin-top: 15px; }
         .flex-grow { flex-grow: 1; }
-
-        /* --- Login Overlay --- */
-        #login-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg-color); z-index: 2000; display: flex; 
-            align-items: center; justify-content: center; transition: opacity 0.5s;
-        }
-        #login-box {
-            background: var(--card-bg); padding: 30px; border-radius: 16px;
-            width: 100%; max-width: 400px; text-align: center; box-shadow: var(--shadow);
-        }
-        #login-box h2 { color: var(--primary-color); margin-bottom: 10px; }
-        #login-box p { color: var(--light-text); margin-top: 0; margin-bottom: 20px; }
-        #login-error { color: var(--danger-color); margin-top: 10px; min-height: 20px; font-weight: bold; }
 
         /* --- Header --- */
         header { 
@@ -102,6 +83,7 @@
         .btn.outline:hover { background-color: var(--primary-color); color: var(--card-bg); }
         .btn:disabled { background-color: var(--light-text); cursor: not-allowed; transform: none; box-shadow: none; opacity: 0.7; }
         .btn i { line-height: 1; }
+        .btn .spinner-in-btn { width: 18px; height: 18px; border-width: 2px; margin-left: 8px; }
 
         /* --- Forms (Inputs, Selects, etc.) --- */
         input, select, textarea { 
@@ -199,6 +181,7 @@
         @keyframes slideIn { to { opacity: 1; transform: translateX(0); } }
         .toast.success { background-color: var(--success-color); }
         .toast.error { background-color: var(--danger-color); }
+        .toast.info { background-color: var(--info-color); }
 
         /* --- Responsive Design --- */
         @media (max-width: 768px) {
@@ -233,7 +216,6 @@
             .report-print-header h2, .report-print-header p { color: #000 !important; }
              .report-print-header p { font-size: 11pt; margin: 5px 0; }
 
-
             #report-section, #individual-report-modal { display: block !important; border: none; padding: 0; margin: 0; }
             .chart-container { page-break-inside: avoid; width: 100% !important; max-width: 90%; margin: 20px auto; }
             table { min-width: 100%; font-size: 10pt; page-break-inside: auto; }
@@ -242,37 +224,23 @@
             h2, h3, h4 { color: #000 !important; }
             .section-title { border-color: #000; }
 
-            /* Hide individual report modal elements for general print */
             body:not(.print-individual) #individual-report-modal { display: none !important; }
-            /* Hide general report modal elements for individual print */
             body.print-individual #main-container { display: none !important; }
             body.print-individual .modal-content { max-width: 100%; border: none; box-shadow: none; }
         }
-
     </style>
 </head>
 <body>
 
     <div id="toast-container"></div>
 
-    <div id="login-overlay">
-        <div id="login-box">
-            <h2><i class="fas fa-lock"></i> تسجيل الدخول</h2>
-            <p>الرجاء إدخال كلمة المرور للوصول إلى النظام.</p>
-            <input type="password" id="password-input" placeholder="كلمة المرور">
-            <button id="login-btn" class="btn primary full-width mt-15">دخول</button>
-            <div id="login-error"></div>
-        </div>
-    </div>
-
     <div class="container" id="main-container">
         <header>
             <div class="header-title">
                 <h1>نظام إدارة الحضور المطور</h1>
-                <p>تتبع سحابي متكامل مع تقارير متقدمة وتصدير بيانات</p>
+                <p>تتبع سحابي فوري مع تقارير متقدمة وتصدير بيانات</p>
             </div>
             <div class="header-actions">
-                <button id="settings-btn" class="btn outline" title="الإعدادات"><i class="fas fa-cog"></i></button>
                 <button id="theme-toggle" class="btn outline" title="تبديل الثيم">
                      <i id="theme-icon-sun" class="fas fa-sun"></i>
                      <i id="theme-icon-moon" class="fas fa-moon"></i>
@@ -285,34 +253,10 @@
                 <h2><i class="fas fa-tachometer-alt"></i> نظرة عامة لليوم (<span id="today-date-display"></span>)</h2>
             </div>
             <div id="overview-grid" class="grid-container">
-                <div class="stat-card success">
-                    <i class="fas fa-user-check"></i>
-                    <div>
-                        <span class="stat-value" id="present-count">0</span>
-                        <span class="stat-label">حاضر</span>
-                    </div>
-                </div>
-                <div class="stat-card danger">
-                    <i class="fas fa-user-times"></i>
-                    <div>
-                        <span class="stat-value" id="absent-count">0</span>
-                        <span class="stat-label">غائب</span>
-                    </div>
-                </div>
-                <div class="stat-card info">
-                    <i class="fas fa-question-circle"></i>
-                    <div>
-                        <span class="stat-value" id="unmarked-count">0</span>
-                        <span class="stat-label">لم يسجل</span>
-                    </div>
-                </div>
-                <div class="stat-card primary">
-                    <i class="fas fa-users"></i>
-                    <div>
-                        <span class="stat-value" id="total-employees-count">0</span>
-                        <span class="stat-label">إجمالي العمال</span>
-                    </div>
-                </div>
+                <div class="stat-card success"><i class="fas fa-user-check"></i><div><span class="stat-value" id="present-count">0</span><span class="stat-label">حاضر</span></div></div>
+                <div class="stat-card danger"><i class="fas fa-user-times"></i><div><span class="stat-value" id="absent-count">0</span><span class="stat-label">غائب</span></div></div>
+                <div class="stat-card info"><i class="fas fa-question-circle"></i><div><span class="stat-value" id="unmarked-count">0</span><span class="stat-label">لم يسجل</span></div></div>
+                <div class="stat-card primary"><i class="fas fa-users"></i><div><span class="stat-value" id="total-employees-count">0</span><span class="stat-label">إجمالي العمال</span></div></div>
             </div>
         </div>
 
@@ -322,7 +266,7 @@
                 <button id="add-employee-btn" class="btn primary"><i class="fas fa-user-plus"></i> <span>إضافة عامل</span></button>
             </div>
             <input type="text" id="search-input" placeholder="ابحث بالاسم أو رقم الهاتف..." style="margin-bottom: 15px;">
-            <div class="table-wrapper"><table id="employees-table"><thead><tr><th>الاسم</th><th>رقم الهاتف/التعريف</th><th>الحالة اليوم</th><th>إجراءات</th></tr></thead><tbody id="employees-table-body"></tbody></table></div>
+            <div class="table-wrapper"><table id="employees-table"><thead><tr><th>الاسم</th><th>رقم الهاتف/التعريف</th><th>الحالة اليوم</th><th>إجراءات</th></tr></thead><tbody id="employees-table-body"><div class="spinner"></div></tbody></table></div>
         </div>
 
         <div class="card">
@@ -334,7 +278,7 @@
                     <button id="mark-all-absent" class="btn danger flex-grow"><i class="fas fa-times-circle"></i> الكل غائب</button>
                 </div>
             </div>
-            <div class="table-wrapper" style="margin-top: 20px;"><table id="attendance-table"><thead><tr><th>الاسم</th><th>حالة الحضور</th></tr></thead><tbody id="attendance-table-body"></tbody></table></div>
+            <div class="table-wrapper" style="margin-top: 20px;"><table id="attendance-table"><thead><tr><th>الاسم</th><th>حالة الحضور</th></tr></thead><tbody id="attendance-table-body"><div class="spinner"></div></tbody></table></div>
         </div>
         
         <div class="card">
@@ -377,68 +321,52 @@
 
     <div id="employee-modal" class="modal"><div class="modal-content"><span class="close-btn">&times;</span><h2 id="modal-title"></h2><label for="modal-employee-name">اسم العامل</label><input type="text" id="modal-employee-name"><br><br><label for="modal-employee-id">رقم الهاتف او بطاقة التعريف</label><input type="text" id="modal-employee-id"><br><br><label for="modal-employee-notes">ملاحظات (المفكرة)</label><textarea id="modal-employee-notes" rows="4"></textarea><button id="save-modal-btn" class="btn primary full-width mt-15"><i class="fas fa-save"></i> <span>حفظ</span></button></div></div>
     <div id="notes-modal" class="modal"><div class="modal-content"><span class="close-btn">&times;</span><h3 id="notes-modal-title"></h3><div id="notes-display"></div></div></div>
-    <div id="password-verify-modal" class="modal"><div class="modal-content small"><span class="close-btn">&times;</span><h2>تأكيد الإجراء</h2><p>للقيام بهذا الإجراء، يرجى إدخال كلمة المرور الحالية.</p><input type="password" id="verify-password-input" placeholder="كلمة المرور"><button id="verify-password-btn" class="btn primary full-width mt-15">تأكيد</button></div></div>
-    <div id="settings-modal" class="modal"><div class="modal-content small"><span class="close-btn">&times;</span><h2><i class="fas fa-cog"></i> إعدادات النظام</h2><label for="current-password">كلمة المرور الحالية</label><input type="password" id="current-password"><br><br><label for="new-password">كلمة المرور الجديدة</label><input type="password" id="new-password"><br><br><button id="change-password-btn" class="btn primary full-width mt-15">حفظ كلمة المرور الجديدة</button></div></div>
     <div id="individual-report-modal" class="modal printable"><div class="modal-content"><span class="close-btn">&times;</span><div id="printable-individual-report"><div class="report-print-header"><h2 id="individual-report-print-title"></h2><p>التقرير خلال الفترة: <span id="individual-report-period"></span></p></div><div id="individual-report-content"><h2 id="individual-report-title"></h2><div class="grid-container"><div class="chart-container" style="max-height: 250px;"><canvas id="individual-summary-chart"></canvas></div><div id="individual-stats"></div></div></div></div><button id="print-individual-report-btn" class="btn info full-width mt-15"><i class="fas fa-print"></i> طباعة تقرير العامل</button></div></div>
 
-<script>
-document.addEventListener('DOMContentLoaded', () => {
+<script type="module">
+    // ### 1. Firebase & App Configuration ###
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+    import { getFirestore, collection, getDocs, doc, setDoc, addDoc, updateDoc, deleteDoc, query, where, orderBy, writeBatch, onSnapshot } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
-    // ##################################################################
-    // ###          1. Firebase & App Configuration                 ###
-    // ##################################################################
+    // تنبيه أمني مهم: هذه الإعدادات تكون ظاهرة للعميل.
+    // يجب عليك استخدام "قواعد الأمان" (Security Rules) في لوحة تحكم Firebase لحماية قاعدة بياناتك
+    // ومنع أي شخص غير مصرح له من قراءة أو كتابة البيانات.
     const firebaseConfig = {
         apiKey: "AIzaSyA1VBBOZQOUwnHp8x487g7lkn14x6Sp-7g",
         authDomain: "stoke-c650a.firebaseapp.com",
         databaseURL: "https://stoke-c650a-default-rtdb.firebaseio.com",
         projectId: "stoke-c650a",
-        storageBucket: "stoke-c650a.firebasestorage.app",
+        storageBucket: "stoke-c650a.appspot.com",
         messagingSenderId: "464151163343",
-        appId: "1:464151163343:web:728a60e952e4943bc822ba",
-        measurementId: "G-6C1X40RWHZ"
+        appId: "1:464151163343:web:728a60e952e4943bc822ba"
     };
 
+    let db;
     try {
-        firebase.initializeApp(firebaseConfig);
+        const app = initializeApp(firebaseConfig);
+        db = getFirestore(app);
     } catch(e) {
         console.error("Firebase initialization failed!", e);
         document.body.innerHTML = `<div style="padding: 20px; text-align: center; font-size: 1.2rem; color: #dc3545; background: #fff; height: 100vh; display: flex; align-items: center; justify-content: center; flex-direction: column;"><h1>خطأ في الاتصال بقاعدة البيانات</h1><p>فشلت عملية تهيئة Firebase. قد تكون إعدادات Firebase غير صحيحة أو هناك مشكلة في الاتصال بالإنترنت.</p></div>`;
-        return;
     }
-    const db = firebase.firestore();
 
     // --- DOM Elements ---
     const DOMElements = {
-        // General
         mainContainer: document.getElementById('main-container'),
         toastContainer: document.getElementById('toast-container'),
         themeToggle: document.getElementById('theme-toggle'),
-
-        // Login
-        loginOverlay: document.getElementById('login-overlay'),
-        loginBtn: document.getElementById('login-btn'),
-        passwordInput: document.getElementById('password-input'),
-        loginError: document.getElementById('login-error'),
-
-        // Overview
         todayDateDisplay: document.getElementById('today-date-display'),
         presentCount: document.getElementById('present-count'),
         absentCount: document.getElementById('absent-count'),
         unmarkedCount: document.getElementById('unmarked-count'),
         totalEmployeesCount: document.getElementById('total-employees-count'),
-
-        // Employees Table
         employeesTableBody: document.getElementById('employees-table-body'),
         searchInput: document.getElementById('search-input'),
         addEmployeeBtn: document.getElementById('add-employee-btn'),
-
-        // Attendance Table
         attendanceDate: document.getElementById('attendance-date'),
         attendanceTableBody: document.getElementById('attendance-table-body'),
         markAllPresentBtn: document.getElementById('mark-all-present'),
         markAllAbsentBtn: document.getElementById('mark-all-absent'),
-
-        // Reports
         startDate: document.getElementById('start-date'),
         endDate: document.getElementById('end-date'),
         generateReportBtn: document.getElementById('generate-report-btn'),
@@ -451,30 +379,14 @@ document.addEventListener('DOMContentLoaded', () => {
         printBtn: document.getElementById('print-btn'),
         shareBtn: document.getElementById('share-btn'),
         exportCsvBtn: document.getElementById('export-csv-btn'),
-
-        // Modals
         employeeModal: document.getElementById('employee-modal'),
         notesModal: document.getElementById('notes-modal'),
-        passwordVerifyModal: document.getElementById('password-verify-modal'),
-        settingsModal: document.getElementById('settings-modal'),
         individualReportModal: document.getElementById('individual-report-modal'),
-        
-        // Employee Modal Fields
         saveModalBtn: document.getElementById('save-modal-btn'),
         modalTitle: document.getElementById('modal-title'),
         modalEmployeeName: document.getElementById('modal-employee-name'),
         modalEmployeeId: document.getElementById('modal-employee-id'),
         modalEmployeeNotes: document.getElementById('modal-employee-notes'),
-
-        // Password & Settings Fields
-        verifyPasswordInput: document.getElementById('verify-password-input'),
-        verifyPasswordBtn: document.getElementById('verify-password-btn'),
-        currentPasswordInput: document.getElementById('current-password'),
-        newPasswordInput: document.getElementById('new-password'),
-        changePasswordBtn: document.getElementById('change-password-btn'),
-        settingsBtn: document.getElementById('settings-btn'),
-
-        // Individual Report Fields
         individualReportTitle: document.getElementById('individual-report-title'),
         individualReportPrintTitle: document.getElementById('individual-report-print-title'),
         individualReportPeriod: document.getElementById('individual-report-period'),
@@ -487,109 +399,74 @@ document.addEventListener('DOMContentLoaded', () => {
         employees: [],
         dailyAttendance: {},
         currentEditingId: null,
-        password: null,
-        actionToConfirm: null,
+        currentFilter: '',
     };
     let chartInstances = {};
     let lastReportData = null;
-    const FALLBACK_PASSWORD = "SIDIKASI"; // Used only if DB password isn't set
+    let unsubscribeAttendance = () => {}; // Function to stop listening to attendance changes
 
-    // ##################################################################
-    // ###                 2. Core App Logic & UI                     ###
-    // ##################################################################
-
-    // --- Helper Functions ---
-    const getISODate = (d = new Date()) => d.toISOString().split('T')[0];
-    const showSpinner = (tbody) => { tbody.innerHTML = `<tr><td colspan="4"><div class="spinner"></div></td></tr>`; };
-    
+    // ### 2. Core App Logic ###
+    const sanitizeHTML = (str) => {
+        const temp = document.createElement('div');
+        temp.textContent = str;
+        return temp.innerHTML;
+    };
     const showToast = (message, type = 'success') => {
         const toast = document.createElement('div');
         toast.className = `toast ${type}`;
-        toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-times-circle'}"></i> ${message}`;
+        toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-times-circle' : 'fa-info-circle'}"></i> ${sanitizeHTML(message)}`;
         DOMElements.toastContainer.appendChild(toast);
         setTimeout(() => { toast.remove(); }, 4000);
     };
-
     const openModal = (modal, id = null) => {
         state.currentEditingId = id;
         modal.style.display = 'flex';
-        const close = () => modal.style.display = 'none';
-        modal.querySelector('.close-btn').onclick = close;
-        window.onclick = (e) => { if (e.target === modal) close(); };
+        const closeBtn = modal.querySelector('.close-btn');
+        if (closeBtn) {
+            const close = () => modal.style.display = 'none';
+            closeBtn.onclick = close;
+            window.onclick = (e) => { if (e.target === modal) close(); };
+        }
     };
-    
-    // --- Theme Management ---
     const setupTheme = () => {
         const applyTheme = (theme) => {
             document.body.className = theme === 'dark' ? 'dark-theme' : '';
             localStorage.setItem('theme', theme);
             if (lastReportData) renderAllCharts(lastReportData);
+            const empIdForIndividualChart = state.currentEditingId;
+            if (chartInstances.individualSummary && lastReportData && empIdForIndividualChart) {
+                const empData = lastReportData.summary.find(e => e.id === empIdForIndividualChart);
+                if(empData) renderIndividualChart(empData);
+            }
         };
         DOMElements.themeToggle.addEventListener('click', () => {
             const newTheme = document.body.classList.contains('dark-theme') ? 'light' : 'dark';
             applyTheme(newTheme);
         });
-        const savedTheme = localStorage.getItem('theme');
-        const preferredTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-        applyTheme(savedTheme || preferredTheme);
+        applyTheme(localStorage.getItem('theme') || 'light');
     };
 
-    // --- Login & Authentication ---
-    const handleLogin = async () => {
-        const enteredPassword = DOMElements.passwordInput.value;
-        if (!state.password) {
-            const doc = await db.collection('settings').doc('password').get();
-            state.password = doc.exists ? doc.data().value : FALLBACK_PASSWORD;
-        }
-
-        if (enteredPassword === state.password) {
-            DOMElements.loginOverlay.style.opacity = '0';
-            setTimeout(() => {
-                DOMElements.loginOverlay.style.display = 'none';
-                DOMElements.mainContainer.classList.add('visible');
-                initApp();
-            }, 500);
-        } else {
-            DOMElements.loginError.textContent = `كلمة مرور خاطئة.`;
-            DOMElements.passwordInput.value = '';
-        }
-    };
-    
-    const confirmActionWithPassword = (action) => {
-        state.actionToConfirm = action;
-        openModal(DOMElements.passwordVerifyModal);
-    };
-
-    // ##################################################################
-    // ###          3. Firebase Service (Database Interaction)        ###
-    // ##################################################################
+    // ### 3. Firebase Service (Real-time & Secure) ###
     const firebaseService = {
-        getEmployees: async () => (await db.collection('employees').orderBy('name').get()).docs.map(doc => ({ id: doc.id, ...doc.data() })),
-        addEmployee: (data) => db.collection('employees').add(data),
-        updateEmployee: (id, data) => db.collection('employees').doc(id).update(data),
+        addEmployee: (data) => addDoc(collection(db, 'employees'), data),
+        updateEmployee: (id, data) => updateDoc(doc(db, 'employees', id), data),
         deleteEmployee: async (id) => {
-            await db.collection('employees').doc(id).delete();
-            const snapshot = await db.collection('attendance').where('employeeId', '==', id).get();
-            const batch = db.batch();
-            snapshot.docs.forEach(doc => batch.delete(doc.ref));
+            const batch = writeBatch(db);
+            batch.delete(doc(db, 'employees', id));
+            const attendanceQuery = query(collection(db, 'attendance'), where('employeeId', '==', id));
+            const attendanceSnapshot = await getDocs(attendanceQuery);
+            attendanceSnapshot.docs.forEach(doc => batch.delete(doc.ref));
             await batch.commit();
         },
         setAttendance: (employeeId, date, status) => {
             const attendanceId = `${employeeId}_${date}`;
             return status === 'none'
-                ? db.collection('attendance').doc(attendanceId).delete().catch(() => {})
-                : db.collection('attendance').doc(attendanceId).set({ employeeId, date, status });
-        },
-        getAttendanceForDate: async (date) => {
-            const snapshot = await db.collection('attendance').where('date', '==', date).get();
-            return snapshot.docs.reduce((acc, doc) => {
-                const data = doc.data();
-                acc[data.employeeId] = data.status;
-                return acc;
-            }, {});
+                ? deleteDoc(doc(db, 'attendance', attendanceId)).catch(() => {})
+                : setDoc(doc(db, 'attendance', attendanceId), { employeeId, date, status });
         },
         getAttendanceForPeriod: async (startDate, endDate) => {
-            const snapshot = await db.collection('attendance').where('date', '>=', startDate).where('date', '<=', endDate).get();
+            const q = query(collection(db, 'attendance'), where('date', '>=', startDate), where('date', '<=', endDate));
+            const snapshot = await getDocs(q);
             const attendanceData = {};
             snapshot.docs.forEach(doc => {
                 const data = doc.data();
@@ -599,52 +476,76 @@ document.addEventListener('DOMContentLoaded', () => {
             return attendanceData;
         }
     };
+    
+    // ### 4. REAL-TIME DATA LISTENERS ###
+    const listenForEmployeeChanges = () => {
+        const q = query(collection(db, 'employees'), orderBy('name'));
+        onSnapshot(q, (querySnapshot) => {
+            state.employees = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            renderAllDynamicContent();
+        }, (error) => {
+            console.error("Error listening to employee changes:", error);
+            showToast("خطأ في المزامنة الحية للعمال.", 'error');
+        });
+    };
 
-    // ##################################################################
-    // ###                4. Rendering & UI Updates                   ###
-    // ##################################################################
-    const renderEmployeesTable = (filter = '') => {
-        const lowerFilter = filter.toLowerCase();
-        const filteredEmployees = state.employees.filter(e => e.name.toLowerCase().includes(lowerFilter) || e.customId?.toLowerCase().includes(lowerFilter));
+    const listenForAttendanceChanges = () => {
+        unsubscribeAttendance(); // Stop listening to the previous date's attendance
+        const date = DOMElements.attendanceDate.value;
+        const q = query(collection(db, 'attendance'), where('date', '==', date));
+        DOMElements.attendanceTableBody.innerHTML = `<tr><td colspan="2"><div class="spinner"></div></td></tr>`;
+        
+        unsubscribeAttendance = onSnapshot(q, (snapshot) => {
+            state.dailyAttendance = snapshot.docs.reduce((acc, doc) => {
+                const data = doc.data();
+                acc[data.employeeId] = data.status;
+                return acc;
+            }, {});
+            renderAllDynamicContent();
+        }, (error) => {
+            console.error("Error listening to attendance changes:", error);
+            showToast("خطأ في المزامنة الحية للحضور.", 'error');
+        });
+    };
+    
+    const getISODate = (d = new Date()) => d.toISOString().split('T')[0];
+    
+    // ### 5. UI RENDERING FUNCTIONS ###
+    const renderAllDynamicContent = () => {
+        renderEmployeesTable();
+        renderDailyAttendance();
+        updateDashboardOverview();
+    };
+
+    const renderEmployeesTable = () => {
+        const lowerFilter = state.currentFilter.toLowerCase();
+        const filteredEmployees = state.employees.filter(e => 
+            e.name.toLowerCase().includes(lowerFilter) || e.customId?.toLowerCase().includes(lowerFilter)
+        );
+
+        if (state.employees.length === 0) {
+            DOMElements.employeesTableBody.innerHTML = `<tr><td colspan="4" class="no-data"><i class="fas fa-user-plus"></i> لا يوجد عمال بعد. قم بإضافة عامل جديد.</td></tr>`; return;
+        }
         if (filteredEmployees.length === 0) {
-            DOMElements.employeesTableBody.innerHTML = `<tr><td colspan="4" class="no-data"><i class="fas fa-search"></i> لا يوجد عمال يطابقون البحث.</td></tr>`;
-            return;
+            DOMElements.employeesTableBody.innerHTML = `<tr><td colspan="4" class="no-data"><i class="fas fa-search"></i> لا يوجد عمال يطابقون البحث.</td></tr>`; return;
         }
         DOMElements.employeesTableBody.innerHTML = filteredEmployees.map(emp => {
             const status = state.dailyAttendance[emp.id];
             const badge = status === 'present' ? `<span class="status-badge status-present">حاضر</span>`
                         : status === 'absent' ? `<span class="status-badge status-absent">غائب</span>`
                         : `<span class="status-badge status-none">لم يسجل</span>`;
-            return `
-                <tr data-id="${emp.id}">
-                    <td data-label="الاسم"><a href="#" class="employee-name-link">${emp.name}</a></td>
-                    <td data-label="رقم الهاتف/التعريف">${emp.customId || 'N/A'}</td>
-                    <td data-label="الحالة اليوم">${badge}</td>
-                    <td data-label="إجراءات" class="action-buttons">
-                        <button class="btn info notes-btn"><i class="fas fa-sticky-note"></i> ملاحظات</button>
-                        <button class="btn warning edit-btn"><i class="fas fa-edit"></i> تعديل</button>
-                        <button class="btn danger delete-btn"><i class="fas fa-trash-alt"></i> حذف</button>
-                    </td>
-                </tr>`;
+            return `<tr data-id="${emp.id}"><td data-label="الاسم"><a href="#" class="employee-name-link">${sanitizeHTML(emp.name)}</a></td><td data-label="رقم الهاتف/التعريف">${sanitizeHTML(emp.customId) || 'N/A'}</td><td data-label="الحالة اليوم">${badge}</td><td data-label="إجراءات" class="action-buttons"><button class="btn info notes-btn"><i class="fas fa-sticky-note"></i> ملاحظات</button><button class="btn warning edit-btn"><i class="fas fa-edit"></i> تعديل</button><button class="btn danger delete-btn"><i class="fas fa-trash-alt"></i> حذف</button></td></tr>`;
         }).join('');
     };
     
     const renderDailyAttendance = () => {
         const date = DOMElements.attendanceDate.value;
         if (state.employees.length === 0) {
-            DOMElements.attendanceTableBody.innerHTML = `<tr><td colspan="2" class="no-data"><i class="fas fa-user-plus"></i> الرجاء إضافة عمال أولاً.</td></tr>`;
-            return;
+            DOMElements.attendanceTableBody.innerHTML = `<tr><td colspan="2" class="no-data"><i class="fas fa-user-plus"></i> الرجاء إضافة عمال أولاً.</td></tr>`; return;
         }
         DOMElements.attendanceTableBody.innerHTML = state.employees.map(emp => {
             const status = state.dailyAttendance[emp.id] || 'none';
-            return `
-                <tr>
-                    <td data-label="الاسم">${emp.name}</td>
-                    <td data-label="حالة الحضور" class="action-buttons">
-                        <button class="btn ${status === 'present' ? 'success' : 'outline'}" onclick="window.updateAttendance('${emp.id}', '${date}', 'present')"><i class="fas fa-check"></i> حاضر</button>
-                        <button class="btn ${status === 'absent' ? 'danger' : 'outline'}" onclick="window.updateAttendance('${emp.id}', '${date}', 'absent')"><i class="fas fa-times"></i> غائب</button>
-                    </td>
-                </tr>`;
+            return `<tr><td data-label="الاسم">${sanitizeHTML(emp.name)}</td><td data-label="حالة الحضور" class="action-buttons"><button class="btn ${status === 'present' ? 'success' : 'outline'}" onclick="window.updateAttendance('${emp.id}', '${date}', 'present')"><i class="fas fa-check"></i> حاضر</button><button class="btn ${status === 'absent' ? 'danger' : 'outline'}" onclick="window.updateAttendance('${emp.id}', '${date}', 'absent')"><i class="fas fa-times"></i> غائب</button></td></tr>`;
         }).join('');
     };
 
@@ -652,8 +553,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let present = 0, absent = 0;
         state.employees.forEach(emp => {
             const status = state.dailyAttendance[emp.id];
-            if (status === 'present') present++;
-            else if (status === 'absent') absent++;
+            if (status === 'present') present++; else if (status === 'absent') absent++;
         });
         const total = state.employees.length;
         DOMElements.presentCount.textContent = present;
@@ -663,14 +563,21 @@ document.addEventListener('DOMContentLoaded', () => {
         DOMElements.todayDateDisplay.textContent = DOMElements.attendanceDate.value;
     };
     
-    // ##################################################################
-    // ###              5. Core Functionality & Actions               ###
-    // ##################################################################
+    // ### 6. ACTIONS & EVENT HANDLERS ###
     const saveEmployee = async () => {
         const name = DOMElements.modalEmployeeName.value.trim();
-        if (!name) return showToast('الرجاء إدخال اسم العامل.', 'error');
-        const employeeData = { name, customId: DOMElements.modalEmployeeId.value.trim(), notes: DOMElements.modalEmployeeNotes.value.trim() };
+        if (!name) {
+            showToast('الرجاء إدخال اسم العامل.', 'error');
+            return;
+        }
+        const employeeData = { 
+            name: name,
+            customId: DOMElements.modalEmployeeId.value.trim(), 
+            notes: DOMElements.modalEmployeeNotes.value.trim() 
+        };
         DOMElements.saveModalBtn.disabled = true;
+        DOMElements.saveModalBtn.innerHTML = '<div class="spinner spinner-in-btn"></div> <span>جاري الحفظ...</span>';
+        
         try {
             if (state.currentEditingId) {
                 await firebaseService.updateEmployee(state.currentEditingId, employeeData);
@@ -680,12 +587,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 showToast('تمت إضافة العامل بنجاح.');
             }
             DOMElements.employeeModal.style.display = 'none';
-            await refreshData();
         } catch (error) { 
             console.error("Error saving employee:", error); 
             showToast("حدث خطأ أثناء الحفظ.", 'error'); 
         } finally { 
             DOMElements.saveModalBtn.disabled = false; 
+            DOMElements.saveModalBtn.innerHTML = '<i class="fas fa-save"></i> <span>حفظ</span>';
         }
     };
     
@@ -693,59 +600,32 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentStatus = state.dailyAttendance[empId];
         const newStatus = currentStatus === status ? 'none' : status;
         state.dailyAttendance[empId] = newStatus;
-        renderDailyAttendance();
-        renderEmployeesTable(DOMElements.searchInput.value);
-        updateDashboardOverview();
+        renderAllDynamicContent();
         await firebaseService.setAttendance(empId, date, newStatus);
     };
 
     const bulkUpdateAttendance = async (status) => {
+        const confirmMsg = status === 'present' 
+            ? 'هل أنت متأكد من تسجيل جميع العمال كـ "حاضر" لهذا اليوم؟'
+            : 'هل أنت متأكد من تسجيل جميع العمال كـ "غائب" لهذا اليوم؟';
+        
+        if (!confirm(confirmMsg)) return;
+
         const date = DOMElements.attendanceDate.value;
-        const batch = db.batch();
+        const batch = writeBatch(db);
         state.employees.forEach(emp => {
-            state.dailyAttendance[emp.id] = status;
-            const docRef = db.collection('attendance').doc(`${emp.id}_${date}`);
+            const docRef = doc(db, 'attendance', `${emp.id}_${date}`);
             batch.set(docRef, { employeeId: emp.id, date, status });
         });
-        renderDailyAttendance();
-        renderEmployeesTable(DOMElements.searchInput.value);
-        updateDashboardOverview();
+        showToast(`جاري تسجيل الكل كـ '${status === 'present' ? 'حاضر' : 'غائب'}...'`, 'info');
         await batch.commit();
-        showToast(`تم تسجيل الكل كـ '${status === 'present' ? 'حاضر' : 'غائب'}'.`);
-    };
-
-    const refreshData = async () => {
-        showSpinner(DOMElements.employeesTableBody);
-        showSpinner(DOMElements.attendanceTableBody);
-        try {
-            const [employees, attendance] = await Promise.all([
-                firebaseService.getEmployees(),
-                firebaseService.getAttendanceForDate(DOMElements.attendanceDate.value)
-            ]);
-            state.employees = employees;
-            state.dailyAttendance = attendance;
-            renderEmployeesTable();
-            renderDailyAttendance();
-            updateDashboardOverview();
-        } catch (error) {
-            console.error("Failed to refresh data:", error);
-            showToast("فشل تحميل البيانات من قاعدة البيانات.", 'error');
-            DOMElements.employeesTableBody.innerHTML = `<tr><td colspan="4" class="no-data">فشل تحميل البيانات.</td></tr>`;
-        }
+        showToast(`تم تسجيل الكل بنجاح.`);
     };
     
-    // ##################################################################
-    // ###               6. Reports & Data Exporting                  ###
-    // ##################################################################
-
     const generateReport = async () => {
-        const start = DOMElements.startDate.value;
-        const end = DOMElements.endDate.value;
-        if (!start || !end || new Date(start) > new Date(end)) {
-            return showToast('الرجاء تحديد فترة تقرير صحيحة.', 'error');
-        }
-        DOMElements.generateReportBtn.disabled = true;
-        DOMElements.generateReportBtn.innerHTML = '<div class="spinner" style="width:20px; height:20px; border-left-color: #fff; margin:0;"></div> <span>جاري إنشاء التقرير...</span>';
+        const start = DOMElements.startDate.value; const end = DOMElements.endDate.value;
+        if (!start || !end || new Date(start) > new Date(end)) return showToast('الرجاء تحديد فترة تقرير صحيحة.', 'error');
+        DOMElements.generateReportBtn.disabled = true; DOMElements.generateReportBtn.innerHTML = '<div class="spinner" style="width:20px; height:20px; border-left-color: #fff; margin:0 auto;"></div> <span>جاري الإنشاء...</span>';
         
         try {
             const periodAttendance = await firebaseService.getAttendanceForPeriod(start, end);
@@ -754,244 +634,114 @@ document.addEventListener('DOMContentLoaded', () => {
                 const attendance = periodAttendance[emp.id] || {};
                 for (let d = new Date(start); d <= new Date(end); d.setDate(d.getDate() + 1)) {
                     const status = attendance[getISODate(d)];
-                    if (status === 'present') present++;
-                    else if (status === 'absent') absent++;
+                    if (status === 'present') present++; else if (status === 'absent') absent++;
                 }
-                const total = present + absent;
-                const percentage = total > 0 ? Math.round((present / total) * 100) : 0;
+                const total = present + absent; const percentage = total > 0 ? Math.round((present / total) * 100) : 0;
                 return { id: emp.id, name: emp.name, present, absent, total, percentage };
             });
-
             const trend = { labels: [], presentData: [], absentData: [] };
             for (let d = new Date(start); d <= new Date(end); d.setDate(d.getDate() + 1)) {
-                const isoDate = getISODate(d);
-                trend.labels.push(isoDate);
-                let dailyPresent = 0, dailyAbsent = 0;
+                const isoDate = getISODate(d); trend.labels.push(isoDate); let dailyPresent = 0, dailyAbsent = 0;
                 state.employees.forEach(emp => {
                     const status = periodAttendance[emp.id]?.[isoDate];
-                    if (status === 'present') dailyPresent++;
-                    else if (status === 'absent') dailyAbsent++;
+                    if (status === 'present') dailyPresent++; else if (status === 'absent') dailyAbsent++;
                 });
-                trend.presentData.push(dailyPresent);
-                trend.absentData.push(dailyAbsent);
+                trend.presentData.push(dailyPresent); trend.absentData.push(dailyAbsent);
             }
-
             lastReportData = { summary, trend, start, end };
-            DOMElements.reportTableBody.innerHTML = summary.map(data => `<tr><td data-label="الاسم">${data.name}</td><td data-label="أيام حضور">${data.present}</td><td data-label="أيام غياب">${data.absent}</td><td data-label="الإجمالي">${data.total}</td><td data-label="نسبة الحضور">${data.percentage}%</td></tr>`).join('');
-            
-            const title = `تقرير من ${start} إلى ${end}`;
-            DOMElements.reportTitleDisplay.textContent = title;
-            DOMElements.reportPeriod.textContent = `${start} إلى ${end}`;
-            DOMElements.reportGenerationDate.textContent = getISODate();
-
-            DOMElements.reportSection.style.display = 'block';
-            renderAllCharts(lastReportData);
-            DOMElements.reportSection.scrollIntoView({ behavior: 'smooth' });
-
-        } catch(error) {
-            console.error("Failed to generate report:", error);
-            showToast("فشل إنشاء التقرير. تحقق من اتصالك بالإنترنت.", 'error');
-        } finally {
-            DOMElements.generateReportBtn.disabled = false;
-            DOMElements.generateReportBtn.innerHTML = '<i class="fas fa-chart-bar"></i> <span>عرض التقرير المتكامل</span>';
-        }
+            DOMElements.reportTableBody.innerHTML = summary.map(data => `<tr><td data-label="الاسم">${sanitizeHTML(data.name)}</td><td data-label="أيام حضور">${data.present}</td><td data-label="أيام غياب">${data.absent}</td><td data-label="الإجمالي">${data.total}</td><td data-label="نسبة الحضور">${data.percentage}%</td></tr>`).join('');
+            DOMElements.reportTitleDisplay.textContent = `تقرير من ${start} إلى ${end}`; DOMElements.reportPeriod.textContent = `${start} إلى ${end}`; DOMElements.reportGenerationDate.textContent = getISODate();
+            DOMElements.reportSection.style.display = 'block'; renderAllCharts(lastReportData); DOMElements.reportSection.scrollIntoView({ behavior: 'smooth' });
+        } catch(error) { console.error("Failed to generate report:", error); showToast("فشل إنشاء التقرير.", 'error'); } 
+        finally { DOMElements.generateReportBtn.disabled = false; DOMElements.generateReportBtn.innerHTML = '<i class="fas fa-chart-bar"></i> <span>عرض التقرير المتكامل</span>'; }
     };
     
     const exportReportToCSV = () => {
         if (!lastReportData) return showToast('الرجاء إنشاء تقرير أولاً.', 'error');
         const { summary, start, end } = lastReportData;
-        let csvContent = "data:text/csv;charset=utf-8,\uFEFF"; // \uFEFF for BOM to support Arabic in Excel
+        let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
         csvContent += "الاسم,أيام حضور,أيام غياب,الإجمالي,نسبة الحضور\r\n";
-        summary.forEach(row => {
-            csvContent += `${row.name},${row.present},${row.absent},${row.total},${row.percentage}%\r\n`;
-        });
-        const encodedUri = encodeURI(csvContent);
-        const link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", `report_${start}_to_${end}.csv`);
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
+        summary.forEach(row => { csvContent += `${row.name.replace(/,/g, '')},${row.present},${row.absent},${row.total},${row.percentage}%\r\n`; });
+        const link = document.createElement("a"); link.setAttribute("href", encodeURI(csvContent)); link.setAttribute("download", `report_${start}_to_${end}.csv`);
+        document.body.appendChild(link); link.click(); link.remove();
         showToast('تم بدء تنزيل ملف CSV.');
     };
 
     const openIndividualReportModal = (empId) => {
-        if (!lastReportData) {
-            return showToast('يرجى إنشاء تقرير عام أولاً لتحديد الفترة الزمنية.', 'error');
-        }
-        const empData = lastReportData.summary.find(e => e.id === empId);
-        if (!empData) return;
-
-        DOMElements.individualReportTitle.innerHTML = `<i class="fas fa-user-chart"></i> تقرير: ${empData.name}`;
-        DOMElements.individualReportPrintTitle.textContent = `تقرير الحضور لـ: ${empData.name}`;
-        DOMElements.individualReportPeriod.textContent = `${lastReportData.start} إلى ${lastReportData.end}`;
-
-        DOMElements.individualStats.innerHTML = `
-            <p><strong>أيام الحضور:</strong> <span>${empData.present}</span></p>
-            <p><strong>أيام الغياب:</strong> <span>${empData.absent}</span></p>
-            <p><strong>إجمالي الأيام المسجلة:</strong> <span>${empData.total}</span></p>
-            <p><strong>نسبة الحضور:</strong> <span>${empData.percentage}%</span></p>
-        `;
-
-        renderIndividualChart(empData);
-        openModal(DOMElements.individualReportModal);
-        
-        DOMElements.printIndividualReportBtn.onclick = () => {
-            document.body.classList.add('print-individual');
-            window.print();
-            document.body.classList.remove('print-individual');
-        };
+        if (!lastReportData) return showToast('يرجى إنشاء تقرير عام أولاً لتحديد الفترة الزمنية.', 'info');
+        const empData = lastReportData.summary.find(e => e.id === empId); if (!empData) return;
+        DOMElements.individualReportTitle.innerHTML = `<i class="fas fa-user-chart"></i> تقرير: ${sanitizeHTML(empData.name)}`; DOMElements.individualReportPrintTitle.textContent = `تقرير الحضور لـ: ${sanitizeHTML(empData.name)}`; DOMElements.individualReportPeriod.textContent = `${lastReportData.start} إلى ${lastReportData.end}`;
+        DOMElements.individualStats.innerHTML = `<p><strong>أيام الحضور:</strong> <span>${empData.present}</span></p><p><strong>أيام الغياب:</strong> <span>${empData.absent}</span></p><p><strong>إجمالي الأيام المسجلة:</strong> <span>${empData.total}</span></p><p><strong>نسبة الحضور:</strong> <span>${empData.percentage}%</span></p>`;
+        renderIndividualChart(empData); openModal(DOMElements.individualReportModal, empId);
+        DOMElements.printIndividualReportBtn.onclick = () => { document.body.classList.add('print-individual'); window.print(); document.body.classList.remove('print-individual'); };
     };
-
-    // ##################################################################
-    // ###                        7. Charting                         ###
-    // ##################################################################
+    
+    // ### 7. CHART RENDERING ###
     const getChartOptions = () => {
         const style = getComputedStyle(document.body);
-        return {
-            textColor: style.getPropertyValue('--text-color').trim(),
-            borderColor: style.getPropertyValue('--border-color').trim(),
-            successColor: style.getPropertyValue('--success-color').trim(),
-            dangerColor: style.getPropertyValue('--danger-color').trim(),
-        };
+        return { textColor: style.getPropertyValue('--text-color').trim(), borderColor: style.getPropertyValue('--border-color').trim(), successColor: style.getPropertyValue('--success-color').trim(), dangerColor: style.getPropertyValue('--danger-color').trim() };
     };
     
     const renderAllCharts = (reportData) => {
         Object.values(chartInstances).forEach(chart => chart?.destroy());
-        const { summary, trend } = reportData;
-        const opts = getChartOptions();
-
-        const totalPresent = summary.reduce((sum, data) => sum + data.present, 0);
-        const totalAbsent = summary.reduce((sum, data) => sum + data.absent, 0);
-        const totalDays = totalPresent + totalAbsent;
-        const attendancePercentage = totalDays > 0 ? Math.round((totalPresent / totalDays) * 100) : 0;
-        
+        const { summary, trend } = reportData; const opts = getChartOptions();
+        const totalPresent = summary.reduce((sum, data) => sum + data.present, 0); const totalAbsent = summary.reduce((sum, data) => sum + data.absent, 0);
+        const totalDays = totalPresent + totalAbsent; const attendancePercentage = totalDays > 0 ? Math.round((totalPresent / totalDays) * 100) : 0;
         DOMElements.gaugeText.textContent = `${attendancePercentage}%`;
-        chartInstances.gauge = new Chart(document.getElementById('overall-gauge-chart'), {
-            type: 'doughnut',
-            data: { datasets: [{ data: [attendancePercentage, 100 - attendancePercentage], backgroundColor: [opts.successColor, opts.borderColor], borderWidth: 0 }] }, 
-            options: { rotation: -90, circumference: 180, cutout: '70%', plugins: { tooltip: { enabled: false } } } 
-        });
-
-        chartInstances.summaryBar = new Chart(document.getElementById('overall-summary-chart'), {
-            type: 'bar',
-            data: { labels: ['إجمالي الحضور', 'إجمالي الغياب'], datasets: [{ label: 'عدد الأيام', data: [totalPresent, totalAbsent], backgroundColor: [opts.successColor, opts.dangerColor] }] },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: {color: opts.textColor}}, y: { beginAtZero: true, ticks: {color: opts.textColor}, grid: {color: opts.borderColor}} } }
-        });
-
-        chartInstances.trend = new Chart(document.getElementById('attendance-trend-chart'), {
-            type: 'line', 
-            data: { 
-                labels: trend.labels, 
-                datasets: [
-                    { label: 'حضور', data: trend.presentData, borderColor: opts.successColor, backgroundColor: opts.successColor+'33', fill: true, tension: 0.3 },
-                    { label: 'غياب', data: trend.absentData, borderColor: opts.dangerColor, backgroundColor: opts.dangerColor+'33', fill: true, tension: 0.3 }
-                ] 
-            }, 
-            options: { responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, scales: { x: { ticks: {color: opts.textColor}}, y: { stacked: true, beginAtZero: true, ticks: {color: opts.textColor}, grid: {color: opts.borderColor}} } }
-        });
+        chartInstances.gauge = new Chart(document.getElementById('overall-gauge-chart'), { type: 'doughnut', data: { datasets: [{ data: [attendancePercentage, 100 - attendancePercentage], backgroundColor: [opts.successColor, opts.borderColor], borderWidth: 0 }] }, options: { rotation: -90, circumference: 180, cutout: '70%', plugins: { tooltip: { enabled: false } } } });
+        chartInstances.summaryBar = new Chart(document.getElementById('overall-summary-chart'), { type: 'bar', data: { labels: ['إجمالي الحضور', 'إجمالي الغياب'], datasets: [{ label: 'عدد الأيام', data: [totalPresent, totalAbsent], backgroundColor: [opts.successColor, opts.dangerColor] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: {color: opts.textColor}}, y: { beginAtZero: true, ticks: {color: opts.textColor}, grid: {color: opts.borderColor}} } } });
+        chartInstances.trend = new Chart(document.getElementById('attendance-trend-chart'), { type: 'line', data: { labels: trend.labels, datasets: [{ label: 'حضور', data: trend.presentData, borderColor: opts.successColor, backgroundColor: opts.successColor+'33', fill: true, tension: 0.3 }, { label: 'غياب', data: trend.absentData, borderColor: opts.dangerColor, backgroundColor: opts.dangerColor+'33', fill: true, tension: 0.3 }] }, options: { responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, scales: { x: { ticks: {color: opts.textColor}}, y: { stacked: true, beginAtZero: true, ticks: {color: opts.textColor}, grid: {color: opts.borderColor}} } } });
     };
 
     const renderIndividualChart = (empData) => {
         if (chartInstances.individualSummary) chartInstances.individualSummary.destroy();
         const opts = getChartOptions();
-        chartInstances.individualSummary = new Chart(document.getElementById('individual-summary-chart'), {
-            type: 'pie',
-            data: {
-                labels: ['حضور', 'غياب'],
-                datasets: [{
-                    data: [empData.present, empData.absent],
-                    backgroundColor: [opts.successColor, opts.dangerColor],
-                    borderColor: getComputedStyle(document.body).getPropertyValue('--card-bg').trim(),
-                    borderWidth: 2
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                        labels: { color: opts.textColor }
-                    }
-                }
-            }
-        });
+        chartInstances.individualSummary = new Chart(document.getElementById('individual-summary-chart'), { type: 'pie', data: { labels: ['حضور', 'غياب'], datasets: [{ data: [empData.present, empData.absent], backgroundColor: [opts.successColor, opts.dangerColor], borderColor: getComputedStyle(document.body).getPropertyValue('--card-bg').trim(), borderWidth: 2 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top', labels: { color: opts.textColor } } } } });
     };
     
-    // ##################################################################
-    // ###           8. Event Listeners & App Initialization          ###
-    // ##################################################################
-    
+    // ### 8. INITIALIZATION ###
     function setupEventListeners() {
-        // Login
-        DOMElements.loginBtn.addEventListener('click', handleLogin);
-        DOMElements.passwordInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleLogin(); });
-
-        // Employee Management
         DOMElements.addEmployeeBtn.addEventListener('click', () => {
-            state.currentEditingId = null;
-            DOMElements.modalTitle.innerHTML = '<i class="fas fa-user-plus"></i> إضافة عامل';
+            state.currentEditingId = null; DOMElements.modalTitle.innerHTML = '<i class="fas fa-user-plus"></i> إضافة عامل';
             ['modalEmployeeName', 'modalEmployeeId', 'modalEmployeeNotes'].forEach(key => DOMElements[key].value = '');
             openModal(DOMElements.employeeModal);
         });
 
-        DOMElements.saveModalBtn.addEventListener('click', async () => {
-            if (state.currentEditingId) {
-                confirmActionWithPassword(saveEmployee);
-            } else {
-                await saveEmployee();
-            }
-        });
+        DOMElements.saveModalBtn.addEventListener('click', saveEmployee);
         
         DOMElements.employeesTableBody.addEventListener('click', async (e) => {
-            const row = e.target.closest('tr');
-            if (!row) return;
-            const id = row.dataset.id;
-            
-            if (e.target.classList.contains('employee-name-link')) {
-                e.preventDefault();
-                openIndividualReportModal(id);
-            } else {
-                const button = e.target.closest('button');
-                if (!button) return;
-                
-                if (button.classList.contains('edit-btn')) {
-                    const emp = state.employees.find(e => e.id === id);
-                    DOMElements.modalTitle.innerHTML = `<i class="fas fa-user-edit"></i> تعديل: ${emp.name}`;
-                    DOMElements.modalEmployeeName.value = emp.name;
-                    DOMElements.modalEmployeeId.value = emp.customId || '';
-                    DOMElements.modalEmployeeNotes.value = emp.notes || '';
-                    openModal(DOMElements.employeeModal, id);
-                } else if (button.classList.contains('delete-btn')) {
-                    if (confirm('هل أنت متأكد من حذف هذا العامل وكل سجلاته نهائياً؟')) {
-                        confirmActionWithPassword(async () => {
-                            try {
-                                await firebaseService.deleteEmployee(id);
-                                showToast('تم حذف العامل بنجاح.');
-                                await refreshData();
-                            } catch (error) {
-                                console.error("Error deleting:", error);
-                                showToast("فشل الحذف.", 'error');
-                            }
-                        });
-                    }
-                } else if (button.classList.contains('notes-btn')) {
-                    const emp = state.employees.find(e => e.id === id);
-                    document.getElementById('notes-modal-title').textContent = `ملاحظات لـ: ${emp.name}`;
-                    document.getElementById('notes-display').textContent = emp.notes || 'لا توجد ملاحظات مسجلة.';
-                    openModal(DOMElements.notesModal);
+            const row = e.target.closest('tr'); if (!row) return; const id = row.dataset.id;
+            const emp = state.employees.find(e => e.id === id); if (!emp) return;
+
+            if (e.target.closest('.employee-name-link')) { e.preventDefault(); openIndividualReportModal(id); } 
+            else if (e.target.closest('.edit-btn')) {
+                DOMElements.modalTitle.innerHTML = `<i class="fas fa-user-edit"></i> تعديل: ${sanitizeHTML(emp.name)}`;
+                DOMElements.modalEmployeeName.value = emp.name; DOMElements.modalEmployeeId.value = emp.customId || ''; DOMElements.modalEmployeeNotes.value = emp.notes || '';
+                openModal(DOMElements.employeeModal, id);
+            } else if (e.target.closest('.delete-btn')) {
+                if (confirm(`هل أنت متأكد من حذف العامل "${emp.name}" وكل سجلاته نهائياً؟ هذا الإجراء لا يمكن التراجع عنه.`)) {
+                    try { 
+                        showToast(`جاري حذف ${emp.name}...`, 'info');
+                        await firebaseService.deleteEmployee(id); 
+                        showToast('تم حذف العامل بنجاح.');
+                    } 
+                    catch (error) { console.error("Error deleting:", error); showToast("فشل الحذف.", 'error'); }
                 }
+            } else if (e.target.closest('.notes-btn')) {
+                document.getElementById('notes-modal-title').textContent = `ملاحظات لـ: ${sanitizeHTML(emp.name)}`;
+                document.getElementById('notes-display').textContent = emp.notes || 'لا توجد ملاحظات مسجلة.';
+                openModal(DOMElements.notesModal);
             }
         });
 
-        // Attendance
-        DOMElements.attendanceDate.addEventListener('change', refreshData);
+        DOMElements.attendanceDate.addEventListener('change', listenForAttendanceChanges);
         DOMElements.markAllPresentBtn.addEventListener('click', () => bulkUpdateAttendance('present'));
         DOMElements.markAllAbsentBtn.addEventListener('click', () => bulkUpdateAttendance('absent'));
-        DOMElements.searchInput.addEventListener('input', (e) => renderEmployeesTable(e.target.value));
+        DOMElements.searchInput.addEventListener('input', (e) => {
+            state.currentFilter = e.target.value;
+            renderEmployeesTable();
+        });
 
-        // Reports & Actions
         DOMElements.generateReportBtn.addEventListener('click', generateReport);
         DOMElements.printBtn.addEventListener('click', () => window.print());
         DOMElements.exportCsvBtn.addEventListener('click', exportReportToCSV);
@@ -1002,55 +752,27 @@ document.addEventListener('DOMContentLoaded', () => {
             summary.forEach(data => { text += `👤 *${data.name}*: ✅ حضور: ${data.present}, ❌ غياب: ${data.absent}\n`; });
             navigator.share({ title: 'تقرير الحضور', text: text }).catch(err => console.error("Share failed:", err));
         });
-
-        // Settings & Password
-        DOMElements.settingsBtn.addEventListener('click', () => openModal(DOMElements.settingsModal));
-        DOMElements.changePasswordBtn.addEventListener('click', async () => {
-            const currentPass = DOMElements.currentPasswordInput.value;
-            const newPass = DOMElements.newPasswordInput.value;
-            if (!currentPass || !newPass) return showToast('يرجى ملء جميع الحقول.', 'error');
-            if (currentPass !== state.password) return showToast('كلمة المرور الحالية غير صحيحة.', 'error');
-            
-            try {
-                await db.collection('settings').doc('password').set({ value: newPass });
-                state.password = newPass; // Update state
-                DOMElements.settingsModal.style.display = 'none';
-                DOMElements.currentPasswordInput.value = '';
-                DOMElements.newPasswordInput.value = '';
-                showToast('تم تغيير كلمة المرور بنجاح.');
-            } catch(error) {
-                console.error("Password change failed:", error);
-                showToast('فشل تغيير كلمة المرور.', 'error');
-            }
-        });
-        
-        DOMElements.verifyPasswordBtn.addEventListener('click', async () => {
-            if (DOMElements.verifyPasswordInput.value === state.password) {
-                DOMElements.passwordVerifyModal.style.display = 'none';
-                DOMElements.verifyPasswordInput.value = '';
-                if (typeof state.actionToConfirm === 'function') {
-                    await state.actionToConfirm();
-                }
-                state.actionToConfirm = null;
-            } else {
-                showToast('كلمة المرور غير صحيحة!', 'error');
-            }
-        });
     }
 
     function initApp() {
         const today = new Date();
         DOMElements.attendanceDate.valueAsDate = today;
         DOMElements.endDate.valueAsDate = today;
-        DOMElements.startDate.valueAsDate = new Date(today.getFullYear(), today.getMonth(), 1);
-        refreshData();
+        const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+        DOMElements.startDate.valueAsDate = startOfMonth;
+        
+        // Start listening for real-time updates
+        listenForEmployeeChanges();
+        listenForAttendanceChanges();
     }
 
     // --- Start the app ---
-    setupTheme();
-    setupEventListeners();
+    if (db) {
+        setupTheme();
+        setupEventListeners();
+        initApp(); // Start the main application logic directly
+    }
 
-});
 </script>
 </body>
 </html>

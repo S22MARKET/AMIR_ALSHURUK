@@ -32,7 +32,7 @@
             padding: 12px 18px;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
             font-size: 1em;
             text-decoration: none;
@@ -40,9 +40,9 @@
             align-items: center;
             gap: 8px;
             justify-content: center;
-            transition: background-color 0.3s;
+            transition: background-color 0.3s, transform 0.2s;
         }
-        .action-btn:hover { opacity: 0.9; }
+        .action-btn:hover { opacity: 0.9; transform: translateY(-2px); }
         .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 24px; }
@@ -55,11 +55,15 @@
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.6); z-index: 1000;
             display: flex; justify-content: center; align-items: center;
+            opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s;
         }
+        .modal-overlay.show { opacity: 1; visibility: visible; }
         .modal-content {
             background: #fff; padding: 25px; border-radius: 8px; width: 90%; max-width: 600px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.3); text-align: right;
+            transform: scale(0.95); transition: transform 0.3s;
         }
+        .modal-overlay.show .modal-content { transform: scale(1); }
         .modal-content h3 { margin-top: 0; color: var(--primary-color); }
         .modal-content textarea {
             width: 100%; height: 120px; margin-bottom: 15px; padding: 10px;
@@ -68,7 +72,6 @@
         }
         .modal-buttons { display: flex; gap: 10px; justify-content: flex-end; }
         
-        /* Custom styles for invoice elements */
         #invoice-to-print table td input {
             width: 100%; box-sizing: border-box; border: 1px solid transparent;
             padding: 8px 5px; border-radius: 4px; transition: border 0.2s; font-size: 1em;
@@ -80,15 +83,22 @@
         .delete-row-btn:hover { transform: scale(1.2); }
         .company-details input { display: none; }
         .edit-mode .editable-value { display: none; }
-        .edit-mode input { display: inline-block; }
+        .edit-mode input { display: inline-block !important; width: 100%; }
 
+        #save-status {
+            font-size: 0.9em;
+            color: #6c757d;
+            font-weight: bold;
+            text-align: center;
+            transition: opacity 0.3s;
+        }
 
-        /* Print Styles */
         @media print {
             body { background-color: #fff; padding: 0; margin: 0; -webkit-print-color-adjust: exact; color-adjust: exact; }
-            .page-container { box-shadow: none; margin: 0; max-width: 100%; border-radius: 0; padding: 20px; }
-            .controls-container, .delete-row-btn, .options-section, .edit-company-btn, .logo-container label, .edit-amount-btn, .delete-custom-field-btn, #add-custom-field-btn, #save-invoice-btn { display: none !important; }
-            input { border: none !important; background: transparent !important; padding: 2px 0 !important; font-weight: bold; color: #000; width: auto; }
+            .page-container, #app-wrapper { box-shadow: none; margin: 0; max-width: 100%; border-radius: 0; padding: 0; }
+            .controls-container, .delete-row-btn, .options-section, .edit-company-btn, .logo-container label, .edit-amount-btn, .delete-custom-field-btn, #add-custom-field-btn, #save-invoice-btn, #download-pdf-btn, #save-status, #password-overlay { display: none !important; }
+            #app-wrapper { display: block !important; }
+            input, textarea { border: none !important; background: transparent !important; padding: 2px 0 !important; font-weight: bold; color: #000; width: auto; resize: none; }
             .invoice-header { border-bottom-color: var(--primary-color) !important; }
             .amount-in-words { border-right-color: var(--purple-color) !important; color: var(--purple-color) !important; background-color: #eaf2f8 !important;}
             #grand-total { background-color: var(--primary-color) !important; color: white !important; }
@@ -99,154 +109,159 @@
     </style>
 </head>
 <body class="bg-gray-100">
-<datalist id="product-suggestions"></datalist>
 
-<!-- Modal for manual text editing -->
-<div id="edit-modal" class="modal-overlay hidden">
-    <div class="modal-content">
-        <h3>تعديل النص يدوياً</h3>
-        <textarea id="modal-textarea" class="w-full"></textarea>
-        <div class="modal-buttons">
-            <button id="modal-cancel" class="action-btn" style="background-color: #6c757d;">إلغاء</button>
-            <button id="modal-save" class="action-btn" style="background-color: var(--success-color);">حفظ التغييرات</button>
-        </div>
+<div id="password-overlay" class="fixed top-0 left-0 w-full h-full bg-gray-100 z-50 flex justify-center items-center flex-col gap-5 p-5">
+    <div class="text-center">
+        <h2 class="text-2xl font-bold" style="color: var(--primary-color);">مولد الفواتير</h2>
+        <p class="text-gray-600">الرجاء إدخال كلمة السر للوصول</p>
+    </div>
+    <div class="flex flex-col gap-3">
+        <input type="password" id="password-input" class="p-3 border border-gray-300 rounded-lg w-64 text-center" placeholder="كلمة السر">
+        <button id="password-submit" class="action-btn justify-center" style="background-color: var(--primary-color);">دخـول</button>
+        <p id="password-error" class="text-red-500 text-center hidden">كلمة السر غير صحيحة.</p>
     </div>
 </div>
+<div id="app-wrapper" class="hidden">
+    <datalist id="product-suggestions"></datalist>
 
-<div class="page-container container mx-auto p-4 md:p-6 bg-white shadow-lg rounded-lg my-5" id="invoice-to-print">
-    <!-- Header -->
-    <header class="invoice-header flex flex-wrap justify-between items-start gap-5 mb-5 pb-5 border-b-3" style="border-bottom-width: 3px; border-color: var(--primary-color);">
-        <div class="logo-container flex-shrink-0 w-full md:w-48 text-center">
-            <img id="company-logo-img" src="" alt="شعار المؤسسة" class="hidden max-w-full h-auto rounded-md mx-auto">
-            <label for="logo-upload" id="logo-upload-label" class="block text-center p-2 border-2 border-dashed border-gray-300 rounded-md cursor-pointer text-sm mt-2 hover:bg-gray-50 hover:border-blue-500">➕ رفع شعار</label>
-            <input type="file" id="logo-upload" accept="image/*" class="hidden">
-        </div>
-        <div class="company-info flex-grow w-full md:w-auto">
-            <div class="flex justify-between items-start">
-                <h1 class="text-2xl md:text-3xl font-bold" style="color: var(--primary-color);">مؤسسة صالحي سليم</h1>
-                <button id="edit-company-btn" class="edit-company-btn text-xs cursor-pointer border border-gray-400 rounded-md py-1 px-2 bg-white">تعديل البيانات ✏️</button>
-            </div>
-            <div class="company-details mt-2 text-sm text-gray-600" id="company-details-section">
-                <p id="p-c-activity" class="flex items-center gap-2"><strong>النشاط:</strong> <span class="editable-value" id="c-activity-val"></span><input type="text" id="c-activity-input" class="p-1 border border-gray-300 rounded w-full"></p>
-                <p id="p-c-address" class="flex items-center gap-2"><strong>العنوان:</strong> <span class="editable-value" id="c-address-val"></span><input type="text" id="c-address-input" class="p-1 border border-gray-300 rounded w-full"></p>
-                <p id="p-c-tax" class="flex items-center gap-2"><strong>رقم جبائي:</strong> <span class="editable-value" id="c-tax-val"></span><input type="text" id="c-tax-input" class="p-1 border border-gray-300 rounded w-full"></p>
-                <p id="p-c-cr" class="flex items-center gap-2"><strong>سجل تجاري:</strong> <span class="editable-value" id="c-cr-val"></span><input type="text" id="c-cr-input" class="p-1 border border-gray-300 rounded w-full"></p>
-                <p id="p-c-bank" class="flex items-center gap-2"><strong>حساب بنكي:</strong> <span class="editable-value" id="c-bank-val"></span><input type="text" id="c-bank-input" class="p-1 border border-gray-300 rounded w-full"></p>
-                <div id="custom-fields-container"></div>
+    <div id="edit-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h3>تعديل النص يدوياً</h3>
+            <textarea id="modal-textarea" class="w-full"></textarea>
+            <div class="modal-buttons">
+                <button id="modal-cancel" class="action-btn" style="background-color: #6c757d;">إلغاء</button>
+                <button id="modal-save" class="action-btn" style="background-color: var(--success-color);">حفظ التغييرات</button>
             </div>
         </div>
-        <div class="invoice-meta w-full md:w-auto text-left">
-            <div class="meta-item flex items-center justify-end gap-3 mb-3"><bdi><b>Facture N°:</b></bdi><input type="text" id="invoice-num" value="001/2025" class="p-2 border border-gray-300 rounded text-left font-bold w-40"></div>
-            <div class="meta-item flex items-center justify-end gap-3"><bdi><b>Date:</b></bdi><input type="date" id="invoice-date" class="p-2 border border-gray-300 rounded text-left font-bold w-40"></div>
-        </div>
-    </header>
+    </div>
 
-    <!-- Client Details -->
-    <section class="client-details flex flex-col md:flex-row gap-5 mb-6">
-        <input type="text" id="client-name" placeholder="اسم العميل" spellcheck="true" class="flex-1 p-3 border border-gray-300 rounded font-bold text-base">
-        <input type="text" id="client-address" placeholder="عنوان العميل" spellcheck="true" class="flex-1 p-3 border border-gray-300 rounded font-bold text-base">
-    </section>
-
-    <!-- Invoice Items Table -->
-    <main>
-        <div class="overflow-x-auto">
-            <table id="invoice-table" class="w-full border-collapse mb-5">
-                <thead class="bg-gray-50">
-                    <tr>
-                        <th class="border border-gray-200 p-3 text-right text-sm font-semibold w-2/5">اسم المنتج</th>
-                        <th class="border border-gray-200 p-3 text-right text-sm font-semibold">الكمية</th>
-                        <th class="border border-gray-200 p-3 text-right text-sm font-semibold">سعر الوحدة (دج)</th>
-                        <th class="border border-gray-200 p-3 text-right text-sm font-semibold">المبلغ الإجمالي (دج)</th>
-                        <th class="delete-header-cell border border-gray-200 p-3 text-right text-sm font-semibold w-12">حذف</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
-
-        <!-- Controls -->
-        <div class="controls-container controls my-8 flex gap-2 flex-wrap justify-center">
-            <button class="action-btn" style="background-color: var(--success-color);" onclick="addRow()">+ إضافة سطر</button>
-            <button class="action-btn" id="save-invoice-btn" style="background-color: var(--info-color);">💾 حفظ في المحفوظات</button>
-            <button class="action-btn" id="new-invoice-btn" style="background-color: var(--warning-color); color: var(--dark-text);">📄 فاتورة جديدة</button>
-            <button class="action-btn" style="background-color: #007bff;" onclick="window.print()">🖨️ طباعة</button>
-            <a href="invoices.html" class="action-btn" style="background-color: #6c757d;">📜 عرض المحفوظات</a>
-        </div>
-
-        <!-- Summary and Options -->
-        <div class="summary-and-options flex flex-col lg:flex-row gap-5 mt-5">
-            <!-- Options Section -->
-            <div class="options-section flex-1 bg-white p-5 rounded-lg border border-gray-200">
-                 <h4 class="mt-0 pb-2 mb-3 border-b border-gray-200 font-bold">خيارات الفاتورة</h4>
-                <div class="option-row flex justify-between items-center mb-3"><span class="option-label font-bold">لون الفاتورة</span><input type="color" id="color-picker" value="#005a9c"></div>
-                <div class="option-row flex justify-between items-center mb-3"><span class="option-label font-bold">تفعيل الضريبة (TVA)</span><label class="switch"><input type="checkbox" id="tva-toggle" checked><span class="slider"></span></label></div>
-                <div class="option-row flex justify-between items-center mb-3"><span class="option-label font-bold">تفعيل التعديل اليدوي</span><label class="switch"><input type="checkbox" id="adjustment-toggle"><span class="slider"></span></label></div>
-                <div class="option-row flex justify-between items-center mb-3"><span class="option-label font-bold">إظهار المبلغ بالعربية</span><label class="switch"><input type="checkbox" id="arabic-text-toggle" checked><span class="slider"></span></label></div>
-                <div class="option-row flex justify-between items-center mb-3"><span class="option-label font-bold">إظهار المبلغ بالفرنسية</span><label class="switch"><input type="checkbox" id="french-text-toggle"><span class="slider"></span></label></div>
-
-                <h4 class="mt-4 pb-2 mb-3 border-b border-gray-200 font-bold">إظهار بيانات المؤسسة</h4>
-                <div class="option-row flex justify-between items-center mb-3"><span class="option-label">النشاط</span><label class="switch"><input type="checkbox" data-target="p-c-activity" checked><span class="slider"></span></label></div>
-                <div class="option-row flex justify-between items-center mb-3"><span class="option-label">العنوان</span><label class="switch"><input type="checkbox" data-target="p-c-address" checked><span class="slider"></span></label></div>
-                <div class="option-row flex justify-between items-center mb-3"><span class="option-label">الرقم الجبائي</span><label class="switch"><input type="checkbox" data-target="p-c-tax" checked><span class="slider"></span></label></div>
-                <div class="option-row flex justify-between items-center mb-3"><span class="option-label">السجل التجاري</span><label class="switch"><input type="checkbox" data-target="p-c-cr" checked><span class="slider"></span></label></div>
-                <div class="option-row flex justify-between items-center mb-3"><span class="option-label">الحساب البنكي</span><label class="switch"><input type="checkbox" data-target="p-c-bank" checked><span class="slider"></span></label></div>
-                <div id="custom-fields-options-container"></div>
-                <button id="add-custom-field-btn" class="action-btn w-full mt-4" style="background-color: var(--success-color);">+ إضافة حقل مخصص</button>
+    <div class="page-container container mx-auto p-4 md:p-6 bg-white shadow-lg rounded-lg my-5" id="invoice-to-print">
+        <header class="invoice-header flex flex-wrap justify-between items-start gap-5 mb-5 pb-5 border-b-3" style="border-bottom-width: 3px; border-color: var(--primary-color);">
+            <div class="logo-container flex-shrink-0 w-full md:w-48 text-center">
+                <img id="company-logo-img" src="" alt="شعار المؤسسة" class="hidden max-w-full h-auto rounded-md mx-auto">
+                <label for="logo-upload" id="logo-upload-label" class="block text-center p-2 border-2 border-dashed border-gray-300 rounded-md cursor-pointer text-sm mt-2 hover:bg-gray-50 hover:border-blue-500">➕ رفع شعار</label>
+                <input type="file" id="logo-upload" accept="image/*" class="hidden">
             </div>
-            
-            <!-- Total Section -->
-            <div class="total-section flex-1 bg-white p-5 rounded-lg border border-gray-200">
-                <div class="total-row flex justify-between items-center pb-3 mb-3 border-b border-gray-100"><span class="total-label font-bold">المجموع الفرعي</span><span id="subtotal">0.00 دج</span></div>
-                <div class="total-row flex justify-between items-center pb-3 mb-3 border-b border-gray-100" id="discount-row-container" style="display: none;">
-                    <span class="total-label font-bold">خصم <label class="switch"><input type="checkbox" id="discount-toggle"><span class="slider"></span></label></span>
-                    <div id="discount-controls" style="display:none;"><input type="number" id="discount-value" value="0" min="0" class="w-20"><select id="discount-type" class="w-16"><option value="amount">دج</option><option value="percent">%</option></select></div>
+            <div class="company-info flex-grow w-full md:w-auto">
+                <div class="flex justify-between items-start">
+                    <h1 class="text-2xl md:text-3xl font-bold" style="color: var(--primary-color);">مؤسسة صالحي سليم</h1>
+                    <button id="edit-company-btn" class="edit-company-btn text-xs cursor-pointer border border-gray-400 rounded-md py-1 px-2 bg-white">تعديل البيانات ✏️</button>
                 </div>
-                <div class="total-row flex justify-between items-center pb-3 mb-3 border-b border-gray-100"><span class="total-label font-bold">المبلغ الصافي (HT)</span><span id="montant-ht">0.00 دج</span></div>
-                <div class="total-row flex justify-between items-center pb-3 mb-3 border-b border-gray-100" id="tva-row-container">
-                    <span class="total-label font-bold">ضريبة (<input type="number" id="tva-rate" value="19" min="0" step="1" class="w-16 text-center">%)</span>
-                    <span id="tva">0.00 دج</span>
+                <div class="company-details mt-2 text-sm text-gray-600" id="company-details-section">
+                    <p id="p-c-activity" class="flex items-center gap-2"><strong>النشاط:</strong> <span class="editable-value" id="c-activity-val"></span><input type="text" id="c-activity-input" class="p-1 border border-gray-300 rounded w-full"></p>
+                    <p id="p-c-address" class="flex items-center gap-2"><strong>العنوان:</strong> <span class="editable-value" id="c-address-val"></span><input type="text" id="c-address-input" class="p-1 border border-gray-300 rounded w-full"></p>
+                    <p id="p-c-tax" class="flex items-center gap-2"><strong>رقم جبائي:</strong> <span class="editable-value" id="c-tax-val"></span><input type="text" id="c-tax-input" class="p-1 border border-gray-300 rounded w-full"></p>
+                    <p id="p-c-cr" class="flex items-center gap-2"><strong>سجل تجاري:</strong> <span class="editable-value" id="c-cr-val"></span><input type="text" id="c-cr-input" class="p-1 border border-gray-300 rounded w-full"></p>
+                    <p id="p-c-bank" class="flex items-center gap-2"><strong>حساب بنكي:</strong> <span class="editable-value" id="c-bank-val"></span><input type="text" id="c-bank-input" class="p-1 border border-gray-300 rounded w-full"></p>
+                    <div id="custom-fields-container"></div>
                 </div>
-                <div class="total-row flex justify-between items-center pb-3 mb-3 border-b border-gray-100" id="timbre-row-container" style="display: none;">
-                     <span class="total-label font-bold">رسم الطابع <label class="switch"><input type="checkbox" id="timbre-toggle"><span class="slider"></span></label></span>
-                    <span id="timbre-amount">0.00 دج</span>
-                </div>
-                <div class="total-row flex justify-between items-center pb-3 mb-3 border-b border-gray-100" id="adjustment-row-container" style="display: none;">
-                    <span class="total-label font-bold">مبلغ التعديل</span>
-                    <input type="number" id="adjustment-value" value="0" step="any" class="w-32 text-right font-bold border border-gray-300 p-1 rounded">
-                </div>
-                <div class="total-row flex justify-between items-center text-xl font-bold p-4 -m-5 mt-2 rounded-b-lg" id="grand-total" style="background-color: var(--primary-color); color: white;"><span class="total-label">الإجمالي للدفع (TTC)</span><span id="montant-ttc">0.00 دج</span></div>
             </div>
-        </div>
+            <div class="invoice-meta w-full md:w-auto text-left">
+                <div class="meta-item flex items-center justify-end gap-3 mb-3"><bdi><b>Facture N°:</b></bdi><input type="text" id="invoice-num" value="001/2025" class="p-2 border border-gray-300 rounded text-left font-bold w-40"></div>
+                <div class="meta-item flex items-center justify-end gap-3"><bdi><b>Date:</b></bdi><input type="date" id="invoice-date" class="p-2 border border-gray-300 rounded text-left font-bold w-40"></div>
+            </div>
+        </header>
 
-        <!-- Amount in Words -->
-        <div class="amount-in-words-container hidden relative mt-5" id="arabic-container">
-            <div class="amount-in-words p-4 rounded-md font-bold" id="amount-in-arabic" style="background-color: #eaf2f8; border-right: 4px solid var(--purple-color); color: var(--purple-color);"></div>
-            <span class="edit-amount-btn absolute top-1/2 -translate-y-1/2 left-3 cursor-pointer text-xl opacity-70" id="edit-arabic-btn">✏️</span>
-        </div>
-        <div class="amount-in-words-container hidden relative mt-5" id="french-container">
-            <div class="amount-in-words p-4 rounded-md font-bold" id="amount-in-french" style="background-color: #eaf2f8; border-right: 4px solid var(--purple-color); color: var(--purple-color);"></div>
-            <span class="edit-amount-btn absolute top-1/2 -translate-y-1/2 left-3 cursor-pointer text-xl opacity-70" id="edit-french-btn">✏️</span>
-        </div>
+        <section class="client-details flex flex-col md:flex-row gap-5 mb-6">
+            <input type="text" id="client-name" placeholder="اسم العميل" spellcheck="true" class="flex-1 p-3 border border-gray-300 rounded font-bold text-base">
+            <input type="text" id="client-address" placeholder="عنوان العميل" spellcheck="true" class="flex-1 p-3 border border-gray-300 rounded font-bold text-base">
+        </section>
 
-        <!-- Footer for Print -->
-        <footer class="invoice-footer hidden justify-between items-start mt-20 pt-5 border-t border-gray-300">
-            <div class="footer-section w-48 text-center font-bold">الختم</div>
-            <div class="footer-section w-48 text-center font-bold">الإمضاء</div>
-        </footer>
-    </main>
+        <main>
+            <div class="overflow-x-auto">
+                <table id="invoice-table" class="w-full border-collapse mb-5">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="border border-gray-200 p-3 text-right text-sm font-semibold w-2/5">اسم المنتج</th>
+                            <th class="border border-gray-200 p-3 text-right text-sm font-semibold">الكمية</th>
+                            <th class="border border-gray-200 p-3 text-right text-sm font-semibold">سعر الوحدة (دج)</th>
+                            <th class="border border-gray-200 p-3 text-right text-sm font-semibold">المبلغ الإجمالي (دج)</th>
+                            <th class="delete-header-cell border border-gray-200 p-3 text-right text-sm font-semibold w-12">حذف</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <div class="controls-container controls my-8 flex flex-col items-center gap-3">
+                <div class="flex gap-3 flex-wrap justify-center">
+                    <button class="action-btn" style="background-color: var(--success-color);" onclick="addRow()">+ إضافة سطر</button>
+                    <button class="action-btn" id="save-invoice-btn" style="background-color: var(--info-color);">💾 حفظ في المحفوظات</button>
+                    <button class="action-btn" id="new-invoice-btn" style="background-color: var(--warning-color); color: var(--dark-text);">📄 فاتورة جديدة</button>
+                    <button class="action-btn" style="background-color: #007bff;" onclick="window.print()">🖨️ طباعة</button>
+                    <button class="action-btn" id="download-pdf-btn" style="background-color: var(--danger-color);">📄 تحميل PDF</button>
+                    <a href="invoices.html" class="action-btn" style="background-color: #6c757d;">📜 عرض المحفوظات</a>
+                </div>
+                <div id="save-status" class="mt-2 h-5"></div>
+            </div>
+
+            <div class="summary-and-options flex flex-col lg:flex-row gap-5 mt-5">
+                <div class="options-section flex-1 bg-white p-5 rounded-lg border border-gray-200">
+                     <h4 class="mt-0 pb-2 mb-3 border-b border-gray-200 font-bold">خيارات الفاتورة</h4>
+                    <div class="option-row flex justify-between items-center mb-3"><span class="option-label font-bold">لون الفاتورة</span><input type="color" id="color-picker" value="#005a9c"></div>
+                    <div class="option-row flex justify-between items-center mb-3"><span class="option-label font-bold">تفعيل الضريبة (TVA)</span><label class="switch"><input type="checkbox" id="tva-toggle" checked><span class="slider"></span></label></div>
+                    <div class="option-row flex justify-between items-center mb-3"><span class="option-label font-bold">تفعيل التعديل اليدوي</span><label class="switch"><input type="checkbox" id="adjustment-toggle"><span class="slider"></span></label></div>
+                    <div class="option-row flex justify-between items-center mb-3"><span class="option-label font-bold">إظهار المبلغ بالعربية</span><label class="switch"><input type="checkbox" id="arabic-text-toggle" checked><span class="slider"></span></label></div>
+                    <div class="option-row flex justify-between items-center mb-3"><span class="option-label font-bold">إظهار المبلغ بالفرنسية</span><label class="switch"><input type="checkbox" id="french-text-toggle"><span class="slider"></span></label></div>
+
+                    <h4 class="mt-4 pb-2 mb-3 border-b border-gray-200 font-bold">إظهار بيانات المؤسسة</h4>
+                    <div class="option-row flex justify-between items-center mb-3"><span class="option-label">النشاط</span><label class="switch"><input type="checkbox" data-target="p-c-activity" checked><span class="slider"></span></label></div>
+                    <div class="option-row flex justify-between items-center mb-3"><span class="option-label">العنوان</span><label class="switch"><input type="checkbox" data-target="p-c-address" checked><span class="slider"></span></label></div>
+                    <div class="option-row flex justify-between items-center mb-3"><span class="option-label">الرقم الجبائي</span><label class="switch"><input type="checkbox" data-target="p-c-tax" checked><span class="slider"></span></label></div>
+                    <div class="option-row flex justify-between items-center mb-3"><span class="option-label">السجل التجاري</span><label class="switch"><input type="checkbox" data-target="p-c-cr" checked><span class="slider"></span></label></div>
+                    <div class="option-row flex justify-between items-center mb-3"><span class="option-label">الحساب البنكي</span><label class="switch"><input type="checkbox" data-target="p-c-bank" checked><span class="slider"></span></label></div>
+                    <div id="custom-fields-options-container"></div>
+                    <button id="add-custom-field-btn" class="action-btn w-full mt-4" style="background-color: var(--success-color);">+ إضافة حقل مخصص</button>
+                </div>
+                
+                <div class="total-section flex-1 bg-white p-5 rounded-lg border border-gray-200">
+                    <div class="total-row flex justify-between items-center pb-3 mb-3 border-b border-gray-100"><span class="total-label font-bold">المجموع الفرعي</span><span id="subtotal">0.00 دج</span></div>
+                    <div class="total-row flex justify-between items-center pb-3 mb-3 border-b border-gray-100" id="discount-row-container"><span class="total-label font-bold">خصم <label class="switch"><input type="checkbox" id="discount-toggle"><span class="slider"></span></label></span><div id="discount-controls" class="hidden"><input type="number" id="discount-value" value="0" min="0" class="w-20 p-1 border rounded"><select id="discount-type" class="w-16 p-1 border rounded"><option value="amount">دج</option><option value="percent">%</option></select></div></div>
+                    <div class="total-row flex justify-between items-center pb-3 mb-3 border-b border-gray-100"><span class="total-label font-bold">المبلغ الصافي (HT)</span><span id="montant-ht">0.00 دج</span></div>
+                    <div class="total-row flex justify-between items-center pb-3 mb-3 border-b border-gray-100" id="tva-row-container"><span class="total-label font-bold">ضريبة (<input type="number" id="tva-rate" value="19" min="0" step="1" class="w-16 text-center p-1 border rounded">%)</span><span id="tva">0.00 دج</span></div>
+                    <div class="total-row flex justify-between items-center pb-3 mb-3 border-b border-gray-100 hidden" id="adjustment-row-container"><span class="total-label font-bold">مبلغ التعديل</span><input type="number" id="adjustment-value" value="0" step="any" class="w-32 text-right font-bold border border-gray-300 p-1 rounded"></div>
+                    <div class="total-row flex justify-between items-center text-xl font-bold p-4 -m-5 mt-2 rounded-b-lg" id="grand-total" style="background-color: var(--primary-color); color: white;"><span class="total-label">الإجمالي للدفع (TTC)</span><span id="montant-ttc">0.00 دج</span></div>
+                </div>
+            </div>
+
+            <div class="amount-in-words-container hidden relative mt-5" id="arabic-container">
+                <div class="amount-in-words p-4 rounded-md font-bold" id="amount-in-arabic" style="background-color: #eaf2f8; border-right: 4px solid var(--purple-color); color: var(--purple-color);"></div>
+                <span class="edit-amount-btn absolute top-1/2 -translate-y-1/2 left-3 cursor-pointer text-xl opacity-70" id="edit-arabic-btn">✏️</span>
+            </div>
+            <div class="amount-in-words-container hidden relative mt-5" id="french-container">
+                <div class="amount-in-words p-4 rounded-md font-bold" id="amount-in-french" style="background-color: #eaf2f8; border-right: 4px solid var(--purple-color); color: var(--purple-color);"></div>
+                <span class="edit-amount-btn absolute top-1/2 -translate-y-1/2 left-3 cursor-pointer text-xl opacity-70" id="edit-french-btn">✏️</span>
+            </div>
+
+            <footer class="invoice-footer hidden justify-between items-start mt-20 pt-5 border-t border-gray-300">
+                <div class="footer-section w-48 text-center font-bold">الختم</div>
+                <div class="footer-section w-48 text-center font-bold">الإمضاء</div>
+            </footer>
+        </main>
+    </div>
 </div>
-
-<!-- Firebase SDK -->
 <script type="module">
     // Import Firebase modules
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc, addDoc, collection, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { getFirestore, doc, setDoc, getDoc, addDoc, collection, serverTimestamp, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     // --- START: Configuration and Initialization ---
-    // These variables are provided by the environment. Do not change them.
+    
+    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    // !!! هام جداً: قم باستبدال القيم التالية بمعلومات مشروع Firebase الخاص بك !!!
+    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    const firebaseConfig = { 
+        apiKey: "YOUR_API_KEY", 
+        authDomain: "YOUR_AUTH_DOMAIN", 
+        projectId: "YOUR_PROJECT_ID",
+        storageBucket: "YOUR_STORAGE_BUCKET",
+        messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+        appId: "YOUR_APP_ID"
+    };
+    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
     const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-    const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "YOUR_API_KEY", authDomain: "YOUR_AUTH_DOMAIN", ...etc };
     const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
     // Initialize Firebase
@@ -254,80 +269,30 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    let userId = null; // To store the authenticated user's ID
-    let currentInvoiceId = null; // To store the ID of the invoice being edited
+    let userId = null;
+    let currentInvoiceId = null; 
 
     // --- END: Configuration and Initialization ---
 
-    // Function to handle user authentication state
-    onAuthStateChanged(auth, async (user) => {
-        if (user) {
-            console.log("User is signed in with UID:", user.uid);
-            userId = user.uid;
-            // Once authenticated, load the draft or the specific invoice
-            loadInitialInvoice();
-        } else {
-            console.log("No user signed in, attempting to sign in.");
-            try {
-                if (initialAuthToken) {
-                    await signInWithCustomToken(auth, initialAuthToken);
-                } else {
-                    await signInAnonymously(auth);
-                }
-            } catch (error) {
-                console.error("Error during sign-in:", error);
-                // Handle sign-in failure (e.g., show an error message to the user)
-            }
-        }
-    });
-    
-    // All the existing JS code for the page functionality
-    var Tafqeet = (function(){/* Tafqeet library code from the original file... */ "use strict";const ones=["","واحد","اثنان","ثلاثة","أربعة","خمسة","ستة","سبعة","ثمانية","تسعة"],tens=["","عشرة","عشرون","ثلاثون","أربعون","خمسون","ستون","سبعون","ثمانون","تسعون"],hundreds=["","مئة","مئتان","ثلاثمئة","أربعمئة","خمسمئة","ستمئة","سبعمئة","ثمانمئة","تسعمئة"],thousands=["","ألف","ألفان","آلاف"],millions=["","مليون","مليونان","ملايين"],billions=["","مليار","ملياران","مليارات"],trillions=["","تريليون","تريليونان","تريليونات"];function convertLessThanOneThousand(e){let t="";const n=Math.floor(e/100),o=Math.floor(e%100/10),a=e%10;return n>0&&(t+=hundreds[n]+(o>0||a>0?" و ":"")),o>0&&a>0?t+=ones[a]+" و "+tens[o]:a>0?t+=ones[a]:o>0&&(t+=tens[o]),t}function convertNumber(e){if(0===e)return"صفر";if("number"!=typeof e||isNaN(e))return"";let t=[];const n=Math.floor(e/1e12),o=Math.floor(e%1e12/1e9),a=Math.floor(e%1e9/1e6),r=Math.floor(e%1e6/1e3),s=e%1e3;return n>0&&t.push(convertLessThanOneThousand(n)+" "+(1===n?trillions[1]:2===n?trillions[2]:n>=3&&n<=10?trillions[3]:trillions[1])),o>0&&t.push(convertLessThanOneThousand(o)+" "+(1===o?billions[1]:2===o?billions[2]:o>=3&&o<=10?billions[3]:billions[1])),a>0&&t.push(convertLessThanOneThousand(a)+" "+(1===a?millions[1]:2===a?millions[2]:a>=3&&a<=10?millions[3]:millions[1])),r>0&&(1===r?t.push(thousands[1]):2===r?t.push(thousands[2]):t.push(convertLessThanOneThousand(r)+" "+(r>=3&&r<=10?thousands[3]:thousands[1]))),s>0&&t.push(convertLessThanOneThousand(s)),t.join(" و ")}return{convert:convertNumber,convertWithCurrency:function(e){if("number"!=typeof e||isNaN(e))return"مبلغ غير صحيح.";const t=Math.floor(e),n=Math.round(100*(e-t));if(0===t&&0===n)return"أوقفت هذه الفاتورة عند مبلغ: صفر دينار جزائري.";let o="أوقفت هذه الفاتورة عند مبلغ: ";return o+=convertNumber(t)+" دينار جزائري",n>0&&(o+=" و "+convertNumber(n)+" سنتيم"),o+"."}})();
+
+    // --- START: Third-party libraries (Tafqeet, etc.) ---
+    var Tafqeet = (function () { "use strict"; const ones = ["", "واحد", "اثنان", "ثلاثة", "أربعة", "خمسة", "ستة", "سبعة", "ثمانية", "تسعة"]; const teens = ["عشرة", "أحد عشر", "اثنا عشر", "ثلاثة عشر", "أربعة عشر", "خمسة عشر", "ستة عشر", "سبعة عشر", "ثمانية عشر", "تسعة عشر"]; const tens = ["", "", "عشرون", "ثلاثون", "أربعون", "خمسون", "ستون", "سبعون", "ثمانون", "تسعون"]; const hundreds = ["", "مئة", "مئتان", "ثلاثمئة", "أربعمئة", "خمسمئة", "ستمئة", "سبعمئة", "ثمانمئة", "تسعمئة"]; const scales = [["", "", ""], ["ألف", "ألفان", "آلاف"], ["مليون", "مليونان", "ملايين"], ["مليار", "ملياران", "مليارات"], ["تريليون", "تريليونان", "تريليونات"]]; function convertTriplet(num) { let result = []; const hundred = Math.floor(num / 100); const rest = num % 100; const ten = Math.floor(rest / 10); const unit = rest % 10; if (hundred > 0) { result.push(hundreds[hundred]); } if (rest > 0) { if (rest < 10) { result.push(ones[rest]); } else if (rest >= 10 && rest < 20) { result.push(teens[rest - 10]); } else { if (unit > 0) { result.push(ones[unit]); } result.push(tens[ten]); } } return result.join(" و "); } function getScaleWord(n, scaleIndex) { if (n === 0) return ""; const scale = scales[scaleIndex]; if (n === 1) return scale[0]; if (n === 2) return scale[1]; if (n >= 3 && n <= 10) return scale[2]; return scale[0]; } function convertNumber(num) { if (num === 0) return "صفر"; const triplets = []; let i = 0; while (num > 0) { triplets.push(num % 1000); num = Math.floor(num / 1000); i++; } let result = []; for (let j = triplets.length - 1; j >= 0; j--) { const triplet = triplets[j]; if (triplet === 0) continue; const words = convertTriplet(triplet); const scale = getScaleWord(triplet, j); if (scale) { result.push(`${words} ${scale}`.trim()); } else { result.push(words); } } return result.join(" و "); } return { convert: convertNumber, convertWithCurrency: function (value) { if (typeof value !== "number" || isNaN(value)) return "مبلغ غير صحيح."; const dinars = Math.floor(value); const centimes = Math.round((value - dinars) * 100); if (dinars === 0 && centimes === 0) return "أوقفت هذه الفاتورة عند مبلغ: صفر دينار جزائري."; let result = "أوقفت هذه الفاتورة عند مبلغ: "; if (dinars > 0) result += `${convertNumber(dinars)} دينار جزائري`; if (centimes > 0) result += `${dinars > 0 ? " و " : ""}${convertNumber(centimes)} سنتيم`; return result + "."; } }; })();
     function numberToWordsFrCurrency(n){if("number"!=typeof n||isNaN(n))return"Montant invalide.";const e=["","un","deux","trois","quatre","cinq","six","sept","huit","neuf","dix","onze","douze","treize","quatorze","quinze","seize","dix-sept","dix-huit","dix-neuf"],t=["","dix","vingt","trente","quarante","cinquante","soixante","soixante-dix","quatre-vingt","quatre-vingt-dix"];function o(n){return n<20?e[n]:n<70?t[Math.floor(n/10)]+(n%10>0?(1===Math.floor(n/10)||1===n%10?" et ":"-")+e[n%10]:""):n<80?t[6]+"-"+o(n-60):n<100?t[Math.floor(n/10)]+(n%10>0?"-"+e[n%10]:"s"):n<200?"cent"+(n>100?" "+o(n%100):""):n<1e3?e[Math.floor(n/100)]+"-cents"+(n%100>0?" "+o(n%100):""):n<2e3?"mille"+(n>1e3?" "+o(n%1000):""):n<1e6?o(Math.floor(n/1e3))+"-mille"+(n%1e3>0?" "+o(n%1e3):""):o(Math.floor(n/1e6))+" million"+(Math.floor(n/1e6)>1?"s":"")+(n%1e6>0?" "+o(n%1e6):"")}const a=Math.floor(n),r=Math.round(100*(n-a));if(0===a&&0===r)return"Arrêtée la présente facture à la somme de : Zéro dinar algérien.";let s="Arrêtée la présente facture à la somme de : ",c=o(a);return s+=c.charAt(0).toUpperCase()+c.slice(1),s+=" dinar"+(a>1?"s":"")+" algérien"+(a>1?"s":""),r>0&&(s+=" et "+o(r)+" centime"+(r>1?"s":"")),s.replace(/-s /g,"s ").replace(/s-mille/g,"s").replace("un-cents","cent").trim()+"."}
+    // --- END: Third-party libraries ---
 
-    document.addEventListener('DOMContentLoaded', function() {
-        // This function will now be called after authentication
-    });
-    
-    async function loadInitialInvoice() {
-        const invoiceToLoadJSON = sessionStorage.getItem('invoiceToLoad');
-        if (invoiceToLoadJSON) {
-            const invoiceData = JSON.parse(invoiceToLoadJSON);
-            currentInvoiceId = invoiceData.id; // The ID is passed from the history page
-            loadInvoiceData(invoiceData);
-            sessionStorage.removeItem('invoiceToLoad');
-        } else {
-            // Load draft from Firestore
-            if (!userId) return;
-            const draftRef = doc(db, "users", userId, "invoices", "draft");
-            try {
-                const docSnap = await getDoc(draftRef);
-                if (docSnap.exists()) {
-                    console.log("Draft found, loading data...");
-                    currentInvoiceId = "draft";
-                    loadInvoiceData(docSnap.data());
-                } else {
-                    console.log("No draft found, starting new invoice.");
-                    loadInvoiceData(null); // Start a fresh invoice
-                }
-            } catch (error) {
-                console.error("Error loading draft:", error);
-                loadInvoiceData(null);
-            }
-        }
-    }
 
-    const editModal = document.getElementById('edit-modal');
-    const modalTextarea = document.getElementById('modal-textarea');
-    const modalSaveBtn = document.getElementById('modal-save');
-    const modalCancelBtn = document.getElementById('modal-cancel');
-    let activeEditTarget = null;
-
+    // --- START: Application Constants and DOM References ---
     const DOM = {
+        pageContainer: document.querySelector('.page-container'),
         tableBody: document.querySelector("#invoice-table tbody"),
         customFieldsContainer: document.getElementById('custom-fields-container'),
         customFieldsOptionsContainer: document.getElementById('custom-fields-options-container'),
         companyDetailsSection: document.getElementById('company-details-section'),
+        saveStatus: document.getElementById('save-status'),
+        editModal: document.getElementById('edit-modal'),
+        modalTextarea: document.getElementById('modal-textarea'),
+        modalSaveBtn: document.getElementById('modal-save'),
+        modalCancelBtn: document.getElementById('modal-cancel'),
     };
 
     const companyFields = {
@@ -338,123 +303,55 @@
         bank:     { val: 'c-bank-val',     input: 'c-bank-input',     p: 'p-c-bank',     default: '00500231400236854088' },
     };
 
+    let activeEditTarget = null;
+    // --- END: Application Constants and DOM References ---
+
+
+    // --- START: Utility Functions ---
     const formatCurrency = (num) => num.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     const getTodaysDate = () => new Date().toISOString().slice(0, 10);
-    
-    let productCatalog = new Set(JSON.parse(localStorage.getItem('productCatalog')) || []);
-
-    function updateProductDatalist() {
-        document.getElementById('product-suggestions').innerHTML = Array.from(productCatalog).map(p => `<option value="${p}"></option>`).join('');
-    }
-
-    window.addRow = function(product = { name: '', quantity: 1, price: 0.00 }) {
-        const newRow = DOM.tableBody.insertRow();
-        newRow.innerHTML = `<td><input type="text" class="product-name" placeholder="أدخل اسم المنتج" value="${product.name || ''}" list="product-suggestions" spellcheck="true"></td><td><input type="number" class="quantity" value="${product.quantity || 1}" min="0"></td><td><input type="number" class="unit-price" value="${parseFloat(product.price || 0).toFixed(2)}" min="0" step="0.01"></td><td class="total-price">0.00 دج</td><td class="delete-header-cell"><button class="delete-row-btn">🗑️</button></td>`;
-        newRow.querySelector('.product-name').focus();
+    const debounce = (func, delay) => {
+        let timeout;
+        return function(...args) {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func.apply(this, args), delay);
+        };
     };
-
-    function updateCalculations() {
-        let subtotal = 0;
-        DOM.tableBody.querySelectorAll("tr").forEach(row => {
-            const quantity = parseFloat(row.querySelector(".quantity").value) || 0;
-            const unitPrice = parseFloat(row.querySelector(".unit-price").value) || 0;
-            const totalPrice = quantity * unitPrice;
-            row.querySelector(".total-price").textContent = formatCurrency(totalPrice) + ' دج';
-            subtotal += totalPrice;
-        });
-
-        const discountToggle = document.getElementById('discount-toggle');
-        const discountContainer = document.getElementById('discount-row-container');
-        let discountAmount = 0;
-        discountContainer.style.display = discountToggle.checked ? 'flex' : 'none';
-        if (discountToggle.checked) {
-            const discountValue = parseFloat(document.getElementById('discount-value').value) || 0;
-            discountAmount = document.getElementById('discount-type').value === 'percent' ? subtotal * (discountValue / 100) : discountValue;
-        }
-        
-        const montantHT = subtotal - discountAmount;
-        
-        const tvaToggle = document.getElementById('tva-toggle');
-        const tvaContainer = document.getElementById('tva-row-container');
-        let tva = 0;
-        tvaContainer.style.display = tvaToggle.checked ? 'flex' : 'none';
-        if (tvaToggle.checked) {
-            const tvaRate = parseFloat(document.getElementById('tva-rate').value) || 0;
-            tva = montantHT * (tvaRate / 100);
-        }
-
-        const timbreToggle = document.getElementById('timbre-toggle');
-        const timbreContainer = document.getElementById('timbre-row-container');
-        timbreContainer.style.display = timbreToggle.checked ? 'flex' : 'none';
-        const timbreAmount = timbreToggle.checked ? (Math.ceil(montantHT / 100) * 1) : 0;
-
-        const adjustmentToggle = document.getElementById('adjustment-toggle');
-        const adjustmentContainer = document.getElementById('adjustment-row-container');
-        let adjustmentValue = 0;
-        adjustmentContainer.style.display = adjustmentToggle.checked ? 'flex' : 'none';
-        if (adjustmentToggle.checked) {
-            adjustmentValue = parseFloat(document.getElementById('adjustment-value').value) || 0;
-        }
-
-        const montantTTC = montantHT + tva + timbreAmount + adjustmentValue;
-
-        document.getElementById("subtotal").textContent = formatCurrency(subtotal) + ' دج';
-        document.getElementById("montant-ht").textContent = formatCurrency(montantHT) + ' دج';
-        document.getElementById("tva").textContent = formatCurrency(tva) + ' دج';
-        document.getElementById("timbre-amount").textContent = formatCurrency(timbreAmount) + ' دج';
-        document.getElementById("montant-ttc").textContent = formatCurrency(montantTTC) + ' دج';
-        
-        updateDisplay(montantTTC);
-    }
-
-    function updateDisplay(montantTTC) {
-        document.getElementById('discount-controls').style.display = document.getElementById('discount-toggle').checked ? 'flex' : 'none';
-        
-        const arabicToggle = document.getElementById('arabic-text-toggle');
-        const arabicContainer = document.getElementById('arabic-container');
-        const amountInArabicDiv = document.getElementById('amount-in-arabic');
-        arabicContainer.classList.toggle('hidden', !arabicToggle.checked);
-        if (arabicToggle.checked && amountInArabicDiv.dataset.locked !== 'true') {
-            amountInArabicDiv.textContent = Tafqeet.convertWithCurrency(montantTTC);
-        }
-        
-        const frenchToggle = document.getElementById('french-text-toggle');
-        const frenchContainer = document.getElementById('french-container');
-        const amountInFrenchDiv = document.getElementById('amount-in-french');
-        frenchContainer.classList.toggle('hidden', !frenchToggle.checked);
-        if (frenchToggle.checked && amountInFrenchDiv.dataset.locked !== 'true') {
-            amountInFrenchDiv.textContent = numberToWordsFrCurrency(montantTTC);
-        }
-    }
     
-    function addCustomField(fieldData) {
-        const fieldId = fieldData ? fieldData.id : `custom-field-${Date.now()}`;
-        const label = fieldData ? fieldData.label : prompt("أدخل اسم الحقل (مثال: الهاتف):");
-        if (!fieldData && (!label || !label.trim())) return;
-        
-        const value = fieldData ? fieldData.value : prompt(`أدخل قيمة الحقل "${label}":`, '');
-        if (!fieldData && value === null) return;
-
-        const isVisible = fieldData ? fieldData.isVisible : true;
-
-        const p = document.createElement('p');
-        p.id = fieldId;
-        p.className = 'custom-field flex items-center gap-2';
-        p.style.display = isVisible ? 'flex' : 'none';
-        p.innerHTML = `<strong>${label}:</strong><span class="custom-value">${value}</span><button class="delete-custom-field-btn" title="حذف الحقل">🗑️</button>`;
-        DOM.customFieldsContainer.appendChild(p);
-
-        const optionDiv = document.createElement('div');
-        optionDiv.className = 'option-row flex justify-between items-center mb-3';
-        optionDiv.innerHTML = `<span class="option-label">${label}</span><label class="switch"><input type="checkbox" data-target="${fieldId}" ${isVisible ? 'checked' : ''}><span class="slider"></span></label>`;
-        DOM.customFieldsOptionsContainer.appendChild(optionDiv);
-
-        if (!fieldData) saveDraft();
+    function showStatus(message, isError = false) {
+        if (!DOM.saveStatus) return;
+        DOM.saveStatus.textContent = message;
+        DOM.saveStatus.style.color = isError ? 'var(--danger-color)' : 'var(--success-color)';
+        setTimeout(() => { if (DOM.saveStatus.textContent === message) DOM.saveStatus.textContent = ''; }, 3000);
     }
+    // --- END: Utility Functions ---
 
+
+    // --- START: Firebase Service ---
+    const debouncedSaveDraft = debounce(() => {
+        if (!userId) return;
+        const data = getInvoiceData();
+        saveDraft(data);
+    }, 1500);
+
+    async function saveDraft(data) {
+        if (!userId) return;
+        showStatus('جاري الحفظ...');
+        const draftRef = doc(db, `/artifacts/${appId}/users/${userId}/invoices/draft`);
+        try {
+            await setDoc(draftRef, data);
+            showStatus('تم حفظ المسودة ✅');
+        } catch (error) {
+            console.error("Error saving draft:", error);
+            showStatus('خطأ في الحفظ ❌', true);
+        }
+    }
+    // --- END: Firebase Service ---
+
+    
+    // --- START: Data Management (Get/Load) ---
     function getInvoiceData() {
         const data = {
-            // No timestamp here, Firestore will add it
             companyInfo: {},
             customCompanyFields: [],
             options: {},
@@ -465,14 +362,12 @@
             clientAddress: document.getElementById('client-address').value,
             discount: { enabled: document.getElementById('discount-toggle').checked, type: document.getElementById('discount-type').value, value: document.getElementById('discount-value').value },
             tva: { enabled: document.getElementById('tva-toggle').checked, rate: document.getElementById('tva-rate').value },
-            timbreEnabled: document.getElementById('timbre-toggle').checked,
             adjustment: { enabled: document.getElementById('adjustment-toggle').checked, value: document.getElementById('adjustment-value').value },
             logo: document.getElementById('company-logo-img').src,
             amountInArabic: { locked: document.getElementById('amount-in-arabic').dataset.locked === 'true', text: document.getElementById('amount-in-arabic').textContent },
             amountInFrench: { locked: document.getElementById('amount-in-french').dataset.locked === 'true', text: document.getElementById('amount-in-french').textContent },
-            // Add total for sorting purposes in the history page
             totalTTC: parseFloat(document.getElementById('montant-ttc').textContent.replace(/[^\d.-]/g, '')) || 0,
-            lastUpdatedAt: serverTimestamp() // Firestore server timestamp
+            lastUpdatedAt: serverTimestamp()
         };
 
         for (const key in companyFields) {
@@ -520,7 +415,7 @@
         DOM.customFieldsContainer.innerHTML = '';
         DOM.customFieldsOptionsContainer.innerHTML = '';
         if (data.customCompanyFields) {
-            data.customCompanyFields.forEach(field => addCustomField(field));
+            data.customCompanyFields.forEach(field => addCustomField(field, false));
         }
 
         document.getElementById('invoice-num').value = data.invoiceNum || '001/2025';
@@ -537,21 +432,13 @@
         if (data.adjustment) {
             document.getElementById('adjustment-toggle').checked = data.adjustment.enabled;
             document.getElementById('adjustment-value').value = data.adjustment.value;
-        } else {
-             document.getElementById('adjustment-toggle').checked = false;
-             document.getElementById('adjustment-value').value = 0;
         }
         
         if (data.tva) {
             document.getElementById('tva-toggle').checked = data.tva.enabled !== false;
             document.getElementById('tva-rate').value = data.tva.rate || '19';
-        } else {
-            document.getElementById('tva-toggle').checked = true;
-            document.getElementById('tva-rate').value = '19';
         }
 
-        document.getElementById('timbre-toggle').checked = data.timbreEnabled || false;
-        
         document.getElementById('arabic-text-toggle').checked = options.showArabic !== false;
         document.getElementById('french-text-toggle').checked = options.showFrench === true;
 
@@ -576,61 +463,205 @@
         const logoImg = document.getElementById('company-logo-img');
         if (data.logo && data.logo.startsWith('data:image')) {
             logoImg.src = data.logo;
-            logoImg.style.display = 'block';
+            logoImg.classList.remove('hidden');
             document.getElementById('logo-upload-label').textContent = '🔄 تغيير الشعار';
         } else {
-            logoImg.style.display = 'none';
+            logoImg.classList.add('hidden');
             logoImg.src = '';
             document.getElementById('logo-upload-label').textContent = '➕ رفع شعار';
         }
 
         DOM.tableBody.innerHTML = '';
         if (data.rows && data.rows.length > 0) {
-            data.rows.forEach(row => addRow(row));
+            data.rows.forEach(row => addRow(row, false));
         } else {
-            addRow();
+            addRow({ name: '', quantity: 1, price: 0.00 }, false);
         }
         updateCalculations();
-        updateProductDatalist();
     }
-    
-    async function saveDraft() {
-        if (!userId) return; // Don't save if user is not authenticated
-        const data = getInvoiceData();
-        // Save to a specific 'draft' document for the user
-        const draftRef = doc(db, "users", userId, "invoices", "draft");
-        try {
-            await setDoc(draftRef, data);
-            console.log("Draft saved to Firestore.");
-        } catch (error) {
-            console.error("Error saving draft:", error);
+    // --- END: Data Management (Get/Load) ---
+
+
+    // --- START: Core UI Logic and Calculations ---
+    window.addRow = function(product = { name: '', quantity: 1, price: 0.00 }, triggerSave = true) {
+        const newRow = DOM.tableBody.insertRow();
+        newRow.innerHTML = `<td><input type="text" class="product-name" placeholder="أدخل اسم المنتج" value="${product.name || ''}" list="product-suggestions" spellcheck="true"></td><td><input type="number" class="quantity" value="${product.quantity || 1}" min="0"></td><td><input type="number" class="unit-price" value="${parseFloat(product.price || 0).toFixed(2)}" min="0" step="0.01"></td><td class="total-price text-right">${formatCurrency(0)} دج</td><td class="delete-header-cell text-center"><button class="delete-row-btn">🗑️</button></td>`;
+        if (triggerSave) {
+            newRow.querySelector('.product-name').focus();
+            handleAppInput();
+        }
+    };
+
+    function updateCalculations() {
+        let subtotal = 0;
+        DOM.tableBody.querySelectorAll("tr").forEach(row => {
+            const quantity = parseFloat(row.querySelector(".quantity").value) || 0;
+            const unitPrice = parseFloat(row.querySelector(".unit-price").value) || 0;
+            const totalPrice = quantity * unitPrice;
+            row.querySelector(".total-price").textContent = formatCurrency(totalPrice) + ' دج';
+            subtotal += totalPrice;
+        });
+
+        const discountToggle = document.getElementById('discount-toggle');
+        let discountAmount = 0;
+        if (discountToggle.checked) {
+            const discountValue = parseFloat(document.getElementById('discount-value').value) || 0;
+            discountAmount = document.getElementById('discount-type').value === 'percent' ? subtotal * (discountValue / 100) : discountValue;
+        }
+        
+        const montantHT = subtotal - discountAmount;
+        
+        const tvaToggle = document.getElementById('tva-toggle');
+        let tva = 0;
+        if (tvaToggle.checked) {
+            const tvaRate = parseFloat(document.getElementById('tva-rate').value) || 0;
+            tva = montantHT * (tvaRate / 100);
         }
 
-        // Also update local product catalog
-        data.rows.forEach(row => row.name.trim() && productCatalog.add(row.name.trim()));
-        localStorage.setItem('productCatalog', JSON.stringify(Array.from(productCatalog)));
-        updateProductDatalist();
+        const adjustmentToggle = document.getElementById('adjustment-toggle');
+        let adjustmentValue = 0;
+        if (adjustmentToggle.checked) {
+            adjustmentValue = parseFloat(document.getElementById('adjustment-value').value) || 0;
+        }
+
+        const montantTTC = montantHT + tva + adjustmentValue;
+
+        document.getElementById("subtotal").textContent = formatCurrency(subtotal) + ' دج';
+        document.getElementById("montant-ht").textContent = formatCurrency(montantHT) + ' دج';
+        document.getElementById("tva").textContent = formatCurrency(tva) + ' دج';
+        document.getElementById("montant-ttc").textContent = formatCurrency(montantTTC) + ' دج';
+        
+        updateDisplay(montantTTC);
+    }
+
+    function updateDisplay(montantTTC) {
+        document.getElementById('discount-controls').classList.toggle('hidden', !document.getElementById('discount-toggle').checked);
+        document.getElementById('tva-row-container').classList.toggle('hidden', !document.getElementById('tva-toggle').checked);
+        document.getElementById('adjustment-row-container').classList.toggle('hidden', !document.getElementById('adjustment-toggle').checked);
+        
+        const arabicToggle = document.getElementById('arabic-text-toggle');
+        const arabicContainer = document.getElementById('arabic-container');
+        const amountInArabicDiv = document.getElementById('amount-in-arabic');
+        arabicContainer.classList.toggle('hidden', !arabicToggle.checked);
+        if (arabicToggle.checked && amountInArabicDiv.dataset.locked !== 'true') {
+            amountInArabicDiv.textContent = Tafqeet.convertWithCurrency(montantTTC);
+        }
+        
+        const frenchToggle = document.getElementById('french-text-toggle');
+        const frenchContainer = document.getElementById('french-container');
+        const amountInFrenchDiv = document.getElementById('amount-in-french');
+        frenchContainer.classList.toggle('hidden', !frenchToggle.checked);
+        if (frenchToggle.checked && amountInFrenchDiv.dataset.locked !== 'true') {
+            amountInFrenchDiv.textContent = numberToWordsFrCurrency(montantTTC);
+        }
+    }
+    
+    function addCustomField(fieldData, triggerSave = true) {
+        const fieldId = fieldData ? fieldData.id : `custom-field-${Date.now()}`;
+        const label = fieldData ? fieldData.label : prompt("أدخل اسم الحقل (مثال: الهاتف):");
+        if (!fieldData && (!label || !label.trim())) return;
+        
+        const value = fieldData ? fieldData.value : prompt(`أدخل قيمة الحقل "${label}":`, '');
+        if (!fieldData && value === null) return;
+
+        const isVisible = fieldData ? fieldData.isVisible : true;
+
+        const p = document.createElement('p');
+        p.id = fieldId;
+        p.className = 'custom-field flex items-center gap-2';
+        p.style.display = isVisible ? 'flex' : 'none';
+        p.innerHTML = `<strong>${label}:</strong><span class="custom-value">${value}</span><button class="delete-custom-field-btn text-red-500 hover:text-red-700" title="حذف الحقل">🗑️</button>`;
+        DOM.customFieldsContainer.appendChild(p);
+
+        const optionDiv = document.createElement('div');
+        optionDiv.className = 'option-row flex justify-between items-center mb-3';
+        optionDiv.innerHTML = `<span class="option-label">${label}</span><label class="switch"><input type="checkbox" data-target="${fieldId}" ${isVisible ? 'checked' : ''}><span class="slider"></span></label>`;
+        DOM.customFieldsOptionsContainer.appendChild(optionDiv);
+
+        if (triggerSave) handleAppInput();
+    }
+
+    function downloadPDF() {
+        const invoiceElement = document.getElementById('invoice-to-print');
+        const invoiceNumber = document.getElementById('invoice-num').value || 'invoice';
+        const clientName = document.getElementById('client-name').value || 'client';
+        const fileName = `Facture-${invoiceNumber}-${clientName}.pdf`;
+
+        html2canvas(invoiceElement, { scale: 2, useCORS: true }).then(canvas => {
+            const imgData = canvas.toDataURL('image/png');
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = pdf.internal.pageSize.getHeight();
+            const canvasWidth = canvas.width;
+            const canvasHeight = canvas.height;
+            const ratio = canvasWidth / canvasHeight;
+            let width = pdfWidth - 20;
+            let height = width / ratio;
+            if (height > pdfHeight - 20) {
+                height = pdfHeight - 20;
+                width = height * ratio;
+            }
+            let x = (pdfWidth - width) / 2;
+            let y = 10;
+            pdf.addImage(imgData, 'PNG', x, y, width, height);
+            pdf.save(fileName);
+        });
+    }
+    // --- END: Core UI Logic and Calculations ---
+
+
+    // --- START: Event Handlers and Initialization ---
+    function handleAppInput() {
+        updateCalculations();
+        debouncedSaveDraft();
+    }
+
+    async function loadInitialInvoice() {
+        const invoiceToLoadJSON = sessionStorage.getItem('invoiceToLoad');
+        if (invoiceToLoadJSON) {
+            const invoiceData = JSON.parse(invoiceToLoadJSON);
+            currentInvoiceId = invoiceData.id;
+            loadInvoiceData(invoiceData);
+            sessionStorage.removeItem('invoiceToLoad');
+        } else {
+            if (!userId) return;
+            const draftRef = doc(db, `/artifacts/${appId}/users/${userId}/invoices/draft`);
+            try {
+                const docSnap = await getDoc(draftRef);
+                if (docSnap.exists()) {
+                    console.log("Draft found, loading data...");
+                    currentInvoiceId = "draft";
+                    loadInvoiceData(docSnap.data());
+                } else {
+                    console.log("No draft found, starting new invoice.");
+                    currentInvoiceId = "draft";
+                    loadInvoiceData(null);
+                }
+            } catch (error) {
+                console.error("Error loading draft:", error);
+                loadInvoiceData(null);
+            }
+        }
     }
 
     async function startNewInvoice() {
         if (confirm('هل أنت متأكد؟ سيتم حذف بيانات الفاتورة الحالية والبدء من جديد.')) {
-            currentInvoiceId = null; // Reset the current ID
-            // Clear the draft in Firestore
+            currentInvoiceId = "draft"; 
             if (userId) {
-                const draftRef = doc(db, "users", userId, "invoices", "draft");
+                const draftRef = doc(db, `/artifacts/${appId}/users/${userId}/invoices/draft`);
                 try {
-                    await setDoc(draftRef, {}); // Set to empty object
+                    await deleteDoc(draftRef);
                     console.log("Firestore draft cleared.");
                 } catch (error) {
                     console.error("Error clearing draft:", error);
                 }
             }
-
             document.getElementById('edit-arabic-btn').textContent = '✏️';
             document.getElementById('edit-french-btn').textContent = '✏️';
             delete document.getElementById('amount-in-arabic').dataset.locked;
             delete document.getElementById('amount-in-french').dataset.locked;
-            loadInvoiceData(null); // Load a blank invoice
+            loadInvoiceData(null); 
         }
     }
     
@@ -640,22 +671,22 @@
             return;
         }
         const data = getInvoiceData();
-        if (!data.clientName || !data.rows.some(r => r.name)) {
-            alert('الرجاء إدخال اسم العميل ومنتج واحد على الأقل قبل الحفظ.');
+        if (!data.clientName || !data.rows.some(r => r.name && parseFloat(r.quantity) > 0)) {
+            alert('الرجاء إدخال اسم العميل ومنتج واحد على الأقل مع كمية صالحة قبل الحفظ.');
             return;
         }
 
         try {
-            const collectionRef = collection(db, "users", userId, "invoices");
+            const collectionRef = collection(db, `/artifacts/${appId}/public/data/invoices`);
             let docRef;
-            // If we are editing an existing invoice (not a draft), update it. Otherwise, create a new one.
+            
             if (currentInvoiceId && currentInvoiceId !== 'draft') {
-                docRef = doc(db, "users", userId, "invoices", currentInvoiceId);
+                docRef = doc(db, `/artifacts/${appId}/public/data/invoices`, currentInvoiceId);
                 await setDoc(docRef, data);
                 alert('تم تحديث الفاتورة في المحفوظات بنجاح!');
             } else {
                 docRef = await addDoc(collectionRef, data);
-                currentInvoiceId = docRef.id; // Store the new ID
+                currentInvoiceId = docRef.id; 
                 alert('تم حفظ الفاتورة في المحفوظات بنجاح!');
             }
             console.log("Invoice saved with ID: ", docRef.id);
@@ -667,116 +698,165 @@
 
     function setupEditAmountModal() {
         ['edit-arabic-btn', 'edit-french-btn'].forEach(id => {
-            const button = document.getElementById(id);
-            if (!button) return;
-
-            button.addEventListener('click', () => {
+            document.getElementById(id)?.addEventListener('click', (e) => {
+                const button = e.currentTarget;
                 const targetDivId = id.replace('edit-', '').replace('-btn', '-in-');
                 const targetDiv = document.getElementById(targetDivId);
                 activeEditTarget = { button, div: targetDiv };
 
                 if (button.textContent === '✏️') {
-                    modalTextarea.value = targetDiv.textContent;
-                    editModal.classList.remove('hidden');
+                    DOM.modalTextarea.value = targetDiv.textContent;
+                    DOM.editModal.classList.add('show');
                 } else if (button.textContent === '🔄') {
                     delete targetDiv.dataset.locked;
                     button.textContent = '✏️';
                     updateCalculations();
-                    saveDraft();
+                    handleAppInput();
                 }
             });
         });
 
-        modalSaveBtn.addEventListener('click', () => {
+        DOM.modalSaveBtn.addEventListener('click', () => {
             if (activeEditTarget) {
-                activeEditTarget.div.textContent = modalTextarea.value;
+                activeEditTarget.div.textContent = DOM.modalTextarea.value;
                 activeEditTarget.div.dataset.locked = 'true';
                 activeEditTarget.button.textContent = '🔄';
-                editModal.classList.add('hidden');
+                DOM.editModal.classList.remove('show');
                 activeEditTarget = null;
-                saveDraft();
+                handleAppInput();
             }
         });
 
-        modalCancelBtn.addEventListener('click', () => {
-            editModal.classList.add('hidden');
+        DOM.modalCancelBtn.addEventListener('click', () => {
+            DOM.editModal.classList.remove('show');
             activeEditTarget = null;
         });
     }
-
-    // --- Event Listeners ---
-    document.querySelector('.page-container').addEventListener('input', (e) => {
-       if (e.target.matches('input, select')) {
-           if (e.target.id === 'color-picker') {
-               document.documentElement.style.setProperty('--primary-color', e.target.value);
-           }
-           updateCalculations();
-           saveDraft(); // Auto-save draft on any input change
-       }
-    });
     
-    document.querySelector('.options-section').addEventListener('change', e => {
-        if (e.target.matches('input[type="checkbox"][data-target]')) {
-            const pElement = document.getElementById(e.target.dataset.target);
-            if (pElement) pElement.style.display = e.target.checked ? 'flex' : 'none';
-        }
-        updateCalculations();
-        saveDraft();
-    });
+    function setupEventListeners() {
+        DOM.pageContainer.addEventListener('input', (e) => {
+            if (e.target.matches('input, select, textarea')) {
+                if (e.target.id === 'color-picker') {
+                    document.documentElement.style.setProperty('--primary-color', e.target.value);
+                }
+                handleAppInput();
+            }
+        });
+        
+        document.querySelector('.options-section').addEventListener('change', e => {
+            if (e.target.matches('input[type="checkbox"][data-target]')) {
+                document.getElementById(e.target.dataset.target).style.display = e.target.checked ? 'flex' : 'none';
+            }
+            handleAppInput();
+        });
 
-    DOM.companyDetailsSection.addEventListener('click', e => {
-        if (e.target.classList.contains('delete-custom-field-btn')) {
-            const p = e.target.closest('p.custom-field');
-            if (p) {
-                const fieldId = p.id;
-                document.querySelector(`.option-row input[data-target="${fieldId}"]`)?.closest('.option-row').remove();
-                p.remove();
-                saveDraft();
+        DOM.companyDetailsSection.addEventListener('click', e => {
+            if (e.target.classList.contains('delete-custom-field-btn')) {
+                const p = e.target.closest('p.custom-field');
+                if (p) {
+                    document.querySelector(`.option-row input[data-target="${p.id}"]`)?.closest('.option-row').remove();
+                    p.remove();
+                    handleAppInput();
+                }
+            }
+        });
+        
+        DOM.tableBody.addEventListener('click', e => {
+            if (e.target.closest('.delete-row-btn')) {
+                e.target.closest('tr').remove();
+                if (DOM.tableBody.rows.length === 0) addRow();
+                else handleAppInput();
+            }
+        });
+        
+        document.getElementById('edit-company-btn').addEventListener('click', () => {
+            const isEditing = DOM.companyDetailsSection.classList.toggle('edit-mode');
+            document.getElementById('edit-company-btn').textContent = isEditing ? 'حفظ البيانات ✓' : 'تعديل البيانات ✏️';
+            if (!isEditing) {
+                for (const key in companyFields) {
+                    document.getElementById(companyFields[key].val).textContent = document.getElementById(companyFields[key].input).value;
+                }
+                handleAppInput();
+            }
+        });
+
+        document.getElementById('logo-upload').addEventListener('change', e => {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    document.getElementById('company-logo-img').src = event.target.result;
+                    document.getElementById('company-logo-img').classList.remove('hidden');
+                    document.getElementById('logo-upload-label').textContent = '🔄 تغيير الشعار';
+                    handleAppInput();
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        document.getElementById('new-invoice-btn').addEventListener('click', startNewInvoice);
+        document.getElementById('save-invoice-btn').addEventListener('click', saveToHistory);
+        document.getElementById('add-custom-field-btn').addEventListener('click', () => addCustomField(null));
+        document.getElementById('download-pdf-btn').addEventListener('click', downloadPDF);
+    }
+    
+    // Initializer call
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            userId = user.uid;
+            console.log("User is signed in with UID:", userId);
+            loadInitialInvoice();
+        } else {
+            console.log("No user signed in, attempting to sign in.");
+            try {
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (error) {
+                console.error("Error during sign-in:", error);
+                alert("فشل تسجيل الدخول. قد لا يتم حفظ عملك.");
             }
         }
     });
-    
-    DOM.tableBody.addEventListener('click', e => {
-        if (e.target.closest('.delete-row-btn')) {
-            e.target.closest('tr').remove();
-            if (DOM.tableBody.rows.length === 0) addRow();
-            updateCalculations();
-            saveDraft();
-        }
-    });
-    
-    document.getElementById('edit-company-btn').addEventListener('click', () => {
-        const isEditing = DOM.companyDetailsSection.classList.toggle('edit-mode');
-        document.getElementById('edit-company-btn').textContent = isEditing ? 'حفظ البيانات ✓' : 'تعديل البيانات ✏️';
-        if (!isEditing) {
-            for (const key in companyFields) {
-                document.getElementById(companyFields[key].val).textContent = document.getElementById(companyFields[key].input).value;
+
+    setupEventListeners();
+    setupEditAmountModal();
+    // --- END: Event Handlers and Initialization ---
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const passwordOverlay = document.getElementById('password-overlay');
+        const passwordInput = document.getElementById('password-input');
+        const passwordSubmit = document.getElementById('password-submit');
+        const passwordError = document.getElementById('password-error');
+        const appWrapper = document.getElementById('app-wrapper');
+
+        const correctPassword = 'SIDIKASI';
+
+        const unlockApp = () => {
+            if (passwordInput.value === correctPassword) {
+                passwordOverlay.classList.add('hidden');
+                appWrapper.classList.remove('hidden');
+            } else {
+                passwordError.classList.remove('hidden');
+                passwordInput.focus();
             }
-            saveDraft();
-        }
-    });
+        };
 
-    document.getElementById('logo-upload').addEventListener('change', e => {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                document.getElementById('company-logo-img').src = event.target.result;
-                document.getElementById('company-logo-img').style.display = 'block';
-                document.getElementById('logo-upload-label').textContent = '🔄 تغيير الشعار';
-                saveDraft();
+        passwordSubmit.addEventListener('click', unlockApp);
+
+        passwordInput.addEventListener('keyup', (event) => {
+            passwordError.classList.add('hidden');
+            if (event.key === 'Enter') {
+                unlockApp();
             }
-            reader.readAsDataURL(file);
-        }
+        });
+        
+        passwordInput.focus();
     });
-
-    document.getElementById('new-invoice-btn').addEventListener('click', startNewInvoice);
-    document.getElementById('save-invoice-btn').addEventListener('click', saveToHistory);
-    document.getElementById('add-custom-field-btn').addEventListener('click', () => addCustomField(null));
-
-    // --- Initial Load ---
-    setupEditAmountModal(); 
-    // The initial load is now handled by the onAuthStateChanged listener
 </script>
 </body>
 </html>
