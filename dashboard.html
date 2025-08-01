@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام إدارة الحضور (الإصدار المحسّن)</title>
+    <title>نظام إدارة الحضور (الإصدار النهائي)</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -491,7 +491,7 @@
         if (data.size === 0) {
             tableHTML += `<tr><td colspan="4" style="text-align:center;">لا توجد بيانات لعرضها.</td></tr>`;
         } else {
-            data.forEach(emp => {
+            [...data.values()].sort((a, b) => a.name.localeCompare(b.name, 'ar')).forEach(emp => {
                 tableHTML += `<tr><td>${sanitizeHTML(emp.name)}</td><td>${sanitizeHTML(emp.customId || '-')}</td><td>${emp.present}</td><td>${emp.absent}</td></tr>`;
             });
         }
@@ -501,15 +501,16 @@
     const renderReportChart = (trends) => {
         const ctx = document.getElementById('attendance-chart').getContext('2d');
         if (attendanceChart) attendanceChart.destroy();
+        const bodyStyles = window.getComputedStyle(document.body);
         attendanceChart = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: trends.dates,
                 datasets: [{
-                    label: 'حاضر', data: trends.present, borderColor: 'var(--success-color)',
+                    label: 'حاضر', data: trends.present, borderColor: bodyStyles.getPropertyValue('--success-color'),
                     backgroundColor: 'color-mix(in srgb, var(--success-color) 20%, transparent)', fill: true, tension: 0.3
                 }, {
-                    label: 'غائب', data: trends.absent, borderColor: 'var(--danger-color)',
+                    label: 'غائب', data: trends.absent, borderColor: bodyStyles.getPropertyValue('--danger-color'),
                     backgroundColor: 'color-mix(in srgb, var(--danger-color) 20%, transparent)', fill: true, tension: 0.3
                 }]
             },
@@ -517,8 +518,37 @@
         });
     };
     
-    const exportTableToCSV = () => { /* ... (same as before) ... */ };
-    const printReport = () => { /* ... (same as before) ... */ };
+    const exportTableToCSV = () => {
+        const table = document.getElementById('report-table');
+        if (!table || table.rows.length <= 1) {
+            return showToast('لا توجد بيانات لتصديرها. الرجاء إنشاء تقرير أولاً.', 'error');
+        }
+        let csvContent = "data:text/csv;charset=utf-8,";
+        csvContent += "الاسم,رقم التعريف,أيام الحضور,أيام الغياب\n";
+
+        for (const row of table.querySelectorAll("tbody tr")) {
+            let rowData = [];
+            row.querySelectorAll("td").forEach(cell => {
+                rowData.push(`"${cell.innerText.replace(/"/g, '""')}"`); // Handle commas inside data
+            });
+            csvContent += rowData.join(",") + "\n";
+        }
+
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", `report_${todayDateString}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+    };
+    
+    const printReport = () => {
+        if (!document.getElementById('report-table') || document.getElementById('report-table').rows.length <= 1) {
+             return showToast('لا توجد بيانات للطباعة. الرجاء إنشاء تقرير أولاً.', 'error');
+        }
+        window.print();
+    };
 
     // --- إعدادات التهيئة الأولية ---
     const setupEventListeners = () => {
@@ -543,14 +573,13 @@
         localStorage.setItem('darkTheme', isDark);
         DOMElements.themeToggleBtn.innerHTML = `<i class="fas ${isDark ? 'fa-sun' : 'fa-moon'}"></i>`;
         if (attendanceChart) {
-            setTimeout(() => {
-                generateReport().catch(console.error);
-            }, 300); // Re-render chart after theme transition
+             renderReportChart(attendanceChart.data); // Re-render chart with new theme colors
         }
     };
     
     const initApp = () => {
-        DOMElements.mainContainer.style.display = 'none'; // Hide content until ready
+        DOMElements.mainContainer.style.display = 'none'; 
+        DOMElements.loaderContainer.innerHTML = '<div class="spinner"></div>';
         DOMElements.loaderContainer.style.display = 'block';
 
         DOMElements.todayDateDisplay.textContent = new Intl.DateTimeFormat('ar-EG-u-nu-latn', { dateStyle: 'full' }).format(today);
