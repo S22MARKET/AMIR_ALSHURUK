@@ -266,7 +266,9 @@
                 <button id="add-employee-btn" class="btn primary"><i class="fas fa-user-plus"></i> <span>إضافة عامل</span></button>
             </div>
             <input type="text" id="search-input" placeholder="ابحث بالاسم أو رقم الهاتف..." style="margin-bottom: 15px;">
-            <div class="table-wrapper"><table id="employees-table"><thead><tr><th>الاسم</th><th>رقم الهاتف/التعريف</th><th>الحالة اليوم</th><th>إجراءات</th></tr></thead><tbody id="employees-table-body"><div class="spinner"></div></tbody></table></div>
+            <div class="table-wrapper"><table id="employees-table"><thead><tr><th>الاسم</th><th>رقم الهاتف/التعريف</th><th>الحالة اليوم</th><th>إجراءات</th></tr></thead><tbody id="employees-table-body"><tr id="employees-loader"><td colspan="4"><div class="spinner"></div></td></tr></tbody></table></div>
+             <div id="no-employees-msg" class="no-data" style="display: none;"><i class="fas fa-user-plus"></i> لا يوجد عمال بعد. قم بإضافة عامل جديد.</div>
+             <div id="no-search-results-msg" class="no-data" style="display: none;"><i class="fas fa-search"></i> لا يوجد عمال يطابقون البحث.</div>
         </div>
 
         <div class="card">
@@ -278,7 +280,7 @@
                     <button id="mark-all-absent" class="btn danger flex-grow"><i class="fas fa-times-circle"></i> الكل غائب</button>
                 </div>
             </div>
-            <div class="table-wrapper" style="margin-top: 20px;"><table id="attendance-table"><thead><tr><th>الاسم</th><th>حالة الحضور</th></tr></thead><tbody id="attendance-table-body"><div class="spinner"></div></tbody></table></div>
+            <div class="table-wrapper" style="margin-top: 20px;"><table id="attendance-table"><thead><tr><th>الاسم</th><th>حالة الحضور</th></tr></thead><tbody id="attendance-table-body"><tr id="attendance-loader"><td colspan="2"><div class="spinner"></div></td></tr></tbody></table></div>
         </div>
         
         <div class="card">
@@ -361,10 +363,14 @@
         unmarkedCount: document.getElementById('unmarked-count'),
         totalEmployeesCount: document.getElementById('total-employees-count'),
         employeesTableBody: document.getElementById('employees-table-body'),
+        employeesLoader: document.getElementById('employees-loader'),
+        noEmployeesMsg: document.getElementById('no-employees-msg'),
+        noSearchResultsMsg: document.getElementById('no-search-results-msg'),
         searchInput: document.getElementById('search-input'),
         addEmployeeBtn: document.getElementById('add-employee-btn'),
         attendanceDate: document.getElementById('attendance-date'),
         attendanceTableBody: document.getElementById('attendance-table-body'),
+        attendanceLoader: document.getElementById('attendance-loader'),
         markAllPresentBtn: document.getElementById('mark-all-present'),
         markAllAbsentBtn: document.getElementById('mark-all-absent'),
         startDate: document.getElementById('start-date'),
@@ -396,14 +402,15 @@
     
     // --- State, Constants & Global Vars ---
     let state = {
-        employees: [],
+        employees: new Map(), // Use a Map for efficient lookups by ID
         dailyAttendance: {},
         currentEditingId: null,
         currentFilter: '',
     };
     let chartInstances = {};
     let lastReportData = null;
-    let unsubscribeAttendance = () => {}; // Function to stop listening to attendance changes
+    let unsubscribeEmployees = () => {};
+    let unsubscribeAttendance = () => {};
 
     // ### 2. Core App Logic ###
     const sanitizeHTML = (str) => {
@@ -466,23 +473,38 @@
         },
         getAttendanceForPeriod: async (startDate, endDate) => {
             const q = query(collection(db, 'attendance'), where('date', '>=', startDate), where('date', '<=', endDate));
-            const snapshot = await getDocs(q);
-            const attendanceData = {};
-            snapshot.docs.forEach(doc => {
-                const data = doc.data();
-                if (!attendanceData[data.employeeId]) attendanceData[data.employeeId] = {};
-                attendanceData[data.employeeId][data.date] = data.status;
-            });
-            return attendanceData;
+            return await getDocs(q); // Return snapshot directly
         }
     };
     
     // ### 4. REAL-TIME DATA LISTENERS ###
     const listenForEmployeeChanges = () => {
+        unsubscribeEmployees(); // Stop previous listener
         const q = query(collection(db, 'employees'), orderBy('name'));
-        onSnapshot(q, (querySnapshot) => {
-            state.employees = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            renderAllDynamicContent();
+
+        unsubscribeEmployees = onSnapshot(q, (snapshot) => {
+            DOMElements.employeesLoader.style.display = 'none';
+            
+            snapshot.docChanges().forEach((change) => {
+                const empData = { id: change.doc.id, ...change.doc.data() };
+                if (change.type === "added") {
+                    state.employees.set(empData.id, empData);
+                    addEmployeeRow(empData);
+                    addAttendanceRow(empData);
+                }
+                if (change.type === "modified") {
+                    state.employees.set(empData.id, empData);
+                    updateEmployeeRow(empData);
+                    updateAttendanceRowName(empData);
+                }
+                if (change.type === "removed") {
+                    state.employees.delete(empData.id);
+                    removeTableRow(DOMElements.employeesTableBody, empData.id);
+                    removeTableRow(DOMElements.attendanceTableBody, empData.id);
+                }
+            });
+            updateDashboardOverview();
+            filterEmployeesTable(); // Apply search filter after changes
         }, (error) => {
             console.error("Error listening to employee changes:", error);
             showToast("خطأ في المزامنة الحية للعمال.", 'error');
@@ -490,18 +512,24 @@
     };
 
     const listenForAttendanceChanges = () => {
-        unsubscribeAttendance(); // Stop listening to the previous date's attendance
+        unsubscribeAttendance(); 
         const date = DOMElements.attendanceDate.value;
         const q = query(collection(db, 'attendance'), where('date', '==', date));
-        DOMElements.attendanceTableBody.innerHTML = `<tr><td colspan="2"><div class="spinner"></div></td></tr>`;
+        DOMElements.attendanceLoader.style.display = 'none';
         
         unsubscribeAttendance = onSnapshot(q, (snapshot) => {
-            state.dailyAttendance = snapshot.docs.reduce((acc, doc) => {
+            // Reset daily status for all employees for the selected date
+            state.employees.forEach(emp => {
+                state.dailyAttendance[emp.id] = 'none';
+            });
+            // Update with new data from snapshot
+            snapshot.forEach(doc => {
                 const data = doc.data();
-                acc[data.employeeId] = data.status;
-                return acc;
-            }, {});
-            renderAllDynamicContent();
+                state.dailyAttendance[data.employeeId] = data.status;
+            });
+            // Re-render all statuses efficiently
+            updateAllStatuses();
+            updateDashboardOverview();
         }, (error) => {
             console.error("Error listening to attendance changes:", error);
             showToast("خطأ في المزامنة الحية للحضور.", 'error');
@@ -510,52 +538,116 @@
     
     const getISODate = (d = new Date()) => d.toISOString().split('T')[0];
     
-    // ### 5. UI RENDERING FUNCTIONS ###
-    const renderAllDynamicContent = () => {
-        renderEmployeesTable();
-        renderDailyAttendance();
-        updateDashboardOverview();
+    // ### 5. UI RENDERING FUNCTIONS (Optimized for performance) ###
+
+    const getStatusBadge = (status) => {
+        return status === 'present' ? `<span class="status-badge status-present">حاضر</span>`
+            : status === 'absent' ? `<span class="status-badge status-absent">غائب</span>`
+            : `<span class="status-badge status-none">لم يسجل</span>`;
     };
 
-    const renderEmployeesTable = () => {
-        const lowerFilter = state.currentFilter.toLowerCase();
-        const filteredEmployees = state.employees.filter(e => 
-            e.name.toLowerCase().includes(lowerFilter) || e.customId?.toLowerCase().includes(lowerFilter)
-        );
+    const createEmployeeRowHTML = (emp) => {
+        const status = state.dailyAttendance[emp.id] || 'none';
+        return `
+            <td data-label="الاسم"><a href="#" class="employee-name-link">${sanitizeHTML(emp.name)}</a></td>
+            <td data-label="رقم الهاتف/التعريف">${sanitizeHTML(emp.customId) || 'N/A'}</td>
+            <td data-label="الحالة اليوم">${getStatusBadge(status)}</td>
+            <td data-label="إجراءات" class="action-buttons">
+                <button class="btn info notes-btn"><i class="fas fa-sticky-note"></i> ملاحظات</button>
+                <button class="btn warning edit-btn"><i class="fas fa-edit"></i> تعديل</button>
+                <button class="btn danger delete-btn"><i class="fas fa-trash-alt"></i> حذف</button>
+            </td>`;
+    };
 
-        if (state.employees.length === 0) {
-            DOMElements.employeesTableBody.innerHTML = `<tr><td colspan="4" class="no-data"><i class="fas fa-user-plus"></i> لا يوجد عمال بعد. قم بإضافة عامل جديد.</td></tr>`; return;
-        }
-        if (filteredEmployees.length === 0) {
-            DOMElements.employeesTableBody.innerHTML = `<tr><td colspan="4" class="no-data"><i class="fas fa-search"></i> لا يوجد عمال يطابقون البحث.</td></tr>`; return;
-        }
-        DOMElements.employeesTableBody.innerHTML = filteredEmployees.map(emp => {
-            const status = state.dailyAttendance[emp.id];
-            const badge = status === 'present' ? `<span class="status-badge status-present">حاضر</span>`
-                        : status === 'absent' ? `<span class="status-badge status-absent">غائب</span>`
-                        : `<span class="status-badge status-none">لم يسجل</span>`;
-            return `<tr data-id="${emp.id}"><td data-label="الاسم"><a href="#" class="employee-name-link">${sanitizeHTML(emp.name)}</a></td><td data-label="رقم الهاتف/التعريف">${sanitizeHTML(emp.customId) || 'N/A'}</td><td data-label="الحالة اليوم">${badge}</td><td data-label="إجراءات" class="action-buttons"><button class="btn info notes-btn"><i class="fas fa-sticky-note"></i> ملاحظات</button><button class="btn warning edit-btn"><i class="fas fa-edit"></i> تعديل</button><button class="btn danger delete-btn"><i class="fas fa-trash-alt"></i> حذف</button></td></tr>`;
-        }).join('');
+    const addEmployeeRow = (emp) => {
+        const row = DOMElements.employeesTableBody.insertRow();
+        row.dataset.id = emp.id;
+        row.innerHTML = createEmployeeRowHTML(emp);
+    };
+
+    const updateEmployeeRow = (emp) => {
+        const row = DOMElements.employeesTableBody.querySelector(`tr[data-id='${emp.id}']`);
+        if (row) row.innerHTML = createEmployeeRowHTML(emp);
     };
     
-    const renderDailyAttendance = () => {
+    const createAttendanceRowHTML = (emp) => {
         const date = DOMElements.attendanceDate.value;
-        if (state.employees.length === 0) {
-            DOMElements.attendanceTableBody.innerHTML = `<tr><td colspan="2" class="no-data"><i class="fas fa-user-plus"></i> الرجاء إضافة عمال أولاً.</td></tr>`; return;
-        }
-        DOMElements.attendanceTableBody.innerHTML = state.employees.map(emp => {
-            const status = state.dailyAttendance[emp.id] || 'none';
-            return `<tr><td data-label="الاسم">${sanitizeHTML(emp.name)}</td><td data-label="حالة الحضور" class="action-buttons"><button class="btn ${status === 'present' ? 'success' : 'outline'}" onclick="window.updateAttendance('${emp.id}', '${date}', 'present')"><i class="fas fa-check"></i> حاضر</button><button class="btn ${status === 'absent' ? 'danger' : 'outline'}" onclick="window.updateAttendance('${emp.id}', '${date}', 'absent')"><i class="fas fa-times"></i> غائب</button></td></tr>`;
-        }).join('');
+        const status = state.dailyAttendance[emp.id] || 'none';
+        return `
+            <td data-label="الاسم">${sanitizeHTML(emp.name)}</td>
+            <td data-label="حالة الحضور" class="action-buttons">
+                <button class="btn ${status === 'present' ? 'success' : 'outline'}" onclick="window.updateAttendance('${emp.id}', '${date}', 'present')"><i class="fas fa-check"></i> حاضر</button>
+                <button class="btn ${status === 'absent' ? 'danger' : 'outline'}" onclick="window.updateAttendance('${emp.id}', '${date}', 'absent')"><i class="fas fa-times"></i> غائب</button>
+            </td>`;
     };
+
+    const addAttendanceRow = (emp) => {
+        const row = DOMElements.attendanceTableBody.insertRow();
+        row.dataset.id = emp.id;
+        row.innerHTML = createAttendanceRowHTML(emp);
+    };
+
+    const updateAttendanceRowName = (emp) => {
+         const row = DOMElements.attendanceTableBody.querySelector(`tr[data-id='${emp.id}']`);
+         if(row) {
+             const nameCell = row.querySelector('td[data-label="الاسم"]');
+             if (nameCell) nameCell.textContent = sanitizeHTML(emp.name);
+         }
+    };
+    
+    const removeTableRow = (tableBody, id) => {
+        const row = tableBody.querySelector(`tr[data-id='${id}']`);
+        if (row) row.remove();
+    };
+    
+    const updateAllStatuses = () => {
+        state.employees.forEach(emp => {
+            const status = state.dailyAttendance[emp.id] || 'none';
+            // Update main employee table badge
+            const empRow = DOMElements.employeesTableBody.querySelector(`tr[data-id='${emp.id}']`);
+            if (empRow) {
+                const badgeCell = empRow.querySelector('td[data-label="الحالة اليوم"]');
+                if (badgeCell) badgeCell.innerHTML = getStatusBadge(status);
+            }
+            // Update attendance table buttons
+            const attendanceRow = DOMElements.attendanceTableBody.querySelector(`tr[data-id='${emp.id}']`);
+            if (attendanceRow) {
+                 const actionsCell = attendanceRow.querySelector('td[data-label="حالة الحضور"]');
+                 if(actionsCell) {
+                    const presentBtn = actionsCell.querySelector('button:first-child');
+                    const absentBtn = actionsCell.querySelector('button:last-child');
+                    presentBtn.className = `btn ${status === 'present' ? 'success' : 'outline'}`;
+                    absentBtn.className = `btn ${status === 'absent' ? 'danger' : 'outline'}`;
+                 }
+            }
+        });
+    };
+
+    const filterEmployeesTable = () => {
+        const lowerFilter = state.currentFilter.toLowerCase();
+        let hasVisibleRows = false;
+        DOMElements.employeesTableBody.querySelectorAll('tr').forEach(row => {
+            const emp = state.employees.get(row.dataset.id);
+            if (emp && (emp.name.toLowerCase().includes(lowerFilter) || emp.customId?.toLowerCase().includes(lowerFilter))) {
+                row.style.display = ''; // or 'table-row'
+                hasVisibleRows = true;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+        // Show/hide messages
+        DOMElements.noEmployeesMsg.style.display = state.employees.size === 0 ? 'block' : 'none';
+        DOMElements.noSearchResultsMsg.style.display = (state.employees.size > 0 && !hasVisibleRows) ? 'block' : 'none';
+    };
+
 
     const updateDashboardOverview = () => {
         let present = 0, absent = 0;
-        state.employees.forEach(emp => {
-            const status = state.dailyAttendance[emp.id];
-            if (status === 'present') present++; else if (status === 'absent') absent++;
+        Object.values(state.dailyAttendance).forEach(status => {
+            if (status === 'present') present++;
+            else if (status === 'absent') absent++;
         });
-        const total = state.employees.length;
+        const total = state.employees.size;
         DOMElements.presentCount.textContent = present;
         DOMElements.absentCount.textContent = absent;
         DOMElements.unmarkedCount.textContent = total - (present + absent);
@@ -567,16 +659,14 @@
     const saveEmployee = async () => {
         const name = DOMElements.modalEmployeeName.value.trim();
         if (!name) {
-            showToast('الرجاء إدخال اسم العامل.', 'error');
-            return;
+            showToast('الرجاء إدخال اسم العامل.', 'error'); return;
         }
         const employeeData = { 
             name: name,
             customId: DOMElements.modalEmployeeId.value.trim(), 
             notes: DOMElements.modalEmployeeNotes.value.trim() 
         };
-        DOMElements.saveModalBtn.disabled = true;
-        DOMElements.saveModalBtn.innerHTML = '<div class="spinner spinner-in-btn"></div> <span>جاري الحفظ...</span>';
+        DOMElements.saveModalBtn.disabled = true; DOMElements.saveModalBtn.innerHTML = '<div class="spinner spinner-in-btn"></div> <span>جاري الحفظ...</span>';
         
         try {
             if (state.currentEditingId) {
@@ -587,28 +677,24 @@
                 showToast('تمت إضافة العامل بنجاح.');
             }
             DOMElements.employeeModal.style.display = 'none';
-        } catch (error) { 
-            console.error("Error saving employee:", error); 
-            showToast("حدث خطأ أثناء الحفظ.", 'error'); 
-        } finally { 
-            DOMElements.saveModalBtn.disabled = false; 
-            DOMElements.saveModalBtn.innerHTML = '<i class="fas fa-save"></i> <span>حفظ</span>';
-        }
+        } catch (error) { console.error("Error saving employee:", error); showToast("حدث خطأ أثناء الحفظ.", 'error'); } 
+        finally { DOMElements.saveModalBtn.disabled = false; DOMElements.saveModalBtn.innerHTML = '<i class="fas fa-save"></i> <span>حفظ</span>'; }
     };
     
     window.updateAttendance = async (empId, date, status) => {
-        const currentStatus = state.dailyAttendance[empId];
+        const currentStatus = state.dailyAttendance[empId] || 'none';
         const newStatus = currentStatus === status ? 'none' : status;
+        // Optimistic UI update for speed
         state.dailyAttendance[empId] = newStatus;
-        renderAllDynamicContent();
+        updateAllStatuses();
+        updateDashboardOverview();
+        // Update Firebase in the background
         await firebaseService.setAttendance(empId, date, newStatus);
     };
 
     const bulkUpdateAttendance = async (status) => {
-        const confirmMsg = status === 'present' 
-            ? 'هل أنت متأكد من تسجيل جميع العمال كـ "حاضر" لهذا اليوم؟'
-            : 'هل أنت متأكد من تسجيل جميع العمال كـ "غائب" لهذا اليوم؟';
-        
+        if (state.employees.size === 0) return showToast('لا يوجد عمال لتسجيل حضورهم.', 'info');
+        const confirmMsg = status === 'present' ? 'هل أنت متأكد من تسجيل جميع العمال كـ "حاضر" لهذا اليوم؟' : 'هل أنت متأكد من تسجيل جميع العمال كـ "غائب" لهذا اليوم؟';
         if (!confirm(confirmMsg)) return;
 
         const date = DOMElements.attendanceDate.value;
@@ -628,26 +714,51 @@
         DOMElements.generateReportBtn.disabled = true; DOMElements.generateReportBtn.innerHTML = '<div class="spinner" style="width:20px; height:20px; border-left-color: #fff; margin:0 auto;"></div> <span>جاري الإنشاء...</span>';
         
         try {
-            const periodAttendance = await firebaseService.getAttendanceForPeriod(start, end);
-            const summary = state.employees.map(emp => {
-                let present = 0, absent = 0;
-                const attendance = periodAttendance[emp.id] || {};
-                for (let d = new Date(start); d <= new Date(end); d.setDate(d.getDate() + 1)) {
-                    const status = attendance[getISODate(d)];
-                    if (status === 'present') present++; else if (status === 'absent') absent++;
-                }
-                const total = present + absent; const percentage = total > 0 ? Math.round((present / total) * 100) : 0;
-                return { id: emp.id, name: emp.name, present, absent, total, percentage };
+            // OPTIMIZED ALGORITHM: Fetch once, process efficiently.
+            const attendanceSnapshot = await firebaseService.getAttendanceForPeriod(start, end);
+            
+            const summaryData = new Map();
+            state.employees.forEach(emp => {
+                summaryData.set(emp.id, { id: emp.id, name: emp.name, present: 0, absent: 0 });
             });
+
+            attendanceSnapshot.forEach(doc => {
+                const data = doc.data();
+                const empSummary = summaryData.get(data.employeeId);
+                if (empSummary) {
+                    if (data.status === 'present') empSummary.present++;
+                    else if (data.status === 'absent') empSummary.absent++;
+                }
+            });
+            
+            const summary = Array.from(summaryData.values()).map(data => {
+                const total = data.present + data.absent;
+                const percentage = total > 0 ? Math.round((data.present / total) * 100) : 0;
+                return { ...data, total, percentage };
+            });
+
+            // Trend analysis (this part remains similar but uses the fetched data)
             const trend = { labels: [], presentData: [], absentData: [] };
+            const attendanceByDate = {};
+            attendanceSnapshot.forEach(doc => {
+                const data = doc.data();
+                if (!attendanceByDate[data.date]) attendanceByDate[data.date] = [];
+                attendanceByDate[data.date].push(data.status);
+            });
+
             for (let d = new Date(start); d <= new Date(end); d.setDate(d.getDate() + 1)) {
-                const isoDate = getISODate(d); trend.labels.push(isoDate); let dailyPresent = 0, dailyAbsent = 0;
-                state.employees.forEach(emp => {
-                    const status = periodAttendance[emp.id]?.[isoDate];
-                    if (status === 'present') dailyPresent++; else if (status === 'absent') dailyAbsent++;
+                const isoDate = getISODate(d);
+                trend.labels.push(isoDate);
+                let dailyPresent = 0, dailyAbsent = 0;
+                const dailyData = attendanceByDate[isoDate] || [];
+                dailyData.forEach(status => {
+                    if (status === 'present') dailyPresent++;
+                    else if (status === 'absent') dailyAbsent++;
                 });
-                trend.presentData.push(dailyPresent); trend.absentData.push(dailyAbsent);
+                trend.presentData.push(dailyPresent);
+                trend.absentData.push(dailyAbsent);
             }
+
             lastReportData = { summary, trend, start, end };
             DOMElements.reportTableBody.innerHTML = summary.map(data => `<tr><td data-label="الاسم">${sanitizeHTML(data.name)}</td><td data-label="أيام حضور">${data.present}</td><td data-label="أيام غياب">${data.absent}</td><td data-label="الإجمالي">${data.total}</td><td data-label="نسبة الحضور">${data.percentage}%</td></tr>`).join('');
             DOMElements.reportTitleDisplay.textContent = `تقرير من ${start} إلى ${end}`; DOMElements.reportPeriod.textContent = `${start} إلى ${end}`; DOMElements.reportGenerationDate.textContent = getISODate();
@@ -655,13 +766,13 @@
         } catch(error) { console.error("Failed to generate report:", error); showToast("فشل إنشاء التقرير.", 'error'); } 
         finally { DOMElements.generateReportBtn.disabled = false; DOMElements.generateReportBtn.innerHTML = '<i class="fas fa-chart-bar"></i> <span>عرض التقرير المتكامل</span>'; }
     };
-    
+
     const exportReportToCSV = () => {
         if (!lastReportData) return showToast('الرجاء إنشاء تقرير أولاً.', 'error');
         const { summary, start, end } = lastReportData;
-        let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
+        let csvContent = "data:text/csv;charset=utf-8,\uFEFF"; // Add BOM for Excel compatibility with Arabic
         csvContent += "الاسم,أيام حضور,أيام غياب,الإجمالي,نسبة الحضور\r\n";
-        summary.forEach(row => { csvContent += `${row.name.replace(/,/g, '')},${row.present},${row.absent},${row.total},${row.percentage}%\r\n`; });
+        summary.forEach(row => { csvContent += `"${row.name.replace(/"/g, '""')}",${row.present},${row.absent},${row.total},${row.percentage}%\r\n`; });
         const link = document.createElement("a"); link.setAttribute("href", encodeURI(csvContent)); link.setAttribute("download", `report_${start}_to_${end}.csv`);
         document.body.appendChild(link); link.click(); link.remove();
         showToast('تم بدء تنزيل ملف CSV.');
@@ -711,7 +822,7 @@
         
         DOMElements.employeesTableBody.addEventListener('click', async (e) => {
             const row = e.target.closest('tr'); if (!row) return; const id = row.dataset.id;
-            const emp = state.employees.find(e => e.id === id); if (!emp) return;
+            const emp = state.employees.get(id); if (!emp) return;
 
             if (e.target.closest('.employee-name-link')) { e.preventDefault(); openIndividualReportModal(id); } 
             else if (e.target.closest('.edit-btn')) {
@@ -734,12 +845,19 @@
             }
         });
 
-        DOMElements.attendanceDate.addEventListener('change', listenForAttendanceChanges);
+        DOMElements.attendanceDate.addEventListener('change', () => {
+             // Clear out old attendance table to prevent showing outdated data before new listener fetches
+            DOMElements.attendanceTableBody.innerHTML = '';
+            state.employees.forEach(emp => addAttendanceRow(emp));
+            DOMElements.attendanceLoader.style.display = 'block';
+            listenForAttendanceChanges();
+        });
+
         DOMElements.markAllPresentBtn.addEventListener('click', () => bulkUpdateAttendance('present'));
         DOMElements.markAllAbsentBtn.addEventListener('click', () => bulkUpdateAttendance('absent'));
         DOMElements.searchInput.addEventListener('input', (e) => {
             state.currentFilter = e.target.value;
-            renderEmployeesTable();
+            filterEmployeesTable();
         });
 
         DOMElements.generateReportBtn.addEventListener('click', generateReport);
@@ -761,7 +879,6 @@
         const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
         DOMElements.startDate.valueAsDate = startOfMonth;
         
-        // Start listening for real-time updates
         listenForEmployeeChanges();
         listenForAttendanceChanges();
     }
@@ -770,11 +887,9 @@
     if (db) {
         setupTheme();
         setupEventListeners();
-        initApp(); // Start the main application logic directly
+        initApp();
     }
 
 </script>
 </body>
 </html>
-
-
