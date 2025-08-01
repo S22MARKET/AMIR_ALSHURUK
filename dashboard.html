@@ -328,24 +328,25 @@
 <script type="module">
     // ### 1. Firebase & App Configuration ###
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+    // This app uses FIRESTORE, so we import firestore functions
     import { getFirestore, collection, getDocs, doc, setDoc, addDoc, updateDoc, deleteDoc, query, where, orderBy, writeBatch, onSnapshot } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
-    // تنبيه أمني مهم: هذه الإعدادات تكون ظاهرة للعميل.
-    // يجب عليك استخدام "قواعد الأمان" (Security Rules) في لوحة تحكم Firebase لحماية قاعدة بياناتك
-    // ومنع أي شخص غير مصرح له من قراءة أو كتابة البيانات.
+    // Your web app's Firebase configuration (UPDATED with your provided config)
     const firebaseConfig = {
         apiKey: "AIzaSyA1VBBOZQOUwnHp8x487g7lkn14x6Sp-7g",
         authDomain: "stoke-c650a.firebaseapp.com",
         databaseURL: "https://stoke-c650a-default-rtdb.firebaseio.com",
         projectId: "stoke-c650a",
-        storageBucket: "stoke-c650a.appspot.com",
+        storageBucket: "stoke-c650a.appspot.com", // Corrected from firebasestorage.app
         messagingSenderId: "464151163343",
-        appId: "1:464151163343:web:728a60e952e4943bc822ba"
+        appId: "1:464151163343:web:728a60e952e4943bc822ba",
+        measurementId: "G-6C1X40RWHZ"
     };
 
     let db;
     try {
         const app = initializeApp(firebaseConfig);
+        // Initialize FIRESTORE which is used by this application's logic
         db = getFirestore(app);
     } catch(e) {
         console.error("Firebase initialization failed!", e);
