@@ -4,126 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>محفوظات الفواتير - مؤسسة صالحي سليم</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root {
             --primary-color: #005a9c;
             --primary-light: #eaf2f8;
-            --secondary-color: #f7f9fc;
-            --border-color: #dee2e6;
             --danger-color: #dc3545;
-            --warning-color: #ffc107;
             --success-color: #28a745;
             --info-color: #17a2b8;
-            --light-bg: #ffffff;
-            --dark-text: #343a40;
-            --gray-text: #6c757d;
-            --font-size-base: 1rem;
-            --border-radius: 12px;
         }
         body {
-            font-family: 'Cairo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 1rem;
-            background-color: var(--secondary-color);
-            direction: rtl;
+            font-family: 'Cairo', 'Segoe UI', sans-serif;
+            background-color: #f7f9fc;
         }
-        .page-container {
-            max-width: 1300px;
-            margin: 1rem auto;
-            background: var(--light-bg);
-            padding: clamp(1rem, 5vw, 2rem);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-            border-radius: var(--border-radius);
-        }
-        .page-header {
-            border-bottom: 2px solid var(--primary-color);
-            padding-bottom: 1.5rem;
-            margin-bottom: 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1.5rem;
-        }
-        .page-header h1 {
-            color: var(--primary-color);
-            margin: 0;
-            font-weight: 700;
-            font-size: clamp(1.5rem, 4vw, 2rem);
-        }
-        .controls-container {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        .main-controls, .secondary-controls {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-        #search-box {
-            padding: 0.75rem 1rem;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            flex-grow: 1;
-            min-width: 220px;
-            transition: all 0.3s ease-in-out;
-        }
-        #search-box:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(0, 90, 156, 0.15);
-            outline: none;
-        }
-        .custom-select {
-            position: relative;
-        }
-        #sort-by {
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-            padding: 0.75rem 2.5rem 0.75rem 1rem;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            background-color: white;
-            cursor: pointer;
-            min-width: 180px;
-        }
-        .custom-select::after {
-            content: '▼';
-            font-size: 0.8rem;
-            color: var(--gray-text);
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            pointer-events: none;
-        }
-        .summary-stats {
-            background-color: var(--primary-light);
-            border-radius: var(--border-radius);
-            padding: 1rem;
-            text-align: center;
-            display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-        .stat {
-            color: var(--primary-color);
-        }
-        .stat strong {
-            display: block;
-            font-size: 1.5rem;
-            color: var(--dark-text);
-        }
-        .action-btn, .create-btn {
+        .action-btn {
             padding: 0.75rem 1.5rem;
-            background-color: var(--primary-color);
             color: white;
             text-decoration: none;
             border-radius: 8px;
@@ -136,85 +32,42 @@
             border: none;
             cursor: pointer;
         }
-        .action-btn:hover, .create-btn:hover {
+        .action-btn:hover {
             opacity: 0.9;
             transform: translateY(-2px);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
-        #delete-all-btn { background-color: var(--danger-color); }
-        #import-btn { background-color: var(--success-color); }
-        #export-btn { background-color: var(--info-color); }
-        #invoices-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 1.5rem;
+        .custom-select {
+            position: relative;
         }
-        .invoice-card {
-            background: #fff;
-            border-right: 5px solid var(--primary-color);
-            border-radius: 10px;
-            padding: 1.25rem;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            transition: box-shadow 0.3s, transform 0.3s;
-            display: flex;
-            flex-direction: column;
-        }
-        .invoice-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-        }
-        .card-header {
-            font-weight: 700;
-            font-size: 1.2rem;
-            color: var(--dark-text);
-            margin-bottom: 1rem;
-        }
-        .card-header .invoice-num { color: var(--primary-color); }
-        .card-body { flex-grow: 1; display: flex; flex-direction: column; gap: 0.75rem; }
-        .card-body p { margin: 0; color: var(--gray-text); }
-        .card-body p strong { color: var(--dark-text); margin-left: 0.5rem; }
-        .card-footer {
-            margin-top: 1.5rem;
-            padding-top: 1rem;
-            border-top: 1px solid #eee;
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 0.75rem;
-        }
-        .view-btn { grid-column: 1 / -1; }
-        .message-container {
-            text-align: center;
-            padding: 3rem 1.5rem;
-            background-color: var(--secondary-color);
-            border: 2px dashed var(--border-color);
-            border-radius: var(--border-radius);
-            color: var(--gray-text);
-            grid-column: 1 / -1;
-        }
-        .message-container svg { width: 60px; height: 60px; margin-bottom: 1.5rem; opacity: 0.5; }
-        .message-container h2 { margin: 0 0 0.5rem 0; color: var(--dark-text); }
-        
-        @media (max-width: 768px) {
-            .main-controls, .secondary-controls { flex-direction: column; align-items: stretch; }
+        .custom-select::after {
+            content: '▼';
+            font-size: 0.8rem;
+            color: #6c757d;
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
         }
     </style>
 </head>
 <body>
 
-<div class="page-container">
-    <header class="page-header">
-        <h1>محفوظات الفواتير</h1>
-        <a href="invoice.html" class="create-btn">
+<div class="page-container container mx-auto p-4 md:p-6">
+    <header class="page-header flex flex-wrap justify-between items-center gap-6 pb-6 mb-6 border-b-2" style="border-color: var(--primary-color);">
+        <h1 class="text-2xl md:text-3xl font-bold" style="color: var(--primary-color);">محفوظات الفواتير</h1>
+        <a href="invoice.html" class="action-btn" style="background-color: var(--primary-color);">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/></svg>
             إنشاء فاتورة جديدة
         </a>
     </header>
 
-    <div class="controls-container">
-        <div class="main-controls">
-            <input type="text" id="search-box" placeholder="🔎 ابحث بالاسم أو الرقم...">
-            <div class="custom-select">
-                <select id="sort-by">
+    <div class="controls-container flex flex-col gap-6 mb-8">
+        <div class="main-controls flex flex-col md:flex-row gap-4 items-center">
+            <input type="text" id="search-box" placeholder="🔎 ابحث بالاسم أو الرقم..." class="p-3 border border-gray-300 rounded-lg flex-grow w-full md:w-auto transition-shadow focus:shadow-md focus:border-blue-500 outline-none">
+            <div class="custom-select w-full md:w-auto">
+                <select id="sort-by" class="appearance-none p-3 border border-gray-300 rounded-lg bg-white cursor-pointer w-full md:w-52">
                     <option value="newest">فرز حسب: الأحدث أولاً</option>
                     <option value="oldest">فرز حسب: الأقدم أولاً</option>
                     <option value="highest">فرز حسب: الأعلى مبلغاً</option>
@@ -222,61 +75,88 @@
                 </select>
             </div>
         </div>
-        <div class="secondary-controls">
-            <button id="import-btn" class="action-btn">📂 استيراد ملف</button>
-            <button id="export-btn" class="action-btn">💾 تصدير كملف</button>
-            <button id="delete-all-btn" class="action-btn">
+        <div class="secondary-controls flex flex-wrap gap-4">
+            <button id="import-btn" class="action-btn" style="background-color: var(--success-color);">📂 استيراد ملف</button>
+            <button id="export-btn" class="action-btn" style="background-color: var(--info-color);">💾 تصدير كملف</button>
+            <button id="delete-all-btn" class="action-btn" style="background-color: var(--danger-color);">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
                 حذف الكل
             </button>
-            <input type="file" id="import-file-input" accept=".json" style="display: none;">
+            <input type="file" id="import-file-input" accept=".json" class="hidden">
         </div>
     </div>
     
-    <div class="summary-stats" id="summary-stats"></div>
+    <div class="summary-stats p-4 rounded-lg flex flex-wrap justify-around gap-4 text-center mb-8" id="summary-stats" style="background-color: var(--primary-light);"></div>
 
     <main>
-        <div id="invoices-list"></div>
+        <div id="invoices-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
     </main>
 </div>
 
-<script>
-document.addEventListener('DOMContentLoaded', () => {
+<!-- Firebase SDK -->
+<script type="module">
+    // Import Firebase modules
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, collection, onSnapshot, doc, deleteDoc, writeBatch, query as firestoreQuery, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // --- START: Configuration and Initialization ---
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+    const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "YOUR_API_KEY", authDomain: "YOUR_AUTH_DOMAIN", projectId: "YOUR_PROJECT_ID" };
+    const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    let userId = null;
+    let allInvoices = [];
+    let unsubscribe = null; // To hold the listener cleanup function
+
+    // --- END: Configuration and Initialization ---
+
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            userId = user.uid;
+            console.log("User is authenticated with UID:", userId);
+            // If there's an active listener, stop it before starting a new one
+            if (unsubscribe) unsubscribe();
+            listenForInvoices();
+        } else {
+            console.log("No user signed in, attempting to sign in.");
+            try {
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (error) {
+                console.error("Error during sign-in:", error);
+            }
+        }
+    });
+
     const listContainer = document.getElementById('invoices-list');
     const searchBox = document.getElementById('search-box');
     const sortBy = document.getElementById('sort-by');
     const summaryContainer = document.getElementById('summary-stats');
     const importFileInput = document.getElementById('import-file-input');
-    
-    let allInvoices = [];
 
-    const formatCurrency = (num) => num.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    
-    const calculateTotal = (invoice) => {
-        const subtotal = invoice.rows.reduce((sum, row) => sum + (parseFloat(row.quantity) || 0) * (parseFloat(row.price) || 0), 0);
-        let discountAmount = 0;
-        if (invoice.discount?.enabled) {
-            const discountValue = parseFloat(invoice.discount.value) || 0;
-            discountAmount = invoice.discount.type === 'percent' ? subtotal * (discountValue / 100) : discountValue;
-        }
-        const montantHT = subtotal - discountAmount;
-        const tva = montantHT * 0.19;
-        const timbreAmount = invoice.timbreEnabled ? (Math.ceil(montantHT / 100) * 1) : 0;
-        return montantHT + tva + timbreAmount;
-    };
+    const formatCurrency = (num) => (num || 0).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
     const renderSummary = (invoices) => {
-        const totalAmount = invoices.reduce((sum, inv) => sum + calculateTotal(inv), 0);
+        const totalAmount = invoices.reduce((sum, inv) => sum + (inv.totalTTC || 0), 0);
         const invoiceCount = invoices.length;
         
         summaryContainer.innerHTML = `
-            <div class="stat">
-                <span>إجمالي عدد الفواتير</span>
-                <strong>${invoiceCount}</strong>
+            <div class="stat text-blue-800">
+                <span class="block text-sm">إجمالي عدد الفواتير</span>
+                <strong class="block text-2xl font-bold text-gray-800">${invoiceCount}</strong>
             </div>
-            <div class="stat">
-                <span>المبلغ الإجمالي للفواتير (TTC)</span>
-                <strong>${formatCurrency(totalAmount)} دج</strong>
+            <div class="stat text-blue-800">
+                <span class="block text-sm">المبلغ الإجمالي للفواتير (TTC)</span>
+                <strong class="block text-2xl font-bold text-gray-800">${formatCurrency(totalAmount)} دج</strong>
             </div>
         `;
     };
@@ -294,11 +174,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         invoicesToRender.forEach(invoice => {
-            const totalTTC = calculateTotal(invoice);
             const card = document.createElement('div');
-            card.className = 'invoice-card';
-            card.dataset.timestamp = invoice.timestamp;
-            card.innerHTML = createInvoiceCardHTML(invoice, totalTTC);
+            card.className = 'invoice-card bg-white rounded-lg p-5 shadow-md transition-transform transform hover:-translate-y-1';
+            card.style.borderRight = `5px solid ${invoice.options?.themeColor || 'var(--primary-color)'}`;
+            card.dataset.id = invoice.id;
+            card.innerHTML = createInvoiceCardHTML(invoice);
             listContainer.appendChild(card);
         });
     };
@@ -306,49 +186,51 @@ document.addEventListener('DOMContentLoaded', () => {
     const createMessageHTML = (type) => {
         const messages = {
             'no-invoices': {
-                icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h13zM1 3.5a.5.5 0 0 0 0 1h14a.5.5 0 0 0 0-1H1zm0 3a.5.5 0 0 0 0 1h14a.5.5 0 0 0 0-1H1zm0 3a.5.5 0 0 0 0 1h14a.5.5 0 0 0 0-1H1z"/></svg>`,
+                icon: `<svg class="w-16 h-16 mx-auto mb-6 opacity-50" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h13zM1 3.5a.5.5 0 0 0 0 1h14a.5.5 0 0 0 0-1H1zm0 3a.5.5 0 0 0 0 1h14a.5.5 0 0 0 0-1H1zm0 3a.5.5 0 0 0 0 1h14a.5.5 0 0 0 0-1H1z"/></svg>`,
                 title: 'لا توجد فواتير محفوظة',
                 text: 'ليس لديك أي فواتير حاليًا. انقر على زر "إنشاء فاتورة جديدة" للبدء.'
             },
             'no-results': {
-                icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/></svg>`,
+                icon: `<svg class="w-16 h-16 mx-auto mb-6 opacity-50" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/></svg>`,
                 title: 'لا توجد نتائج مطابقة',
                 text: 'لم يتم العثور على فواتير تطابق بحثك. حاول استخدام كلمات أخرى.'
             }
         };
         const msg = messages[type];
-        return `<div class="message-container">${msg.icon}<h2>${msg.title}</h2><p>${msg.text}</p></div>`;
+        return `<div class="message-container text-center p-12 bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 col-span-full">${msg.icon}<h2 class="text-xl font-bold text-gray-800 mb-2">${msg.title}</h2><p>${msg.text}</p></div>`;
     };
 
-    const createInvoiceCardHTML = (invoice, totalTTC) => `
-        <div class="card-header">
-            <span class="invoice-num">فاتورة رقم: ${invoice.invoiceNum || 'N/A'}</span>
+    const createInvoiceCardHTML = (invoice) => `
+        <div class="card-header font-bold text-lg text-gray-800 mb-4">
+            <span class="invoice-num" style="color: ${invoice.options?.themeColor || 'var(--primary-color)'};">فاتورة رقم: ${invoice.invoiceNum || 'N/A'}</span>
         </div>
-        <div class="card-body">
-            <p><strong>العميل:</strong> ${invoice.clientName || 'غير محدد'}</p>
-            <p><strong>التاريخ:</strong> ${invoice.invoiceDate || 'غير محدد'}</p>
-            <p><strong>الإجمالي (TTC):</strong> ${formatCurrency(totalTTC)} دج</p>
+        <div class="card-body flex-grow flex flex-col gap-2 text-sm">
+            <p class="text-gray-600"><strong class="text-gray-800 font-semibold ml-2">العميل:</strong> ${invoice.clientName || 'غير محدد'}</p>
+            <p class="text-gray-600"><strong class="text-gray-800 font-semibold ml-2">التاريخ:</strong> ${invoice.invoiceDate || 'غير محدد'}</p>
+            <p class="text-gray-600 font-bold mt-2"><strong class="text-gray-800 font-semibold ml-2">الإجمالي (TTC):</strong> ${formatCurrency(invoice.totalTTC)} دج</p>
         </div>
-        <div class="card-footer">
-            <button class="action-btn view-btn" data-action="view" style="background-color: var(--primary-color);">عرض وتعديل</button>
+        <div class="card-footer mt-6 pt-4 border-t border-gray-200 grid grid-cols-2 gap-3">
+            <button class="action-btn col-span-2" data-action="view" style="background-color: var(--primary-color);">عرض وتعديل</button>
             <button class="action-btn" data-action="delete" style="background-color: var(--danger-color);">حذف</button>
         </div>
     `;
 
-    const loadInvoices = () => {
-        try {
-            allInvoices = JSON.parse(localStorage.getItem('invoicesHistory')) || [];
-        } catch (error) {
-            console.error("Error parsing invoices from localStorage:", error);
-            allInvoices = [];
-            alert("حدث خطأ أثناء تحميل الفواتير المحفوظة.");
-        }
-    };
+    function listenForInvoices() {
+        if (!userId) return;
+        const invoicesCollectionPath = `/artifacts/${appId}/public/data/invoices`;
+        const invoicesRef = collection(db, invoicesCollectionPath);
+        const q = firestoreQuery(invoicesRef, orderBy("lastUpdatedAt", "desc"));
 
-    const saveInvoices = () => {
-        localStorage.setItem('invoicesHistory', JSON.stringify(allInvoices));
-        updateDisplay();
-    };
+        unsubscribe = onSnapshot(q, (snapshot) => {
+            allInvoices = snapshot.docs
+                .map(doc => ({ id: doc.id, ...doc.data() }))
+                .filter(doc => doc.id !== 'draft'); // Ensure draft is excluded
+            updateDisplay();
+        }, (error) => {
+            console.error("Error listening for invoice changes:", error);
+            alert("حدث خطأ في جلب الفواتير.");
+        });
+    }
 
     const updateDisplay = () => {
         const query = searchBox.value.toLowerCase().trim();
@@ -363,17 +245,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const sortValue = sortBy.value;
         filtered.sort((a, b) => {
-            const totalA = calculateTotal(a);
-            const totalB = calculateTotal(b);
             switch (sortValue) {
-                case 'oldest': return new Date(a.timestamp) - new Date(b.timestamp);
-                case 'highest': return totalB - totalA;
-                case 'lowest': return totalA - totalB;
+                case 'oldest': return (a.lastUpdatedAt?.toDate() || 0) - (b.lastUpdatedAt?.toDate() || 0);
+                case 'highest': return (b.totalTTC || 0) - (a.totalTTC || 0);
+                case 'lowest': return (a.totalTTC || 0) - (b.totalTTC || 0);
                 case 'newest':
                 default:
-                    const dateA = a.timestamp ? new Date(a.timestamp) : 0;
-                    const dateB = b.timestamp ? new Date(b.timestamp) : 0;
-                    return dateB - dateA;
+                    return (b.lastUpdatedAt?.toDate() || 0) - (a.lastUpdatedAt?.toDate() || 0);
             }
         });
 
@@ -381,13 +259,13 @@ document.addEventListener('DOMContentLoaded', () => {
         renderSummary(allInvoices);
     };
 
-    const handleCardAction = (e) => {
+    const handleCardAction = async (e) => {
         const button = e.target.closest('.action-btn');
-        if (!button) return;
+        if (!button || !userId) return;
 
         const card = button.closest('.invoice-card');
-        const timestamp = card?.dataset.timestamp;
-        const invoice = allInvoices.find(inv => inv.timestamp === timestamp);
+        const docId = card?.dataset.id;
+        const invoice = allInvoices.find(inv => inv.id === docId);
         if (!invoice) return;
 
         const action = button.dataset.action;
@@ -397,8 +275,15 @@ document.addEventListener('DOMContentLoaded', () => {
             window.location.href = 'invoice.html';
         } else if (action === 'delete') {
             if (confirm(`هل أنت متأكد من حذف فاتورة العميل "${invoice.clientName}"؟`)) {
-                allInvoices = allInvoices.filter(inv => inv.timestamp !== timestamp);
-                saveInvoices();
+                try {
+                    const docRef = doc(db, `/artifacts/${appId}/public/data/invoices`, docId);
+                    await deleteDoc(docRef);
+                    console.log("Invoice deleted successfully");
+                    // UI will update automatically via onSnapshot
+                } catch (error) {
+                    console.error("Error deleting invoice:", error);
+                    alert("حدث خطأ أثناء حذف الفاتورة.");
+                }
             }
         }
     };
@@ -422,24 +307,36 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const handleImport = (event) => {
+        if (!userId) {
+            alert("يجب تسجيل الدخول أولاً للاستيراد.");
+            return;
+        }
         const file = event.target.files[0];
         if (!file) return;
 
         const reader = new FileReader();
-        reader.onload = (e) => {
+        reader.onload = async (e) => {
             try {
                 const importedInvoices = JSON.parse(e.target.result);
                 if (!Array.isArray(importedInvoices)) throw new Error('الملف غير صالح.');
                 
                 const confirmationMsg = `هل أنت متأكد من استيراد ${importedInvoices.length} فاتورة؟ سيتم دمجها مع الفواتير الحالية.`;
                 if (confirm(confirmationMsg)) {
-                    const existingTimestamps = new Set(allInvoices.map(inv => inv.timestamp));
-                    const newInvoices = importedInvoices.filter(inv => !existingTimestamps.has(inv.timestamp));
-                    allInvoices.push(...newInvoices);
-                    saveInvoices();
-                    alert(`تم استيراد ${newInvoices.length} فاتورة جديدة بنجاح!`);
+                    const batch = writeBatch(db);
+                    const collectionRef = collection(db, `/artifacts/${appId}/public/data/invoices`);
+                    
+                    importedInvoices.forEach(inv => {
+                        const docRef = doc(collectionRef); // Create a new doc with a new ID
+                        // Remove id from object if it exists to let firestore generate it
+                        delete inv.id;
+                        batch.set(docRef, inv);
+                    });
+                    
+                    await batch.commit();
+                    alert(`تم استيراد ${importedInvoices.length} فاتورة جديدة بنجاح!`);
                 }
             } catch (error) {
+                console.error("Import failed:", error);
                 alert('فشل استيراد الملف. يرجى التأكد من أنه ملف تصدير صالح.');
             } finally {
                 event.target.value = null; 
@@ -448,22 +345,28 @@ document.addEventListener('DOMContentLoaded', () => {
         reader.readAsText(file);
     };
 
-    const handleDeleteAll = () => {
-        if (allInvoices.length === 0) {
+    const handleDeleteAll = async () => {
+        if (!userId || allInvoices.length === 0) {
             alert("لا توجد فواتير لحذفها.");
             return;
         }
         if (confirm("تحذير! هل أنت متأكد من حذف جميع الفواتير؟ لا يمكن التراجع عن هذا الإجراء.")) {
-            allInvoices = [];
-            saveInvoices();
-            alert("تم حذف جميع الفواتير بنجاح.");
+            try {
+                const batch = writeBatch(db);
+                allInvoices.forEach(inv => {
+                    const docRef = doc(db, `/artifacts/${appId}/public/data/invoices`, inv.id);
+                    batch.delete(docRef);
+                });
+                await batch.commit();
+                alert("تم حذف جميع الفواتير بنجاح.");
+            } catch (error) {
+                console.error("Error deleting all invoices:", error);
+                alert("حدث خطأ أثناء حذف جميع الفواتير.");
+            }
         }
     };
 
     // --- INITIALIZATION ---
-    loadInvoices();
-    updateDisplay();
-    
     searchBox.addEventListener('input', updateDisplay);
     sortBy.addEventListener('change', updateDisplay);
     listContainer.addEventListener('click', handleCardAction);
@@ -471,7 +374,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('import-btn').addEventListener('click', () => importFileInput.click());
     importFileInput.addEventListener('change', handleImport);
     document.getElementById('delete-all-btn').addEventListener('click', handleDeleteAll);
-});
 </script>
 
 </body>
