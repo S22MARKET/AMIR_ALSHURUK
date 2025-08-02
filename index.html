@@ -251,14 +251,12 @@
 <section id="hero" class="hero">
     <div class="container reveal" style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;">
         
-        <!-- النص -->
         <div style="flex: 1; min-width: 280px; padding: 10px;">
             <h2>الجودة والنظافة تبدأ من هنا</h2>
             <p>أمير الشروق، خياركم الأول لمواد تنظيف عالية الفعالية بأسعار الجملة. نخدم كل ولايات الجزائر.</p>
             <a href="#products" class="cta-button">اكتشف منتجاتنا <i class="fas fa-arrow-down"></i></a>
         </div>
 
-        <!-- الصورة -->
         <div style="flex: 1; min-width: 280px; text-align: center;">
             <img src="PIC/LOGGGOOO.jpg" alt="شعار أمير الشروق" style="max-width: 100%; height: auto; border-radius: 12px;">
         </div>
@@ -363,66 +361,6 @@
 </div>
 
 <div id="toast" class="toast-notification"></div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
@@ -607,20 +545,6 @@
             .tagline { font-size: 20px; }
             .actions-container { gap: 20px; }
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         /* نمط الوضع الداكن */
 body.dark-mode {
   background-color: #121212;
@@ -642,11 +566,6 @@ body.dark-mode .card-right {
 }
 
 /* عدل ألوان أخرى حسب حاجتك في الوضع الداكن */
-
-
-
-
-
     </style>
 </head>
 <body>
@@ -776,7 +695,6 @@ body.dark-mode .card-right {
     </span>
   </p>
 
-  <!-- نافذة مودال -->
   <div id="phoneModal" onclick="closeModal()">
     <div class="modal-content" onclick="event.stopPropagation()">
       <h3>اختر الإجراء للرقم:</h3>
@@ -789,7 +707,9 @@ body.dark-mode .card-right {
 
   <script>
     window.onload = function() {
-      document.getElementById('phoneModal').style.display = 'none';
+      if(document.getElementById('phoneModal')) {
+        document.getElementById('phoneModal').style.display = 'none';
+      }
     };
 
     let currentPhone = "";
@@ -813,52 +733,21 @@ body.dark-mode .card-right {
     }
 
     function closeModal() {
-      document.getElementById('phoneModal').style.display = 'none';
+      if(document.getElementById('phoneModal')) {
+         document.getElementById('phoneModal').style.display = 'none';
+      }
     }
 
     window.onclick = function(event) {
       const modal = document.getElementById('phoneModal');
-      if (event.target === modal) {
+      if (modal && event.target === modal) {
         closeModal();
       }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   </script>
 
 </body>
 </html>
-
-
-
-
-
-
                               
                                     </div>
                                 </div>
@@ -963,67 +852,10 @@ body.dark-mode .card-right {
             }
 
         }
-
-
-
-
-
-
-
     </script>
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 <style>
@@ -1097,43 +929,17 @@ body.dark-mode .card-right {
     </div>
 </section>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <footer>
     <div class="container">
         <div class="social-links">
             <a href="https://wa.me/213781465477" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
             <a href="https://web.facebook.com/p/أ%D9%85%D9%8A%D8%B1-%D8%A7%D9%84%D8%B4%D8%B1%D9%88%D9%82-61559518204192/" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-            <a href="https://www.instagram.com/amirchourouk36/" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="https://www.instagram.com/amir_el_chorouk?igsh=OHhyNnE0MGd5cGpo" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
              <a href="https://t.me/amirchourouk" target="_blank" rel="noopener noreferrer" aria-label="Telegram"><i class="fab fa-telegram"></i></a>
         </div>
         <p>جميع الحقوق محفوظة &copy; أمير الشروق <span id="year"></span>. تصميم وتطوير   </p>
     </div>
 </footer>
-
-
-
-
-
-
-
-
-
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -1153,23 +959,25 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const productsContainer = document.getElementById('products-container');
     const placeholderSvg = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'%3E%3C/svg%3E`;
-    products.forEach(product => {
-        const card = `
-            <div class="product-card reveal">
-                <img src="${product.image}" alt="${product.name}" loading="lazy" onerror="this.onerror=null;this.src='${placeholderSvg}';">
-                <div class="product-info">
-                    <h3>${product.name}</h3>
-                    <div class="price-info">
-                        <p>سعر الجملة: <span class="price-super-gros">${product.superGros}</span></p>
-                        <p>شبه جملة: <span class="price-gros">${product.gros}</span></p>
+    if(productsContainer) {
+        products.forEach(product => {
+            const card = `
+                <div class="product-card reveal">
+                    <img src="${product.image}" alt="${product.name}" loading="lazy" onerror="this.onerror=null;this.src='${placeholderSvg}';">
+                    <div class="product-info">
+                        <h3>${product.name}</h3>
+                        <div class="price-info">
+                            <p>سعر الجملة: <span class="price-super-gros">${product.superGros}</span></p>
+                            <p>شبه جملة: <span class="price-gros">${product.gros}</span></p>
+                        </div>
+                        <div class="product-actions">
+                            <button class="action-btn order-btn" data-product-name="${product.name}"><i class="fas fa-shopping-cart"></i> اطلب الآن</button>
+                        </div>
                     </div>
-                    <div class="product-actions">
-                        <button class="action-btn order-btn" data-product-name="${product.name}"><i class="fas fa-shopping-cart"></i> اطلب الآن</button>
-                    </div>
-                </div>
-            </div>`;
-        productsContainer.innerHTML += card;
-    });
+                </div>`;
+            productsContainer.innerHTML += card;
+        });
+    }
 
     // --- إعدادات أساسية (Theme, Refresh, Year) ---
     const themeToggle = document.getElementById('theme-toggle');
@@ -1216,21 +1024,29 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // التحكم بالكمية
-    document.getElementById('increaseQty').addEventListener('click', () => quantityInput.value++);
-    document.getElementById('decreaseQty').addEventListener('click', () => { if (quantityInput.value > 1) quantityInput.value--; });
+    if(document.getElementById('increaseQty')) {
+      document.getElementById('increaseQty').addEventListener('click', () => quantityInput.value++);
+    }
+    if(document.getElementById('decreaseQty')) {
+      document.getElementById('decreaseQty').addEventListener('click', () => { if (quantityInput.value > 1) quantityInput.value--; });
+    }
 
     // زر تأكيد الكمية والانتقال لنافذة التواصل
-    document.getElementById('confirmQuantityBtn').addEventListener('click', () => {
-        currentOrder.quantity = quantityInput.value;
-        quantityModal.classList.remove('show');
-        contactChannelModal.classList.add('show');
-    });
+    if(document.getElementById('confirmQuantityBtn')) {
+      document.getElementById('confirmQuantityBtn').addEventListener('click', () => {
+          currentOrder.quantity = quantityInput.value;
+          quantityModal.classList.remove('show');
+          contactChannelModal.classList.add('show');
+      });
+    }
 
     // الرجوع من نافذة التواصل إلى نافذة الكمية
-    document.getElementById('cancelContact').addEventListener('click', () => {
-        contactChannelModal.classList.remove('show');
-        quantityModal.classList.add('show');
-    });
+    if(document.getElementById('cancelContact')) {
+      document.getElementById('cancelContact').addEventListener('click', () => {
+          contactChannelModal.classList.remove('show');
+          quantityModal.classList.add('show');
+      });
+    }
     
     // إغلاق النوافذ المنبثقة
     document.querySelectorAll('.modal .modal-close, .modal .cancel-btn[data-close]').forEach(el => {
@@ -1247,16 +1063,16 @@ document.addEventListener('DOMContentLoaded', function() {
             const customerPhone = document.getElementById('customerPhone').value.trim();
 
             if (!customerName || !customerPhone) {
-                showToast('الرجاء إدخال الاسم ورقم الهاتف.');
+                showToastGlobal('الرجاء إدخال الاسم ورقم الهاتف.');
                 return;
             }
 
             // --- معلومات العمل (تم التحديث) ---
             const businessPhoneNumber = "213781465477";
             const businessUsernames = {
-                telegram: 'Amirelchorouk', // تم التحديث هنا
+                telegram: 'amirchourouk', 
                 facebook: '61559518204192',
-                instagram: 'amirchourouk36',
+                instagram: 'amir_el_chorouk',
             };
             // ------------------------------------
 
@@ -1277,23 +1093,29 @@ document.addEventListener('DOMContentLoaded', function() {
                 case 'facebook':
                 case 'instagram':
                     navigator.clipboard.writeText(message.replace(/\*/g, '')).then(() => {
-                        showToast(`تم نسخ تفاصيل الطلب. سيتم فتح ${platform}.`);
+                        showToastGlobal(`تم نسخ تفاصيل الطلب. سيتم فتح ${platform}.`);
                         const user = (platform === 'facebook') ? businessUsernames.facebook : businessUsernames.instagram;
                         url = (platform === 'facebook') ? `https://m.me/${user}` : `https://ig.me/m/${user}`;
                         setTimeout(() => window.open(url, '_blank'), 2000);
                     });
                     break;
             }
-            contactChannelModal.classList.remove('show');
+            if(contactChannelModal) {
+              contactChannelModal.classList.remove('show');
+            }
         });
     });
 
     // --- وظيفة إظهار رسالة التنبيه ---
-    const toast = document.getElementById('toast');
-    function showToast(message) {
-        toast.textContent = message;
-        toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 3000);
+    function showToastGlobal(message) {
+        const toastEl = document.querySelectorAll('#toast');
+        toastEl.forEach(toast => {
+            if(toast) {
+                toast.textContent = message;
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 3000);
+            }
+        });
     }
     
     // --- كشف التمرير لإظهار العناصر ---
@@ -1311,15 +1133,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
 
 
 
