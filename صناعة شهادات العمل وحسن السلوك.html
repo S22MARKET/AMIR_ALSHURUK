@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>محرر مستندات رسمي - مؤسسة صالحي سليم</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, getDoc, serverTimestamp, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyA1VBBOZQOUwnHp8x487g7lkn14x6Sp-7g",
+          authDomain: "stoke-c650a.firebaseapp.com",
+          databaseURL: "https://stoke-c650a-default-rtdb.firebaseio.com",
+          projectId: "stoke-c650a",
+          storageBucket: "stoke-c650a.appspot.com",
+          messagingSenderId: "464151163343",
+          appId: "1:464151163343:web:dff851d918b7477dc822ba",
+          measurementId: "G-HGREZ2BHRM"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        window.firebaseDB = { db, collection, addDoc, getDocs, doc, getDoc, serverTimestamp, deleteDoc, updateDoc };
+    </script>
+
+    <style>
+        :root {
+            --primary-color: #004a8f;
+            --secondary-color: #f8f9fa;
+            --danger-color: #d9534f;
+            --font-family-official: 'Amiri', 'Times New Roman', Times, serif;
+        }
+        [contenteditable="true"]:focus {
+            outline: 2px dashed var(--primary-color);
+            background-color: #f0f8ff;
+        }
+        body { font-family: var(--font-family-official); margin: 0; background-color: var(--secondary-color); direction: rtl; }
+        .page-container {
+            max-width: 210mm; min-height: 297mm; background-color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin: 2rem auto; padding: 15mm; display: flex; flex-direction: column;
+        }
+        .action-btn {
+            padding: 10px 20px; color: white; border: none; border-radius: 6px; cursor: pointer;
+            font-size: 1em; display: inline-flex; align-items: center; gap: 8px; transition: background-color 0.3s;
+        }
+        .hidden { display: none !important; }
+
+        /* Header */
+        .republic-header { text-align: center; font-size: 1.2rem; font-weight: bold; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1.5px solid #333; }
+        .document-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; border-bottom: 3px double var(--primary-color); padding-bottom: 1rem; margin-bottom: 2rem; }
+        .header-left { flex: 1; min-width: 0; }
+        .header-right { flex-basis: 200px; flex-shrink: 0; text-align: left;}
+        .company-title { color: var(--primary-color); font-size: 2.4rem; font-weight: bold; margin-bottom: 0.5rem; }
+        .company-details p { margin-bottom: 5px; font-size: 0.9em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .company-detail-item { position: relative; padding-right: 25px; }
+
+        /* Main Content */
+        main { flex-grow: 1; font-size: 1.2rem; line-height: 2.2; }
+        .body-row { position: relative; padding: 4px 10px; border-radius: 4px; transition: background-color 0.2s; }
+        .main-content-item { cursor: grab; }
+        .body-row:hover { background-color: #f0f8ff; }
+        .delete-row-btn {
+            position: absolute; right: -30px; top: 50%; transform: translateY(-50%); background: none; border: none;
+            color: var(--danger-color); cursor: pointer; font-size: 1.2em; display: none; opacity: 0.7;
+        }
+        .body-row:hover .delete-row-btn, .company-detail-item:hover .delete-row-btn { display: block; }
+        .fillable-field { border: none; border-bottom: 1.5px dotted #555; background: transparent; font: inherit; font-weight: bold; color: #111; }
+        .fillable-field.latin-input { direction: ltr; text-align: left; }
+        .fillable-field:focus { outline: none; border-bottom: 1.5px solid var(--primary-color); }
+        
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        /* Footer */
+        .document-footer {
+            padding-top: 0.1rem;
+        }
+        
+        /* Modal */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); justify-content: center; align-items: center; }
+        .modal-content { background-color: #fefefe; margin: auto; padding: 25px; border: 1px solid #888; width: 90%; max-width: 600px; border-radius: 8px; position: relative; }
+        .close-button { color: #aaa; position: absolute; left: 15px; top: 10px; font-size: 28px; font-weight: bold; cursor: pointer; }
+        .saved-doc-btn {
+             background: none; border: none; cursor: pointer; padding: 4px; border-radius: 4px;
+        }
+        .saved-doc-btn:hover { background-color: #e2e8f0; }
+
+    /* Print Styles */
+    @media print {
+        body { 
+            background-color: #fff; 
+            font-size: 10.5pt; 
+            margin: 0;
+            padding: 0;
+        }
+        
+        #app-wrapper { 
+            padding: 0; 
+            margin: 0; 
+        }
+        
+        .page-container {
+            box-shadow: none;
+            margin: 0 auto;
+            padding: 12mm;
+            width: 210mm;
+            min-height: 297mm;
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+        }
+        
+        main {
+            font-size: 1.1rem;
+            line-height: 1.9;
+            flex-grow: 1;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .document-header {
+            margin-bottom: 1rem;
+        }
+        
+        .company-title {
+            font-size: 2rem !important;
+            margin-bottom: 0.3rem;
+        }
+        
+        .document-footer {
+            margin-top: 0;
+            padding-top: 0;
+            border-top: none;
+            page-break-inside: avoid;
+        }
+        
+        .controls-container, 
+        #add-company-field-btn, 
+        .logo-container label, 
+        .delete-row-btn, 
+        .document-meta, 
+        #saved-docs-modal {
+            display: none !important;
+        }
+        
+        [contenteditable="true"] { 
+            outline: none !important; 
+        }
+    }
+    </style>
+</head>
+<body class="bg-gray-200">
+
+<div id="app-wrapper" class="py-5">
+    <div class="page-container">
+
+        <header>
+            <div class="republic-header" contenteditable="true">الجمهورية الجزائرية الديمقراطية الشعبية</div>
+            <div class="document-header">
+                <div class="header-left">
+                    <h1 class="company-title" contenteditable="true">مؤسسة صالحي سليم</h1>
+                    <div class="company-details" id="company-details-section"></div>
+                    <button id="add-company-field-btn" class="text-xs mt-2 cursor-pointer border border-gray-400 rounded-md py-1 px-2 bg-white hover:bg-gray-100">+ إضافة حقل للمؤسسة</button>
+                </div>
+                <div class="header-right">
+                     <div class="logo-container text-left mb-4">
+                         <img id="company-logo-img" src="" alt="شعار المؤسسة" class="hidden max-w-full h-auto max-h-24 rounded-md inline-block">
+                         <label for="logo-upload" id="logo-upload-label" class="block text-center p-2 border-2 border-dashed border-gray-300 rounded-md cursor-pointer text-sm mt-2 hover:bg-gray-50">➕ رفع شعار</label>
+                         <input type="file" id="logo-upload" accept="image/*" class="hidden">
+                     </div>
+                    <div class="document-meta">
+                        <label for="doc-type-select" class="text-sm font-bold text-gray-700">نوع المستند:</label>
+                        <select id="doc-type-select" class="w-full p-1 border rounded">
+                            <option value="certificate">شهادة عمل</option>
+                            <option value="goodStanding">حسن السيرة والسلوك</option>
+                        </select>
+                        <label for="invoice-date" class="mt-2 block text-sm font-bold text-gray-700">التاريخ:</label>
+                        <input type="date" id="invoice-date" class="w-full p-1 border rounded">
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main id="main-content"></main>
+        
+        <footer class="document-footer">
+            <div id="footer-content"></div>
+        </footer>
+
+        <div class="controls-container mt-auto pt-4 flex flex-wrap justify-center items-center gap-4">
+            <button id="add-row-btn" class="action-btn" style="background-color: #28a745;">+ إضافة سطر</button>
+            <button class="action-btn" style="background-color: var(--primary-color);" onclick="window.print()">🖨️ طباعة</button>
+            <button id="save-to-firebase-btn" class="action-btn" style="background-color: #563d7c;">💾 حفظ سحابي</button>
+            <button id="load-from-firebase-btn" class="action-btn" style="background-color: #6c757d;">📂 المستندات المحفوظة</button>
+        </div>
+    </div>
+</div>
+
+<div id="saved-docs-modal" class="modal">
+    <div class="modal-content" style="max-width: 800px;">
+        <span class="close-button">&times;</span>
+        <h3 class="text-xl font-bold mb-4">المستندات المحفوظة</h3>
+        <div class="flex gap-4">
+            <div class="w-1/2">
+                <h4 class="font-bold border-b pb-2 mb-2 text-center">شهادات العمل</h4>
+                <ul id="saved-certificates-list" class="p-2 max-h-96 overflow-y-auto border rounded"></ul>
+            </div>
+            <div class="w-1/2">
+                <h4 class="font-bold border-b pb-2 mb-2 text-center">شهادات حسن السيرة والسلوك</h4>
+                <ul id="saved-goodstanding-list" class="p-2 max-h-96 overflow-y-auto border rounded"></ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="module">
+document.addEventListener('DOMContentLoaded', () => {
+    // --- DOM Elements ---
+    const companyDetailsSection = document.getElementById('company-details-section');
+    const mainContent = document.getElementById('main-content');
+    const footerContent = document.getElementById('footer-content');
+    const logoImg = document.getElementById('company-logo-img');
+    const docTypeSelect = document.getElementById('doc-type-select');
+    const docDateInput = document.getElementById('invoice-date');
+    const savedDocsModal = document.getElementById('saved-docs-modal');
+
+    // --- Data State & Templates ---
+    let companyFields = [];
+    let currentDocumentType = 'certificate';
+    
+    const templates = {
+        certificate: {
+            main: `
+                <h2 class="text-3xl font-bold text-center mb-6 underline main-content-item" contenteditable="true">شهادة عمل</h2>
+                <div class="body-row main-content-item"><span contenteditable="true">أنا الممضي أسفله، مسير مؤسسة صالحي سليم، أشهد بأن السيد(ة): </span><input type="text" class="fillable-field" style="width: 25%;"> <button class="delete-row-btn">🗑️</button></div>
+                <div class="body-row main-content-item"><span contenteditable="true">المولود(ة) بتاريخ: </span><input type="text" class="fillable-field" style="width: 150px;"> <span contenteditable="true">بـ: </span><input type="text" class="fillable-field" style="width: 250px;"> <button class="delete-row-btn">🗑️</button></div>
+                <div class="body-row main-content-item"><span contenteditable="true">الحامل(ة) لبطاقة التعريف الوطنية رقم: </span><input type="number" class="fillable-field latin-input" style="width: 25%;"> <span contenteditable="true"> الصادرة بتاريخ: </span><input type="text" class="fillable-field" style="width: 20%;"> <button class="delete-row-btn">🗑️</button></div>
+                <div class="body-row main-content-item"><span contenteditable="true">عن دائرة: </span><input type="text" class="fillable-field" style="width: 80%;"> <button class="delete-row-btn">🗑️</button></div>
+                <div class="body-row main-content-item"><span contenteditable="true">كان يشتغل(تشتغل) في المؤسسة بوظيفة: </span><input type="text" class="fillable-field" style="width: 45%;"> <button class="delete-row-btn">🗑️</button></div>
+                <div class="body-row main-content-item"><span contenteditable="true">وذلك في الفترة الممتدة من: </span><input type="text" class="fillable-field" style="width: 200px;"> <span contenteditable="true">إلى غاية: </span><input type="text" class="fillable-field" style="width: 200px;">. <button class="delete-row-btn">🗑️</button></div>
+                <div class="body-row main-content-item"><span contenteditable="true">سلمت له هذه الشهادة بناءً على طلبه لاستعمالها فيما يسمح به القانون.</span> <button class="delete-row-btn">🗑️</button></div>
+                <div class="body-row main-content-item mt-8"><span contenteditable="true">حرر بـ:</span> <input type="text" class="fillable-field" style="width: 150px;" value="ابن مهيدي">، <span contenteditable="true">في:</span> <span class="font-bold doc-issue-date"></span></div>
+                <div class="flex justify-start items-start pt-4 main-content-item">
+                    <div class="text-left" style="width: 200px;">
+                        <div class="font-bold" contenteditable="true">الختم والإمضاء</div>
+                        <div class="mt-4"><span class="text-sm" contenteditable="true">الاسم واللقب:</span><br><input type="text" class="fillable-field" style="width: 100%;"></div>
+                    </div>
+                </div>
+            `,
+            footer: () => ''
+        },
+        goodStanding: {
+            main: `
+                <h2 class="text-3xl font-bold text-center mb-6 underline main-content-item" contenteditable="true">شهادة حسن السيرة والسلوك</h2>
+                <div class="body-row main-content-item"><span contenteditable="true">يشهد مسير مؤسسة صالحي سليم، بأن السيد(ة): </span><input type="text" class="fillable-field" style="width: 40%;"> <button class="delete-row-btn">🗑️</button></div>
+                <div class="body-row main-content-item"><span contenteditable="true">الذي كان يشغل منصب: </span><input type="text" class="fillable-field" style="width: 60%;"> <button class="delete-row-btn">🗑️</button></div>
+                <div class="body-row main-content-item"><span contenteditable="true">قد أظهر(ت) خلال فترة عمله(ا) بالمؤسسة سلوكًا قويمًا وسيرة حسنة، وتميز(ت) بالإخلاص والتفاني في العمل.</span><button class="delete-row-btn">🗑️</button></div>
+                <div class="body-row main-content-item mt-4"><span contenteditable="true">سلمت هذه الشهادة للمعني(ة) بالأمر للإدلاء بها عند الحاجة.</span> <button class="delete-row-btn">🗑️</button></div>
+                <div class="body-row main-content-item mt-8"><span contenteditable="true">حرر بـ:</span> <input type="text" class="fillable-field" style="width: 150px;" value="ابن مهيدي">، <span contenteditable="true">في:</span> <span class="font-bold doc-issue-date"></span></div>
+                <div class="flex justify-start items-start pt-4 main-content-item">
+                    <div class="text-left" style="width: 200px;">
+                        <div class="font-bold" contenteditable="true">الختم والإمضاء</div>
+                        <div class="mt-4"><span class="text-sm" contenteditable="true">الاسم واللقب:</span><br><input type="text" class="fillable-field" style="width: 100%;"></div>
+                    </div>
+                </div>
+            `,
+            footer: () => ''
+        }
+    };
+
+    const defaultCompanyFields = [
+        { id: 'activity', label: 'النشاط', value: 'تجارة جملة للآليات والأدوات' },
+        { id: 'address', label: 'العنوان', value: 'تخصيص الفيض، سيدي قاسي، ابن مهيدي' },
+        { id: 'tax', label: 'رقم جبائي', value: '18136030080117100000' },
+        { id: 'cr', label: 'سجل تجاري', value: '36/00-3451123ا21' }
+    ];
+
+    // --- Core Functions ---
+    const updateAllDates = () => {
+        const selectedDate = docDateInput.value ? new Date(docDateInput.value).toLocaleDateString('fr-CA') : '';
+        document.querySelectorAll('.doc-issue-date').forEach(el => {
+            el.textContent = selectedDate;
+        });
+    };
+
+    const saveDataToLocal = () => {
+        const fieldElements = companyDetailsSection.querySelectorAll('.company-detail-item');
+        const updatedFields = Array.from(fieldElements).map((p, index) => {
+            const labelEl = p.querySelector('strong');
+            const valueEl = p.querySelector('span');
+            if (!labelEl || !valueEl) return null;
+            const label = labelEl.textContent.replace(':', '').trim();
+            const value = valueEl.textContent.trim();
+            return { id: companyFields[index]?.id || `field_${Date.now()}`, label, value };
+        }).filter(Boolean);
+        companyFields = updatedFields;
+
+        localStorage.setItem('companyProfileDataV14', JSON.stringify(companyFields));
+        localStorage.setItem('companyLogoV14', logoImg.src);
+        localStorage.setItem('mainBodyContentV14', mainContent.innerHTML);
+        localStorage.setItem('footerContentV14', footerContent.innerHTML); // Will now save an empty string
+        localStorage.setItem('currentDocTypeV14', currentDocumentType);
+        localStorage.setItem('docDateV14', docDateInput.value);
+    };
+
+    const loadDataFromLocal = () => {
+        const savedFields = localStorage.getItem('companyProfileDataV14');
+        companyFields = savedFields ? JSON.parse(savedFields) : JSON.parse(JSON.stringify(defaultCompanyFields));
+        
+        const savedLogo = localStorage.getItem('companyLogoV14');
+        if (savedLogo && savedLogo.startsWith('data:image')) {
+            logoImg.src = savedLogo;
+            logoImg.classList.remove('hidden');
+        }
+
+        currentDocumentType = localStorage.getItem('currentDocTypeV14') || 'certificate';
+        docTypeSelect.value = currentDocumentType;
+        docDateInput.value = localStorage.getItem('docDateV14') || new Date().toISOString().slice(0, 10);
+        
+        let savedBody = localStorage.getItem('mainBodyContentV14');
+        const savedFooter = localStorage.getItem('footerContentV14');
+        
+        // Migration logic: Concatenate footer to body if it exists from a previous version
+        if (savedBody && savedFooter) {
+            savedBody += savedFooter;
+            // After concatenating once, clear the old footer from storage to prevent re-adding it on next load
+            localStorage.setItem('footerContentV14', ''); 
+        }
+        
+        // If there's no saved body, load from template. Otherwise, use the (potentially migrated) saved body.
+        // The footer argument is now null because it's part of the main body.
+        loadDocumentTemplate(currentDocumentType, savedBody, null);
+        renderCompanyFields();
+    };
+    
+    const renderCompanyFields = () => {
+        companyDetailsSection.innerHTML = '';
+        companyFields.forEach((field, index) => {
+            if (field.value) {
+                const p = document.createElement('p');
+                p.className = 'company-detail-item';
+                p.innerHTML = `
+                    <strong contenteditable="true">${field.label}:</strong> <span contenteditable="true">${field.value}</span>
+                    <button class="delete-row-btn" data-index="${index}">🗑️</button>
+                `;
+                companyDetailsSection.appendChild(p);
+            }
+        });
+    };
+
+    const loadDocumentTemplate = (type, savedMain = null, savedFooter = null) => {
+        currentDocumentType = type;
+        mainContent.innerHTML = savedMain || templates[type].main;
+        footerContent.innerHTML = savedFooter || templates[type].footer();
+        updateAllDates();
+    };
+
+    const populateEditor = (data) => {
+        companyFields = data.companyFields;
+        docDateInput.value = data.docDate;
+        docTypeSelect.value = data.docType;
+
+        // Migration logic for firebase data: concatenate footer to body if it exists
+        let mainHtml = data.mainContent;
+        if (data.footerContent) {
+            mainHtml += data.footerContent;
+        }
+        
+        // Pass concatenated content as main, and null as footer.
+        loadDocumentTemplate(data.docType, mainHtml, null); 
+        
+        if (data.logoSrc) {
+            logoImg.src = data.logoSrc;
+            logoImg.classList.remove('hidden');
+        }
+        renderCompanyFields();
+        alert("تم تحميل المستند بنجاح!");
+    };
+    
+    // --- Event Listeners & Setup ---
+    document.getElementById('load-from-firebase-btn').addEventListener('click', () => savedDocsModal.style.display = 'flex');
+    savedDocsModal.querySelector('.close-button').addEventListener('click', () => savedDocsModal.style.display = 'none');
+    window.addEventListener('click', (event) => { if (event.target == savedDocsModal) savedDocsModal.style.display = 'none'; });
+    
+    docDateInput.addEventListener('change', updateAllDates);
+    docTypeSelect.addEventListener('change', (e) => {
+        if (confirm('هل أنت متأكد؟ سيتم استبدال المحتوى الحالي بقالب جديد.')) {
+            loadDocumentTemplate(e.target.value);
+        } else {
+            e.target.value = currentDocumentType;
+        }
+    });
+
+    document.getElementById('add-row-btn').addEventListener('click', () => {
+        const newRow = document.createElement('div');
+        newRow.className = 'body-row main-content-item';
+        newRow.innerHTML = `<span contenteditable="true">&nbsp;</span> <button class="delete-row-btn">🗑️</button>`;
+        mainContent.appendChild(newRow);
+    });
+    
+    document.getElementById('add-company-field-btn').addEventListener('click', () => {
+        const newField = { id: `custom_${Date.now()}`, label: 'حقل جديد', value: 'أدخل القيمة هنا' };
+        companyFields.push(newField);
+        renderCompanyFields();
+    });
+
+    companyDetailsSection.addEventListener('click', (e) => {
+        if (e.target.matches('.delete-row-btn')) {
+            const index = parseInt(e.target.getAttribute('data-index'), 10);
+            if (!isNaN(index)) {
+                companyFields.splice(index, 1);
+                renderCompanyFields();
+                saveDataToLocal();
+            }
+        }
+    });
+
+    mainContent.addEventListener('click', (e) => {
+        if (e.target.matches('.delete-row-btn')) e.target.closest('.main-content-item').remove();
+    });
+
+    document.body.addEventListener('input', saveDataToLocal);
+    document.body.addEventListener('change', saveDataToLocal);
+
+
+    // --- Firebase & Saved Docs Modal ---
+    document.getElementById('save-to-firebase-btn').addEventListener('click', async () => {
+        const defaultName = mainContent.querySelector('input.fillable-field')?.value || 'مستند بلا عنوان';
+        const label = prompt("الرجاء إدخال اسم لحفظ المستند:", defaultName);
+
+        if (label === null || label.trim() === "") {
+            alert("تم إلغاء عملية الحفظ.");
+            return;
+        }
+        
+        saveDataToLocal();
+
+        const dataToSave = {
+            label,
+            title: mainContent.querySelector('h2')?.innerText,
+            docDate: docDateInput.value,
+            docType: currentDocumentType,
+            companyFields,
+            mainContent: mainContent.innerHTML,
+            footerContent: footerContent.innerHTML, // Will be empty now
+            logoSrc: logoImg.src,
+            createdAt: window.firebaseDB.serverTimestamp()
+        };
+        try {
+            await window.firebaseDB.addDoc(window.firebaseDB.collection(window.firebaseDB.db, "documents"), dataToSave);
+            alert(`تم حفظ المستند باسم "${label}" بنجاح!`);
+        } catch (e) { alert("حدث خطأ أثناء الحفظ."); console.error(e); }
+    });
+
+    document.getElementById('load-from-firebase-btn').addEventListener('click', async () => {
+        const certList = document.getElementById('saved-certificates-list');
+        const goodStandingList = document.getElementById('saved-goodstanding-list');
+        const lists = [certList, goodStandingList];
+        
+        lists.forEach(list => list.innerHTML = '<li>يتم الآن التحميل...</li>');
+
+        try {
+            const querySnapshot = await window.firebaseDB.getDocs(window.firebaseDB.collection(window.firebaseDB.db, "documents"));
+            
+            lists.forEach(list => list.innerHTML = '');
+            
+            const docs = { certificate: [], goodStanding: [] };
+
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                if(docs[data.docType]) {
+                    docs[data.docType].push({ id: doc.id, ...data });
+                }
+            });
+
+            const createListItem = (docData) => {
+                const li = document.createElement('li');
+                li.className = 'p-2 border-b cursor-pointer hover:bg-gray-100 flex justify-between items-center text-sm';
+                
+                const textSpan = document.createElement('span');
+                textSpan.className = 'flex-grow';
+                const displayName = docData.label || docData.title || 'بدون اسم';
+                textSpan.textContent = `${displayName} - ${new Date(docData.docDate).toLocaleDateString('fr-CA')}`;
+                
+                textSpan.onclick = async () => {
+                    const docSnap = await window.firebaseDB.getDoc(window.firebaseDB.doc(window.firebaseDB.db, "documents", docData.id));
+                    if (docSnap.exists()) {
+                        populateEditor(docSnap.data());
+                        savedDocsModal.style.display = 'none';
+                    }
+                };
+
+                const buttonsWrapper = document.createElement('div');
+                buttonsWrapper.className = 'flex-shrink-0';
+
+                const editBtn = document.createElement('button');
+                editBtn.innerHTML = '✏️';
+                editBtn.className = 'saved-doc-btn mx-1';
+                editBtn.title = 'إعادة تسمية';
+                editBtn.onclick = async (e) => {
+                    e.stopPropagation();
+                    const currentLabel = docData.label || docData.title || '';
+                    const newLabel = prompt('تعديل اسم المستند:', currentLabel);
+                    if (newLabel && newLabel.trim() !== "" && newLabel.trim() !== currentLabel) {
+                        try {
+                            const docRef = window.firebaseDB.doc(window.firebaseDB.db, "documents", docData.id);
+                            await window.firebaseDB.updateDoc(docRef, { label: newLabel });
+                            textSpan.textContent = `${newLabel} - ${new Date(docData.docDate).toLocaleDateString('fr-CA')}`;
+                            docData.label = newLabel;
+                            alert('تم تعديل الاسم بنجاح.');
+                        } catch (error) {
+                            alert('فشل تعديل الاسم.');
+                            console.error("Error updating document: ", error);
+                        }
+                    }
+                };
+                
+                const deleteBtn = document.createElement('button');
+                deleteBtn.innerHTML = '🗑️';
+                deleteBtn.className = 'saved-doc-btn';
+                deleteBtn.title = 'حذف';
+                deleteBtn.onclick = async (e) => {
+                    e.stopPropagation();
+                    if (confirm(`هل أنت متأكد من حذف المستند "${displayName}"؟`)) {
+                        try {
+                            await window.firebaseDB.deleteDoc(window.firebaseDB.doc(window.firebaseDB.db, "documents", docData.id));
+                            li.remove();
+                            alert('تم الحذف بنجاح.');
+                        } catch (error) {
+                            alert('حدث خطأ أثناء الحذف.');
+                            console.error("Error deleting document: ", error);
+                        }
+                    }
+                };
+
+                buttonsWrapper.appendChild(editBtn);
+                buttonsWrapper.appendChild(deleteBtn);
+                
+                li.appendChild(textSpan);
+                li.appendChild(buttonsWrapper);
+
+                return li;
+            };
+
+            docs.certificate.sort((a, b) => new Date(b.createdAt?.toDate() || 0) - new Date(a.createdAt?.toDate() || 0)).forEach(doc => certList.appendChild(createListItem(doc)));
+            docs.goodStanding.sort((a, b) => new Date(b.createdAt?.toDate() || 0) - new Date(a.createdAt?.toDate() || 0)).forEach(doc => goodStandingList.appendChild(createListItem(doc)));
+
+            if (docs.certificate.length === 0) { certList.innerHTML = '<li>لا توجد شهادات عمل محفوظة.</li>'; }
+            if (docs.goodStanding.length === 0) { goodStandingList.innerHTML = '<li>لا توجد شهادات سلوك محفوظة.</li>'; }
+
+        } catch (error) {
+            lists.forEach(list => list.innerHTML = '<li>فشل تحميل القائمة.</li>');
+            console.error(error);
+        }
+    });
+
+    // --- Initial Load ---
+    loadDataFromLocal();
+    new Sortable(mainContent, { animation: 150, ghostClass: 'bg-blue-100', handle: '.main-content-item', onEnd: saveDataToLocal });
+});
+</script>
+
+</body>
+</html>
