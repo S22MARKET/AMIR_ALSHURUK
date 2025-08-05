@@ -21,390 +21,1196 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+/*
+ * ===================================================================
+ * Amir El Chourouk - Unified Stylesheet
+ * Version: 1.0
+ * Description: A complete and unified style file for the website.
+ * ===================================================================
+ */
 
-    <style>
-        :root {
-            --bg-color: #f8f9fa;
-            --header-bg: rgba(255, 255, 255, 0.7);
-            --card-bg: #ffffff;
-            --text-color: #212529;
-            --heading-color: #0d6efd;
-            --accent-color: #0d6efd;
-            --accent-gradient: linear-gradient(45deg, #0d6efd, #0dcaf0);
-            --footer-bg: #212529;
-            --shadow: 0 8px 24px rgba(13, 110, 253, 0.1);
-            --shadow-hover: 0 12px 32px rgba(13, 110, 253, 0.2);
-        }
+/* --- Google Fonts --- */
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap');
 
-        body.dark-mode {
-            --bg-color: #121212;
-            --header-bg: rgba(22, 27, 34, 0.75);
-            --card-bg: #1c1c1c;
-            --text-color: #f0f6fc;
-            --heading-color: #58a6ff;
-            --accent-color: #58a6ff;
-            --accent-gradient: linear-gradient(45deg, #2f81f7, #3fb950);
-            --footer-bg: #0d1117;
-            --shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-            --shadow-hover: 0 12px 32px rgba(0, 0, 0, 0.5);
-        }
+/*
+ * =========================================
+ * :ROOT VARIABLES
+ * =========================================
+ */
+:root {
+    /* Main Site Theme */
+    --bg-color: #f8f9fa;
+    --header-bg: rgba(255, 255, 255, 0.7);
+    --card-bg: #ffffff;
+    --text-color: #212529;
+    --heading-color: #0d6efd;
+    --accent-color: #0d6efd;
+    --accent-gradient: linear-gradient(45deg, #0d6efd, #0dcaf0);
+    --footer-bg: #212529;
+    --shadow: 0 8px 24px rgba(13, 110, 253, 0.1);
+    --shadow-hover: 0 12px 32px rgba(13, 110, 253, 0.2);
 
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        html { scroll-behavior: smooth; }
-        body {
-            font-family: 'Tajawal', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.8;
-            transition: background-color 0.4s, color 0.4s;
-            overflow-x: hidden;
-        }
-        .container { width: 90%; max-width: 1200px; margin: 0 auto; }
-        section { padding: 80px 0; }
-        .section-title { text-align: center; margin-bottom: 60px; font-size: clamp(2rem, 5vw, 3rem); font-weight: 800; color: var(--heading-color); }
+    /* Digital Card Theme */
+    --primary-color: #2c5b8a;
+    --secondary-color: #c5a46d;
+    --icon-color: #777;
+    --success-color: #25D366;
+}
 
-        header {
-            background-color: var(--header-bg);
-            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(128, 128, 128, 0.1);
-            padding: 15px 0; position: sticky; top: 0; z-index: 1000;
-        }
-        .header-content { display: flex; justify-content: space-between; align-items: center; }
-        .logo-container { display: flex; align-items: center; gap: 12px; text-decoration: none; }
-        .logo-container img { height: 50px; width: 50px; border-radius: 8px; }
-        .logo-container h1 { font-size: 1.8rem; color: var(--heading-color); }
-        .nav-controls { display: flex; align-items: center; gap: 20px; }
-        #theme-toggle, #refresh-btn { background: transparent; border: none; color: var(--heading-color); font-size: 1.5rem; cursor: pointer; transition: transform 0.3s ease; }
-        #theme-toggle:hover, #refresh-btn:hover { transform: scale(1.2) rotate(20deg); }
-        nav ul { list-style: none; display: flex; gap: 30px; }
-        nav a { color: var(--text-color); text-decoration: none; font-weight: 700; font-size: 1.1rem; padding: 5px 0; position: relative; transition: color 0.3s; }
-        nav a::after { content: ''; position: absolute; bottom: 0; right: 0; width: 0; height: 3px; background: var(--accent-gradient); border-radius: 3px; transition: width 0.4s ease-in-out; }
-        nav a:hover, nav a.active { color: var(--accent-color); }
-        nav a.active::after { width: 100%; }
-        .hamburger { display: none; font-size: 1.8rem; background: none; border: none; color: var(--heading-color); cursor: pointer; }
+body.dark-mode {
+    /* Main Site Dark Theme */
+    --bg-color: #121212;
+    --header-bg: rgba(22, 27, 34, 0.75);
+    --card-bg: #1c1c1c;
+    --text-color: #f0f6fc;
+    --heading-color: #58a6ff;
+    --accent-color: #58a6ff;
+    --accent-gradient: linear-gradient(45deg, #2f81f7, #3fb950);
+    --footer-bg: #0d1117;
+    --shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    --shadow-hover: 0 12px 32px rgba(0, 0, 0, 0.5);
 
-        .hero { padding: 100px 0; text-align: center; }
-        .hero h2 { font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 800; color: var(--heading-color); margin-bottom: 20px; }
-        .hero p { font-size: 1.3rem; max-width: 600px; margin: 0 auto 30px auto; color: var(--text-color); opacity: 0.8; }
-        .cta-button { background: var(--accent-gradient); color: white; padding: 15px 35px; border-radius: 50px; text-decoration: none; font-size: 1.2rem; font-weight: 700; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
-        .cta-button:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.3); }
+    /* Digital Card Dark Theme */
+    background-color: #121212;
+    color: #ddd;
+}
 
-        .products-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 40px; }
-        .product-card { background-color: var(--card-bg); border-radius: 16px; box-shadow: var(--shadow); overflow: hidden; transition: transform 0.4s, box-shadow 0.4s; display: flex; flex-direction: column; text-align: center; }
-        .product-card:hover { transform: translateY(-10px); box-shadow: var(--shadow-hover); }
-        .product-card img { width: 100%; height: 280px; object-fit: contain; transition: transform 0.4s; padding: 10px; background-color: #fff; }
-        .product-info { padding: 25px; flex-grow: 1; display: flex; flex-direction: column; }
-        .product-info h3 { font-size: 1.6rem; font-weight: 700; margin-bottom: 15px; color: var(--heading-color); flex-grow: 1; }
-        .price-info p { margin: 8px 0; font-size: 1.1rem; }
-        .price-info span { font-weight: 700; font-size: 1.3rem; }
-        .product-actions { margin-top: 20px; }
-        .action-btn { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 12px; border-radius: 10px; color: white !important; text-decoration: none; font-size: 1rem; font-weight: 700; transition: all 0.3s; border: none; width: 100%; background: var(--accent-gradient); cursor: pointer;}
-        .action-btn:hover { transform: scale(1.05); filter: brightness(1.1); }
-        
-        .contact-section { background-color: var(--card-bg); }
-        .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; max-width: 900px; margin: auto; }
-        .contact-details p { font-size: 1.2rem; margin-bottom: 20px; display: flex; align-items: center; gap: 15px; }
-        .contact-details p i { color: var(--accent-color); font-size: 1.5rem; width: 25px; }
-        .contact-details a { color: var(--text-color); text-decoration: none; font-weight: 500; transition: color 0.3s; }
-        .contact-details a:hover { color: var(--accent-color); text-decoration: underline; }
+/*
+ * =========================================
+ * GENERAL & BASE STYLES
+ * =========================================
+ */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
-        .modal {
-            display: none; position: fixed; z-index: 2000; left: 0; top: 0;
-            width: 100%; height: 100%; overflow: auto;
-            background-color: rgba(0,0,0,0.8);
-            backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
-            align-items: center; justify-content: center;
-            padding: 15px;
-        }
-        .modal.show { display: flex; }
-        .modal-box {
-            background-color: var(--card-bg);
-            padding: 30px; border-radius: 15px;
-            width: 95%; max-width: 450px;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            animation: fadeInUp 0.4s ease-out;
-            position: relative;
-        }
-        .modal-close { position: absolute; top: 10px; left: 15px; font-size: 2rem; font-weight: bold; color: var(--text-color); cursor: pointer; opacity: 0.7; }
-        .modal-close:hover { opacity: 1; }
-        .modal-title { font-size: 1.8rem; margin-bottom: 25px; color: var(--heading-color); font-weight: 800; }
-        .modal-actions { display: flex; flex-direction: column; gap: 15px; justify-content: center; margin-top: 25px; }
-        .modal-btn { padding: 12px 25px; border-radius: 8px; font-weight: 700; cursor: pointer; transition: all 0.3s; font-size: 1rem; border: none; }
-        .confirm-btn { background: var(--accent-gradient); color: white; }
-        .cancel-btn { background: #6c757d; color: white; }
-        .secondary-btn { background: transparent; border: 2px solid var(--accent-color); color: var(--accent-color); }
-        
-        .quantity-controls { display: flex; align-items: center; justify-content: center; margin: 25px 0; gap: 15px; }
-        .quantity-btn { background: var(--accent-gradient); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.2s; }
-        .quantity-input { width: 80px; text-align: center; font-size: 1.5rem; padding: 8px; border: 2px solid var(--accent-color); border-radius: 8px; background-color: var(--bg-color); color: var(--text-color); font-weight: 700; }
+html {
+    scroll-behavior: smooth;
+}
 
-        #contactChannelModal .input-group { margin-bottom: 20px; text-align: right; }
-        #contactChannelModal label { display: block; margin-bottom: 8px; font-weight: 700; font-size: 1.1rem; }
-        #contactChannelModal input {
-            width: 100%; padding: 12px; font-size: 1.1rem;
-            border-radius: 8px; border: 2px solid #ccc;
-            background-color: var(--bg-color); color: var(--text-color); transition: border-color 0.3s;
-        }
-        #contactChannelModal input:focus { border-color: var(--accent-color); outline: none; }
-        
-        .social-order-buttons { display: none; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 25px; }
-        .social-order-buttons.show { display: grid; }
-        .social-btn { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 12px; border-radius: 8px; color: white !important; text-decoration: none; font-size: 1rem; font-weight: 700; transition: all 0.3s; border: none; }
-        .social-btn i { font-size: 1.3rem; }
-        .social-btn.whatsapp { background: #25D366; }
-        .social-btn.telegram { background: #0088cc; }
-        .social-btn.facebook { background: #1877F2; }
-        .social-btn.instagram { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
-        .social-btn:hover { transform: scale(1.05); opacity: 0.9; }
+body {
+    font-family: 'Tajawal', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.8;
+    transition: background-color 0.4s, color 0.4s;
+    overflow-x: hidden;
+}
 
-        footer { background-color: var(--footer-bg); color: #adb5bd; padding: 40px 0; text-align: center; }
-        .social-links a { color: #f8f9fa; font-size: 1.5rem; margin: 0 15px; transition: color 0.3s; }
-        .social-links a:hover { color: var(--accent-color); }
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
 
-        .toast-notification {
-            position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%);
-            background-color: #2c3e50; color: white; padding: 15px 25px; border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2); z-index: 3000;
-            opacity: 0; visibility: hidden; transition: all 0.4s ease;
-            text-align: center;
-        }
-        .toast-notification.show { opacity: 1; visibility: visible; bottom: 30px; }
-        
-        .reveal { opacity: 0; transform: translateY(50px); transition: opacity 0.8s, transform 0.8s; }
-        .reveal.visible { opacity: 1; transform: translateY(0); }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
-        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+section {
+    padding: 80px 0;
+}
 
-        @media (max-width: 768px) {
-            .nav-menu {
-                display: none; flex-direction: column; position: absolute;
-                top: 82px; right: 0; width: 100%;
-                background-color: var(--header-bg);
-                backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-                padding: 20px; animation: slideDown 0.3s ease-out;
-            }
-            .nav-menu.active { display: flex; }
-            nav ul { flex-direction: column; width: 100%; text-align: center; gap: 20px; }
-            .hamburger { display: block; }
-            .contact-grid { grid-template-columns: 1fr; gap: 40px; text-align: center; }
-            .contact-details p { justify-content: center; }
-        }
-         @media (max-width: 480px) {
-            .social-order-buttons.show { grid-template-columns: 1fr; }
-         }
-    </style>
+.section-title {
+    text-align: center;
+    margin-bottom: 60px;
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 800;
+    color: var(--heading-color);
+}
+
+body.dark-mode a {
+    color: var(--secondary-color);
+}
+
+/*
+ * =========================================
+ * HEADER & NAVIGATION
+ * =========================================
+ */
+header {
+    background-color: var(--header-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(128, 128, 128, 0.1);
+    padding: 15px 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    transition: all 0.3s;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+}
+
+.logo-container img {
+    height: 50px;
+    width: 50px;
+    border-radius: 8px;
+}
+
+.logo-container h1 {
+    font-size: 1.8rem;
+    color: var(--heading-color);
+}
+
+.nav-controls {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+#theme-toggle, #refresh-btn {
+    background: transparent;
+    border: none;
+    color: var(--heading-color);
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+#theme-toggle:hover, #refresh-btn:hover {
+    transform: scale(1.2) rotate(20deg);
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 30px;
+}
+
+nav a {
+    color: var(--text-color);
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1.1rem;
+    padding: 5px 0;
+    position: relative;
+    transition: color 0.3s;
+}
+
+nav a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 0;
+    height: 3px;
+    background: var(--accent-gradient);
+    border-radius: 3px;
+    transition: width 0.4s ease-in-out;
+}
+
+nav a:hover, nav a.active {
+    color: var(--accent-color);
+}
+
+nav a.active::after {
+    width: 100%;
+}
+
+.hamburger {
+    display: none;
+    font-size: 1.8rem;
+    background: none;
+    border: none;
+    color: var(--heading-color);
+    cursor: pointer;
+}
+
+/*
+ * =========================================
+ * SECTIONS
+ * =========================================
+ */
+
+/* --- Hero Section --- */
+.hero {
+    padding: 100px 0;
+    text-align: center;
+}
+
+.hero h2 {
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    font-weight: 800;
+    color: var(--heading-color);
+    margin-bottom: 20px;
+}
+
+.hero p {
+    font-size: 1.3rem;
+    max-width: 600px;
+    margin: 0 auto 30px auto;
+    color: var(--text-color);
+    opacity: 0.8;
+}
+
+.cta-button {
+    background: var(--accent-gradient);
+    color: white;
+    padding: 15px 35px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-size: 1.2rem;
+    font-weight: 700;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.cta-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+}
+
+/* --- Features Section --- */
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 40px;
+    text-align: center;
+}
+
+.feature-item .icon {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    color: var(--accent-color);
+}
+
+.feature-item h3 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    font-weight: 700;
+}
+
+/* --- About Us / Video Section --- */
+.about-us {
+    background-color: var(--card-bg);
+}
+
+.about-us-content {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.about-us-content p {
+    font-size: 1.2rem;
+    line-height: 1.7;
+    margin-bottom: 40px;
+    opacity: 0.9;
+}
+
+.video-container {
+    width: 100%;
+    max-width: 720px;
+    margin: auto;
+    box-shadow: var(--shadow-hover);
+    border-radius: 16px;
+    overflow: hidden;
+    background: #000;
+}
+
+.video-container video {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* --- Products Section --- */
+.products-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 40px;
+}
+
+.product-card {
+    background-color: var(--card-bg);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    transition: transform 0.4s, box-shadow 0.4s;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+.product-card:hover {
+    transform: translateY(-10px);
+    box-shadow: var(--shadow-hover);
+}
+
+.product-card img {
+    width: 100%;
+    height: 280px;
+    object-fit: contain;
+    transition: transform 0.4s;
+    padding: 10px;
+    background-color: #fff;
+}
+
+.product-info {
+    padding: 25px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-info h3 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+    color: var(--heading-color);
+    flex-grow: 1;
+}
+
+.price-info p {
+    margin: 8px 0;
+    font-size: 1.1rem;
+}
+
+.price-info span {
+    font-weight: 700;
+    font-size: 1.3rem;
+}
+.price-info .price-unite {
+    color: #dc3545;
+}
+
+.product-actions {
+    margin-top: 20px;
+}
+
+.action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px;
+    border-radius: 10px;
+    color: white !important;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 700;
+    transition: all 0.3s;
+    border: none;
+    width: 100%;
+    background: var(--accent-gradient);
+    cursor: pointer;
+}
+
+.action-btn:hover {
+    transform: scale(1.05);
+    filter: brightness(1.1);
+}
+
+/* --- Contact Section --- */
+.contact-section {
+    background-color: var(--card-bg);
+}
+
+.contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 50px;
+    align-items: center;
+    max-width: 900px;
+    margin: auto;
+}
+
+.contact-details {
+    text-align: right;
+}
+
+.contact-details p {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.contact-details p i {
+    color: var(--accent-color);
+    font-size: 1.5rem;
+    width: 25px;
+}
+
+.contact-details a {
+    color: var(--text-color);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.contact-details a:hover {
+    color: var(--accent-color);
+    text-decoration: underline;
+}
+
+.qr-code-container {
+    text-align: center;
+}
+
+.qr-code-container h3 {
+    margin-bottom: 20px;
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.qr-code-container img {
+    max-width: 220px;
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+}
+
+/* --- Digital Business Card Section (#card_visit) --- */
+.unified-section {
+    padding: 60px 20px;
+    text-align: center;
+    font-family: 'Tajawal', sans-serif;
+}
+
+.unified-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+.unified-section .section-title {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    margin-bottom: 40px;
+    font-weight: 800;
+}
+
+.page-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    perspective: 1500px;
+}
+
+.business-card {
+    background: var(--card-bg);
+    width: 100%;
+    border-radius: 20px;
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.15);
+    display: flex;
+    overflow: hidden;
+    border: 1px solid #e0e0e0;
+    transition: transform 0.2s ease-out, box-shadow 0.4s ease;
+    animation: fadeInCard 0.8s ease-out forwards;
+    opacity: 0;
+    cursor: pointer;
+    transform-style: preserve-3d;
+    margin-bottom: 30px;
+}
+
+body.dark-mode .business-card {
+    background-color: #222;
+    box-shadow: 0 15px 45px rgba(255, 255, 255, 0.1);
+}
+
+@keyframes fadeInCard {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.business-card:hover {
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
+}
+
+.card-right {
+    background: linear-gradient(135deg, var(--primary-color), #1a4a7a);
+    color: white;
+    padding: 30px;
+    width: 40%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+body.dark-mode .card-right {
+    background: linear-gradient(135deg, #444c66, #2c3a5a);
+    color: #f0d97e;
+}
+
+.card-right .qr-code-img {
+    width: 160px;
+    height: 160px;
+    background: white;
+    padding: 10px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    transition: transform 0.3s ease;
+}
+
+.business-card:hover .qr-code-img {
+    transform: scale(1.05);
+}
+
+.qr-code-img img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    border-radius: 6px;
+}
+
+.card-right h2 {
+    margin: 10px 0 5px 0;
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--secondary-color);
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+}
+
+.card-right p {
+    margin: 0;
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+.card-right a {
+    color: #fff;
+    text-decoration: none;
+    word-break: break-all;
+    transition: color 0.3s ease;
+}
+
+.card-right a:hover {
+    color: var(--secondary-color);
+}
+
+.card-left {
+    padding: 30px 40px;
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: right;
+}
+
+.tagline {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 3px solid var(--secondary-color);
+}
+
+.description {
+    font-size: 15px;
+    color: #555;
+    line-height: 1.7;
+    margin-bottom: 20px;
+}
+
+.contact-info .info-item {
+    margin: 15px 0;
+    font-size: 16px;
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
+}
+
+.contact-info .info-item i {
+    font-size: 20px;
+    color: var(--icon-color);
+    width: 30px;
+    text-align: center;
+    margin-left: 15px;
+    transition: color 0.3s ease;
+}
+
+.business-card:hover .info-item i {
+    color: var(--secondary-color);
+}
+
+.contact-info a {
+    color: var(--text-color);
+    text-decoration: none;
+    transition: color 0.3s;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.contact-info a:hover {
+    color: var(--secondary-color);
+}
+
+.whatsapp-link a {
+    color: var(--success-color);
+    font-weight: 700;
+}
+
+.business-card:hover .fa-whatsapp {
+    color: var(--success-color) !important;
+}
+
+/* --- Digital Card Actions --- */
+.actions-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 25px;
+    width: 100%;
+}
+
+.download-buttons-container, .social-share-container {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.actions-container h3 {
+    margin-bottom: 0px;
+    color: var(--primary-color);
+}
+
+.btn-download {
+    background: linear-gradient(135deg, var(--secondary-color), #a88a59);
+    color: white;
+    border: none;
+    padding: 14px 30px;
+    font-size: 16px;
+    font-family: 'Tajawal', sans-serif;
+    font-weight: 700;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(197, 164, 109, 0.4);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-download:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(197, 164, 109, 0.5);
+}
+
+.btn-download i {
+    margin-left: 10px;
+}
+
+.social-share-container a {
+    color: white;
+    padding: 10px 15px;
+    border-radius: 6px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: transform 0.2s ease;
+}
+
+.social-share-container a:hover {
+    transform: translateY(-2px);
+}
+.social-share-container .whatsapp { background-color: #25D366; }
+.social-share-container .facebook { background-color: #4267B2; }
+.social-share-container .twitter { background-color: #1DA1F2; }
+.social-share-container .telegram { background-color: #0088cc; }
 
 
+/* --- Download App Section --- */
+.download-app-section {
+    font-family: 'Tajawal', sans-serif;
+    background-color: #f4f7f6;
+    text-align: center;
+    padding: clamp(2rem, 8vw, 4rem) 1rem;
+    border-top: 1px solid #e0e0e0;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.download-app-container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.download-app-section h2 {
+    font-size: clamp(1.8rem, 5vw, 2.5rem);
+    color: #2c3e50;
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+}
+
+.download-app-section p {
+    font-size: clamp(1rem, 2.5vw, 1.1rem);
+    color: #7f8c8d;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+}
+
+.download-btn-android {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    background-color: #4CAF50;
+    color: white;
+    padding: 0.8rem 1.8rem;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+}
+
+.download-btn-android .fab {
+    font-size: 1.5rem;
+}
+
+.download-btn-android:hover {
+    background-color: #45a049;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+}
 
 
+/*
+ * =========================================
+ * MODALS
+ * =========================================
+ */
+
+/* --- General Modal Styles --- */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.8);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-box {
+    background-color: var(--card-bg);
+    padding: 30px;
+    border-radius: 15px;
+    width: 95%;
+    max-width: 450px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    animation: fadeInUp 0.4s ease-out;
+    position: relative;
+}
+
+.modal-close {
+    position: absolute;
+    top: 10px;
+    left: 15px;
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--text-color);
+    cursor: pointer;
+    opacity: 0.7;
+}
+
+.modal-close:hover {
+    opacity: 1;
+}
+
+.modal-title {
+    font-size: 1.8rem;
+    margin-bottom: 25px;
+    color: var(--heading-color);
+    font-weight: 800;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 25px;
+    flex-wrap: wrap;
+}
+
+.modal-btn {
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 1rem;
+    border: none;
+}
+
+.confirm-btn {
+    background: var(--accent-gradient);
+    color: white;
+}
+
+.cancel-btn {
+    background: #6c757d;
+    color: white;
+}
+
+.secondary-btn {
+    background: transparent;
+    border: 2px solid var(--accent-color);
+    color: var(--accent-color);
+}
+
+/* --- Quantity Modal --- */
+.quantity-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 25px 0;
+    gap: 15px;
+}
+
+.quantity-btn {
+    background: var(--accent-gradient);
+    color: white;
+    border: none;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s;
+}
+
+.quantity-input {
+    width: 80px;
+    text-align: center;
+    font-size: 1.5rem;
+    padding: 8px;
+    border: 2px solid var(--accent-color);
+    border-radius: 8px;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-weight: 700;
+}
+
+/* --- Contact/Order Modal --- */
+#contactChannelModal .input-group {
+    margin-bottom: 20px;
+    text-align: right;
+}
+
+#contactChannelModal label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+#contactChannelModal input {
+    width: 100%;
+    padding: 12px;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    border: 2px solid #ccc;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: border-color 0.3s;
+}
+
+#contactChannelModal input:focus {
+    border-color: var(--accent-color);
+    outline: none;
+}
+
+.social-order-buttons {
+    display: none;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.social-order-buttons.show {
+    display: grid;
+}
+
+.social-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px;
+    border-radius: 8px;
+    color: white !important;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 700;
+    transition: all 0.3s;
+    border: none;
+}
+
+.social-btn i {
+    font-size: 1.3rem;
+}
+.social-btn.whatsapp { background: #25D366; }
+.social-btn.telegram { background: #0088cc; }
+.social-btn.facebook { background: #1877F2; }
+.social-btn.instagram { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
+.social-btn:hover {
+    transform: scale(1.05);
+    opacity: 0.9;
+}
+
+/* --- Phone Number Modal --- */
+.phone-number {
+      cursor: pointer;
+      color: #000;
+      text-decoration: underline;
+      font-weight: 900;
+      font-size: 16px;
+      transition: color 0.3s ease;
+}
+.phone-number:hover {
+      color: #c5a46d;
+}
+
+#phoneModal {
+      display: none;
+      font-family: 'Tajawal', sans-serif;
+}
+#phoneModal .modal-content {
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      text-align: center;
+      max-width: 320px;
+      width: 90%;
+      user-select: none;
+}
+#phoneModal h3 {
+      margin-bottom: 20px;
+      font-size: 18px;
+}
+#phoneModal p#modalPhoneNumber {
+      font-weight: 900;
+      font-size: 20px;
+      margin-bottom: 25px;
+      direction: ltr;
+      letter-spacing: 2px;
+}
+#phoneModal button {
+      width: 100%;
+      padding: 12px 0;
+      margin-bottom: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      font-weight: 700;
+}
+#phoneModal button.call-btn { background-color: #2c5b8a; color: white; }
+#phoneModal button.call-btn:hover { background-color: #24486e; }
+#phoneModal button.copy-btn { background-color: #c5a46d; color: white; }
+#phoneModal button.copy-btn:hover { background-color: #a88a59; }
+#phoneModal button.cancel-btn { background-color: #999; color: white; margin-top: 0; }
+#phoneModal button.cancel-btn:hover { background-color: #777; }
 
 
+/*
+ * =========================================
+ * FOOTER
+ * =========================================
+ */
+footer {
+    background-color: var(--footer-bg);
+    color: #adb5bd;
+    padding: 40px 0;
+    text-align: center;
+}
 
+.social-links a {
+    color: #f8f9fa;
+    font-size: 1.5rem;
+    margin: 0 15px;
+    transition: color 0.3s;
+}
 
+.social-links a:hover {
+    color: var(--accent-color);
+}
 
+/*
+ * =========================================
+ * UTILITIES & ANIMATIONS
+ * =========================================
+ */
 
+/* --- Toast Notification --- */
+.toast-notification {
+    position: fixed;
+    bottom: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #2c3e50;
+    color: white;
+    padding: 15px 25px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    z-index: 3000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s ease;
+    text-align: center;
+}
 
+.toast-notification.show {
+    opacity: 1;
+    visibility: visible;
+    bottom: 30px;
+}
 
-    <style>
-        /* --- المتغيرات العامة (تصميم فاخر) --- */
-        :root {
-            --bg-color: #f8f9fa;
-            --header-bg: rgba(255, 255, 255, 0.7);
-            --card-bg: #ffffff;
-            --text-color: #212529;
-            --heading-color: #0d6efd;
-            --accent-color: #0d6efd;
-            --accent-gradient: linear-gradient(45deg, #0d6efd, #0dcaf0);
-            --footer-bg: #212529;
-            --shadow: 0 8px 24px rgba(13, 110, 253, 0.1);
-            --shadow-hover: 0 12px 32px rgba(13, 110, 253, 0.2);
-        }
+/* --- Scroll & Load Animations --- */
+.reveal {
+    opacity: 0;
+    transform: translateY(50px);
+    transition: opacity 0.8s, transform 0.8s;
+}
 
-        body.dark-mode {
-            --bg-color: #121212;
-            --header-bg: rgba(22, 27, 34, 0.75);
-            --card-bg: #1c1c1c;
-            --text-color: #f0f6fc;
-            --heading-color: #58a6ff;
-            --accent-color: #58a6ff;
-            --accent-gradient: linear-gradient(45deg, #2f81f7, #3fb950);
-            --footer-bg: #0d1117;
-            --shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-            --shadow-hover: 0 12px 32px rgba(0, 0, 0, 0.5);
-        }
+.reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
 
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        html { scroll-behavior: smooth; }
-        body {
-            font-family: 'Tajawal', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.8;
-            transition: background-color 0.4s, color 0.4s;
-            overflow-x: hidden;
-        }
-        .container { width: 90%; max-width: 1200px; margin: 0 auto; }
-        section { padding: 80px 0; }
-        .section-title { text-align: center; margin-bottom: 60px; font-size: clamp(2rem, 5vw, 3rem); font-weight: 800; color: var(--heading-color); }
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
 
-        /* --- رأس الصفحة (Header) --- */
-        header {
-            background-color: var(--header-bg);
-            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(128, 128, 128, 0.1);
-            padding: 15px 0; position: sticky; top: 0; z-index: 1000; transition: all 0.3s;
-        }
-        .header-content { display: flex; justify-content: space-between; align-items: center; }
-        .logo-container { display: flex; align-items: center; gap: 12px; text-decoration: none; }
-        .logo-container img { height: 50px; width: 50px; border-radius: 8px; }
-        .logo-container h1 { font-size: 1.8rem; color: var(--heading-color); }
-        .nav-controls { display: flex; align-items: center; gap: 20px; }
-        #theme-toggle, #refresh-btn { background: transparent; border: none; color: var(--heading-color); font-size: 1.5rem; cursor: pointer; transition: transform 0.3s ease; }
-        #theme-toggle:hover, #refresh-btn:hover { transform: scale(1.2) rotate(20deg); }
-        nav ul { list-style: none; display: flex; gap: 30px; }
-        nav a { color: var(--text-color); text-decoration: none; font-weight: 700; font-size: 1.1rem; padding: 5px 0; position: relative; transition: color 0.3s; }
-        nav a::after { content: ''; position: absolute; bottom: 0; right: 0; width: 0; height: 3px; background: var(--accent-gradient); border-radius: 3px; transition: width 0.4s ease-in-out; }
-        nav a:hover, nav a.active { color: var(--accent-color); }
-        nav a.active::after { width: 100%; }
-        .hamburger { display: none; font-size: 1.8rem; background: none; border: none; color: var(--heading-color); cursor: pointer; }
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
 
-        /* --- قسم Hero --- */
-        .hero { padding: 100px 0; text-align: center; }
-        .hero h2 { font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 800; color: var(--heading-color); margin-bottom: 20px; }
-        .hero p { font-size: 1.3rem; max-width: 600px; margin: 0 auto 30px auto; color: var(--text-color); opacity: 0.8; }
-        .cta-button { background: var(--accent-gradient); color: white; padding: 15px 35px; border-radius: 50px; text-decoration: none; font-size: 1.2rem; font-weight: 700; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
-        .cta-button:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.3); }
+/*
+ * =========================================
+ * MEDIA QUERIES (RESPONSIVE DESIGN)
+ * =========================================
+ */
+@media (max-width: 768px) {
+    .nav-menu {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 82px;
+        right: 0;
+        width: 100%;
+        background-color: var(--header-bg);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        padding: 20px;
+        animation: slideDown 0.3s ease-out;
+    }
 
-        /* --- قسم الميزات --- */
-        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; text-align: center; }
-        .feature-item .icon { font-size: 3rem; margin-bottom: 20px; color: var(--accent-color); }
-        .feature-item h3 { font-size: 1.5rem; margin-bottom: 10px; font-weight: 700; }
+    .nav-menu.active {
+        display: flex;
+    }
 
-        /* --- قسم الفيديو التعريفي (جديد) --- */
-        .about-us { background-color: var(--card-bg); }
-        .about-us-content { max-width: 800px; margin: 0 auto; text-align: center; }
-        .about-us-content p { font-size: 1.2rem; line-height: 1.7; margin-bottom: 40px; opacity: 0.9; }
-        .video-container { width: 100%; max-width: 720px; margin: auto; box-shadow: var(--shadow-hover); border-radius: 16px; overflow: hidden; background: #000; }
-        .video-container video { width: 100%; height: auto; display: block; }
-        
-        /* --- قسم المنتجات --- */
-        .products-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 40px; }
-        .product-card { background-color: var(--card-bg); border-radius: 16px; box-shadow: var(--shadow); overflow: hidden; transition: transform 0.4s, box-shadow 0.4s; display: flex; flex-direction: column; text-align: center; }
-        .product-card:hover { transform: translateY(-10px); box-shadow: var(--shadow-hover); }
-        .product-card img { width: 100%; height: 280px; object-fit: contain; transition: transform 0.4s; padding: 10px; background-color: #fff; }
-        .product-info { padding: 25px; flex-grow: 1; display: flex; flex-direction: column; }
-        .product-info h3 { font-size: 1.6rem; font-weight: 700; margin-bottom: 15px; color: var(--heading-color); flex-grow: 1; }
-        .price-info p { margin: 8px 0; font-size: 1.1rem; }
-        .price-info span { font-weight: 700; font-size: 1.3rem; }
-        .product-actions { margin-top: 20px; }
-        .action-btn { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 12px; border-radius: 10px; color: white !important; text-decoration: none; font-size: 1rem; font-weight: 700; transition: all 0.3s; border: none; width: 100%; background: var(--accent-gradient); cursor: pointer;}
-        .action-btn:hover { transform: scale(1.05); filter: brightness(1.1); }
+    nav ul {
+        flex-direction: column;
+        width: 100%;
+        text-align: center;
+        gap: 20px;
+    }
 
-        /* --- قسم تواصل معنا (مُحسّن) --- */
-        .contact-section { background-color: var(--card-bg); }
-        .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; max-width: 900px; margin: auto; }
-        .contact-details { text-align: right; }
-        .contact-details p { font-size: 1.2rem; margin-bottom: 20px; display: flex; align-items: center; gap: 15px; }
-        .contact-details p i { color: var(--accent-color); font-size: 1.5rem; width: 25px; }
-        .contact-details a { color: var(--text-color); text-decoration: none; font-weight: 500; transition: color 0.3s; }
-        .contact-details a:hover { color: var(--accent-color); text-decoration: underline; }
-        .qr-code-container { text-align: center; }
-        .qr-code-container h3 { margin-bottom: 20px; font-size: 1.3rem; font-weight: 700; }
-        .qr-code-container img { max-width: 220px; width: 100%; height: auto; border-radius: 12px; box-shadow: var(--shadow); }
+    .hamburger {
+        display: block;
+    }
 
-        /* --- النوافذ المنبثقة (Modals) --- */
-        .modal {
-            display: none; position: fixed; z-index: 2000; left: 0; top: 0;
-            width: 100%; height: 100%; overflow: auto;
-            background-color: rgba(0,0,0,0.8);
-            backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
-            align-items: center; justify-content: center;
-            padding: 15px;
-        }
-        .modal.show { display: flex; }
-        .modal-box {
-            background-color: var(--card-bg);
-            padding: 30px; border-radius: 15px;
-            width: 95%; max-width: 450px;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            animation: fadeInUp 0.4s ease-out;
-            position: relative;
-        }
-        .modal-close { position: absolute; top: 10px; left: 15px; font-size: 2rem; font-weight: bold; color: var(--text-color); cursor: pointer; opacity: 0.7; }
-        .modal-close:hover { opacity: 1; }
-        .modal-title { font-size: 1.8rem; margin-bottom: 25px; color: var(--heading-color); font-weight: 800; }
-        .modal-actions { display: flex; gap: 15px; justify-content: center; margin-top: 25px; flex-wrap: wrap; }
-        .modal-btn { padding: 12px 25px; border-radius: 8px; font-weight: 700; cursor: pointer; transition: all 0.3s; font-size: 1rem; border: none; }
-        .confirm-btn { background: var(--accent-gradient); color: white; }
-        .cancel-btn { background: #6c757d; color: white; }
-        
-        .quantity-controls { display: flex; align-items: center; justify-content: center; margin: 25px 0; gap: 15px; }
-        .quantity-btn { background: var(--accent-gradient); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.2s; }
-        .quantity-input { width: 80px; text-align: center; font-size: 1.5rem; padding: 8px; border: 2px solid var(--accent-color); border-radius: 8px; background-color: var(--bg-color); color: var(--text-color); font-weight: 700; }
+    .contact-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+        text-align: center;
+    }
+    .contact-details {
+        text-align: center;
+    }
+    .contact-details p {
+        justify-content: center;
+    }
+    .qr-code-container {
+        order: -1;
+    }
 
-        #contactChannelModal .input-group { margin-bottom: 20px; text-align: right; }
-        #contactChannelModal label { display: block; margin-bottom: 8px; font-weight: 700; font-size: 1.1rem; }
-        #contactChannelModal input {
-            width: 100%; padding: 12px; font-size: 1.1rem;
-            border-radius: 8px; border: 2px solid #ccc;
-            background-color: var(--bg-color); color: var(--text-color); transition: border-color 0.3s;
-        }
-        #contactChannelModal input:focus { border-color: var(--accent-color); outline: none; }
-        .social-order-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 25px; }
-        .social-btn { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 12px; border-radius: 8px; color: white !important; text-decoration: none; font-size: 1rem; font-weight: 700; transition: all 0.3s; border: none; }
-        .social-btn i { font-size: 1.3rem; }
-        .social-btn.whatsapp { background: #25D366; }
-        .social-btn.telegram { background: #0088cc; }
-        .social-btn.facebook { background: #1877F2; }
-        .social-btn.instagram { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
-        .social-btn:hover { transform: scale(1.05); opacity: 0.9; }
+    .unified-section .section-title {
+        font-size: 2rem;
+    }
+    .page-container {
+        perspective: none;
+    }
+    .business-card {
+        flex-direction: column;
+    }
+    .card-left, .card-right {
+        width: 100%;
+        padding: 30px;
+        box-sizing: border-box;
+    }
+    .card-right {
+        order: -1;
+    }
+    .tagline {
+        font-size: 20px;
+    }
+    .actions-container {
+        gap: 20px;
+    }
+    .social-order-buttons {
+        grid-template-columns: 1fr;
+    }
+}
 
-        /* --- ذيل الصفحة (Footer) --- */
-        footer { background-color: var(--footer-bg); color: #adb5bd; padding: 40px 0; text-align: center; }
-        .social-links a { color: #f8f9fa; font-size: 1.5rem; margin: 0 15px; transition: color 0.3s; }
-        .social-links a:hover { color: var(--accent-color); }
+@media (max-width: 480px) {
+    .hero h2 {
+        font-size: 2.2rem;
+    }
+    .container {
+        width: 95%;
+    }
+    .modal-title {
+        font-size: 1.5rem;
+    }
+    .social-order-buttons.show {
+        grid-template-columns: 1fr;
+    }
+}
 
-        /* --- رسالة التنبيه (Toast) --- */
-        .toast-notification {
-            position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%);
-            background-color: #2c3e50; color: white; padding: 15px 25px; border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2); z-index: 3000;
-            opacity: 0; visibility: hidden; transition: all 0.4s ease;
-        }
-        .toast-notification.show { opacity: 1; visibility: visible; bottom: 30px; }
-        
-        /* --- حركات التمرير والرسوم المتحركة --- */
-        .reveal { opacity: 0; transform: translateY(50px); transition: opacity 0.8s, transform 0.8s; }
-        .reveal.visible { opacity: 1; transform: translateY(0); }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
-        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* --- التجاوب مع الشاشات --- */
-        @media (max-width: 768px) {
-            .nav-menu {
-                display: none; flex-direction: column; position: absolute;
-                top: 82px; right: 0; width: 100%;
-                background-color: var(--header-bg);
-                backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-                padding: 20px; animation: slideDown 0.3s ease-out;
-            }
-            .nav-menu.active { display: flex; }
-            nav ul { flex-direction: column; width: 100%; text-align: center; gap: 20px; }
-            .hamburger { display: block; }
-            .social-order-buttons { grid-template-columns: 1fr; }
-            .contact-grid { grid-template-columns: 1fr; gap: 40px; }
-            .contact-details { text-align: center; }
-            .contact-details p { justify-content: center; }
-            .qr-code-container { order: -1; }
-        }
-        @media (max-width: 480px) {
-            .hero h2 { font-size: 2.2rem; }
-            .container { width: 95%; }
-            .modal-title { font-size: 1.5rem; }
-        }
-    </style>
+</style>
 </head>
 </head>
 <body>
@@ -1211,37 +2017,40 @@ body.dark-mode .card-right {
         const products = [
 
 
+    { name: 'جافيل 5 لتر', gros: '135.00 د.ج', superGros: '125.00 د.ج', prixUnite: '150.00 د.ج', image: 'PIC/JAVAIL 5L.jpg' },
+    { name: 'جافيل 1 لتر', gros: '42.00 د.ج', superGros: '35.00 د.ج', prixUnite: '50.00 د.ج', image: 'PIC/JAVAIL 1 L.jpg' },
+    { name: 'صانيبون 5 لتر', gros: '165.00 د.ج', superGros: '155.00 د.ج', prixUnite: '200.00 د.ج', image: 'PIC/SANIBON 5 L.jpg' },
+    { name: 'صانيبون 1 لتر', gros: '85.00 د.ج', superGros: '75.00 د.ج', prixUnite: '100.00 د.ج', image: 'PIC/SANIBON 1L.jpg' },
+    { name: 'منظف الأرضيات 1 لتر', gros: '95.00 د.ج', superGros: '85.50 د.ج', prixUnite: '110.00 د.ج', image: 'PIC/LAVESOLE 1L.jpg' },
+    { name: 'سائل الأواني 5 لتر', gros: '310.00 د.ج', superGros: '290.00 د.ج', prixUnite: '330.00 د.ج', image: 'PIC/AWANI 5 L.png' },
+    { name: 'سائل الأواني 1 لتر', gros: '105.00 د.ج', superGros: '90.00 د.ج', prixUnite: '120.00 د.ج', image: 'PIC/AWANI 1 L.png' },
 
-            { name: 'جافيل 5 لتر', gros: '135.00 د.ج', superGros: '125.00 د.ج', image: 'PIC/JAVAIL 5L.jpg' },
-            { name: 'جافيل 1 لتر', gros: '42.00 د.ج', superGros: '35.00 د.ج', image: 'PIC/JAVAIL 1 L.jpg' },
-            { name: 'صانيبون 5 لتر', gros: '165.00 د.ج', superGros: '155.00 د.ج', image: 'PIC/SANIBON 5 L.jpg' },
-            { name: 'صانيبون 1 لتر', gros: '85.00 د.ج', superGros: '75.00 د.ج', image: 'PIC/SANIBON 1L.jpg' },
-            { name: 'منظف الأرضيات 1 لتر', gros: '95.00 د.ج', superGros: '85.50 د.ج', image: 'PIC/LAVESOLE 1L.jpg' },
-            { name: 'سائل الأواني 5 لتر', gros: '310.00 د.ج', superGros: '290.00 د.ج', image: 'PIC/AWANI 5 L.png' },
-            { name: 'سائل الأواني 1 لتر', gros: '105.00 د.ج', superGros: '90.00 د.ج', image: 'PIC/AWANI 1 L.png' },
-        ];
+
+  ];
 
         const productsContainer = document.getElementById('products-container');
-        if(productsContainer) {
-            products.forEach(product => {
-                const card = `
-                    <div class="product-card reveal">
-                        <img src="${product.image}" alt="${product.name}" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/280x280/ffffff/cccccc?text=Image+Not+Found';">
-                        <div class="product-info">
-                            <h3>${product.name}</h3>
-                            <div class="price-info">
-                                <p>سعر الجملة: <span class="price-super-gros">${product.superGros}</span></p>
-                                <p>شبه جملة: <span class="price-gros">${product.gros}</span></p>
-                            </div>
-                            <div class="product-actions">
-                                <button class="action-btn order-btn" data-product-name="${product.name}"><i class="fas fa-shopping-cart"></i> اطلب الآن</button>
-                            </div>
-                        </div>
-                    </div>`;
-                productsContainer.innerHTML += card;
-            });
-        }
+        if(productsContainer) 
+        
+        {products.forEach(product => {
+    const card = `
+        <div class="product-card reveal">
+            <img src="${product.image}" alt="${product.name}" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/280x280/ffffff/cccccc?text=Image+Not+Found';">
+            <div class="product-info">
+                <h3>${product.name}</h3>
+                <div class="price-info">
+                    <p>سعر الوحدة: <span class="price-unite">${product.prixUnite}</span></p>
+                    <p>سعر الجملة: <span class="price-super-gros">${product.superGros}</span></p>
+                    <p>شبه جملة: <span class="price-gros">${product.gros}</span></p>
+                </div>
+                <div class="product-actions">
+                    <button class="action-btn order-btn" data-product-name="${product.name}"><i class="fas fa-shopping-cart"></i> اطلب الآن</button>
+                </div>
+            </div>
+        </div>`;
+    productsContainer.innerHTML += card;
+});
 
+        }
         const themeToggle = document.getElementById('theme-toggle');
         const body = document.body;
         const currentTheme = localStorage.getItem('theme');
@@ -1413,6 +2222,8 @@ body.dark-mode .card-right {
 
 </body>
 </html>
+
+
 
 
 
