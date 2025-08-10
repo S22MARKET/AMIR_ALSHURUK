@@ -3,823 +3,743 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>S22 Market - لوحة التحكم المطورة</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <title>نظام إدارة الحضور (الإصدار النهائي)</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800&display=swap" rel="stylesheet">
+    
     <style>
-        body { font-family: 'Tajawal', sans-serif; background-color: #f0f2f5; }
-        .hidden { display: none; }
-        .active-tab { background-color: #4f46e5; color: white; }
-        .dashboard-panel { animation: fadeIn 0.5s; }
-        .modal-backdrop {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.6); z-index: 40;
-            display: flex; align-items: center; justify-content: center;
+        /* --- المتغيرات والأنماط العامة --- */
+        :root {
+            --primary-color: #0d6efd; --primary-dark: #0a58ca; --primary-light: #e7f1ff;
+            --bg-color: #f0f2f5; --card-bg: #ffffff; --text-color: #212529; --light-text: #6c757d;
+            --border-color: #dee2e6; --shadow: 0 8px 25px rgba(0, 0, 0, 0.07);
+            --success-color: #198754; --danger-color: #dc3545; --warning-color: #ffc107; --info-color: #0dcaf0;
         }
-        .modal-content {
-            background-color: white; padding: 1.5rem; border-radius: 0.75rem;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 90%;
-            max-width: 700px; z-index: 50; max-height: 90vh; overflow-y: auto;
+        body.dark-theme {
+            --primary-color: #5887ff; --primary-dark: #3a52b1; --primary-light: #2a2f4c;
+            --bg-color: #121212; --card-bg: #1e1e1e; --text-color: #e0e0e0; --light-text: #888;
+            --border-color: #333; --shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
         }
-        .loader {
-            border: 5px solid #f3f3f3; border-top: 5px solid #4f46e5;
-            border-radius: 50%; width: 50px; height: 50px;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        *, *::before, *::after { transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; box-sizing: border-box; }
+        body { font-family: 'Cairo', sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 15px; min-height: 100vh; line-height: 1.6; }
+        .container { max-width: 1400px; margin: auto; padding-bottom: 30px; display: none; } /* Hidden by default */
+        header { display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 20px; padding-top: 10px; gap: 15px; }
+        header h1 { color: var(--primary-color); font-size: clamp(2em, 5vw, 2.8em); font-weight: 800; margin: 0; }
+        .header-controls { display: flex; align-items: center; gap: 10px; width: 100%; justify-content: flex-start; flex-wrap: wrap; }
+        .card { background: var(--card-bg); border-radius: 16px; padding: 20px; margin-bottom: 25px; box-shadow: var(--shadow); border: 1px solid var(--border-color); }
+        .card-header { display: flex; flex-wrap: wrap; gap: 15px; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; }
+        .card-header h2 { margin: 0; color: var(--primary-color); font-size: clamp(1.4em, 4vw, 1.6em); }
+        .grid-container { display: grid; gap: 15px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 18px; border-radius: 8px; cursor: pointer; font-weight: 700; color: #fff; transition: all 0.25s ease; font-family: 'Cairo', sans-serif; font-size: 0.95em; text-decoration: none; white-space: nowrap; border: 1px solid transparent; }
+        .btn:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0,0,0,0.2); }
+        .btn.primary { background-color: var(--primary-color); }
+        .btn.primary.outline { background-color: transparent; border-color: var(--primary-color); color: var(--primary-color); }
+        .btn.primary.outline:hover { background-color: var(--primary-color); color: #fff; }
+        .btn.danger.outline { background-color: transparent; border-color: var(--danger-color); color: var(--danger-color); }
+        .btn.danger.outline:hover { background-color: var(--danger-color); color: #fff; }
+        /* --- ألوان أزرار الحضور والغياب المحسنة --- */
+        .btn.success { background-color: var(--success-color); border-color: var(--success-color); }
+        .btn.danger { background-color: var(--danger-color); border-color: var(--danger-color); }
+        .btn.success:hover:not(:disabled) { background-color: color-mix(in srgb, var(--success-color) 80%, black); }
+        .btn.danger:hover:not(:disabled) { background-color: color-mix(in srgb, var(--danger-color) 80%, black); }
+        .btn:disabled { background-color: var(--light-text); cursor: not-allowed; transform: none; box-shadow: none; opacity: 0.7; }
+        input, select, textarea { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; background-color: var(--bg-color); color: var(--text-color); font-family: 'Cairo', sans-serif; font-size: 1em; }
+        .table-wrapper { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; min-width: 700px; }
+        th, td { padding: 14px 12px; text-align: right; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
+        thead th { background-color: var(--primary-light); color: var(--primary-dark); font-size: 1.1em; }
+        tbody tr:hover { background-color: color-mix(in srgb, var(--primary-color) 8%, transparent); }
+        .status-badge { padding: 5px 12px; border-radius: 20px; font-weight: bold; font-size: 0.85em; display: inline-block; min-width: 80px; text-align: center; }
+        .status-present { background-color: color-mix(in srgb, var(--success-color) 20%, transparent); color: var(--success-color); }
+        .status-absent { background-color: color-mix(in srgb, var(--danger-color) 20%, transparent); color: var(--danger-color); }
+        .status-none { background-color: color-mix(in srgb, var(--light-text) 20%, transparent); color: var(--light-text); }
+        .spinner { border: 4px solid var(--primary-light); width: 40px; height: 40px; border-radius: 50%; border-left-color: var(--primary-color); animation: spin 1s ease infinite; margin: 20px auto; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .stat-card { background-color: var(--card-bg); border-radius: 12px; padding: 20px; display: flex; align-items: center; gap: 20px; border-right: 5px solid; color: var(--primary-color); }
+        .stat-card i { font-size: clamp(2em, 6vw, 2.5em); opacity: 0.7; }
+        .stat-card .stat-value { font-size: clamp(1.8em, 5vw, 2em); font-weight: 800; display: block; }
+        .stat-card.success { border-color: var(--success-color); color: var(--success-color); }
+        .stat-card.danger { border-color: var(--danger-color); color: var(--danger-color); }
+        .stat-card.info { border-color: var(--info-color); color: var(--info-color); }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.7); align-items: center; justify-content: center; backdrop-filter: blur(5px); padding: 15px; animation: fadeIn 0.3s; }
+        .modal-content { background-color: var(--card-bg); margin: auto; padding: 25px; width: 100%; max-width: 500px; border-radius: 16px; animation: slideDown 0.4s; position: relative; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideDown { from { transform: translateY(-30px); opacity: 0; } to { translateY(0); opacity: 1; } }
+        .close-btn { color: #aaa; position: absolute; left: 20px; top: 15px; font-size: 28px; font-weight: bold; cursor: pointer; }
+        #toast-container { position: fixed; bottom: 20px; left: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
+        .toast { padding: 15px 20px; border-radius: 8px; color: #fff; font-weight: bold; box-shadow: 0 5px 15px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 10px; opacity: 0; transform: translateY(100px); animation: slideUp 0.5s forwards; }
+        @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
+        .toast.success { background-color: var(--success-color); }
+        .toast.error { background-color: var(--danger-color); }
+        .action-buttons { display: flex; gap: 8px; flex-wrap: nowrap; }
+        .report-controls { display: flex; gap: 15px; align-items: center; flex-wrap: wrap; }
+        #report-chart-container { max-height: 400px; margin-top: 20px; }
+        .empty-state { text-align: center; padding: 40px; color: var(--light-text); }
+        .empty-state i { font-size: 3em; margin-bottom: 10px; }
 
-        /* Responsive table styles */
-        @media (max-width: 768px) {
-            .responsive-table thead { display: none; }
-            .responsive-table tr {
-                display: block;
-                border: 1px solid #e5e7eb;
-                border-radius: 0.5rem;
-                padding: 1rem;
-                margin-bottom: 1rem;
-                background-color: white;
-                box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-            }
-             .responsive-table td {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: 0.5rem 0;
-                border-bottom: 1px solid #f3f4f6;
-            }
-            .responsive-table td:last-child { border-bottom: none; }
-            .responsive-table td::before {
-                content: attr(data-label);
-                font-weight: 600;
-                margin-left: 0.5rem; /* Adjusted for RTL */
-            }
-             .responsive-table .actions-cell {
-                justify-content: flex-end;
-            }
-             .responsive-table .actions-cell::before {
-                content: "";
-            }
+        /* --- شاشة كلمة المرور --- */
+        #login-modal { display: flex; }
+        #login-modal .modal-content { max-width: 400px; }
+        #login-spinner { display: none; }
+        
+        /* --- تحسينات الشاشات الصغيرة --- */
+        @media (min-width: 768px) {
+            header { flex-direction: row; justify-content: space-between; align-items: center; }
+            .header-controls { width: auto; }
+        }
+        @media (max-width: 600px) {
+            .action-buttons { flex-direction: column; align-items: stretch; width: 120px; }
+            .action-buttons .btn { width: 100%; }
+        }
+        @media print {
+            body { padding: 0; margin: 0; background-color: #fff; color: #000; }
+            .card { box-shadow: none; border: 1px solid #ccc; }
+            header, .header-controls, .stat-card, .action-buttons, #add-employee-btn, .report-controls, .no-print { display: none !important; }
+            .container { max-width: 100%; display: block !important; }
+            table { min-width: 100%; font-size: 10pt; }
+            th, td { padding: 8px; }
+            #report-chart-container, #login-modal, #password-modal, #attendance-date-picker-container { display: none; } /* Hide chart and modals in print */
         }
     </style>
 </head>
 <body>
 
-    <div id="login-page" class="min-h-screen flex items-center justify-center bg-gray-50">
-        <div class="max-w-md w-full bg-white p-8 rounded-2xl shadow-lg text-center">
-            <i class="fas fa-user-shield text-5xl text-indigo-600 mb-4"></i>
-            <h2 class="text-3xl font-extrabold text-gray-900 mb-2">لوحة التحكم</h2>
-            <p class="text-gray-600 mb-6">الرجاء تسجيل الدخول للمتابعة.</p>
+    <div id="toast-container"></div>
+
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <h2><i class="fas fa-lock"></i> تسجيل الدخول</h2>
             <form id="login-form">
-                <div class="space-y-4">
-                    <input type="email" id="admin-email" class="w-full px-4 py-3 bg-gray-100 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500 transition" placeholder="البريد الإلكتروني" required>
-                    <input type="password" id="admin-password" class="w-full px-4 py-3 bg-gray-100 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500 transition" placeholder="كلمة المرور" required>
+                <div style="margin-bottom: 15px;">
+                    <label for="password-input">كلمة المرور</label>
+                    <input type="password" id="password-input" required>
                 </div>
-                <p id="login-error" class="hidden text-red-500 mt-3">البريد الإلكتروني أو كلمة المرور غير صحيحة.</p>
-                <button type="submit" class="w-full mt-6 bg-indigo-600 text-white font-bold py-3 rounded-lg hover:bg-indigo-700 transition-colors text-lg">
-                    <i class="fas fa-sign-in-alt mr-2"></i> دخول
-                </button>
+                <button type="submit" class="btn primary" style="width:100%;"><i class="fas fa-sign-in-alt"></i> دخول</button>
+                <div id="login-spinner" class="spinner"></div>
             </form>
-             <a href="index.html" class="block w-full mt-4 bg-gray-200 text-gray-700 font-bold py-3 rounded-lg hover:bg-gray-300 transition-colors text-lg">
-                <i class="fas fa-arrow-left mr-2"></i> العودة للمتجر
-            </a>
+        </div>
+    </div>
+    
+    <div id="password-modal" class="modal">
+        <div class="modal-content">
+             <span class="close-btn">&times;</span>
+            <h2>تغيير كلمة المرور</h2>
+            <form id="password-change-form">
+                 <div style="margin-bottom: 15px;">
+                    <label for="current-password">كلمة المرور الحالية</label>
+                    <input type="password" id="current-password" required>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label for="new-password">كلمة المرور الجديدة</label>
+                    <input type="password" id="new-password" required>
+                </div>
+                <button type="submit" class="btn primary" style="width:100%;"><i class="fas fa-key"></i> حفظ كلمة المرور الجديدة</button>
+            </form>
         </div>
     </div>
 
-    <div id="dashboard-page" class="hidden">
-        <div class="relative min-h-screen md:flex">
-            <div class="bg-gray-800 text-gray-100 flex justify-between md:hidden">
-                <a href="#" class="block p-4 text-white font-bold">S22 Market</a>
-                <button id="mobile-menu-btn" class="p-4 focus:outline-none focus:bg-gray-700">
-                    <i class="fas fa-bars"></i>
-                </button>
+    <div class="container" id="main-container">
+        <header>
+            <h1><i class="fas fa-calendar-check" style="color: var(--primary-color);"></i> نظام الحضور</h1>
+            <div class="header-controls no-print">
+                <button id="add-employee-btn" class="btn primary"><i class="fas fa-user-plus"></i> <span>إضافة عامل</span></button>
+                <button id="change-password-btn" class="btn primary outline"><i class="fas fa-key"></i> <span>تغيير كلمة المرور</span></button>
+                <button id="theme-toggle" class="btn primary outline" style="min-width: 45px;"><i class="fas fa-moon"></i></button>
             </div>
+        </header>
 
-            <aside id="sidebar" class="bg-gray-800 text-white w-64 space-y-6 py-7 px-2 absolute inset-y-0 right-0 transform translate-x-full md:relative md:translate-x-0 transition duration-200 ease-in-out">
-                <div class="p-3 text-center border-b border-gray-700">
-                    <h2 class="text-2xl font-bold">S22 Market</h2>
-                </div>
-                <nav class="flex-1 p-2 space-y-2">
-                    <a href="#analytics" class="dashboard-tab active-tab flex items-center px-4 py-3 rounded-md hover:bg-indigo-700"><i class="fas fa-chart-line fa-fw mr-3"></i> لوحة التحكم</a>
-                    <a href="#products" class="dashboard-tab flex items-center px-4 py-3 rounded-md hover:bg-indigo-700"><i class="fas fa-boxes fa-fw mr-3"></i> المنتجات</a>
-                    <a href="#categories" class="dashboard-tab flex items-center px-4 py-3 rounded-md hover:bg-indigo-700"><i class="fas fa-sitemap fa-fw mr-3"></i> الأقسام</a>
-                    <a href="#orders" class="dashboard-tab flex items-center px-4 py-3 rounded-md hover:bg-indigo-700"><i class="fas fa-clipboard-list fa-fw mr-3"></i> الطلبات</a>
-                </nav>
-                <div class="p-4 border-t border-gray-700">
-                    <button id="logout-btn" class="w-full bg-red-600 py-2 rounded-md hover:bg-red-700 transition-colors"><i class="fas fa-sign-out-alt mr-2"></i> تسجيل الخروج</button>
-                </div>
-            </aside>
+         <div class="card">
+            <div class="card-header">
+                <h2><i class="fas fa-tachometer-alt"></i> نظرة عامة للتاريخ: <span id="selected-date-display"></span></h2>
+            </div>
+            <div id="overview-grid" class="grid-container">
+                <div class="stat-card success"><i class="fas fa-user-check"></i><div><span class="stat-value" id="present-count">0</span><span class="stat-label">حاضر</span></div></div>
+                <div class="stat-card danger"><i class="fas fa-user-times"></i><div><span class="stat-value" id="absent-count">0</span><span class="stat-label">غائب</span></div></div>
+                <div class="stat-card info"><i class="fas fa-question-circle"></i><div><span class="stat-value" id="unmarked-count">0</span><span class="stat-label">لم يسجل</span></div></div>
+                <div class="stat-card"><i class="fas fa-users"></i><div><span class="stat-value" id="total-employees-count">0</span><span class="stat-label">إجمالي العمال</span></div></div>
+            </div>
+        </div>
 
-            <main class="flex-1 p-4 md:p-8 overflow-y-auto">
-                <div id="analytics-panel" class="dashboard-panel"></div>
-                <div id="products-panel" class="dashboard-panel hidden"></div>
-                <div id="categories-panel" class="dashboard-panel hidden"></div>
-                <div id="orders-panel" class="dashboard-panel hidden"></div>
-            </main>
+        <div class="card">
+            <div class="card-header">
+                <h2><i class="fas fa-users"></i> قائمة العمال وتسجيل الحضور</h2>
+                <div id="attendance-date-picker-container" class="report-controls no-print">
+                    <label for="attendance-date-picker">اختر التاريخ:</label>
+                    <input type="date" id="attendance-date-picker" style="max-width: 200px;">
+                </div>
+            </div>
+            <div style="padding-bottom: 20px;">
+                 <input type="text" id="search-input" placeholder="ابحث بالاسم أو رقم التعريف...">
+            </div>
+            <div class="table-wrapper">
+                <table id="employees-table">
+                    <thead><tr><th>الاسم</th><th>رقم التعريف</th><th>الحالة</th><th class="no-print">تسجيل (سريع)</th><th class="no-print">إجراءات</th></tr></thead>
+                    <tbody id="employees-table-body"></tbody>
+                </table>
+            </div>
+             <div id="loader-container" style="text-align: center; padding: 20px; display:none;"><div class="spinner"></div></div>
+             <div id="empty-state-container" style="display: none;"></div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h2><i class="fas fa-chart-pie"></i> تقارير الحضور</h2>
+                 <div class="header-controls no-print">
+                    <button id="export-csv-btn" class="btn primary outline"><i class="fas fa-file-csv"></i> تصدير CSV</button>
+                    <button id="print-report-btn" class="btn primary outline"><i class="fas fa-print"></i> طباعة</button>
+                </div>
+            </div>
+            <div class="report-controls no-print">
+                <label for="report-start-date">من:</label>
+                <input type="date" id="report-start-date">
+                <label for="report-end-date">إلى:</label>
+                <input type="date" id="report-end-date">
+                <button id="generate-report-btn" class="btn primary"><i class="fas fa-cogs"></i> إنشاء التقرير</button>
+            </div>
+            <div id="report-results" style="display: none;">
+                 <div id="report-chart-container"><canvas id="attendance-chart"></canvas></div>
+                 <div class="table-wrapper" style="margin-top: 20px;"><table id="report-table"></table></div>
+            </div>
+        </div>
+
+        <div id="employee-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn">&times;</span>
+                <h2 id="modal-title">إضافة عامل جديد</h2>
+                <form id="employee-form" novalidate>
+                    <div style="margin-bottom: 15px;">
+                        <label for="modal-employee-name">اسم العامل <span style="color:red">*</span></label>
+                        <input type="text" id="modal-employee-name" required>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label for="modal-employee-id">رقم الهاتف او بطاقة التعريف</label>
+                        <input type="text" id="modal-employee-id">
+                    </div>
+                     <div style="margin-bottom: 15px;">
+                        <label for="modal-employee-notes">ملاحظات</label>
+                        <textarea id="modal-employee-notes" rows="3"></textarea>
+                    </div>
+                    <button id="save-modal-btn" type="submit" class="btn primary" style="width:100%; margin-top:15px; padding: 12px;"><i class="fas fa-save"></i> <span>حفظ</span></button>
+                </form>
+            </div>
         </div>
     </div>
 
-    <div id="modal-container"></div>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+    import { getFirestore, collection, doc, setDoc, addDoc, updateDoc, deleteDoc, query, orderBy, onSnapshot, writeBatch, getDocs, where } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, doc, updateDoc, deleteDoc, onSnapshot, query, serverTimestamp, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    // --- Firebase Configuration ---
+    const firebaseConfig = {
+        apiKey: "AIzaSyA1VBBOZQOUwnHp8x487g7lkn14x6Sp-7g",
+        authDomain: "stoke-c650a.firebaseapp.com",
+        databaseURL: "https://stoke-c650a-default-rtdb.firebaseio.com",
+        projectId: "stoke-c650a",
+        storageBucket: "stoke-c650a.appspot.com",
+        messagingSenderId: "464151163343",
+        appId: "1:464151163343:web:728a60e952e4943bc822ba"
+    };
+    
+    // --- تهيئة التطبيق والحالة العامة ---
+    let db, attendanceChart;
+    let unsubscribeAttendanceListener = null; // To detach old listeners
+    const APP_PASSWORD_KEY = 'attendanceAppPassword';
+    const DEFAULT_PASSWORD = 'SIDIKASI';
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyAxEq-nkLDc3_HM38xb3mhb8ekSXmuFQ7I",
-            authDomain: "s22market-4bdb9.firebaseapp.com",
-            databaseURL: "https://s22market-4bdb9-default-rtdb.firebaseio.com",
-            projectId: "s22market-4bdb9",
-            storageBucket: "s22market-4bdb9.appspot.com",
-            messagingSenderId: "1029564929614",
-            appId: "1:1029564929614:web:2866722c34cf1fb2b8951f",
-            measurementId: "G-VH16M3Q33V"
+    try {
+        const app = initializeApp(firebaseConfig);
+        db = getFirestore(app);
+    } catch (e) {
+        document.body.innerHTML = `<div style="text-align:center; padding-top: 50px;"><h1>خطأ في الاتصال بقاعدة البيانات</h1><p>${e.message}</p></div>`;
+        console.error("Firebase initialization failed!", e);
+    }
+
+    const today = new Date();
+    const todayDateString = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+    
+    const state = {
+        employees: new Map(),
+        dailyAttendance: {},
+        currentEditingId: null,
+        isAuthenticated: false,
+        selectedDateString: todayDateString,
+    };
+    
+
+    // --- عناصر الواجهة الرسومية ---
+    const DOMElements = {
+        mainContainer: document.getElementById('main-container'),
+        loginModal: document.getElementById('login-modal'),
+        loginForm: document.getElementById('login-form'),
+        passwordInput: document.getElementById('password-input'),
+        loginSpinner: document.getElementById('login-spinner'),
+        passwordModal: document.getElementById('password-modal'),
+        changePasswordBtn: document.getElementById('change-password-btn'),
+        passwordChangeForm: document.getElementById('password-change-form'),
+        employeesTableBody: document.getElementById('employees-table-body'),
+        loaderContainer: document.getElementById('loader-container'),
+        emptyStateContainer: document.getElementById('empty-state-container'),
+        employeeModal: document.getElementById('employee-modal'),
+        employeeForm: document.getElementById('employee-form'),
+        modalTitle: document.getElementById('modal-title'),
+        saveModalBtn: document.getElementById('save-modal-btn'),
+        addEmployeeBtn: document.getElementById('add-employee-btn'),
+        themeToggleBtn: document.getElementById('theme-toggle'),
+        searchInput: document.getElementById('search-input'),
+        presentCount: document.getElementById('present-count'),
+        absentCount: document.getElementById('absent-count'),
+        unmarkedCount: document.getElementById('unmarked-count'),
+        totalEmployeesCount: document.getElementById('total-employees-count'),
+        selectedDateDisplay: document.getElementById('selected-date-display'),
+        attendanceDatePicker: document.getElementById('attendance-date-picker'),
+        reportStartDate: document.getElementById('report-start-date'),
+        reportEndDate: document.getElementById('report-end-date'),
+        generateReportBtn: document.getElementById('generate-report-btn'),
+        reportTable: document.getElementById('report-table'),
+        exportCsvBtn: document.getElementById('export-csv-btn'),
+        printReportBtn: document.getElementById('print-report-btn'),
+        reportResults: document.getElementById('report-results'),
+    };
+    
+    // --- دوال مساعدة ---
+    const sanitizeHTML = str => str ? str.toString().replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;') : '';
+
+    const showToast = (message, type = 'success') => {
+        const icon = type === 'success' ? 'fa-check-circle' : 'fa-times-circle';
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.innerHTML = `<i class="fas ${icon}"></i> ${sanitizeHTML(message)}`;
+        document.getElementById('toast-container').appendChild(toast);
+        setTimeout(() => toast.remove(), 4000);
+    };
+    
+    const getStoredPassword = () => localStorage.getItem(APP_PASSWORD_KEY) || DEFAULT_PASSWORD;
+
+    // --- خدمات Firebase ---
+    const firebaseService = {
+        updateEmployee: (id, data) => updateDoc(doc(db, 'employees', id), data),
+        addEmployee: (data) => addDoc(collection(db, 'employees'), { ...data, createdAt: new Date() }),
+        deleteEmployee: (id) => deleteDoc(doc(db, 'employees', id)),
+        setAttendance: (employeeId, status, dateStr) => {
+            const attendanceRef = doc(db, 'attendance', dateStr);
+            return updateDoc(attendanceRef, { [`statuses.${employeeId}`]: status });
+        },
+        createDailyAttendanceDoc: (dateStr) => {
+            const attendanceRef = doc(db, 'attendance', dateStr);
+            return setDoc(attendanceRef, { statuses: {} }, { merge: true });
+        }
+    };
+    
+    // --- منطق التطبيق الأساسي ---
+    const handleSaveEmployee = async (e) => {
+        e.preventDefault();
+        const name = DOMElements.employeeForm['modal-employee-name'].value.trim();
+        if (!name) { return showToast('الرجاء إدخال اسم العامل.', 'error'); }
+        
+        const employeeData = {
+            name: name,
+            customId: DOMElements.employeeForm['modal-employee-id'].value.trim(),
+            notes: DOMElements.employeeForm['modal-employee-notes'].value.trim()
         };
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+        const originalBtnText = DOMElements.saveModalBtn.innerHTML;
+        DOMElements.saveModalBtn.disabled = true;
+        DOMElements.saveModalBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
 
-        let categoriesCache = [];
-        let productsCache = [];
-        let ordersCache = [];
-        let myChart = null;
-
-        const loginPage = document.getElementById('login-page');
-        const dashboardPage = document.getElementById('dashboard-page');
-        const loginForm = document.getElementById('login-form');
-        const loginError = document.getElementById('login-error');
-        const logoutBtn = document.getElementById('logout-btn');
-
-        onAuthStateChanged(auth, user => {
-            if (user) {
-                loginPage.classList.add('hidden');
-                dashboardPage.classList.remove('hidden');
-                initializeDashboard();
+        try {
+            if (state.currentEditingId) {
+                await firebaseService.updateEmployee(state.currentEditingId, employeeData);
+                showToast('تم تحديث العامل بنجاح.');
             } else {
-                loginPage.classList.remove('hidden');
-                dashboardPage.classList.add('hidden');
+                await firebaseService.addEmployee(employeeData);
+                showToast('تمت إضافة العامل بنجاح.');
             }
-        });
-
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('admin-email').value;
-            const password = document.getElementById('admin-password').value;
-            loginError.classList.add('hidden');
-            try {
-                await signInWithEmailAndPassword(auth, email, password);
-            } catch (error) {
-                loginError.textContent = "فشل الدخول. تحقق من البريد وكلمة المرور.";
-                loginError.classList.remove('hidden');
-            }
-        });
-
-        logoutBtn.addEventListener('click', async () => { await signOut(auth); });
-
-        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-        const sidebar = document.getElementById('sidebar');
-        mobileMenuBtn.addEventListener('click', () => {
-            sidebar.classList.toggle('translate-x-full');
-        });
-
-        function initializeDashboard() {
-            const tabs = document.querySelectorAll('.dashboard-tab');
-            const panels = document.querySelectorAll('.dashboard-panel');
-
-            tabs.forEach(tab => {
-                tab.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    tabs.forEach(t => t.classList.remove('active-tab'));
-                    tab.classList.add('active-tab');
-                    const targetPanelId = tab.getAttribute('href').substring(1) + '-panel';
-                    panels.forEach(panel => panel.classList.toggle('hidden', panel.id !== targetPanelId));
-                    if (window.innerWidth < 768 && !sidebar.classList.contains('translate-x-full')) {
-                        sidebar.classList.add('translate-x-full');
-                    }
-                });
-            });
-            
-            loadAnalytics();
-            loadCategories();
-            loadProducts();
-            loadOrders();
+            DOMElements.employeeModal.style.display = 'none';
+        } catch (err) {
+            showToast('حدث خطأ أثناء الحفظ.', 'error');
+            console.error(err);
+        } finally {
+            DOMElements.saveModalBtn.disabled = false;
+            DOMElements.saveModalBtn.innerHTML = originalBtnText;
         }
+    };
+    
+    const openEditModal = (empId) => {
+        const emp = state.employees.get(empId);
+        if (!emp) return;
         
-        // ===================================
-        // Analytics Section
-        // ===================================
-        function loadAnalytics() {
-            const panel = document.getElementById('analytics-panel');
-            panel.innerHTML = `
-                <h1 class="text-3xl font-bold text-gray-800 mb-6">لوحة التحكم الرئيسية</h1>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                    <div class="bg-white p-6 rounded-xl shadow-md flex items-center">
-                        <i class="fas fa-coins text-4xl text-yellow-400 mr-4"></i>
-                        <div><p class="text-gray-500">إجمالي الإيرادات</p><p id="total-revenue" class="text-2xl font-bold">0 د.ج</p></div>
-                    </div>
-                     <div class="bg-white p-6 rounded-xl shadow-md flex items-center">
-                        <i class="fas fa-hand-holding-usd text-4xl text-green-500 mr-4"></i>
-                        <div><p class="text-gray-500">إجمالي الأرباح</p><p id="total-profit" class="text-2xl font-bold">0 د.ج</p></div>
-                    </div>
-                     <div class="bg-white p-6 rounded-xl shadow-md flex items-center">
-                        <i class="fas fa-clipboard-list text-4xl text-blue-500 mr-4"></i>
-                        <div><p class="text-gray-500">إجمالي الطلبات</p><p id="total-orders" class="text-2xl font-bold">0</p></div>
-                    </div>
-                     <div class="bg-white p-6 rounded-xl shadow-md flex items-center">
-                        <i class="fas fa-boxes text-4xl text-purple-500 mr-4"></i>
-                        <div><p class="text-gray-500">المنتجات</p><p id="total-products" class="text-2xl font-bold">0</p></div>
-                    </div>
-                </div>
-                <div class="bg-white p-6 rounded-xl shadow-md">
-                    <h2 class="text-xl font-bold mb-4">الطلبات المكتملة (آخر 7 أيام)</h2>
-                    <canvas id="ordersChart"></canvas>
-                </div>`;
+        state.currentEditingId = empId;
+        DOMElements.modalTitle.textContent = 'تعديل بيانات العامل';
+        DOMElements.employeeForm['modal-employee-name'].value = emp.name;
+        DOMElements.employeeForm['modal-employee-id'].value = emp.customId || '';
+        DOMElements.employeeForm['modal-employee-notes'].value = emp.notes || '';
+        DOMElements.employeeModal.style.display = 'flex';
+    };
+    
+    const handleDeleteEmployee = async (empId, empName) => {
+        if (!confirm(`هل أنت متأكد من حذف العامل "${empName}"؟ سيتم حذفه نهائياً.`)) return;
+        try {
+            await firebaseService.deleteEmployee(empId);
+            showToast('تم حذف العامل.');
+        } catch (err) {
+            showToast('فشل حذف العامل.', 'error'); console.error(err);
         }
-
-        function updateAnalytics() {
-            document.getElementById('total-products').textContent = productsCache.length;
-            const completedOrders = ordersCache.filter(o => o.status === 'completed');
-            const totalRevenue = completedOrders.reduce((sum, order) => sum + (order.price || 0), 0);
-            const totalProfit = completedOrders.reduce((sum, order) => sum + (order.profit || 0), 0);
-            document.getElementById('total-revenue').textContent = `${totalRevenue.toLocaleString()} د.ج`;
-            document.getElementById('total-profit').textContent = `${totalProfit.toLocaleString()} د.ج`;
-            document.getElementById('total-orders').textContent = ordersCache.length;
-
-            const last7Days = {};
-            for(let i = 6; i >= 0; i--) {
-                const d = new Date();
-                d.setDate(d.getDate() - i);
-                const key = d.toISOString().split('T')[0];
-                last7Days[key] = 0;
-            }
-
-            completedOrders.forEach(order => {
-                if (order.createdAt?.toDate) {
-                    const orderDate = order.createdAt.toDate().toISOString().split('T')[0];
-                    if (last7Days.hasOwnProperty(orderDate)) {
-                        last7Days[orderDate]++;
-                    }
-                }
-            });
-
-            const chartLabels = Object.keys(last7Days).map(date => new Date(date).toLocaleDateString('ar-EG', { weekday: 'short', day: 'numeric'}));
-            const chartData = Object.values(last7Days);
-
-            const ctx = document.getElementById('ordersChart')?.getContext('2d');
-            if (!ctx) return;
-            if (myChart) myChart.destroy();
-            myChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: chartLabels,
-                    datasets: [{
-                        label: 'عدد الطلبات',
-                        data: chartData,
-                        backgroundColor: 'rgba(79, 70, 229, 0.8)',
-                        borderColor: 'rgba(79, 70, 229, 1)',
-                        borderWidth: 1,
-                        borderRadius: 5
-                    }]
-                },
-                options: { responsive: true, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }, plugins: { legend: { display: false } } }
-            });
-        }
-        
-        // ===================================
-        // Categories Section
-        // ===================================
-        function loadCategories() {
-            const panel = document.getElementById('categories-panel');
-            panel.innerHTML = `<div class="flex justify-between items-center mb-6"><h1 class="text-3xl font-bold text-gray-800">إدارة الأقسام</h1><button id="add-category-btn" class="bg-indigo-600 text-white px-5 py-2 rounded-lg font-semibold hover:bg-indigo-700"><i class="fas fa-plus mr-2"></i> إضافة قسم</button></div><div id="categories-list" class="space-y-4"></div>`;
-            document.getElementById('add-category-btn').addEventListener('click', () => showCategoryModal());
-            const list = document.getElementById('categories-list');
-            
-            onSnapshot(query(collection(db, "categories"), orderBy("name")), (snapshot) => {
-                categoriesCache = [];
-                list.innerHTML = snapshot.empty ? '<p class="text-center text-gray-500">لا توجد أقسام. أضف قسماً جديداً للبدء.</p>' : '';
-                snapshot.forEach(doc => {
-                    const category = { id: doc.id, ...doc.data() };
-                    categoriesCache.push(category);
-                    const el = document.createElement('div');
-                    el.className = 'bg-white p-4 rounded-xl shadow-md border flex flex-col md:flex-row justify-between md:items-center';
-                    
-                    const subcatHtml = (category.subcategories || []).map(sub => 
-                        `<span class="inline-block ${sub.active ? 'bg-green-100 text-green-800' : 'bg-gray-200 text-gray-700'} px-3 py-1 rounded-full text-sm mr-2 mb-2">
-                            ${sub.name} <i class="fas ${sub.active ? 'fa-check' : 'fa-times'} ml-1"></i>
-                        </span>`
-                    ).join('');
-
-                    el.innerHTML = `
-                        <div>
-                            <h4 class="text-xl font-bold">${category.name}</h4>
-                            <div class="mt-2 pl-4">${subcatHtml || '<p class="text-sm text-gray-500">لا توجد فروع</p>'}</div>
-                        </div>
-                        <div class="mt-3 md:mt-0 flex-shrink-0">
-                            <button class="edit-category-btn text-indigo-500 hover:text-indigo-700 mr-4" data-id="${category.id}"><i class="fas fa-edit"></i> تعديل</button>
-                            <button class="delete-category-btn text-red-500 hover:text-red-700" data-id="${category.id}"><i class="fas fa-trash"></i> حذف</button>
-                        </div>`;
-                    list.appendChild(el);
-                });
-                attachCategoryActionListeners();
-            });
-        }
-
-        function showCategoryModal(category = null) {
-            const title = category ? 'تعديل القسم' : 'إضافة قسم جديد';
-            const subcategories = category?.subcategories || [];
-
-            let subcategoriesHtml = subcategories.map((sub, index) => `
-                <div class="flex items-center gap-2 mb-2 subcategory-item">
-                    <input type="text" class="w-full p-2 border rounded sub-name" value="${sub.name || ''}" placeholder="اسم الفرع">
-                    <label class="flex items-center gap-1 cursor-pointer text-sm"><input type="checkbox" class="sub-active" ${sub.active ? 'checked' : ''}> فعال</label>
-                    <button type="button" class="text-red-500 remove-sub-btn"><i class="fas fa-times-circle"></i></button>
-                </div>
-            `).join('');
-
-            const content = `
-                <div><label class="font-semibold">اسم القسم الرئيسي</label><input type="text" id="category-name" class="mt-1 w-full p-2 border rounded" value="${category ? category.name : ''}" required></div>
-                <div class="mt-4">
-                    <label class="font-semibold">الفروع (Sub-categories)</label>
-                    <div id="subcategories-container" class="mt-2 space-y-2 bg-gray-50 p-3 rounded-md">${subcategoriesHtml}</div>
-                    <button type="button" id="add-subcategory-btn" class="text-sm mt-2 text-indigo-600 font-semibold hover:underline"><i class="fas fa-plus-circle mr-1"></i>إضافة فرع جديد</button>
-                </div>`;
-
-            showModal(title, content, async () => {
-                const name = document.getElementById('category-name').value.trim();
-                if (!name) { alert('الرجاء إدخال اسم القسم الرئيسي.'); return; }
-
-                const subsData = [];
-                document.querySelectorAll('.subcategory-item').forEach(item => {
-                    const subName = item.querySelector('.sub-name').value.trim();
-                    const subActive = item.querySelector('.sub-active').checked;
-                    if(subName) subsData.push({ name: subName, active: subActive });
-                });
-
-                showLoadingModal();
-                try {
-                    const data = { name, subcategories: subsData };
-                    if (category) await updateDoc(doc(db, "categories", category.id), data);
-                    else await addDoc(collection(db, "categories"), data);
-                    closeModal();
-                } catch (error) {
-                    console.error("Error saving category:", error);
-                    alert("حدث خطأ أثناء الحفظ.");
-                    closeModal();
-                }
-            });
-
-            const addSubcategory = () => {
-                const container = document.getElementById('subcategories-container');
-                const newItem = document.createElement('div');
-                newItem.className = 'flex items-center gap-2 mb-2 subcategory-item';
-                newItem.innerHTML = `
-                    <input type="text" class="w-full p-2 border rounded sub-name" placeholder="اسم الفرع">
-                    <label class="flex items-center gap-1 cursor-pointer text-sm"><input type="checkbox" class="sub-active" checked> فعال</label>
-                    <button type="button" class="text-red-500 remove-sub-btn"><i class="fas fa-times-circle"></i></button>
-                `;
-                newItem.querySelector('.remove-sub-btn').onclick = () => newItem.remove();
-                container.appendChild(newItem);
-            };
-
-            document.getElementById('add-subcategory-btn').onclick = addSubcategory;
-            document.querySelectorAll('.remove-sub-btn').forEach(btn => btn.onclick = (e) => e.currentTarget.closest('.subcategory-item').remove());
-        }
-
-        function attachCategoryActionListeners() {
-            document.querySelectorAll('.edit-category-btn').forEach(btn => {
-                btn.onclick = () => {
-                    const category = categoriesCache.find(c => c.id === btn.dataset.id);
-                    if (category) showCategoryModal(category);
-                };
-            });
-            document.querySelectorAll('.delete-category-btn').forEach(btn => {
-                btn.onclick = () => {
-                    showModal('تأكيد الحذف', 'هل أنت متأكد من حذف هذا القسم؟ سيؤثر هذا على المنتجات المرتبطة به.', async () => {
-                        try {
-                            await deleteDoc(doc(db, "categories", btn.dataset.id));
-                            closeModal();
-                        } catch (error) { showModal('خطأ', 'فشل حذف القسم.', () => closeModal(), 'موافق', false); }
-                    }, 'نعم, حذف', true);
-                };
-            });
-        }
-        
-        // ===================================
-        // Products Section
-        // ===================================
-        function loadProducts() {
-            const panel = document.getElementById('products-panel');
-            panel.innerHTML = `<div class="flex justify-between items-center mb-6"><h1 class="text-3xl font-bold text-gray-800">إدارة المنتجات</h1><button id="add-product-btn" class="bg-indigo-600 text-white px-5 py-2 rounded-lg font-semibold hover:bg-indigo-700"><i class="fas fa-plus mr-2"></i> إضافة منتج</button></div><div class="overflow-x-auto"><table class="w-full text-right responsive-table"><thead class="bg-gray-100"><tr><th class="p-3">الصورة</th><th class="p-3">الاسم</th><th class="p-3">القسم</th><th class="p-3">الفرع</th><th class="p-3">السعر</th><th class="p-3">إجراءات</th></tr></thead><tbody id="products-table-body"></tbody></table></div>`;
-            document.getElementById('add-product-btn').addEventListener('click', () => showProductModal());
-            const tableBody = document.getElementById('products-table-body');
-
-            onSnapshot(query(collection(db, "products"), orderBy("createdAt", "desc")), (snapshot) => {
-                productsCache = [];
-                tableBody.innerHTML = snapshot.empty ? '<tr><td colspan="6" class="p-8 text-center text-gray-500">لا توجد منتجات. أضف منتجاً جديداً للبدء.</td></tr>' : '';
-                snapshot.forEach(doc => {
-                    const product = { id: doc.id, ...doc.data() };
-                    productsCache.push(product);
-                    const catName = categoriesCache.find(c => c.id === product.categoryId)?.name || '<span class="text-red-500">غير محدد</span>';
-                    
-                    // Handle both new (imageUrls) and old (imageUrl) data structures
-                    const image = (product.imageUrls && product.imageUrls.length > 0) ? product.imageUrls[0] : product.imageUrl;
-
-                    const row = tableBody.insertRow();
-                    row.className = 'border-b bg-white';
-                    row.innerHTML = `
-                        <td data-label="الصورة" class="p-3"><img src="${image}" alt="${product.name}" class="w-16 h-16 object-cover rounded-md" onerror="this.onerror=null;this.src='https://placehold.co/64x64/e2e8f0/94a3b8?text=Error';"></td>
-                        <td data-label="الاسم" class="p-3 font-semibold">${product.name}</td>
-                        <td data-label="القسم" class="p-3">${catName}</td>
-                        <td data-label="الفرع" class="p-3">${product.subCategoryName || '---'}</td>
-                        <td data-label="السعر" class="p-3 font-mono">${(product.price || 0).toLocaleString()} د.ج</td>
-                        <td data-label="إجراءات" class="p-3 actions-cell">
-                            <button class="edit-product-btn text-indigo-500 hover:text-indigo-700 mr-4" data-id="${product.id}"><i class="fas fa-edit fa-lg"></i></button>
-                            <button class="delete-product-btn text-red-500 hover:text-red-700" data-id="${product.id}"><i class="fas fa-trash fa-lg"></i></button>
-                        </td>`;
-                });
-                attachProductActionListeners();
-                updateAnalytics();
-            });
-        }
-        
-        function populateSubcategories(categoryId, productSubCategory = null) {
-            const subCategoryContainer = document.getElementById('product-subcategory-container');
-            const subCategorySelect = document.getElementById('product-subcategory');
-            if (!subCategoryContainer || !subCategorySelect) return;
-
-            const selectedCategory = categoriesCache.find(c => c.id === categoryId);
-            const activeSubcategories = selectedCategory?.subcategories?.filter(s => s.active) || [];
-
-            if (activeSubcategories.length > 0) {
-                subCategorySelect.innerHTML = '<option value="">اختر فرع...</option>';
-                activeSubcategories.forEach(sub => {
-                    const isSelected = sub.name === productSubCategory ? 'selected' : '';
-                    subCategorySelect.innerHTML += `<option value="${sub.name}" ${isSelected}>${sub.name}</option>`;
-                });
-                subCategoryContainer.classList.remove('hidden');
+    };
+    
+    const handleAttendanceAction = async (empId, status) => {
+        try {
+            await firebaseService.setAttendance(empId, status, state.selectedDateString);
+        } catch (err) {
+            // If the doc doesn't exist, create it first, then set status
+            if (err.code === 'not-found' || err.code === 'INVALID_ARGUMENT') {
+                await firebaseService.createDailyAttendanceDoc(state.selectedDateString);
+                await firebaseService.setAttendance(empId, status, state.selectedDateString);
             } else {
-                subCategoryContainer.classList.add('hidden');
-                subCategorySelect.innerHTML = '';
+                showToast(`فشل تسجيل الحالة`, 'error'); console.error(err);
             }
         }
-        
-        /**
-         * NEW: Resizes and compresses an image file client-side.
-         * @param {File} file The image file.
-         * @param {number} maxWidth The maximum width of the output image.
-         * @param {number} quality The quality of the output JPEG (0 to 1).
-         * @returns {Promise<Blob>} A promise that resolves with the compressed image Blob.
-         */
-        function resizeAndCompressImage(file, maxWidth = 800, quality = 0.85) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = event => {
-                    const img = new Image();
-                    img.src = event.target.result;
-                    img.onload = () => {
-                        if (img.width <= maxWidth) {
-                            // If image is already smaller than max width, just resolve it
-                            resolve(file);
-                            return;
-                        }
-                        const canvas = document.createElement('canvas');
-                        const scale = maxWidth / img.width;
-                        canvas.width = maxWidth;
-                        canvas.height = img.height * scale;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                        canvas.toBlob(blob => {
-                            resolve(blob);
-                        }, 'image/jpeg', quality);
-                    };
-                };
-                reader.onerror = error => reject(error);
-            });
-        }
-
-        function showProductModal(product = null) {
-            const title = product ? 'تعديل المنتج' : 'إضافة منتج جديد';
-            
-            const categoryOptions = categoriesCache.map(cat => 
-                `<option value="${cat.id}" ${product && product.categoryId === cat.id ? 'selected' : ''}>${cat.name}</option>`
-            ).join('');
-
-            // Handle both new (imageUrls) and old (imageUrl) data structures for display
-            let existingImages = [];
-            if (product) {
-                if (product.imageUrls && product.imageUrls.length > 0) {
-                    existingImages = product.imageUrls;
-                } else if (product.imageUrl) {
-                    existingImages = [product.imageUrl]; // Treat old single image as an array
+    };
+    
+    // --- الاستماع للتغييرات والتحميل ---
+    const listenForEmployeeChanges = () => {
+        const q = query(collection(db, 'employees'), orderBy('name'));
+        onSnapshot(q, (snapshot) => {
+            snapshot.docChanges().forEach((change) => {
+                const empData = { id: change.doc.id, ...change.doc.data() };
+                if (change.type === "added" || change.type === "modified") {
+                    state.employees.set(empData.id, empData);
+                } else if (change.type === "removed") {
+                    state.employees.delete(empData.id);
                 }
+            });
+            renderEmployees();
+            updateStatsDisplay();
+        }, (error) => {
+            console.error("Error listening to employees: ", error);
+            showToast("خطأ في الاتصال بقائمة العمال", "error");
+        });
+    };
+    
+    const listenForDailyAttendance = (dateString) => {
+        if (unsubscribeAttendanceListener) {
+            unsubscribeAttendanceListener();
+        }
+        const attendanceRef = doc(db, 'attendance', dateString);
+        unsubscribeAttendanceListener = onSnapshot(attendanceRef, (docSnap) => {
+            if (docSnap.exists()) {
+                state.dailyAttendance = docSnap.data().statuses || {};
+            } else {
+                state.dailyAttendance = {};
             }
+            renderEmployees(); 
+            updateStatsDisplay();
+        }, (error) => {
+            console.error(`Error listening to attendance for ${dateString}: `, error);
+            showToast("خطأ في الاتصال بسجل الحضور", "error");
+        });
+    };
+    
+    // --- عرض البيانات في الواجهة ---
+    const renderEmployees = () => {
+        DOMElements.employeesTableBody.innerHTML = '';
+        if (state.employees.size === 0) {
+            DOMElements.emptyStateContainer.innerHTML = `<div class="empty-state"><i class="fas fa-users-slash"></i><p>لم يتم إضافة أي عمال بعد. ابدأ بإضافة عامل جديد.</p></div>`;
+            DOMElements.emptyStateContainer.style.display = 'block';
+            return;
+        }
+        DOMElements.emptyStateContainer.style.display = 'none';
 
-            const existingImagesHTML = existingImages.map(url => 
-                `<div class="relative group"><img src="${url}" class="w-24 h-24 rounded object-cover border"><div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"><span class="text-white text-xs text-center">سيتم حذفها عند رفع صور جديدة</span></div></div>`
-            ).join('');
+        const sortedEmployees = [...state.employees.values()].sort((a, b) => a.name.localeCompare(b.name, 'ar'));
+        sortedEmployees.forEach(emp => {
+            const row = document.createElement('tr');
+            row.dataset.id = emp.id;
+            row.innerHTML = createEmployeeRowHTML(emp);
+            DOMElements.employeesTableBody.appendChild(row);
+            
+            row.querySelector('.btn-present').addEventListener('click', () => handleAttendanceAction(emp.id, 'present'));
+            row.querySelector('.btn-absent').addEventListener('click', () => handleAttendanceAction(emp.id, 'absent'));
+            row.querySelector('.btn-edit').addEventListener('click', () => openEditModal(emp.id));
+            row.querySelector('.btn-delete').addEventListener('click', () => handleDeleteEmployee(emp.id, emp.name));
+        });
+        filterTable();
+    };
+    
+    const createEmployeeRowHTML = (emp) => {
+        const status = state.dailyAttendance[emp.id] || 'none';
+        const statusText = { present: 'حاضر', absent: 'غائب', none: 'لم يسجل' }[status];
+        
+        return `
+            <td data-label="الاسم">${sanitizeHTML(emp.name)}</td>
+            <td data-label="رقم التعريف">${sanitizeHTML(emp.customId || '-')}</td>
+            <td data-label="الحالة"><span class="status-badge status-${status}">${statusText}</span></td>
+            <td data-label="تسجيل (سريع)" class="action-buttons no-print">
+                <button class="btn btn-sm success btn-present" ${status === 'present' ? 'disabled' : ''}>حاضر</button>
+                <button class="btn btn-sm danger btn-absent" ${status === 'absent' ? 'disabled' : ''}>غائب</button>
+            </td>
+            <td data-label="إجراءات" class="action-buttons no-print">
+                <button class="btn btn-sm primary outline btn-edit"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-sm danger outline btn-delete"><i class="fas fa-trash"></i></button>
+            </td>
+        `;
+    };
 
-            const content = `
-                <div class="space-y-4">
-                    <div><label class="font-semibold">اسم المنتج</label><input type="text" id="product-name" class="mt-1 w-full p-2 border rounded" value="${product ? product.name : ''}" required></div>
-                    <div><label class="font-semibold">السعر (د.ج)</label><input type="number" id="product-price" class="mt-1 w-full p-2 border rounded" value="${product ? product.price : ''}" required></div>
-                    <div>
-                        <label class="font-semibold">الوصف</label>
-                        <textarea id="product-description" class="mt-1 w-full p-2 border rounded" rows="4" placeholder="اكتب وصفاً جذاباً للمنتج...">${product ? (product.description || '') : ''}</textarea>
-                    </div>
-                    <div>
-                        <label class="font-semibold">القسم الرئيسي</label>
-                        <select id="product-category-select" class="mt-1 w-full p-2 border rounded bg-white" required>
-                            <option value="">اختر قسم...</option>
-                            ${categoryOptions}
-                        </select>
-                    </div>
-                    <div id="product-subcategory-container" class="hidden">
-                        <label class="font-semibold">الفرع</label>
-                        <select id="product-subcategory" class="mt-1 w-full p-2 border rounded bg-white"></select>
-                    </div>
-                    <div>
-                        <label class="font-semibold">صور المنتج (يمكنك اختيار عدة صور)</label>
-                        <input type="file" id="product-images" class="mt-1 w-full p-2 border rounded text-sm" accept="image/*" multiple>
-                         ${product ? `<p class="text-sm text-gray-500 mt-1">الصور الحالية. رفع صور جديدة سيقوم باستبدالها.</p><div class="flex flex-wrap gap-2 mt-2">${existingImagesHTML}</div>` : ''}
-                        <div id="image-preview-container" class="flex flex-wrap gap-2 mt-2"></div>
-                    </div>
-                </div>`;
+    const updateStatsDisplay = () => {
+        const present = Object.values(state.dailyAttendance).filter(s => s === 'present').length;
+        const absent = Object.values(state.dailyAttendance).filter(s => s === 'absent').length;
+        const total = state.employees.size;
+        
+        DOMElements.presentCount.textContent = present;
+        DOMElements.absentCount.textContent = absent;
+        DOMElements.totalEmployeesCount.textContent = total;
+        DOMElements.unmarkedCount.textContent = Math.max(0, total - (present + absent));
+    };
 
-            showModal(title, content, async () => {
-                const IMGBB_API_KEY = 'ac296feb5a275923598bdbfd4f9aed8c';
+    const updateDateDisplays = (dateString) => {
+        const date = new Date(dateString + 'T00:00:00'); // Avoid timezone issues
+        const formattedDate = new Intl.DateTimeFormat('ar-EG-u-nu-latn', { dateStyle: 'full' }).format(date);
+        DOMElements.selectedDateDisplay.textContent = formattedDate;
+    };
 
-                const name = document.getElementById('product-name').value.trim();
-                const price = parseFloat(document.getElementById('product-price').value);
-                const description = document.getElementById('product-description').value.trim();
-                const categoryId = document.getElementById('product-category-select').value;
-                const subCategoryName = document.getElementById('product-subcategory').value || null;
-                const imageFiles = document.getElementById('product-images').files;
+    // --- وظائف البحث والتقارير ---
+    const filterTable = () => {
+        const query = DOMElements.searchInput.value.toLowerCase().trim();
+        DOMElements.employeesTableBody.querySelectorAll('tr').forEach(row => {
+            const name = row.cells[0].textContent.toLowerCase();
+            const id = row.cells[1].textContent.toLowerCase();
+            row.style.display = (name.includes(query) || id.includes(query)) ? '' : 'none';
+        });
+    };
 
-                if (!name || isNaN(price) || !categoryId) {
-                    return showModal('خطأ في الإدخال', 'يرجى ملء الحقول الإلزامية: اسم المنتج، السعر، والقسم الرئيسي.', () => showProductModal(product), 'موافق', false);
-                }
-                
-                if (IMGBB_API_KEY === 'YOUR_IMGBB_API_KEY' && imageFiles.length > 0) {
-                    return showModal('خطأ في الإعداد', 'الرجاء وضع مفتاح API الخاص بك من موقع ImgBB في الكود أولاً (ملف dashboard.html).', () => showProductModal(product), 'موافق', false);
-                }
+    const generateReport = async () => {
+        const startDate = DOMElements.reportStartDate.value;
+        const endDate = DOMElements.reportEndDate.value;
+        if (!startDate || !endDate || startDate > endDate) {
+            return showToast('الرجاء تحديد نطاق تاريخ صحيح', 'error');
+        }
 
-                try {
-                    let newImageUrls = [];
-                    // Use existing images if no new ones are uploaded
-                    if (imageFiles.length === 0 && product) {
-                        if (product.imageUrls && product.imageUrls.length > 0) {
-                            newImageUrls = product.imageUrls;
-                        } else if (product.imageUrl) {
-                            newImageUrls = [product.imageUrl];
-                        }
-                    }
+        const btn = DOMElements.generateReportBtn;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جارٍ الإنشاء...';
 
-                    if (imageFiles.length > 0) {
-                        showLoadingModal(`جاري ضغط ورفع الصور (${imageFiles.length})...`);
-                        
-                        const uploadPromises = Array.from(imageFiles).map(async file => {
-                            const compressedBlob = await resizeAndCompressImage(file);
-                            const formData = new FormData();
-                            formData.append('image', compressedBlob);
+        try {
+            const q = query(collection(db, 'attendance'), where('__name__', '>=', startDate), where('__name__', '<=', endDate));
+            const querySnapshot = await getDocs(q);
 
-                            const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
-                                method: 'POST',
-                                body: formData
-                            });
-                            const result = await response.json();
-                            if (result.success) {
-                                return result.data.url;
-                            } else {
-                                throw new Error(`فشل رفع الصورة: ${file.name}`);
-                            }
-                        });
-
-                        newImageUrls = await Promise.all(uploadPromises);
-                    }
-                    
-                    if (newImageUrls.length === 0) {
-                         return showModal('خطأ', 'يجب رفع صورة واحدة على الأقل للمنتج.', () => showProductModal(product), 'موافق', false);
-                    }
-
-                    showLoadingModal('جاري حفظ البيانات...');
-                    
-                    const productData = { name, price, description, categoryId, subCategoryName, imageUrls: newImageUrls, updatedAt: serverTimestamp() };
-                    
-                    if (product) {
-                        await updateDoc(doc(db, "products", product.id), productData);
-                    } else {
-                        productData.createdAt = serverTimestamp();
-                        await addDoc(collection(db, "products"), productData);
-                    }
-                    closeModal();
-
-                } catch (error) {
-                    console.error("Error saving product:", error);
-                    showModal('خطأ فادح', `فشل حفظ المنتج: ${error.message}`, () => closeModal(), 'موافق', false);
-                }
+            const reportData = new Map();
+            state.employees.forEach(emp => {
+                reportData.set(emp.id, { name: emp.name, customId: emp.customId, present: 0, absent: 0 });
             });
 
-            const categorySelect = document.getElementById('product-category-select');
-            categorySelect.addEventListener('change', (e) => {
-                populateSubcategories(e.target.value);
+            const dailyTrends = { dates: [], present: [], absent: [] };
+
+            querySnapshot.docs.sort((a,b) => a.id.localeCompare(b.id)).forEach(doc => {
+                const date = doc.id;
+                const statuses = doc.data().statuses || {};
+                let dailyPresent = 0, dailyAbsent = 0;
+
+                for (const [empId, status] of Object.entries(statuses)) {
+                    if (reportData.has(empId)) {
+                        if (status === 'present') { reportData.get(empId).present++; dailyPresent++; }
+                        else if (status === 'absent') { reportData.get(empId).absent++; dailyAbsent++; }
+                    }
+                }
+                dailyTrends.dates.push(date);
+                dailyTrends.present.push(dailyPresent);
+                dailyTrends.absent.push(dailyAbsent);
             });
             
-            // NEW: Add image preview logic
-            const imageInput = document.getElementById('product-images');
-            const previewContainer = document.getElementById('image-preview-container');
-            imageInput.addEventListener('change', () => {
-                previewContainer.innerHTML = ''; // Clear previous previews
-                Array.from(imageInput.files).forEach(file => {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        const img = document.createElement('img');
-                        img.src = e.target.result;
-                        img.className = 'w-24 h-24 rounded object-cover border';
-                        previewContainer.appendChild(img);
-                    }
-                    reader.readAsDataURL(file);
-                });
-            });
+            renderReportTable(reportData);
+            renderReportChart(dailyTrends);
+            DOMElements.reportResults.style.display = 'block';
+            showToast('تم إنشاء التقرير بنجاح');
 
-            if (product && product.categoryId) {
-                populateSubcategories(product.categoryId, product.subCategoryName);
+        } catch (error) {
+            console.error("Error generating report: ", error);
+            showToast("خطأ في إنشاء التقرير", "error");
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-cogs"></i> إنشاء التقرير';
+        }
+    };
+    
+    const renderReportTable = (data) => {
+        let tableHTML = `<thead><tr><th>Name</th><th>ID</th><th>Present Days</th><th>Absent Days</th></tr></thead><tbody>`;
+        if (data.size === 0) {
+            tableHTML += `<tr><td colspan="4" style="text-align:center;">لا توجد بيانات لعرضها.</td></tr>`;
+        } else {
+            [...data.values()].sort((a, b) => a.name.localeCompare(b.name, 'ar')).forEach(emp => {
+                tableHTML += `<tr><td>${sanitizeHTML(emp.name)}</td><td>${sanitizeHTML(emp.customId || '-')}</td><td>${emp.present}</td><td>${emp.absent}</td></tr>`;
+            });
+        }
+        DOMElements.reportTable.innerHTML = tableHTML + `</tbody>`;
+    };
+
+    const renderReportChart = (trends) => {
+        const ctx = document.getElementById('attendance-chart').getContext('2d');
+        if (attendanceChart) attendanceChart.destroy();
+        const bodyStyles = window.getComputedStyle(document.body);
+        attendanceChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: trends.dates,
+                datasets: [{
+                    label: 'حاضر', data: trends.present, borderColor: bodyStyles.getPropertyValue('--success-color'),
+                    backgroundColor: 'color-mix(in srgb, var(--success-color) 20%, transparent)', fill: true, tension: 0.3
+                }, {
+                    label: 'غائب', data: trends.absent, borderColor: bodyStyles.getPropertyValue('--danger-color'),
+                    backgroundColor: 'color-mix(in srgb, var(--danger-color) 20%, transparent)', fill: true, tension: 0.3
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, suggestedMax: 10 } } }
+        });
+    };
+    
+    const exportTableToCSV = () => {
+        const table = document.getElementById('report-table');
+        if (!table || table.tHead.rows.length === 0 || table.tBodies[0].rows.length === 0) {
+            return showToast('لا توجد بيانات لتصديرها. الرجاء إنشاء تقرير أولاً.', 'error');
+        }
+
+        let csvContent = "Name,ID,Present_Days,Absent_Days\n";
+
+        for (const row of table.tBodies[0].rows) {
+            let rowData = [];
+            for(const cell of row.cells) {
+                rowData.push(`"${cell.innerText.replace(/"/g, '""')}"`);
             }
+            csvContent += rowData.join(",") + "\n";
         }
         
-        function attachProductActionListeners() {
-            document.querySelectorAll('.edit-product-btn').forEach(btn => {
-                btn.onclick = () => {
-                    const product = productsCache.find(p => p.id === btn.dataset.id);
-                    if (product) showProductModal(product);
-                };
-            });
-            document.querySelectorAll('.delete-product-btn').forEach(btn => {
-                btn.onclick = () => {
-                    const { id } = btn.dataset;
-                    showModal('تأكيد الحذف', 'هل أنت متأكد من حذف هذا المنتج؟ لا يمكن التراجع عن هذا الإجراء.', async () => {
-                        showLoadingModal('جاري الحذف...');
-                        try {
-                            await deleteDoc(doc(db, "products", id));
-                            closeModal();
-                        } catch (error) {
-                            showModal('خطأ', `فشل حذف المنتج: ${error.message}`, () => closeModal(), 'موافق', false);
-                        }
-                    }, 'نعم, حذف', true);
-                };
-            });
+        const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement("a");
+        const url = URL.createObjectURL(blob);
+        link.setAttribute("href", url);
+        link.setAttribute("download", `attendance_report.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+    
+    const printReport = () => {
+        if (!document.getElementById('report-table') || document.getElementById('report-table').rows.length <= 1) {
+             return showToast('لا توجد بيانات للطباعة. الرجاء إنشاء تقرير أولاً.', 'error');
+        }
+        window.print();
+    };
+
+    // --- وظائف المصادقة ---
+    const handleLogin = (e) => {
+        e.preventDefault();
+        const enteredPassword = DOMElements.passwordInput.value;
+        const correctPassword = getStoredPassword();
+
+        DOMElements.loginSpinner.style.display = 'block';
+        DOMElements.loginForm.querySelector('button').style.display = 'none';
+
+        setTimeout(() => {
+            if (enteredPassword === correctPassword) {
+                state.isAuthenticated = true;
+                DOMElements.loginModal.style.display = 'none';
+                initApp();
+            } else {
+                showToast('كلمة المرور غير صحيحة!', 'error');
+                DOMElements.passwordInput.value = '';
+                DOMElements.loginSpinner.style.display = 'none';
+                DOMElements.loginForm.querySelector('button').style.display = 'block';
+            }
+        }, 500);
+    };
+
+    const handleChangePassword = (e) => {
+        e.preventDefault();
+        const currentPassword = e.target['current-password'].value;
+        const newPassword = e.target['new-password'].value;
+        
+        if (currentPassword !== getStoredPassword()) {
+            return showToast('كلمة المرور الحالية غير صحيحة.', 'error');
+        }
+        if (!newPassword || newPassword.length < 4) {
+             return showToast('كلمة المرور الجديدة يجب أن تكون 4 أحرف على الأقل.', 'error');
+        }
+
+        localStorage.setItem(APP_PASSWORD_KEY, newPassword);
+        showToast('تم تغيير كلمة المرور بنجاح.', 'success');
+        DOMElements.passwordChangeForm.reset();
+        DOMElements.passwordModal.style.display = 'none';
+    };
+
+    // --- إعدادات التهيئة الأولية ---
+    const setupEventListeners = () => {
+        DOMElements.employeeForm.addEventListener('submit', handleSaveEmployee);
+        DOMElements.addEmployeeBtn.addEventListener('click', () => {
+            state.currentEditingId = null;
+            DOMElements.modalTitle.textContent = 'إضافة عامل جديد';
+            DOMElements.employeeForm.reset();
+            DOMElements.employeeModal.style.display = 'flex';
+        });
+        DOMElements.employeeModal.querySelector('.close-btn').addEventListener('click', () => DOMElements.employeeModal.style.display = 'none');
+        DOMElements.searchInput.addEventListener('input', filterTable);
+        DOMElements.themeToggleBtn.addEventListener('click', toggleTheme);
+        DOMElements.generateReportBtn.addEventListener('click', generateReport);
+        DOMElements.exportCsvBtn.addEventListener('click', exportTableToCSV);
+        DOMElements.printReportBtn.addEventListener('click', printReport);
+        
+        DOMElements.changePasswordBtn.addEventListener('click', () => {
+            DOMElements.passwordChangeForm.reset();
+            DOMElements.passwordModal.style.display = 'flex';
+        });
+        DOMElements.passwordModal.querySelector('.close-btn').addEventListener('click', () => DOMElements.passwordModal.style.display = 'none');
+        DOMElements.passwordChangeForm.addEventListener('submit', handleChangePassword);
+
+        DOMElements.attendanceDatePicker.addEventListener('change', (e) => {
+            const newDate = e.target.value;
+            if (newDate) {
+                state.selectedDateString = newDate;
+                updateDateDisplays(newDate);
+                listenForDailyAttendance(newDate);
+            }
+        });
+    };
+
+    const toggleTheme = () => {
+        document.body.classList.toggle('dark-theme');
+        const isDark = document.body.classList.contains('dark-theme');
+        localStorage.setItem('darkTheme', isDark);
+        DOMElements.themeToggleBtn.innerHTML = `<i class="fas ${isDark ? 'fa-sun' : 'fa-moon'}"></i>`;
+        if (attendanceChart) {
+             renderReportChart(attendanceChart.data);
+        }
+    };
+    
+    const initApp = () => {
+        if (!state.isAuthenticated) return;
+        DOMElements.mainContainer.style.display = 'block';
+        DOMElements.loaderContainer.style.display = 'block';
+
+        DOMElements.attendanceDatePicker.value = state.selectedDateString;
+        updateDateDisplays(state.selectedDateString);
+
+        DOMElements.reportStartDate.value = todayDateString;
+        DOMElements.reportEndDate.value = todayDateString;
+
+        if (localStorage.getItem('darkTheme') === 'true') {
+             document.body.classList.add('dark-theme');
+             DOMElements.themeToggleBtn.innerHTML = `<i class="fas fa-sun"></i>`;
         }
         
-        // ===================================
-        // Orders Section
-        // ===================================
-        function loadOrders() {
-            const panel = document.getElementById('orders-panel');
-            panel.innerHTML = `<h1 class="text-3xl font-bold text-gray-800 mb-6">الطلبات الواردة</h1>
-                       <div class="overflow-x-auto bg-white rounded-xl shadow-md">
-                         <table class="w-full text-right responsive-table">
-                           <thead class="bg-gray-100">
-                             <tr>
-                               <th class="p-3 font-semibold">العميل</th>
-                               <th class="p-3 font-semibold">الهاتف</th>
-                               <th class="p-3 font-semibold">المنتج</th>
-                               <th class="p-3 font-semibold">المبلغ</th>
-                               <th class="p-3 font-semibold">الربح</th>
-                               <th class="p-3 font-semibold">الموقع</th>
-                               <th class="p-3 font-semibold">معلومات إضافية</th>
-                               <th class="p-3 font-semibold">الحالة</th>
-                               <th class="p-3 font-semibold">التاريخ</th>
-                               <th class="p-3 font-semibold">إجراءات</th>
-                             </tr>
-                           </thead>
-                           <tbody id="orders-table-body"></tbody>
-                         </table>
-                       </div>`;
-            const tableBody = document.getElementById('orders-table-body');
-            
-            onSnapshot(query(collection(db, "orders"), orderBy("createdAt", "desc")), (snapshot) => {
-                ordersCache = []; 
-                tableBody.innerHTML = snapshot.empty ? '<tr><td colspan="10" class="p-8 text-center text-gray-500">لا توجد طلبات حاليًا.</td></tr>' : '';
-
-                snapshot.forEach(doc => {
-                    const order = { id: doc.id, ...doc.data() };
-                    ordersCache.push(order);
-                    const date = order.createdAt?.toDate().toLocaleDateString('ar-EG-u-nu-latn', { year: 'numeric', month: 'short', day: 'numeric' }) || 'N/A';
-                    
-                    const statusText = order.status === 'completed' ? 'مكتمل' : (order.status === 'canceled' ? 'ملغي' : 'جديد');
-                    const statusColor = order.status === 'completed' ? 'bg-green-100 text-green-800' : (order.status === 'canceled' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800');
-                    const rowColor = order.status === 'completed' ? 'bg-green-50/50' : (order.status === 'canceled' ? 'bg-red-50/50' : 'bg-white');
-
-                    const row = tableBody.insertRow();
-                    row.className = `border-b ${rowColor} transition-colors`;
-                    row.innerHTML = `
-                        <td data-label="العميل" class="p-3 font-semibold">${order.customerName}</td>
-                        <td data-label="الهاتف" class="p-3 font-mono" dir="ltr"><a href="tel:${order.customerContact}" class="hover:underline">${order.customerContact}</a></td>
-                        <td data-label="المنتج" class="p-3">${order.quantity} x ${order.productName}</td>
-                        <td data-label="المبلغ" class="p-3 font-mono">${(order.price || 0).toLocaleString()} د.ج</td>
-                        <td data-label="الربح" class="p-3">
-                            <input type="number" class="profit-input w-24 p-1 border rounded text-center font-mono transition-colors" placeholder="0" value="${order.profit || ''}" data-id="${order.id}">
-                        </td>
-                        <td data-label="الموقع" class="p-3 text-sm">${order.customerLocation || '---'}</td>
-                        <td data-label="معلومات إضافية" class="p-3 text-sm">${order.additionalInfo || '---'}</td>
-                        <td data-label="الحالة" class="p-3 actions-cell">
-                            <select class="order-status-select p-2 rounded-lg border-gray-300 ${statusColor}" data-id="${order.id}">
-                                <option value="new" ${order.status === 'new' ? 'selected' : ''}>جديد</option>
-                                <option value="completed" ${order.status === 'completed' ? 'selected' : ''}>مكتمل</option>
-                                <option value="canceled" ${order.status === 'canceled' ? 'selected' : ''}>ملغي</option>
-                            </select>
-                        </td>
-                        <td data-label="التاريخ" class="p-3 font-mono text-sm">${date}</td>
-                        <td data-label="إجراءات" class="p-3">
-                            <button class="delete-order-btn text-red-500 hover:text-red-700" data-id="${order.id}"><i class="fas fa-trash fa-lg"></i></button>
-                        </td>
-                    `;
-                });
-                
-                attachOrderActionListeners();
-                updateAnalytics(); 
-            });
-        }
+        setupEventListeners();
+        listenForEmployeeChanges();
+        listenForDailyAttendance(state.selectedDateString);
         
-        function attachOrderActionListeners() {
-            document.querySelectorAll('.order-status-select').forEach(select => {
-                select.onchange = async (e) => {
-                    const { id } = e.target.dataset;
-                    const newStatus = e.target.value;
-                    await updateDoc(doc(db, "orders", id), { status: newStatus });
-                };
-            });
-            
-            document.querySelectorAll('.profit-input').forEach(input => {
-                let debounceTimer;
-                input.onkeyup = (e) => {
-                    clearTimeout(debounceTimer);
-                    debounceTimer = setTimeout(async () => {
-                         const id = e.target.dataset.id;
-                         const profitValue = parseFloat(e.target.value) || 0;
-                         try {
-                            await updateDoc(doc(db, "orders", id), { profit: profitValue });
-                            e.target.classList.add('border-green-400');
-                            setTimeout(() => e.target.classList.remove('border-green-400'), 2000);
-                         } catch (error) {
-                            e.target.classList.add('border-red-400');
-                         }
-                    }, 1000); // Update after 1 second of no typing
-                };
-            });
-            
-            // NEW: Attach listener for the delete order button
-            document.querySelectorAll('.delete-order-btn').forEach(btn => {
-                btn.onclick = () => {
-                    const { id } = btn.dataset;
-                    showModal('تأكيد الحذف', 'هل أنت متأكد من حذف هذا الطلب؟ لا يمكن التراجع عن هذا الإجراء.', async () => {
-                        showLoadingModal('جاري الحذف...');
-                        try {
-                            await deleteDoc(doc(db, "orders", id));
-                            closeModal();
-                        } catch (error) {
-                            showModal('خطأ', `فشل حذف الطلب: ${error.message}`, () => closeModal(), 'موافق', false);
-                        }
-                    }, 'نعم, حذف', true);
-                };
-            });
-        }
-        
-        // --- Modal & Utility Functions ---
-        function showModal(title, content, onConfirm, confirmText = 'حفظ', showCancel = true) {
-            const modalContainer = document.getElementById('modal-container');
-            modalContainer.innerHTML = `
-                <div class="modal-backdrop" id="modal-backdrop">
-                    <div class="modal-content">
-                        <div class="flex justify-between items-center mb-4 border-b pb-3">
-                           <h3 class="text-xl font-bold">${title}</h3>
-                           <button id="modal-close-btn" class="text-gray-400 hover:text-gray-800 text-2xl">&times;</button>
-                        </div>
-                        <div id="modal-body">${content}</div>
-                        <div class="flex justify-end gap-4 mt-6 border-t pt-4">
-                            ${showCancel ? `<button id="modal-cancel" class="bg-gray-200 text-gray-800 px-6 py-2 rounded-lg font-semibold hover:bg-gray-300">إلغاء</button>` : ''}
-                            <button id="modal-confirm" class="bg-indigo-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-indigo-700">${confirmText}</button>
-                        </div>
-                    </div>
-                </div>`;
-            if (showCancel) document.getElementById('modal-cancel').addEventListener('click', closeModal);
-            document.getElementById('modal-close-btn').addEventListener('click', closeModal);
-            document.getElementById('modal-backdrop').addEventListener('click', (e) => { if (e.target.id === 'modal-backdrop' && showCancel) closeModal(); });
-            document.getElementById('modal-confirm').addEventListener('click', onConfirm);
-        }
+        DOMElements.loaderContainer.style.display = 'none';
+    };
 
-        function closeModal() { document.getElementById('modal-container').innerHTML = ''; }
-
-        function showLoadingModal(text = 'جاري الحفظ...') {
-             document.getElementById('modal-container').innerHTML = `<div class="modal-backdrop"><div class="modal-content text-center"><div class="loader mx-auto"></div><p class="mt-4 text-lg font-semibold text-gray-700">${text}</p></div></div>`;
-        }
-
-    </script>
+    // --- بدء تشغيل التطبيق ---
+    DOMElements.loginForm.addEventListener('submit', handleLogin);
+    
+</script>
 </body>
 </html>
