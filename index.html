@@ -3,2814 +3,501 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>أمير الشروق - لمواد التنظيف الفاخرة</title> 
-    <meta name="description" content="أمير الشروق | مواد تنظيف فاخرة بالجملة والتجزئة في الجزائر. أفضل المنتجات بأعلى جودة وأسعار تنافسية. توصيل سريع وخدمة ممتازة لجميع الولايات.">
-    <meta name="keywords" content="أمير الشروق, مواد تنظيف, منظفات, بيع بالجملة, تنظيف فاخر, Blida, El Tarf, الجزائر, Amir El Chourouk, nettoyage Algérie">
-    
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://s22market.github.io/AMIR_ALSHURUK/">
-    <meta property="og:title" content="أمير الشروق - مواد تنظيف فاخرة في الجزائر">
-    <meta property="og:description" content="أمير الشروق يقدم أفضل مواد التنظيف الفاخرة بأسعار مناسبة وخدمة توصيل سريعة في الجزائر. اكتشف مجموعتنا الآن!">
-    <meta property="og:image" content="https://i.imgur.com/qY2pReh.jpg">
-    <meta property="og:locale" content="ar_DZ">
-
-    <link href="PIC/LOGGGOOO.jpg" rel="icon">
-
+    <title>S22 Market - تصفح أحدث المنتجات</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-<style>
-/*
- * ===================================================================
- * Amir El Chourouk - Unified Stylesheet
- * Version: 1.0
- * Description: A complete and unified style file for the website.
- * ===================================================================
- */
-
-/* --- Google Fonts --- */
-@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap');
-
-/*
- * =========================================
- * :ROOT VARIABLES
- * =========================================
- */
-:root {
-    /* Main Site Theme */
-    --bg-color: #f8f9fa;
-    --header-bg: rgba(255, 255, 255, 0.7);
-    --card-bg: #ffffff;
-    --text-color: #212529;
-    --heading-color: #0d6efd;
-    --accent-color: #0d6efd;
-    --accent-gradient: linear-gradient(45deg, #0d6efd, #0dcaf0);
-    --footer-bg: #212529;
-    --shadow: 0 8px 24px rgba(13, 110, 253, 0.1);
-    --shadow-hover: 0 12px 32px rgba(13, 110, 253, 0.2);
-
-    /* Digital Card Theme */
-    --primary-color: #2c5b8a;
-    --secondary-color: #c5a46d;
-    --icon-color: #777;
-    --success-color: #25D366;
-}
-
-body.dark-mode {
-    /* Main Site Dark Theme */
-    --bg-color: #121212;
-    --header-bg: rgba(22, 27, 34, 0.75);
-    --card-bg: #1c1c1c;
-    --text-color: #f0f6fc;
-    --heading-color: #58a6ff;
-    --accent-color: #58a6ff;
-    --accent-gradient: linear-gradient(45deg, #2f81f7, #3fb950);
-    --footer-bg: #0d1117;
-    --shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-    --shadow-hover: 0 12px 32px rgba(0, 0, 0, 0.5);
-
-    /* Digital Card Dark Theme */
-    background-color: #121212;
-    color: #ddd;
-}
-
-/*
- * =========================================
- * GENERAL & BASE STYLES
- * =========================================
- */
-*, *::before, *::after {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-html {
-    scroll-behavior: smooth;
-}
-
-body {
-    font-family: 'Tajawal', sans-serif;
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    line-height: 1.8;
-    transition: background-color 0.4s, color 0.4s;
-    overflow-x: hidden;
-}
-
-.container {
-    width: 90%;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-section {
-    padding: 80px 0;
-}
-
-.section-title {
-    text-align: center;
-    margin-bottom: 60px;
-    font-size: clamp(2rem, 5vw, 3rem);
-    font-weight: 800;
-    color: var(--heading-color);
-}
-
-body.dark-mode a {
-    color: var(--secondary-color);
-}
-
-/*
- * =========================================
- * HEADER & NAVIGATION
- * =========================================
- */
-header {
-    background-color: var(--header-bg);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(128, 128, 128, 0.1);
-    padding: 15px 0;
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    transition: all 0.3s;
-}
-
-.header-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.logo-container {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    text-decoration: none;
-}
-
-.logo-container img {
-    height: 50px;
-    width: 50px;
-    border-radius: 8px;
-}
-
-.logo-container h1 {
-    font-size: 1.8rem;
-    color: var(--heading-color);
-}
-
-.nav-controls {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-}
-
-#theme-toggle, #refresh-btn {
-    background: transparent;
-    border: none;
-    color: var(--heading-color);
-    font-size: 1.5rem;
-    cursor: pointer;
-    transition: transform 0.3s ease;
-}
-
-#theme-toggle:hover, #refresh-btn:hover {
-    transform: scale(1.2) rotate(20deg);
-}
-
-nav ul {
-    list-style: none;
-    display: flex;
-    gap: 30px;
-}
-
-nav a {
-    color: var(--text-color);
-    text-decoration: none;
-    font-weight: 700;
-    font-size: 1.1rem;
-    padding: 5px 0;
-    position: relative;
-    transition: color 0.3s;
-}
-
-nav a::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    width: 0;
-    height: 3px;
-    background: var(--accent-gradient);
-    border-radius: 3px;
-    transition: width 0.4s ease-in-out;
-}
-
-nav a:hover, nav a.active {
-    color: var(--accent-color);
-}
-
-nav a.active::after {
-    width: 100%;
-}
-
-.hamburger {
-    display: none;
-    font-size: 1.8rem;
-    background: none;
-    border: none;
-    color: var(--heading-color);
-    cursor: pointer;
-}
-
-/*
- * =========================================
- * SECTIONS
- * =========================================
- */
-
-/* --- Hero Section --- */
-.hero {
-    padding: 100px 0;
-    text-align: center;
-}
-
-.hero h2 {
-    font-size: clamp(2.5rem, 6vw, 4rem);
-    font-weight: 800;
-    color: var(--heading-color);
-    margin-bottom: 20px;
-}
-
-.hero p {
-    font-size: 1.3rem;
-    max-width: 600px;
-    margin: 0 auto 30px auto;
-    color: var(--text-color);
-    opacity: 0.8;
-}
-
-.cta-button {
-    background: var(--accent-gradient);
-    color: white;
-    padding: 15px 35px;
-    border-radius: 50px;
-    text-decoration: none;
-    font-size: 1.2rem;
-    font-weight: 700;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-}
-
-.cta-button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-}
-
-/* --- Features Section --- */
-.features-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 40px;
-    text-align: center;
-}
-
-.feature-item .icon {
-    font-size: 3rem;
-    margin-bottom: 20px;
-    color: var(--accent-color);
-}
-
-.feature-item h3 {
-    font-size: 1.5rem;
-    margin-bottom: 10px;
-    font-weight: 700;
-}
-
-/* --- About Us / Video Section --- */
-.about-us {
-    background-color: var(--card-bg);
-}
-
-.about-us-content {
-    max-width: 800px;
-    margin: 0 auto;
-    text-align: center;
-}
-
-.about-us-content p {
-    font-size: 1.2rem;
-    line-height: 1.7;
-    margin-bottom: 40px;
-    opacity: 0.9;
-}
-
-.video-container {
-    width: 100%;
-    max-width: 720px;
-    margin: auto;
-    box-shadow: var(--shadow-hover);
-    border-radius: 16px;
-    overflow: hidden;
-    background: #000;
-}
-
-.video-container video {
-    width: 100%;
-    height: auto;
-    display: block;
-}
-
-/* --- Products Section --- */
-.products-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 40px;
-}
-
-.product-card {
-    background-color: var(--card-bg);
-    border-radius: 16px;
-    box-shadow: var(--shadow);
-    overflow: hidden;
-    transition: transform 0.4s, box-shadow 0.4s;
-    display: flex;
-    flex-direction: column;
-    text-align: center;
-}
-
-.product-card:hover {
-    transform: translateY(-10px);
-    box-shadow: var(--shadow-hover);
-}
-
-.product-card img {
-    width: 100%;
-    height: 280px;
-    object-fit: contain;
-    transition: transform 0.4s;
-    padding: 10px;
-    background-color: #fff;
-}
-
-.product-info {
-    padding: 25px;
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-}
-
-.product-info h3 {
-    font-size: 1.6rem;
-    font-weight: 700;
-    margin-bottom: 15px;
-    color: var(--heading-color);
-    flex-grow: 1;
-}
-
-.price-info p {
-    margin: 8px 0;
-    font-size: 1.1rem;
-}
-
-.price-info span {
-    font-weight: 700;
-    font-size: 1.3rem;
-}
-.price-info .price-unite {
-    color: #dc3545;
-}
-
-.product-actions {
-    margin-top: 20px;
-}
-
-.action-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    padding: 12px;
-    border-radius: 10px;
-    color: white !important;
-    text-decoration: none;
-    font-size: 1rem;
-    font-weight: 700;
-    transition: all 0.3s;
-    border: none;
-    width: 100%;
-    background: var(--accent-gradient);
-    cursor: pointer;
-}
-
-.action-btn:hover {
-    transform: scale(1.05);
-    filter: brightness(1.1);
-}
-
-/* --- Contact Section --- */
-.contact-section {
-    background-color: var(--card-bg);
-}
-
-.contact-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 50px;
-    align-items: center;
-    max-width: 900px;
-    margin: auto;
-}
-
-.contact-details {
-    text-align: right;
-}
-
-.contact-details p {
-    font-size: 1.2rem;
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.contact-details p i {
-    color: var(--accent-color);
-    font-size: 1.5rem;
-    width: 25px;
-}
-
-.contact-details a {
-    color: var(--text-color);
-    text-decoration: none;
-    font-weight: 500;
-    transition: color 0.3s;
-}
-
-.contact-details a:hover {
-    color: var(--accent-color);
-    text-decoration: underline;
-}
-
-.qr-code-container {
-    text-align: center;
-}
-
-.qr-code-container h3 {
-    margin-bottom: 20px;
-    font-size: 1.3rem;
-    font-weight: 700;
-}
-
-.qr-code-container img {
-    max-width: 220px;
-    width: 100%;
-    height: auto;
-    border-radius: 12px;
-    box-shadow: var(--shadow);
-}
-
-/* --- Digital Business Card Section (#card_visit) --- */
-.unified-section {
-    padding: 60px 20px;
-    text-align: center;
-    font-family: 'Tajawal', sans-serif;
-}
-
-.unified-container {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 0 15px;
-}
-
-.unified-section .section-title {
-    font-size: 2.5rem;
-    color: var(--primary-color);
-    margin-bottom: 40px;
-    font-weight: 800;
-}
-
-.page-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-    width: 100%;
-    perspective: 1500px;
-}
-
-.business-card {
-    background: var(--card-bg);
-    width: 100%;
-    border-radius: 20px;
-    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.15);
-    display: flex;
-    overflow: hidden;
-    border: 1px solid #e0e0e0;
-    transition: transform 0.2s ease-out, box-shadow 0.4s ease;
-    animation: fadeInCard 0.8s ease-out forwards;
-    opacity: 0;
-    cursor: pointer;
-    transform-style: preserve-3d;
-    margin-bottom: 30px;
-}
-
-body.dark-mode .business-card {
-    background-color: #222;
-    box-shadow: 0 15px 45px rgba(255, 255, 255, 0.1);
-}
-
-@keyframes fadeInCard {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-.business-card:hover {
-    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
-}
-
-.card-right {
-    background: linear-gradient(135deg, var(--primary-color), #1a4a7a);
-    color: white;
-    padding: 30px;
-    width: 40%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-}
-body.dark-mode .card-right {
-    background: linear-gradient(135deg, #444c66, #2c3a5a);
-    color: #f0d97e;
-}
-
-.card-right .qr-code-img {
-    width: 160px;
-    height: 160px;
-    background: white;
-    padding: 10px;
-    border-radius: 12px;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    transition: transform 0.3s ease;
-}
-
-.business-card:hover .qr-code-img {
-    transform: scale(1.05);
-}
-
-.qr-code-img img {
-    width: 100%;
-    height: 100%;
-    display: block;
-    border-radius: 6px;
-}
-
-.card-right h2 {
-    margin: 10px 0 5px 0;
-    font-size: 26px;
-    font-weight: 800;
-    color: var(--secondary-color);
-    text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
-}
-
-.card-right p {
-    margin: 0;
-    font-size: 14px;
-    opacity: 0.9;
-}
-
-.card-right a {
-    color: #fff;
-    text-decoration: none;
-    word-break: break-all;
-    transition: color 0.3s ease;
-}
-
-.card-right a:hover {
-    color: var(--secondary-color);
-}
-
-.card-left {
-    padding: 30px 40px;
-    width: 60%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    text-align: right;
-}
-
-.tagline {
-    font-size: 22px;
-    font-weight: 700;
-    color: var(--primary-color);
-    margin-bottom: 15px;
-    padding-bottom: 10px;
-    border-bottom: 3px solid var(--secondary-color);
-}
-
-.description {
-    font-size: 15px;
-    color: #555;
-    line-height: 1.7;
-    margin-bottom: 20px;
-}
-
-.contact-info .info-item {
-    margin: 15px 0;
-    font-size: 16px;
-    color: var(--text-color);
-    display: flex;
-    align-items: center;
-}
-
-.contact-info .info-item i {
-    font-size: 20px;
-    color: var(--icon-color);
-    width: 30px;
-    text-align: center;
-    margin-left: 15px;
-    transition: color 0.3s ease;
-}
-
-.business-card:hover .info-item i {
-    color: var(--secondary-color);
-}
-
-.contact-info a {
-    color: var(--text-color);
-    text-decoration: none;
-    transition: color 0.3s;
-    cursor: pointer;
-    font-weight: 500;
-}
-
-.contact-info a:hover {
-    color: var(--secondary-color);
-}
-
-.whatsapp-link a {
-    color: var(--success-color);
-    font-weight: 700;
-}
-
-.business-card:hover .fa-whatsapp {
-    color: var(--success-color) !important;
-}
-
-/* --- Digital Card Actions --- */
-.actions-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 25px;
-    width: 100%;
-}
-
-.download-buttons-container, .social-share-container {
-    display: flex;
-    gap: 15px;
-    justify-content: center;
-    flex-wrap: wrap;
-}
-
-.actions-container h3 {
-    margin-bottom: 0px;
-    color: var(--primary-color);
-}
-
-.btn-download {
-    background: linear-gradient(135deg, var(--secondary-color), #a88a59);
-    color: white;
-    border: none;
-    padding: 14px 30px;
-    font-size: 16px;
-    font-family: 'Tajawal', sans-serif;
-    font-weight: 700;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 5px 15px rgba(197, 164, 109, 0.4);
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.btn-download:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(197, 164, 109, 0.5);
-}
-
-.btn-download i {
-    margin-left: 10px;
-}
-
-.social-share-container a {
-    color: white;
-    padding: 10px 15px;
-    border-radius: 6px;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    transition: transform 0.2s ease;
-}
-
-.social-share-container a:hover {
-    transform: translateY(-2px);
-}
-.social-share-container .whatsapp { background-color: #25D366; }
-.social-share-container .facebook { background-color: #4267B2; }
-.social-share-container .twitter { background-color: #1DA1F2; }
-.social-share-container .telegram { background-color: #0088cc; }
-
-
-/* --- Download App Section --- */
-.download-app-section {
-    font-family: 'Tajawal', sans-serif;
-    background-color: #f4f7f6;
-    text-align: center;
-    padding: clamp(2rem, 8vw, 4rem) 1rem;
-    border-top: 1px solid #e0e0e0;
-    border-bottom: 1px solid #e0e0e0;
-}
-
-.download-app-container {
-    max-width: 600px;
-    margin: 0 auto;
-}
-
-.download-app-section h2 {
-    font-size: clamp(1.8rem, 5vw, 2.5rem);
-    color: #2c3e50;
-    margin-top: 0;
-    margin-bottom: 0.5rem;
-}
-
-.download-app-section p {
-    font-size: clamp(1rem, 2.5vw, 1.1rem);
-    color: #7f8c8d;
-    line-height: 1.6;
-    margin-bottom: 2rem;
-}
-
-.download-btn-android {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.75rem;
-    background-color: #4CAF50;
-    color: white;
-    padding: 0.8rem 1.8rem;
-    border-radius: 50px;
-    font-size: 1.1rem;
-    font-weight: 700;
-    text-decoration: none;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
-}
-
-.download-btn-android .fab {
-    font-size: 1.5rem;
-}
-
-.download-btn-android:hover {
-    background-color: #45a049;
-    transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
-}
-
-
-/*
- * =========================================
- * MODALS
- * =========================================
- */
-
-/* --- General Modal Styles --- */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 2000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0,0,0,0.8);
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
-    align-items: center;
-    justify-content: center;
-    padding: 15px;
-}
-
-.modal.show {
-    display: flex;
-}
-
-.modal-box {
-    background-color: var(--card-bg);
-    padding: 30px;
-    border-radius: 15px;
-    width: 95%;
-    max-width: 450px;
-    text-align: center;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-    animation: fadeInUp 0.4s ease-out;
-    position: relative;
-}
-
-.modal-close {
-    position: absolute;
-    top: 10px;
-    left: 15px;
-    font-size: 2rem;
-    font-weight: bold;
-    color: var(--text-color);
-    cursor: pointer;
-    opacity: 0.7;
-}
-
-.modal-close:hover {
-    opacity: 1;
-}
-
-.modal-title {
-    font-size: 1.8rem;
-    margin-bottom: 25px;
-    color: var(--heading-color);
-    font-weight: 800;
-}
-
-.modal-actions {
-    display: flex;
-    gap: 15px;
-    justify-content: center;
-    margin-top: 25px;
-    flex-wrap: wrap;
-}
-
-.modal-btn {
-    padding: 12px 25px;
-    border-radius: 8px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.3s;
-    font-size: 1rem;
-    border: none;
-}
-
-.confirm-btn {
-    background: var(--accent-gradient);
-    color: white;
-}
-
-.cancel-btn {
-    background: #6c757d;
-    color: white;
-}
-
-.secondary-btn {
-    background: transparent;
-    border: 2px solid var(--accent-color);
-    color: var(--accent-color);
-}
-
-/* --- Quantity Modal --- */
-.quantity-controls {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 25px 0;
-    gap: 15px;
-}
-
-.quantity-btn {
-    background: var(--accent-gradient);
-    color: white;
-    border: none;
-    width: 45px;
-    height: 45px;
-    border-radius: 50%;
-    font-size: 1.5rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.2s;
-}
-
-.quantity-input {
-    width: 80px;
-    text-align: center;
-    font-size: 1.5rem;
-    padding: 8px;
-    border: 2px solid var(--accent-color);
-    border-radius: 8px;
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    font-weight: 700;
-}
-
-/* --- Contact/Order Modal --- */
-#contactChannelModal .input-group {
-    margin-bottom: 20px;
-    text-align: right;
-}
-
-#contactChannelModal label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 700;
-    font-size: 1.1rem;
-}
-
-#contactChannelModal input {
-    width: 100%;
-    padding: 12px;
-    font-size: 1.1rem;
-    border-radius: 8px;
-    border: 2px solid #ccc;
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    transition: border-color 0.3s;
-}
-
-#contactChannelModal input:focus {
-    border-color: var(--accent-color);
-    outline: none;
-}
-
-.social-order-buttons {
-    display: none;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
-    margin-top: 25px;
-}
-
-.social-order-buttons.show {
-    display: grid;
-}
-
-.social-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    padding: 12px;
-    border-radius: 8px;
-    color: white !important;
-    text-decoration: none;
-    font-size: 1rem;
-    font-weight: 700;
-    transition: all 0.3s;
-    border: none;
-}
-
-.social-btn i {
-    font-size: 1.3rem;
-}
-.social-btn.whatsapp { background: #25D366; }
-.social-btn.telegram { background: #0088cc; }
-.social-btn.facebook { background: #1877F2; }
-.social-btn.instagram { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
-.social-btn:hover {
-    transform: scale(1.05);
-    opacity: 0.9;
-}
-
-/* --- Phone Number Modal --- */
-.phone-number {
-      cursor: pointer;
-      color: #000;
-      text-decoration: underline;
-      font-weight: 900;
-      font-size: 16px;
-      transition: color 0.3s ease;
-}
-.phone-number:hover {
-      color: #c5a46d;
-}
-
-#phoneModal {
-      display: none;
-      font-family: 'Tajawal', sans-serif;
-}
-#phoneModal .modal-content {
-      background: #fff;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-      text-align: center;
-      max-width: 320px;
-      width: 90%;
-      user-select: none;
-}
-#phoneModal h3 {
-      margin-bottom: 20px;
-      font-size: 18px;
-}
-#phoneModal p#modalPhoneNumber {
-      font-weight: 900;
-      font-size: 20px;
-      margin-bottom: 25px;
-      direction: ltr;
-      letter-spacing: 2px;
-}
-#phoneModal button {
-      width: 100%;
-      padding: 12px 0;
-      margin-bottom: 12px;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-      font-weight: 700;
-}
-#phoneModal button.call-btn { background-color: #2c5b8a; color: white; }
-#phoneModal button.call-btn:hover { background-color: #24486e; }
-#phoneModal button.copy-btn { background-color: #c5a46d; color: white; }
-#phoneModal button.copy-btn:hover { background-color: #a88a59; }
-#phoneModal button.cancel-btn { background-color: #999; color: white; margin-top: 0; }
-#phoneModal button.cancel-btn:hover { background-color: #777; }
-
-
-/*
- * =========================================
- * FOOTER
- * =========================================
- */
-footer {
-    background-color: var(--footer-bg);
-    color: #adb5bd;
-    padding: 40px 0;
-    text-align: center;
-}
-
-.social-links a {
-    color: #f8f9fa;
-    font-size: 1.5rem;
-    margin: 0 15px;
-    transition: color 0.3s;
-}
-
-.social-links a:hover {
-    color: var(--accent-color);
-}
-
-/*
- * =========================================
- * UTILITIES & ANIMATIONS
- * =========================================
- */
-
-/* --- Toast Notification --- */
-.toast-notification {
-    position: fixed;
-    bottom: -100px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #2c3e50;
-    color: white;
-    padding: 15px 25px;
-    border-radius: 8px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-    z-index: 3000;
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.4s ease;
-    text-align: center;
-}
-
-.toast-notification.show {
-    opacity: 1;
-    visibility: visible;
-    bottom: 30px;
-}
-
-/* --- Scroll & Load Animations --- */
-.reveal {
-    opacity: 0;
-    transform: translateY(50px);
-    transition: opacity 0.8s, transform 0.8s;
-}
-
-.reveal.visible {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-@keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(20px) scale(0.95); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-@keyframes slideDown {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/*
- * =========================================
- * MEDIA QUERIES (RESPONSIVE DESIGN)
- * =========================================
- */
-@media (max-width: 768px) {
-    .nav-menu {
-        display: none;
-        flex-direction: column;
-        position: absolute;
-        top: 82px;
-        right: 0;
-        width: 100%;
-        background-color: var(--header-bg);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        padding: 20px;
-        animation: slideDown 0.3s ease-out;
-    }
-
-    .nav-menu.active {
-        display: flex;
-    }
-
-    nav ul {
-        flex-direction: column;
-        width: 100%;
-        text-align: center;
-        gap: 20px;
-    }
-
-    .hamburger {
-        display: block;
-    }
-
-    .contact-grid {
-        grid-template-columns: 1fr;
-        gap: 40px;
-        text-align: center;
-    }
-    .contact-details {
-        text-align: center;
-    }
-    .contact-details p {
-        justify-content: center;
-    }
-    .qr-code-container {
-        order: -1;
-    }
-
-    .unified-section .section-title {
-        font-size: 2rem;
-    }
-    .page-container {
-        perspective: none;
-    }
-    .business-card {
-        flex-direction: column;
-    }
-    .card-left, .card-right {
-        width: 100%;
-        padding: 30px;
-        box-sizing: border-box;
-    }
-    .card-right {
-        order: -1;
-    }
-    .tagline {
-        font-size: 20px;
-    }
-    .actions-container {
-        gap: 20px;
-    }
-    .social-order-buttons {
-        grid-template-columns: 1fr;
-    }
-}
-
-@media (max-width: 480px) {
-    .hero h2 {
-        font-size: 2.2rem;
-    }
-    .container {
-        width: 95%;
-    }
-    .modal-title {
-        font-size: 1.5rem;
-    }
-    .social-order-buttons.show {
-        grid-template-columns: 1fr;
-    }
-}
-
-</style>
-</head>
-</head>
-<body>
-
-
-<header>
-    <div class="container header-content">
-        <a href="#" class="logo-container">
-            <img src="PIC/LOGO.jpg" alt="شعار أمير الشروق">
-            <h1>أمير الشروق</h1>
-        </a>
-        <nav id="navbar">
-            <ul class="nav-menu" id="nav-menu">
-                <li><a href="#hero" class="nav-link active">الرئيسية</a></li>
-                <li><a href="#features" class="nav-link">ميزاتنا</a></li>
-                <li><a href="#about-us" class="nav-link">من نحن</a></li>
-                <li><a href="#products" class="nav-link">المنتجات</a></li>
-                <li><a href="#contact" class="nav-link">تواصل معنا</a></li>
-            </ul>
-        </nav>
-        <div class="nav-controls">
-            <button id="theme-toggle" aria-label="تبديل الوضع"><i class="fas fa-sun"></i></button>
-            <button id="refresh-btn" aria-label="تحديث الصفحة"><i class="fas fa-sync-alt"></i></button>
-            <button class="hamburger" id="hamburger" aria-label="فتح القائمة"><i class="fas fa-bars"></i></button>
-        </div>
-    </div>
-</header>
-
-<main>
-<section id="hero" class="hero">
-    <div class="container reveal" style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;">
-        
-        <div style="flex: 1; min-width: 280px; padding: 10px;">
-            <h2>الجودة والنظافة تبدأ من هنا</h2>
-            <p>أمير الشروق، خياركم الأول لمواد تنظيف عالية الفعالية بأسعار الجملة. نخدم كل ولايات الجزائر.</p>
-            <a href="#products" class="cta-button">اكتشف منتجاتنا <i class="fas fa-arrow-down"></i></a>
-        </div>
-
-        <div style="flex: 1; min-width: 280px; text-align: center;">
-            <img src="PIC/LOGGGOOO.jpg" alt="شعار أمير الشروق" style="max-width: 100%; height: auto; border-radius: 12px;">
-        </div>
-        
-    </div>
-</section>
-    <section id="features" class="features" style="background-color: var(--card-bg);">
-        <div class="container">
-            <h2 class="section-title reveal">لماذا تختار أمير الشروق؟</h2>
-            <div class="features-grid">
-                <div class="feature-item reveal"><div class="icon"><i class="fas fa-award"></i></div><h3>جودة فائقة</h3><p>منتجاتنا مصنعة وفق أعلى المعايير.</p></div>
-                <div class="feature-item reveal"><div class="icon"><i class="fas fa-tags"></i></div><h3>أسعار تنافسية</h3><p>نقدم أسعار جملة وشبه جملة لا تقبل المنافسة.</p></div>
-                <div class="feature-item reveal"><div class="icon"><i class="fas fa-truck-fast"></i></div><h3>توصيل مضمون</h3><p>توصيل موثوق لجميع الولايات.</p></div>
-            </div>
-        </div>
-    </section>
-
-    <section id="about-us" class="about-us">
-        <div class="container reveal">
-            <h2 class="section-title">تعرف على مؤسسة أمير الشروق</h2>
-            <div class="about-us-content">
-                <p>
-                    نحن في مؤسسة <strong>أمير الشروق</strong> نعمل على تقديم خدمات احترافية في مجالات متعددة، ونفخر بجودة أعمالنا والتزامنا برضا عملائنا. اكتشف المزيد من خلال هذا الفيديو التعريفي.
-                </p>
-                <div class="video-container">
-                    <video controls poster="PIC/LOGO.jpg">
-                        <source src="vidio.mp4" type="video/mp4">
-                        المتصفح لا يدعم عرض الفيديو.
-                    </video>
-                </div>
-            </div>
-        </div>
-    </section>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<section style="padding: 30px 15px; background: linear-gradient(to bottom, #ffffff, #f0f0f0); text-align: center; font-family: 'Arial', sans-serif;">
-  <div style="max-width: 800px; margin: auto;">
-    <h2 style="font-size: 1.8rem; margin-bottom: 20px; color: #2c3e50;">
-      🛒 عروض الجملة وشبه الجملة
-    </h2>
-
-    <div style="display: flex; flex-direction: column; gap: 15px; font-size: 1.1rem; color: #333;">
-      <div style="background: #e8f5e9; padding: 15px; border-radius: 10px;">
-        ✅ الجملة تبدأ من منتجات <strong>1 لتر</strong> بكمية <strong>60 وحدة</strong> فما فوق
-      </div>
-      <div style="background: #e3f2fd; padding: 15px; border-radius: 10px;">
-        ✅ الجملة تبدأ من منتجات <strong>5 لتر</strong> بكمية <strong>15 وحدة</strong> فما فوق
-      </div>
-      <div style="background: #fff3e0; padding: 15px; border-radius: 10px;">
-        📦 شبه الجملة تبدأ من منتجات <strong>1 لتر</strong> بكمية <strong>30 وحدة</strong> فما فوق
-      </div>
-      <div style="background: #fce4ec; padding: 15px; border-radius: 10px;">
-        📦 شبه الجملة تبدأ من منتجات <strong>5 لتر</strong> بكمية <strong>3 وحدات</strong> فما فوق
-      </div>
-    </div>
-  </div>
-</section>
-
-
-
-
-
-
-
-
-
-
-    <section id="products" class="products-section">
-        <div class="container">
-            <h2 class="section-title reveal">منتجاتنا المميزة</h2>
-            <div class="products-container" id="products-container"></div>
-        </div>
-    </section>
-
-    <section id="contact" class="contact-section">
-        <div class="container">
-            <h2 class="section-title reveal">تواصل معنا بسهولة</h2>
-            <div class="contact-grid">
-                <div class="contact-details reveal">
-                    <p><i class="fas fa-map-marker-alt"></i> <strong>العنوان:</strong> الطارف، الجزائر</p>
-                    <p><i class="fas fa-phone"></i> <strong>الهاتف:</strong> <a href="tel:+213781465477">0781465477</a> | <a href="tel:+213557754808">0557754808</a></p>
-                    <p><i class="fab fa-whatsapp"></i> <strong>واتساب:</strong> <a href="https://wa.me/213781465477" target="_blank" rel="noopener noreferrer">اضغط هنا للمحادثة</a></p>
-                    <p><i class="fas fa-envelope"></i> <strong>البريد:</strong> <a href="mailto:amirchourouk363636@gmail.com">amirchourouk363636@gmail.com</a></p>
-                </div>
-                <div class="qr-code-container reveal">
-                    <h3>أو امسح الرمز للتواصل السريع عبر واتساب</h3>
-                    <img src="PIC/QR02.jpg" alt="QR Code للاتصال عبر واتساب" id="qr-code-img">
-                </div>
-            </div>
-        </div>
-    </section>
-</main>
-
-
-
-
-
-
-<div id="quantityModal" class="modal">
-    <div class="modal-box">
-        <span class="modal-close">&times;</span>
-        <h3 class="modal-title" id="productTitle"></h3>
-        <div class="quantity-controls">
-            <button class="quantity-btn" id="decreaseQty" aria-label="Decrease quantity">-</button>
-            <input type="number" min="1" value="1" class="quantity-input" id="quantityInput" aria-label="Quantity">
-            <button class="quantity-btn" id="increaseQty" aria-label="Increase quantity">+</button>
-        </div>
-        <div class="modal-actions">
-            <button class="modal-btn cancel-btn" data-close>إلغاء</button>
-            <button class="modal-btn confirm-btn" id="confirmQuantityBtn">تأكيد ومتابعة</button>
-        </div>
-    </div>
-</div>
-
-<div id="contactChannelModal" class="modal">
-    <div class="modal-box">
-        <br><br><br><br><br><br><br>
-        <span class="modal-close">&times;</span>
-        <h3 class="modal-title">إكمال الطلب</h3>
-        <p style="margin-bottom: 20px; opacity: 0.8;">الرجاء إدخال بياناتك لإرسال الطلب.</p>
-        <div class="input-group">
-            <label for="customerName">الاسم الكامل:</label>
-            <input type="text" id="customerName" placeholder="أدخل اسمك هنا" required>
-        </div>
-        <div class="input-group">
-            <label for="customerPhone">رقم الهاتف:</label>
-            <input type="tel" id="customerPhone" placeholder="أدخل رقم هاتفك هنا" required>
-        </div>
-        <div class="input-group">
-            <label for="customerLocation">الموقع / العنوان:</label>
-            <input type="text" id="customerLocation" placeholder="أدخل موقعك أو عنوانك" required>
-        </div>
-        <div class="modal-actions">
-            <button class="modal-btn confirm-btn" id="submitOrderBtn">تأكيد الطلب عبر الموقع</button>
-            <button class="modal-btn secondary-btn" id="showSocialBtn">إرسال عبر تطبيق آخر</button>
-            <button class="modal-btn cancel-btn" id="cancelContact">رجوع</button>
-        </div>
-        <div class="social-order-buttons" id="social-buttons">
-            <a href="#" class="social-btn whatsapp" data-platform="WhatsApp"><i class="fab fa-whatsapp"></i> واتساب</a>
-            <a href="#" class="social-btn telegram" data-platform="Telegram"><i class="fab fa-telegram"></i> تيليجرام</a>
-            <a href="#" class="social-btn facebook" data-platform="Facebook"><i class="fab fa-facebook-f"></i> فيسبوك</a>
-            <a href="#" class="social-btn instagram" data-platform="Instagram"><i class="fab fa-instagram"></i> انستقرام</a>
-        </div>
-    </div>
-</div>
-
-
-
-<div id="toast" class="toast-notification"></div>
-
-
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>أقسام محسّنة لموقعك</title>
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
     <style>
-        /* --- متغيرات الألوان الرئيسية لسهولة التعديل --- */
-        :root {
-            --primary-color: #2c5b8a; /* لون أساسي (أزرق غامق) */
-            --secondary-color: #c5a46d; /* لون ثانوي (ذهبي) */
-            --card-background: #ffffff; /* خلفية البطاقة */
-            --text-color: #333; /* لون النص العام */
-            --icon-color: #777; /* لون الأيقونة */
-            --success-color: #25D366; /* لون واتساب */
-        }
-
-        /* --- أنماط عامة للقسم --- */
-        .unified-section {
-            padding: 60px 20px;
-            text-align: center;
-
-            font-family: 'Tajawal', sans-serif; /* يفضل إضافة خط عربي جميل مثل تجوال */
-        }
-
-        .unified-container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 0 15px;
-        }
-
-        .section-title {
-            font-size: 2.5rem;
-            color: var(--primary-color);
-            margin-bottom: 40px;
-            font-weight: 800;
-        }
-
-        /* --- أنماط بطاقة الزيارة الرقمية --- */
-        .page-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-            width: 100%;
-            perspective: 1500px;
-        }
-
-        .business-card {
-            background: var(--card-background);
-            width: 100%;
-            border-radius: 20px;
-            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.15);
-            display: flex;
-            overflow: hidden;
-            border: 1px solid #e0e0e0;
-            transition: transform 0.2s ease-out, box-shadow 0.4s ease;
-            animation: fadeInCard 0.8s ease-out forwards;
-            opacity: 0;
-            cursor: pointer;
-            transform-style: preserve-3d;
-            margin-bottom: 30px; /* مسافة قبل أزرار التحميل والمشاركة */
-        }
-
-        @keyframes fadeInCard {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .business-card:hover {
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
-        }
-
-        .card-right {
-            background: linear-gradient(135deg, var(--primary-color), #1a4a7a);
-            color: white; padding: 30px; width: 40%;
-            display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
-        }
-        
-        .card-right .qr-code-img {
-            width: 160px; height: 160px; background: white; padding: 10px; border-radius: 12px; margin-bottom: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: transform 0.3s ease;
-        }
-
-        .business-card:hover .qr-code-img { transform: scale(1.05); }
-        .qr-code-img img { width: 100%; height: 100%; display: block; border-radius: 6px; }
-        .card-right h2 { margin: 10px 0 5px 0; font-size: 26px; font-weight: 800; color: var(--secondary-color); text-shadow: 1px 1px 3px rgba(0,0,0,0.2); }
-        .card-right p { margin: 0; font-size: 14px; opacity: 0.9; }
-        .card-right a { color: #fff; text-decoration: none; word-break: break-all; transition: color 0.3s ease; }
-        .card-right a:hover { color: var(--secondary-color); }
-
-        .card-left {
-            padding: 30px 40px; width: 60%;
-            display: flex; flex-direction: column; justify-content: center; text-align: right;
-        }
-        
-        .tagline { font-size: 22px; font-weight: 700; color: var(--primary-color); margin-bottom: 15px; padding-bottom: 10px; border-bottom: 3px solid var(--secondary-color); }
-        .description { font-size: 15px; color: #555; line-height: 1.7; margin-bottom: 20px; }
-        .contact-info .info-item { margin: 15px 0; font-size: 16px; color: var(--text-color); display: flex; align-items: center; }
-        .contact-info .info-item i { font-size: 20px; color: var(--icon-color); width: 30px; text-align: center; margin-left: 15px; transition: color 0.3s ease; }
-        .business-card:hover .info-item i { color: var(--secondary-color); }
-        .contact-info a { color: var(--text-color); text-decoration: none; transition: color 0.3s; cursor: pointer; font-weight: 500; }
-        .contact-info a:hover { color: var(--secondary-color); }
-        .whatsapp-link a { color: var(--success-color); font-weight: 700; }
-        .business-card:hover .fa-whatsapp { color: var(--success-color) !important; }
-
-        /* --- أزرار التحميل والمشاركة --- */
-        .actions-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 25px;
-            width: 100%;
-        }
-
-        .download-buttons-container, .social-share-container {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        
-        .actions-container h3 {
-            margin-bottom: 0px;
-            color: var(--primary-color);
-        }
-
-        .btn-download { /* زر تحميل البطاقة */
-            background: linear-gradient(135deg, var(--secondary-color), #a88a59);
-            color: white; border: none; padding: 14px 30px;
-            font-size: 16px; font-family: 'Tajawal', sans-serif; font-weight: 700;
-            border-radius: 10px; cursor: pointer; transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(197, 164, 109, 0.4); text-decoration: none;
-            display: inline-flex; align-items: center; justify-content: center;
-        }
-
-        .btn-download:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(197, 164, 109, 0.5);
-        }
-        .btn-download i { margin-left: 10px; }
-        
-        .social-share-container a { /* أزرار المشاركة */
-            color: white;
-            padding: 10px 15px;
-            border-radius: 6px;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: transform 0.2s ease;
-        }
-        .social-share-container a:hover {
-            transform: translateY(-2px);
-        }
-        .social-share-container .whatsapp { background-color: #25D366; }
-        .social-share-container .facebook { background-color: #4267B2; }
-        .social-share-container .twitter { background-color: #1DA1F2; }
-        .social-share-container .telegram { background-color: #0088cc; }
-
-        /* --- رسالة التنبيه (Toast) --- */
-        .toast-notification {
-            position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%);
-            background-color: #2c3e50; color: white; padding: 15px 25px; border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2); z-index: 1000;
-            opacity: 0; visibility: hidden; transition: all 0.4s ease;
-        }
-
-        .toast-notification.show { opacity: 1; visibility: visible; bottom: 30px; }
-
-        /* --- تصميم متجاوب --- */
-        @media (max-width: 768px) {
-            .section-title { font-size: 2rem; }
-            .page-container { perspective: none; }
-            .business-card { flex-direction: column; }
-            .card-left, .card-right { width: 100%; padding: 30px; box-sizing: border-box; }
-            .card-right { order: -1; }
-            .tagline { font-size: 20px; }
-            .actions-container { gap: 20px; }
-        }
-        /* نمط الوضع الداكن */
-body.dark-mode {
-  background-color: #121212;
-  color: #ddd;
-}
-
-body.dark-mode a {
-  color: #c5a46d; /* لون ذهبي في الوضع الداكن */
-}
-
-body.dark-mode .business-card {
-  background-color: #222;
-  box-shadow: 0 15px 45px rgba(255, 255, 255, 0.1);
-}
-
-body.dark-mode .card-right {
-  background: linear-gradient(135deg, #444c66, #2c3a5a);
-  color: #f0d97e;
-}
-
-/* عدل ألوان أخرى حسب حاجتك في الوضع الداكن */
-    </style>
-</head>
-<body>
-
-    <main>
-        <section id="card_visit" class="unified-section">
-            <div class="unified-container">
-                <h2  class="section-title">بطاقتك الرقمية وتفاصيل التواصل</h2>
-                
-                <div class="page-container">
-                    <div class="business-card" id="businessCard" title="انقر لتوليد صورة ديناميكية للبطاقة">
-                        <div class="card-left">
-                            <h3  style="font-weight: 900; font-size: 15px; color: #000; line-height: 1.7; margin-bottom: 20px;" class="tagline">الجودة والنظافة تبدأ من هنا</h3>
-                            <p   style="font-weight: 900; font-size: 15px; color: #000; line-height: 1.7; margin-bottom: 20px;"class="description">
-
-
-                                خياركم الأول لمواد تنظيف عالية الفعالية بأسعار الجملة. نخدمكم في الطارف وكل أنحاء الجزائر.
-                            </p>
-                            <div class="contact-info">
-                                <div class="info-item">
-                                    <i class="fas fa-map-marker-alt"></i><span   style="font-weight: 900; font-size: 15px; color: #000; line-height: 1.7; margin-bottom: 20px;" >الطارف، الجزائر</span>
-                                </div>
-                                <div class="info-item">
-                                    <i class="fas fa-phone-alt"></i>
-                            
-
-                                    <div>
-
-                                        <!DOCTYPE html>
-<html lang="ar">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>بطاقة الاتصال</title>
-  <style>
-    .phone-number {
-      cursor: pointer;
-      color: #000;
-      text-decoration: underline;
-      font-weight: 900;
-      font-size: 40px;
-      transition: color 0.3s ease;
-    }
-    .phone-number:hover {
-      color: #c5a46d; /* ذهبي */
-    }
-
-    #phoneModal {
-      display: none; /* مخفية عند التحميل */
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.5);
-      z-index: 9999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Tajawal', sans-serif;
-    }
-    #phoneModal .modal-content {
-      background: #fff;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-      text-align: center;
-      max-width: 320px;
-      width: 90%;
-      user-select: none;
-    }
-    #phoneModal h3 {
-      margin-bottom: 20px;
-      font-size: 18px;
-    }
-    #phoneModal p#modalPhoneNumber {
-      font-weight: 900;
-      font-size: 20px;
-      margin-bottom: 25px;
-      direction: ltr;
-      letter-spacing: 2px;
-    }
-    #phoneModal button {
-      width: 100%;
-      padding: 12px 0;
-      margin-bottom: 12px;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-      font-weight: 700;
-    }
-    #phoneModal button.call-btn {
-      background-color: #2c5b8a;
-      color: white;
-    }
-    #phoneModal button.call-btn:hover {
-      background-color: #24486e;
-    }
-    #phoneModal button.copy-btn {
-      background-color: #c5a46d;
-      color: white;
-    }
-    #phoneModal button.copy-btn:hover {
-      background-color: #a88a59;
-    }
-    #phoneModal button.cancel-btn {
-      background-color: #999;
-      color: white;
-      margin-top: 0;
-    }
-    #phoneModal button.cancel-btn:hover {
-      background-color: #777;
-    }
-  </style>
-</head>
-<body>
-
-  <p style="font-weight: 900; font-size: 16px; color: #000;">
-    <span class="phone-number" 
-          onclick="event.stopPropagation(); showPhoneOptions('0781465477')">
-      0781465477
-    </span>
-  
-    <span class="phone-number" 
-          onclick="event.stopPropagation(); showPhoneOptions('0557754808')">
-      0557754808
-    </span>
-  </p>
-
-  <div id="phoneModal" onclick="closeModal()">
-    <div class="modal-content" onclick="event.stopPropagation()">
-      <h3>اختر الإجراء للرقم:</h3>
-      <p id="modalPhoneNumber"></p>
-      <button class="call-btn" onclick="callNow()">📞 اتصال</button>
-      <button class="copy-btn" onclick="copyNow()">📋 نسخ الرقم</button>
-      <button class="cancel-btn" onclick="closeModal()">إلغاء</button>
-    </div>
-  </div>
-
-  <script>
-    window.onload = function() {
-      if(document.getElementById('phoneModal')) {
-        document.getElementById('phoneModal').style.display = 'none';
-      }
-    };
-
-    let currentPhone = "";
-
-    function showPhoneOptions(phoneNumber) {
-      currentPhone = phoneNumber;
-      document.getElementById('modalPhoneNumber').innerText = phoneNumber;
-      document.getElementById('phoneModal').style.display = 'flex';
-    }
-
-    function callNow() {
-      window.location.href = `tel:${currentPhone}`;
-      closeModal();
-    }
-
-    function copyNow() {
-      navigator.clipboard.writeText(currentPhone).then(() => {
-        alert("📋 تم نسخ الرقم: " + currentPhone);
-      });
-      closeModal();
-    }
-
-    function closeModal() {
-      if(document.getElementById('phoneModal')) {
-         document.getElementById('phoneModal').style.display = 'none';
-      }
-    }
-
-    window.onclick = function(event) {
-      const modal = document.getElementById('phoneModal');
-      if (modal && event.target === modal) {
-        closeModal();
-      }
-    }
-  </script>
-
-</body>
-</html>
-                              
-                                    </div>
-                                </div>
-                                <div class="info-item">
-                                    <i class="fas fa-envelope"></i>
-                                    <a  style="font-weight: 900; font-size: 26px; color: #000; line-height: 1.7; margin-bottom: 20px;"class="description" href="mailto:amirchourouk363636@gmail.com" onclick="event.stopPropagation();">amirchourouk363636@gmail.com</a>
-                                </div>
-                                <div class="info-item whatsapp-link">
-                                    <i class="fab fa-whatsapp"></i>
-                                    <a href="https://wa.me/213781465477" target="_blank" onclick="event.stopPropagation();">مراسلة مباشرة على واتساب</a>
-                                </div>
-
-                 </div>
-                        </div>
-
-                        <div class="card-right">
-                            <h2  style="font-weight: 900; font-size: 48px; color: #ebb80f; line-height: 1.7; margin-bottom: 40px;"class="description" >أمير الشروق</h2>
-                            <div class="qr-code-img">
-                                <img src="PIC/QR01.jpg" alt="QR Code للموقع" onerror="this.onerror=null;this.src='https://placehold.co/160x160/ffffff/c5a46d?text=QR+Code';">
-                            </div>
-                            <p  style="font-weight: 900; font-size: 17px; color: #ffffff; line-height: 1.7; margin-bottom: 20px;"class="description">امسح الكود لزيارة موقعنا</p>
-                            <a  style="font-weight: 900; font-size: 17px; color: #ffffff; line-height: 1.7; margin-bottom: 20px;"class="description" href="https://s22market.github.io/AMIR_ALSHURUK/" target="_blank" onclick="event.stopPropagation();">s22market.github.io/AMIR_ALSHURUK</a>
-                        </div>
-                    </div>
-
-                    <div class="actions-container">
-                        <div class="download-buttons-container">
-                             <a href="PIC/card visit.jpg" class="btn-download" download="Amir-Alshuruk-Card.jpg">
-                                <i class="fas fa-download"></i>
-                                تحميل بطاقة الزيارة (Visit Card)
-                            </a>
-                        </div>
-                        
-                        <div>
-                            <h3>شارك موقعنا مع أصدقائك:</h3>
-                            <div class="social-share-container">
-                                <a href="https://wa.me/?text=🌐%20اكتشف%20موقع%20أمير%20الشروق:%20https://s22market.github.io/AMIR_ALSHURUK/" target="_blank" rel="noopener noreferrer" class="whatsapp">
-                                    <i class="fab fa-whatsapp"></i> واتساب
-                                </a>
-                                <a href="https://www.facebook.com/sharer/sharer.php?u=https://s22market.github.io/AMIR_ALSHURUK/" target="_blank" rel="noopener noreferrer" class="facebook">
-                                    <i class="fab fa-facebook-f"></i> فيسبوك
-                                </a>
-                                <a href="https://twitter.com/intent/tweet?url=https://s22market.github.io/AMIR_ALSHURUK/&text=🌐%20اكتشف%20موقع%20أمير%20الشروق" target="_blank" rel="noopener noreferrer" class="twitter">
-                                    <i class="fab fa-twitter"></i> تويتر
-                                </a>
-                                <a href="https://t.me/share/url?url=https://s22market.github.io/AMIR_ALSHURUK/&text=🌐%20اكتشف%20موقع%20أمير%20الشروق" target="_blank" rel="noopener noreferrer" class="telegram">
-                                    <i class="fab fa-telegram-plane"></i> تيليغرام
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        </main>
-
-    <div id="toast" class="toast-notification"></div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // --- تأثير التحريك ثلاثي الأبعاد للبطاقة ---
-            const card = document.getElementById('businessCard');
-            if (card) {
-                // تجنب التعدي على حركة الماوس في الشاشات الصغيرة
-                if (window.innerWidth > 768) {
-                    card.addEventListener('mousemove', (e) => {
-                        const cardRect = card.getBoundingClientRect();
-                        const x = e.clientX - cardRect.left;
-                        const y = e.clientY - cardRect.top;
-                        const middleX = cardRect.width / 2;
-                        const middleY = cardRect.height / 2;
-                        const rotateY = ((x - middleX) / middleX) * 10; // تقليل زاوية الدوران قليلاً
-                        const rotateX = ((middleY - y) / middleY) * 10;
-                        card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`;
-                    });
-
-                    card.addEventListener('mouseleave', () => {
-                        card.style.transform = 'rotateX(0deg) rotateY(0deg) scale(1)';
-                    });
-                }
-            }
-        });
-
-        // --- دوال مساعدة ---
-        function copyToClipboard(text) {
-            navigator.clipboard.writeText(text).then(() => {
-                showToast('✅ تم نسخ الرقم: ' + text);
-            }).catch(err => {
-                console.error('لم يتم النسخ:', err);
-                showToast('❌ فشل نسخ الرقم');
-            });
-        }
-
-        function showToast(message) {
-            const toast = document.getElementById('toast');
-            if(toast) {
-                toast.textContent = message;
-                toast.classList.add('show');
-                setTimeout(() => {
-                    toast.classList.remove('show');
-                }, 3000);
-            }
-
-        }
-    </script>
-
-</body>
-</html>
-
-
-<style>
-    /* يمكنك وضع هذا الـ CSS في ملف الأنماط الرئيسي أو تركه هنا */
-    @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap');
-    @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css');
-
-    .download-app-section {
-        font-family: 'Tajawal', sans-serif;
-        background-color: #f4f7f6; /* لون خلفية هادئ */
-        text-align: center;
-        padding: clamp(2rem, 8vw, 4rem) 1rem;
-        border-top: 1px solid #e0e0e0;
-        border-bottom: 1px solid #e0e0e0;
-    }
-
-    .download-app-container {
-        max-width: 600px;
-        margin: 0 auto;
-    }
-
-    .download-app-section h2 {
-        font-size: clamp(1.8rem, 5vw, 2.5rem);
-        color: #2c3e50; /* لون عنوان داكن وأنيق */
-        margin-top: 0;
-        margin-bottom: 0.5rem;
-    }
-
-    .download-app-section p {
-        font-size: clamp(1rem, 2.5vw, 1.1rem);
-        color: #7f8c8d; /* لون نصي أفتح */
-        line-height: 1.6;
-        margin-bottom: 2rem;
-    }
-
-    .download-btn-android {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.75rem; /* مسافة بين الأيقونة والنص */
-        background-color: #4CAF50; /* لون أخضر مميز للأندرويد */
-        color: white;
-        padding: 0.8rem 1.8rem;
-        border-radius: 50px; /* حواف دائرية بالكامل */
-        font-size: 1.1rem;
-        font-weight: 700;
-        text-decoration: none;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
-    }
-    
-    .download-btn-android .fab {
-        font-size: 1.5rem; /* حجم أيقونة الأندرويد */
-    }
-
-    .download-btn-android:hover {
-        background-color: #45a049;
-        transform: translateY(-3px);
-        box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
-    }
-</style>
-
-<section class="download-app-section">
-    <div class="download-app-container">
-        <h2>حمّل تطبيق أمير الشروق</h2>
-        <p>احصل على أحدث العروض والمنتجات مباشرة على هاتفك. تطبيقنا متوفر الآن للتحميل على أجهزة الأندرويد.</p>
-        
-        <a href="أمير الشروق - لمواد التنظيف.apk" class="download-btn-android" download>
-            <i class="fab fa-android"></i>
-            <span>تحميل التطبيق الآن</span>
-        </a>
-    </div>
-</section>
-
-<footer>
-    <div class="container">
-        <div class="social-links">
-            <a href="https://wa.me/213781465477" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
-            <a href="https://web.facebook.com/p/أ%D9%85%D9%8A%D8%B1-%D8%A7%D9%84%D8%B4%D8%B1%D9%88%D9%82-61559518204192/" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-            <a href="https://www.instagram.com/amir_el_chorouk?igsh=OHhyNnE0MGd5cGpo" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-             <a href="https://t.me/amirchourouk" target="_blank" rel="noopener noreferrer" aria-label="Telegram"><i class="fab fa-telegram"></i></a>
-        </div>
-        <p>جميع الحقوق محفوظة &copy; أمير الشروق <span id="year"></span>. تصميم وتطوير   </p>
-    </div>
-</footer>
-
-
-
-
-
-
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-    const firebaseConfig = {
-     apiKey: "AIzaSyA1VBBOZQOUwnHp8x487g7lkn14x6Sp-7g",
-     authDomain: "stoke-c650a.firebaseapp.com",
-     databaseURL: "https://stoke-c650a-default-rtdb.firebaseio.com",
-     projectId: "stoke-c650a",
-     storageBucket: "stoke-c650a.appspot.com",
-     messagingSenderId: "464151163343",
-     appId: "1:464151163343:web:c77c7dfd093ce9c1c822ba",
-     measurementId: "G-EP0R97CYLS"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    document.addEventListener('DOMContentLoaded', function() {
-        const products = [
-
-
-    { name: 'جافيل 5 لتر', gros: '135.00 د.ج', superGros: '125.00 د.ج', prixUnite: '150.00 د.ج', image: 'PIC/JAVAIL 5L.jpg' },
-    { name: 'جافيل 1 لتر', gros: '42.00 د.ج', superGros: '35.00 د.ج', prixUnite: '50.00 د.ج', image: 'PIC/JAVAIL 1 L.jpg' },
-    { name: 'صانيبون 5 لتر', gros: '165.00 د.ج', superGros: '155.00 د.ج', prixUnite: '200.00 د.ج', image: 'PIC/SANIBON 5 L.jpg' },
-    { name: 'صانيبون 1 لتر', gros: '85.00 د.ج', superGros: '75.00 د.ج', prixUnite: '100.00 د.ج', image: 'PIC/SANIBON 1L.jpg' },
-    { name: 'منظف الأرضيات 1 لتر', gros: '95.00 د.ج', superGros: '85.50 د.ج', prixUnite: '110.00 د.ج', image: 'PIC/LAVESOLE 1L.jpg' },
-    { name: 'سائل الأواني 5 لتر', gros: '310.00 د.ج', superGros: '290.00 د.ج', prixUnite: '330.00 د.ج', image: 'PIC/AWANI 5 L.png' },
-    { name: 'سائل الأواني 1 لتر', gros: '105.00 د.ج', superGros: '90.00 د.ج', prixUnite: '120.00 د.ج', image: 'PIC/AWANI 1 L.png' },
-
-
-  ];
-
-        const productsContainer = document.getElementById('products-container');
-        if(productsContainer) 
-        
-        {products.forEach(product => {
-    const card = `
-        <div class="product-card reveal">
-            <img src="${product.image}" alt="${product.name}" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/280x280/ffffff/cccccc?text=Image+Not+Found';">
-            <div class="product-info">
-                <h3>${product.name}</h3>
-                <div class="price-info">
-                    <p>سعر الوحدة: <span class="price-unite">${product.prixUnite}</span></p>
-                    <p>سعر الجملة: <span class="price-super-gros">${product.superGros}</span></p>
-                    <p>شبه جملة: <span class="price-gros">${product.gros}</span></p>
-                </div>
-                <div class="product-actions">
-                    <button class="action-btn order-btn" data-product-name="${product.name}"><i class="fas fa-shopping-cart"></i> اطلب الآن</button>
-                </div>
-            </div>
-        </div>`;
-    productsContainer.innerHTML += card;
-});
-
-        }
-        const themeToggle = document.getElementById('theme-toggle');
-        const body = document.body;
-        const currentTheme = localStorage.getItem('theme');
-        if (currentTheme === 'dark') {
-            body.classList.add('dark-mode');
-            themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
-        } else {
-            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-        }
-        themeToggle.addEventListener('click', () => {
-            body.classList.toggle('dark-mode');
-            localStorage.setItem('theme', body.classList.contains('dark-mode') ? 'dark' : 'light');
-            themeToggle.innerHTML = body.classList.contains('dark-mode') ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
-        });
-        document.getElementById('refresh-btn').addEventListener('click', () => location.reload());
-        document.getElementById('year').textContent = new Date().getFullYear();
-        const hamburger = document.getElementById('hamburger');
-        const navMenu = document.getElementById('nav-menu');
-        hamburger.addEventListener('click', () => {
-            navMenu.classList.toggle('active');
-            hamburger.querySelector('i').classList.toggle('fa-bars');
-            hamburger.querySelector('i').classList.toggle('fa-times');
-        });
-
-        const quantityModal = document.getElementById('quantityModal');
-        const contactChannelModal = document.getElementById('contactChannelModal');
-        const productTitleEl = document.getElementById('productTitle');
-        const quantityInput = document.getElementById('quantityInput');
-        let currentOrder = { productName: '', quantity: 1 };
-
-        document.querySelectorAll('.order-btn').forEach(button => {
-            button.addEventListener('click', () => {
-                currentOrder.productName = button.getAttribute('data-product-name');
-                productTitleEl.textContent = currentOrder.productName;
-                quantityInput.value = 1;
-                quantityModal.classList.add('show');
-            });
-        });
-
-        document.getElementById('increaseQty').addEventListener('click', () => quantityInput.value++);
-        document.getElementById('decreaseQty').addEventListener('click', () => { if (quantityInput.value > 1) quantityInput.value--; });
-        document.getElementById('confirmQuantityBtn').addEventListener('click', () => {
-            currentOrder.quantity = quantityInput.value;
-            quantityModal.classList.remove('show');
-            contactChannelModal.classList.add('show');
-        });
-        document.getElementById('cancelContact').addEventListener('click', () => {
-            contactChannelModal.classList.remove('show');
-            quantityModal.classList.add('show');
-        });
-        document.querySelectorAll('.modal .modal-close, .modal .cancel-btn[data-close]').forEach(el => {
-            el.addEventListener('click', () => {
-                el.closest('.modal').classList.remove('show');
-            });
-        });
-
-        async function saveOrderToFirebase(source) {
-            const customerName = document.getElementById('customerName').value.trim();
-            const customerPhone = document.getElementById('customerPhone').value.trim();
-            const customerLocation = document.getElementById('customerLocation').value.trim();
-            if (!customerName || !customerPhone || !customerLocation) {
-                showToastGlobal('الرجاء إدخال جميع البيانات: الاسم والهاتف والموقع.');
-                return null;
-            }
-            const orderData = {
-                productName: currentOrder.productName,
-                quantity: parseInt(currentOrder.quantity, 10),
-                customerName, customerPhone, customerLocation,
-                status: 'مازال',
-                expectedPrice: 0,
-                myCommission: 0,
-                source: source,
-                createdAt: serverTimestamp()
-            };
-            try {
-                await addDoc(collection(db, "orders"), orderData);
-                return orderData;
-            } catch (e) {
-                console.error("Error adding document: ", e);
-                showToastGlobal('❌ حدث خطأ أثناء حفظ الطلب.');
-                return null;
-            }
-        }
-
-        document.getElementById('submitOrderBtn').addEventListener('click', async (e) => {
-            const btn = e.target;
-            btn.disabled = true;
-            btn.textContent = 'جاري الإرسال...';
-            const savedOrder = await saveOrderToFirebase('الموقع');
-            if (savedOrder) {
-                showToastGlobal('✅ تم إرسال طلبك بنجاح!');
-                contactChannelModal.classList.remove('show');
-                ['customerName', 'customerPhone', 'customerLocation'].forEach(id => document.getElementById(id).value = '');
-            }
-            btn.disabled = false;
-            btn.textContent = 'تأكيد الطلب عبر الموقع';
-        });
-
-        document.getElementById('showSocialBtn').addEventListener('click', () => {
-            document.getElementById('social-buttons').classList.toggle('show');
-        });
-
-        document.querySelectorAll('.social-btn').forEach(button => {
-            button.addEventListener('click', async function(e) {
-                e.preventDefault();
-                const platform = this.dataset.platform;
-                const originalContent = this.innerHTML;
-                this.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${this.innerText}`;
-                this.disabled = true;
-                
-                const savedOrder = await saveOrderToFirebase(platform);
-
-                if (savedOrder) {
-                    const businessPhoneNumber = "213781465477";
-                    const businessTelegramUser = "amirchourouk";
-                    const businessFacebookID = "61559518204192";
-                    const businessInstagramURL = "https://www.instagram.com/amir_el_chorouk/";
-                    
-                    const message = `*طلب جديد من موقع أمير الشروق*\n-----------------------------------\n*المنتج:* ${savedOrder.productName}\n*الكمية:* ${savedOrder.quantity}\n-----------------------------------\n*بيانات العميل:*\n*الاسم:* ${savedOrder.customerName}\n*الهاتف:* ${savedOrder.customerPhone}\n*الموقع:* ${savedOrder.customerLocation}`;
-                    const plainTextMessage = message.replace(/\*/g, ''); // For clipboard
-                    const encodedMessage = encodeURIComponent(message);
-                    
-                    let url;
-                    if (platform === 'WhatsApp') {
-                        url = `https://wa.me/${businessPhoneNumber}?text=${encodedMessage}`;
-                    } else if (platform === 'Telegram') {
-                        url = `https://t.me/${businessTelegramUser}?text=${encodedMessage}`;
-                    } else if (platform === 'Facebook') {
-                        url = `https://m.me/${businessFacebookID}`;
-                        navigator.clipboard.writeText(plainTextMessage);
-                        showToastGlobal('✅ تم نسخ الطلب! قم بلصقه في ماسنجر.');
-                    } else if (platform === 'Instagram') {
-                        url = businessInstagramURL;
-                        navigator.clipboard.writeText(plainTextMessage);
-                        showToastGlobal('✅ تم نسخ الطلب! قم بلصقه في رسالتك على انستقرام.');
-                    }
-                    
-                    if(url) {
-                        window.open(url, '_blank');
-                        contactChannelModal.classList.remove('show');
-                    }
-                }
-                
-                this.disabled = false;
-                this.innerHTML = originalContent;
-            });
-        });
-
-        function showToastGlobal(message) {
-            const toastEl = document.getElementById('toast');
-            if(toastEl) {
-                toastEl.textContent = message;
-                toastEl.classList.add('show');
-                setTimeout(() => toastEl.classList.remove('show'), 4000);
-            }
-        }
-        
-        const revealObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add("visible");
-                    revealObserver.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.1 });
-        document.querySelectorAll(".reveal").forEach(el => revealObserver.observe(el));
-    });
-</script>
-
-</body>
-</html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نافذة أذكار وتنبيهات</title>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
-    <style>
-        /* =================================================================== */
-        /* نافذة الأذكار المنبثقة - نسخة محسّنة                                   */
-        /* =================================================================== */
-
-        :root {
-            --adm-bg-color: #f8f5f2;
-            --adm-modal-bg: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(249, 249, 249, 0.85));
-            --adm-primary-text: #3a4d39;
-            --adm-secondary-text: #6c757d;
-            --adm-reminder-text: #8d8d8d;
-            --adm-primary-accent: #4f6f52;
-            --adm-primary-accent-hover: #739072;
-            --adm-success-color: #a3b18a;
-            --adm-subtle-border: rgba(0, 0, 0, 0.1);
-            
-            --adm-border-radius-lg: 16px;
-            --adm-border-radius-md: 10px;
-            
-            --adm-shadow: 0 10px 35px rgba(0, 0, 0, 0.12);
-            --adm-transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-        }
-
         body {
             font-family: 'Tajawal', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: var(--adm-bg-color);
+            background-color: #f0f2f5;
         }
-
-        .adm-modal-overlay {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: fixed;
-            inset: 0;
-            z-index: 99999;
-            padding: 1rem;
-            
-            background-color: rgba(40, 55, 40, 0.5);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            
-            /* تحسين: السماح بالتمرير إذا كان المحتوى أطول من الشاشة */
-            overflow-y: auto;
-
-            opacity: 0;
-            animation: adm-fadeIn 0.5s ease-out forwards;
+        /* --- Animations & Loaders --- */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .loader {
+            border: 5px solid #f3f3f3; border-top: 5px solid #3b82f6;
+            border-radius: 50%; width: 50px; height: 50px;
+            animation: spin 1s linear infinite;
         }
-
-        @keyframes adm-fadeIn {
-            to { opacity: 1; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .small-loader {
+            border: 3px solid rgba(255, 255, 255, 0.3); border-top-color: #fff;
+            border-radius: 50%; width: 20px; height: 20px;
+            animation: spin 0.8s linear infinite;
         }
-        
-        /* تصميم موحد لكل النوافذ المنبثقة */
-        .adm-modal-content, .adm-jumaa-message-content, .isn-modal-content {
-            background: var(--adm-modal-bg);
-            padding: clamp(1.25rem, 4vw, 2rem) clamp(1rem, 4vw, 2rem) 1.5rem;
-            border-radius: var(--adm-border-radius-lg);
-            box-shadow: var(--adm-shadow);
-            width: 100%;
-            max-width: 460px;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            
-            transform: translateY(20px) scale(0.98);
-            opacity: 0;
-            animation: adm-scaleUp 0.5s 0.2s ease-out forwards;
-            
+        /* --- Modal Styles --- */
+        .modal-backdrop {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.7); z-index: 50;
+            display: flex; align-items: center; justify-content: center;
+            animation: fadeIn 0.3s;
+        }
+        .modal-content {
+            background-color: white;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            width: 90%;
+            max-width: 600px; /* Increased max-width for new fields */
+            max-height: 95vh;
             display: flex;
             flex-direction: column;
-            gap: clamp(1rem, 3.5vw, 1.5rem);
+            overflow: hidden;
+            animation: slideInUp 0.4s;
         }
-
-        @keyframes adm-scaleUp {
-            to {
-                transform: translateY(0) scale(1);
-                opacity: 1;
-            }
-        }
-        
-        .adm-hidden {
-            display: none !important;
-        }
-        
-        .adm-modal-header h2, .isn-modal-header h2 {
-            font-size: clamp(1.5rem, 5.5vw, 2rem);
-            font-weight: 700;
-            color: var(--adm-primary-text);
-            margin: 0 0 0.25rem 0;
-        }
-        
-        .adm-tasks-header {
-            font-size: clamp(1rem, 3.5vw, 1.1rem);
-            line-height: 1.6;
-            color: var(--adm-secondary-text);
-            margin: 0;
-        }
-
-        .adm-dhikr-tasks {
+        .modal-body-container {
             display: flex;
-            flex-direction: column;
-            gap: clamp(0.75rem, 3vw, 1rem);
-        }
-
-        .adm-dhikr-btn {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: clamp(0.8rem, 3vw, 1rem) clamp(1rem, 4vw, 1.25rem);
-            font-size: clamp(1rem, 4vw, 1.1rem);
-            font-weight: 500;
-            color: #fff;
-            background-color: var(--adm-primary-accent);
-            border: none;
-            border-radius: var(--adm-border-radius-md);
-            cursor: pointer;
-            transition: var(--adm-transition);
-            text-decoration: none;
-        }
-        
-        .adm-dhikr-btn .adm-icon {
-            margin-left: 10px;
-            font-size: 1.2rem;
-        }
-        
-        .adm-dhikr-btn .adm-btn-text {
-            flex-grow: 1;
-            text-align: right;
-        }
-
-        .adm-dhikr-btn:hover:not(:disabled) {
-            background-color: var(--adm-primary-accent-hover);
-            transform: translateY(-4px);
-            box-shadow: 0 6px 20px rgba(79, 111, 82, 0.4);
-        }
-
-        .adm-dhikr-btn:disabled {
-            background-color: var(--adm-success-color);
-            cursor: default;
-        }
-
-        .adm-dhikr-btn.adm-is-completed::after {
-            content: "\f00c";
-            font-family: "Font Awesome 6 Free";
-            font-weight: 900;
-            color: #fff;
-            margin-right: 10px;
-        }
-
-        .adm-dhikr-btn .adm-counter {
-            background-color: rgba(0, 0, 0, 0.15);
-            padding: 0.2rem 0.6rem;
-            border-radius: 50px;
-            font-size: 0.9rem;
-            min-width: 40px;
-        }
-        
-        .adm-modal-footer {
-            margin-top: auto;
-            padding-top: clamp(0.75rem, 3vw, 1rem);
-            border-top: 1px solid rgba(0,0,0,0.07);
-        }
-        
-        .adm-dhikr-reminder p {
-            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
-            color: var(--adm-reminder-text);
-            line-height: 1.6;
-            margin: 0 0 1rem 0;
-        }
-        
-        .adm-dhikr-reminder .quran-verse {
-            color: var(--adm-primary-text);
-            font-weight: 500;
-        }
-
-        .adm-progress-bar-container {
-            width: 100%;
-            background-color: rgba(0, 0, 0, 0.08);
-            border-radius: 50px;
-            height: 10px;
+            flex-direction: row;
             overflow: hidden;
         }
-        
-        #adm-progress-bar {
-            width: 0%;
+        .modal-image-pane {
+            width: 50%;
+            background-color: #f3f4f6;
+        }
+        .modal-form-pane {
+            width: 50%;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+        .slider-container {
+            position: relative;
+            width: 100%;
             height: 100%;
-            background-color: var(--adm-success-color);
-            border-radius: 50px;
-            transition: width 0.5s ease-in-out;
         }
-        
-        /* تصميم نافذة الجمعة */
-        .adm-jumaa-message-content {
-            background-color: #fdf6f0;
-            border: 2px solid #d4a373;
-        }
-        .adm-jumaa-message-content .jumaa-header {
-            font-size: clamp(1.5rem, 5vw, 1.7rem);
-            color: var(--adm-primary-accent);
-            font-weight: 700;
-            margin-bottom: 0;
-        }
-        .adm-jumaa-message-content .jumaa-body {
-            font-size: clamp(0.9rem, 3.5vw, 1rem);
-            color: var(--adm-primary-text);
-            line-height: 1.8;
-            text-align: justify;
-        }
-        .adm-jumaa-message-content .jumaa-source {
-            font-size: clamp(0.8rem, 3vw, 0.9rem);
-            color: var(--adm-secondary-text);
-            margin-top: 0.5rem;
-        }
-        .adm-jumaa-message-content #play-jumaa-audio {
-            background-color: #d4a373;
-        }
-        .adm-jumaa-message-content #play-jumaa-audio:hover:not(:disabled) {
-            background-color: #c79059;
-            transform: translateY(-2px);
-        }
-        .adm-jumaa-message-content #play-jumaa-audio:disabled {
-            background-color: #e3c1a0;
-            transform: none;
-            box-shadow: none;
-        }
-        .adm-jumaa-message-content .closing-message {
-            background-color: #fff3cd;
-            border: 1px solid #ffeeba;
-            padding: clamp(0.75rem, 3vw, 1rem);
-            border-radius: 8px;
-            font-size: clamp(0.9rem, 3.5vw, 1rem);
-        }
-        .adm-jumaa-message-content .closing-message p {
-            color: #856404;
-            font-weight: bold;
-            margin: 0;
-        }
-        /* تحسين: تصميم زر التحديث ليتناسب مع الهوية البصرية */
-        .adm-jumaa-refresh-btn {
-            font-family: 'Tajawal', sans-serif;
-            font-size: clamp(0.8rem, 3vw, 0.9rem);
-            padding: 0.6rem 1rem;
-            background-color: rgba(0,0,0,0.05);
-            border: 1px solid rgba(0,0,0,0.1);
-            border-radius: var(--adm-border-radius-md);
-            color: var(--adm-secondary-text);
-            cursor: pointer;
-            transition: var(--adm-transition);
+        .slider-container img {
             width: 100%;
-            margin-top: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
+            height: 100%;
+            object-fit: cover;
         }
-        .adm-jumaa-refresh-btn:hover {
-            background-color: #e2e6ea;
-            color: var(--adm-primary-text);
-            border-color: rgba(0,0,0,0.15);
+        /* --- Image Slider in Modal --- */
+        .slider-track { display: flex; transition: transform 0.3s ease-in-out; height: 100%;}
+        .slider-item { min-width: 100%; height: 100%; }
+        .slider-btn {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            background-color: rgba(0,0,0,0.4); color: white;
+            border-radius: 50%; width: 40px; height: 40px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; z-index: 10; transition: background-color 0.2s;
         }
-
-
-        /* تصميم نافذة سورة الكهف */
-        .isn-modal-content.jumaa-style {
-            background-color: #e8f5e9;
-            border: 2px solid var(--adm-primary-accent);
+        .slider-btn:hover { background-color: rgba(0,0,0,0.6); }
+        .slider-btn.next { left: 10px; } /* Flipped for RTL */
+        .slider-btn.prev { right: 10px; }
+        .slider-dots {
+            position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%);
+            display: flex; gap: 8px;
         }
-        .isn-modal-content .quran-text {
-            font-size: clamp(1.1rem, 4vw, 1.3rem);
-            color: var(--adm-primary-text);
-            font-style: italic;
-            line-height: 1.7;
+        .dot {
+            width: 10px; height: 10px; border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.6);
+            cursor: pointer; transition: background-color 0.3s;
         }
-        .isn-modal-content .hadith-source {
-            font-size: clamp(0.8rem, 3vw, 0.9rem);
-            color: var(--adm-secondary-text);
+        .dot.active { background-color: white; }
+        .cursor-zoom-in { cursor: zoom-in; }
+        /* --- Fullscreen Image Viewer --- */
+        .fullscreen-backdrop {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(0, 0, 0, 0.85); z-index: 1000;
+            display: flex; align-items: center; justify-content: center;
+            cursor: zoom-out; animation: fadeIn 0.3s;
         }
-        .isn-modal-content .buttons-container {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
-            width: 100%;
+        .fullscreen-backdrop img { max-width: 95%; max-height: 95%; object-fit: contain; }
+        .fullscreen-close-btn { position: absolute; top: 20px; right: 20px; color: white; font-size: 2.5rem; cursor: pointer; }
+        /* --- Toast Notification --- */
+        #toast-container {
+            position: fixed; bottom: 20px; left: 20px; z-index: 1001;
         }
-        .isn-btn {
-            flex: 1;
-            padding: 0.75rem;
-            border-radius: var(--adm-border-radius-md);
-            border: none;
-            cursor: pointer;
-            font-weight: 700;
-            font-size: clamp(0.9rem, 3.5vw, 1rem);
-            transition: var(--adm-transition);
-            text-decoration: none;
-            display: inline-block;
+        .toast {
+            background-color: #22c55e; color: white;
+            padding: 1rem 1.5rem; border-radius: 0.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex; align-items: center; gap: 0.75rem;
+            animation: slideInUp 0.5s, fadeOut 0.5s 4.5s forwards;
         }
-        .isn-btn.btn-jumaa {
-            background-color: var(--adm-primary-accent);
-            color: white;
-        }
-        .isn-btn.btn-jumaa:hover {
-            background-color: var(--adm-primary-accent-hover);
-            transform: translateY(-2px);
-        }
-        .isn-btn.btn-close {
-            background-color: #e9ecef;
-            color: #495057;
-        }
-        .isn-btn.btn-close:hover {
-            background-color: #dee2e6;
-        }
-
-        /* تحسين: جعل أزرار نافذة الكهف عمودية على الشاشات الصغيرة جدًا */
-        @media (max-width: 360px) {
-            .isn-modal-content .buttons-container {
+        @keyframes fadeOut { to { opacity: 0; transform: translateY(20px); } }
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 95%;
+                max-width: 450px;
+                max-height: 90vh;
+            }
+            .modal-body-container {
                 flex-direction: column;
             }
+            .modal-image-pane, .modal-form-pane {
+                width: 100%;
+            }
+            .modal-image-pane {
+                height: 250px; /* Fixed height for image on mobile */
+            }
+            .modal-form-pane {
+                padding: 1rem;
+                max-height: calc(90vh - 250px);
+            }
         }
-
+        @media (max-width: 640px) {
+            header h1 { font-size: 1.5rem; }
+            .md\:col-span-1, .md\:col-span-3 { grid-column: span 1; }
+            aside { position: static !important; margin-bottom: 1rem; }
+            #products-grid { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)) !important; }
+        }
     </style>
 </head>
 <body>
-
-    <div id="adm-modal-overlay" class="adm-modal-overlay">
-        
-        <div id="adm-modal-content" class="adm-modal-content">
-            <div class="adm-modal-header">
-                <h2>أهلاً بكم، طبتم وطاب ممشاكم</h2>
-                <p class="adm-tasks-header">للمتابعة، نرجو منك إنجاز هذه الأذكار اليسيرة.</p>
-            </div>
-            <div id="adm-dhikr-tasks" class="adm-dhikr-tasks">
-                <button id="adm-btn-salat" class="adm-dhikr-btn">
-                    <span class="adm-btn-text"><i class="fa-solid fa-moon adm-icon"></i>صلِّ على النبي ﷺ</span>
-                    <span class="adm-counter">0/1</span>
-                </button>
-                <button id="adm-btn-tasbih" class="adm-dhikr-btn">
-                    <span class="adm-btn-text"><i class="fa-solid fa-leaf adm-icon"></i>سبحان الله وبحمده</span>
-                    <span class="adm-counter">0/1</span>
-                </button>
-                <button id="adm-btn-istighfar" class="adm-dhikr-btn">
-                    <span class="adm-btn-text"><i class="fa-solid fa-hands-praying adm-icon"></i>استغفر الله</span>
-                    <span class="adm-counter">0/1</span>
-                </button>
-            </div>
-            <div class="adm-modal-footer">
-                <div class="adm-dhikr-reminder">
-                    <p>
-                        <span class="quran-verse">﴿ الَّذِينَ آمَنُوا وَتَطْمَئِنُّ قُلُوبُهُم بِذِكْرِ اللَّهِ ۗ أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ﴾</span>
-                        <br>[الرعد:28]
-                        <br><br>
-                        اذكر الله بنية التقرب إليه، ولك الأجر إن شاء الله.
-                    </p>
+    <header class="bg-white shadow-sm sticky top-0 z-30">
+        <div class="max-w-7xl mx-auto py-3 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+            <h1 class="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800">S22<span class="text-blue-600">MARKET</span></h1>
+        </div>
+    </header>
+    <main class="max-w-7xl mx-auto py-4 sm:py-6 md:py-8 px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
+            <aside class="md:col-span-1 bg-white p-4 sm:p-6 rounded-xl shadow-md h-fit sticky top-16 md:top-24">
+                <h3 class="text-lg sm:text-xl font-bold mb-3 sm:mb-4 border-b pb-2 sm:pb-3">البحث والتصنيف</h3>
+                <div class="space-y-3 sm:space-y-4">
+                    <div>
+                        <label for="search-input" class="font-semibold text-gray-700 text-sm sm:text-base">ابحث عن منتج</label>
+                        <div class="relative mt-1">
+                            <span class="absolute inset-y-0 right-0 flex items-center pr-3"><i class="fas fa-search text-gray-400"></i></span>
+                            <input type="text" id="search-input" placeholder="اسم المنتج..." class="w-full pr-10 pl-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="price-filter" class="font-semibold text-gray-700 text-sm sm:text-base">ترتيب حسب السعر</label>
+                        <select id="price-filter" class="mt-1 w-full p-2 text-sm sm:text-base border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="default">افتراضي</option>
+                            <option value="asc">من الأرخص للأغلى</option>
+                            <option value="desc">من الأغلى للأرخص</option>
+                        </select>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-gray-700 text-sm sm:text-base mb-2">الأقسام</h4>
+                        <div id="store-categories" class="space-y-2">
+                            <div class="text-center p-4"><div class="loader mx-auto"></div></div>
+                        </div>
+                    </div>
                 </div>
-                <div class="adm-progress-bar-container">
-                    <div id="adm-progress-bar"></div>
+            </aside>
+            <div class="md:col-span-3">
+                 <div id="store-loader" class="text-center py-12 sm:py-16 md:py-20"><div class="loader mx-auto"></div><p class="mt-4 text-gray-600">جاري تحميل المنتجات...</p></div>
+                 <div id="products-grid" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                    </div>
+                 <div id="no-products-msg" class="hidden text-center py-12 sm:py-16 md:py-20 bg-white rounded-xl shadow-sm">
+                    <i class="fas fa-store-slash text-3xl sm:text-4xl text-gray-400"></i>
+                    <p class="mt-4 text-lg sm:text-xl font-semibold text-gray-500">لا توجد منتجات تطابق بحثك حاليًا.</p>
                 </div>
             </div>
         </div>
-
-        <div id="adm-jumaa-message" class="adm-jumaa-message-content adm-hidden">
-            <h2 class="jumaa-header">📿 تذكير بصلاة الجمعة</h2>
-            <div class="jumaa-body">
-                <p>
-                    
- يَٰٓأَيُّهَا ٱلَّذِينَ ءَامَنُوٓاْ إِذَا نُودِيَ لِلصَّلَوٰةِ مِن يَوۡمِ ٱلۡجُمُعَةِ فَٱسۡعَوۡاْ إِلَىٰ ذِكۡرِ ٱللَّهِ وَذَرُواْ ٱلۡبَيۡعَۚ ذَٰلِكُمۡ خَيۡرٞ لَّكُمۡ إِن كُنتُمۡ تَعۡلَمُونَ (9) فَإِذَا قُضِيَتِ ٱلصَّلَوٰةُ فَٱنتَشِرُواْ فِي ٱلۡأَرۡضِ وَٱبۡتَغُواْ مِن فَضۡلِ ٱللَّهِ وَٱذۡكُرُواْ ٱللَّهَ كَثِيرٗا لَّعَلَّكُمۡ تُفۡلِحُونَ (10) وَإِذَا رَأَوۡاْ تِجَٰرَةً أَوۡ لَهۡوًا ٱنفَضُّوٓاْ إِلَيۡهَا وَتَرَكُوكَ قَآئِمٗاۚ قُلۡ مَا عِندَ ٱللَّهِ خَيۡرٞ مِّنَ ٱللَّهۡوِ وَمِنَ ٱلتِّجَٰرَةِۚ وَٱللَّهُ خَيۡرُ ٱلرَّٰزِقِينَ (11)                
-                
-                </p>
-            </div>
-            <p class="jumaa-source">[سورة الجمعة: 9-11]</p>
-            <button id="play-jumaa-audio" class="adm-dhikr-btn">
-                <span class="adm-btn-text"><i class="fa-solid fa-volume-high adm-icon"></i> تشغيل التلاوة</span>
-            </button>
-            <div class="closing-message">
-                <p>⛔ تُغلق <strong>مؤسسة أمير الشروق</strong> أبوابها يوم الجمعة من الساعة <strong>11:30</strong> إلى <strong>14:00</strong> احترامًا للصلاة.</p>
-            </div>
-            <button id="refresh-btn" class="adm-jumaa-refresh-btn" aria-label="تحديث الصفحة" onclick="location.reload();">
-                <i class="fas fa-sync-alt"></i>
-                <span>اضغط هنا بعد الساعة 14:00</span>
-            </button>
+    </main>
+    <footer class="bg-gray-800 text-white mt-8 sm:mt-10 md:mt-12">
+        <div class="max-w-7xl mx-auto py-6 sm:py-8 px-4 sm:px-6 lg:px-8 text-center">
+            <h3 class="text-xl sm:text-2xl font-bold">تواصل معنا</h3>
+            <p class="text-gray-400 mt-2 mb-4 sm:mb-6 text-sm sm:text-base">تابعنا على الشبكات الاجتماعية أو تواصل معنا مباشرة عبر واتساب</p>
+            <div id="social-links-container" class="flex justify-center items-center gap-4 sm:gap-6">
+                </div>
+            <p class="mt-6 sm:mt-8 text-gray-500 text-xs sm:text-sm">&copy; 2024 S22 Market. كل الحقوق محفوظة.</p>
         </div>
-
-        <div id="kahfModal" class="isn-modal-content jumaa-style adm-hidden">
-            <div class="isn-modal-header"><h2>📿 فضل سورة الكهف</h2></div>
-            <p class="quran-text">"من قرأ سورةَ الكهفِ في يومِ الجمعةِ أضاء له من النورِ ما بين الجمُعَتَين."</p>
-            <p class="hadith-source">صحيح الترغيب | 736</p>
-            <div class="buttons-container">
-                <a href="سورة الكهف مكتوبة.html" class="isn-btn btn-jumaa">قراءة السورة</a>
-                <button id="closeKahfModal" class="isn-btn btn-close">إغلاق</button>
-            </div>
-        </div>
-    </div>
-
-    <audio id="jumaa-audio" src="JOMAA.mp3" preload="auto"></audio>
-
-    <script>
-    document.addEventListener('DOMContentLoaded', () => {
-
-        const overlay = document.getElementById('adm-modal-overlay');
-        const dhikrModal = document.getElementById('adm-modal-content');
-        const jumaaMessage = document.getElementById('adm-jumaa-message');
-        const jumaaAudio = document.getElementById('jumaa-audio');
-        const kahfModal = document.getElementById('kahfModal');
-
-        function showHideOverlay(show) {
-            if (show) {
-                overlay.classList.remove('adm-hidden');
-                // Ensure correct display property for flexbox
-                overlay.style.display = 'flex'; 
-                overlay.style.opacity = '0';
-                // Force a reflow before adding the animation class
-                void overlay.offsetWidth; 
-                overlay.style.transition = 'opacity 0.5s ease';
-                overlay.style.opacity = '1';
-            } else {
-                overlay.style.transition = 'opacity 0.5s ease';
-                overlay.style.opacity = '0';
-                setTimeout(() => { 
-                    overlay.style.display = 'none';
-                }, 500);
-            }
-        }
-
-        function handleModalsVisibility() {
-            const now = new Date();
-            const day = now.getDay();
-            const hours = now.getHours();
-            const minutes = now.getMinutes();
-            
-            const currentTimeInMinutes = hours * 60 + minutes;
-            const startTime = 11 * 60 + 30; // 11:30
-            const endTime = 14 * 60;        // 14:00
-
-            const isFriday = (day === 5);
-            const isJumaaClosingTime = (isFriday && currentTimeInMinutes >= startTime && currentTimeInMinutes < endTime);
-
-            // Hide all modals first
-            dhikrModal.classList.add('adm-hidden');
-            jumaaMessage.classList.add('adm-hidden');
-            kahfModal.classList.add('adm-hidden');
-            
-            let shouldShowOverlay = true;
-
-            if (isJumaaClosingTime) {
-                // In Friday prayer time: show Jumaa message
-                jumaaMessage.classList.remove('adm-hidden');
-            } else if (isFriday) {
-                // On Friday (outside prayer time): show Kahf modal
-                kahfModal.classList.remove('adm-hidden');
-            } else {
-                // On other days: show standard Dhikr modal
-                dhikrModal.classList.remove('adm-hidden');
-            }
-            
-            if(shouldShowOverlay) {
-                showHideOverlay(true);
-            }
-        }
-        
-        handleModalsVisibility();
-
-        // --- Buttons Logic ---
-
-        const playButton = document.getElementById('play-jumaa-audio');
-        if (playButton && jumaaAudio) {
-            playButton.addEventListener('click', () => {
-                if (jumaaAudio.paused) {
-                    jumaaAudio.play().catch(e => console.error("Error playing audio:", e));
-                    playButton.querySelector('.adm-btn-text').innerHTML = '<i class="fa-solid fa-pause adm-icon"></i> جارٍ التشغيل...';
-                } else {
-                    jumaaAudio.pause();
-                    playButton.querySelector('.adm-btn-text').innerHTML = '<i class="fa-solid fa-volume-high adm-icon"></i> تشغيل التلاوة';
-                }
-            });
-            jumaaAudio.onended = () => {
-                 playButton.querySelector('.adm-btn-text').innerHTML = '<i class="fa-solid fa-volume-high adm-icon"></i> تشغيل التلاوة';
-            };
-        }
-        
-        const closeKahfBtn = document.getElementById('closeKahfModal');
-        if(closeKahfBtn) {
-            closeKahfBtn.addEventListener('click', () => {
-                showHideOverlay(false);
-            });
-        }
-
-        // --- Dhikr Modal Logic ---
-        const progressBar = document.getElementById('adm-progress-bar');
-        const requiredClicks = 1;
-
-        const buttons = {
-            salat:     { element: document.getElementById('adm-btn-salat'),     count: 0 },
-            tasbih:    { element: document.getElementById('adm-btn-tasbih'),    count: 0 },
-            istighfar: { element: document.getElementById('adm-btn-istighfar'), count: 0 }
+    </footer>
+    <div id="modal-container"></div>
+    <div id="toast-container"></div>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getFirestore, collection, getDocs, addDoc, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        // --- Configuration ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyAxEq-nkLDc3_HM38xb3mhb8ekSXmuFQ7I",
+            authDomain: "s22market-4bdb9.firebaseapp.com",
+            databaseURL: "https://s22market-4bdb9-default-rtdb.firebaseio.com",
+            projectId: "s22market-4bdb9",
+            storageBucket: "s22market-4bdb9.appspot.com",
+            messagingSenderId: "1029564929614",
+            appId: "1:1029564929614:web:2866722c34cf1fb2b8951f",
+            measurementId: "G-VH16M3Q33V"
         };
-
-        const totalButtons = Object.values(buttons).filter(b => b.element).length;
-        if (totalButtons > 0) {
-            const totalRequiredClicks = requiredClicks * totalButtons;
-            let totalClicks = 0;
-
-            function updateProgressBar() {
-                const progressPercentage = (totalClicks / totalRequiredClicks) * 100;
-                progressBar.style.width = `${progressPercentage}%`;
+        const CONTACT_PHONE_NUMBER = "213699443914"; 
+        const SOCIAL_LINKS = {
+            whatsapp: `https://wa.me/${CONTACT_PHONE_NUMBER}`,
+            facebook: "https://www.facebook.com/people/S22market/61563869504735/",
+            instagram: "https://www.instagram.com/s22market2/",
+            telegram: "https://t.me/S22MARKET"
+        };
+        
+        // --- Firebase Initialization ---
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        // --- Global State & Elements Cache ---
+        let productsCache = [];
+        let categoriesCache = [];
+        const elements = {
+            modalContainer: document.getElementById('modal-container'),
+            toastContainer: document.getElementById('toast-container'),
+            grid: document.getElementById('products-grid'),
+            loader: document.getElementById('store-loader'),
+            noProductsMsg: document.getElementById('no-products-msg'),
+            categoriesContainer: document.getElementById('store-categories'),
+            searchInput: document.getElementById('search-input'),
+            priceFilter: document.getElementById('price-filter'),
+            socialLinksContainer: document.getElementById('social-links-container')
+        };
+        
+        // --- Toast Notification Function ---
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = `<i class="fas fa-check-circle text-xl sm:text-2xl"></i><span class="text-sm sm:text-base">${message}</span>`;
+            elements.toastContainer.appendChild(toast);
+            setTimeout(() => toast.remove(), 5000);
+        }
+        // --- Render Functions ---
+        function renderStoreProducts() {
+            elements.grid.innerHTML = '';
+            const searchTerm = elements.searchInput.value.toLowerCase();
+            const priceSort = elements.priceFilter.value;
+            const activeCategoryBtn = document.querySelector('.category-filter-btn.active');
+            const selectedCategoryId = activeCategoryBtn ? activeCategoryBtn.dataset.id : 'all';
+            let filteredProducts = productsCache;
+            if (selectedCategoryId !== 'all') {
+                filteredProducts = filteredProducts.filter(p => p.categoryId === selectedCategoryId);
             }
-
-            function checkAllTasksCompletion() {
-                if (totalClicks >= totalRequiredClicks) {
-                    const taskContainer = document.getElementById('adm-dhikr-tasks');
-                    taskContainer.innerHTML = `<p style="color: var(--adm-primary-accent); font-size: 1.2rem; font-weight: bold;">جزاكم الله خيرًا، تم إنجاز الأذكار!</p>`;
-                    
-                    setTimeout(() => {
-                        showHideOverlay(false);
-                    }, 2000);
-                }
+            if (searchTerm) {
+                filteredProducts = filteredProducts.filter(p => p.name.toLowerCase().includes(searchTerm) || (p.description && p.description.toLowerCase().includes(searchTerm)));
             }
-            
-            for (const key in buttons) {
-                const buttonData = buttons[key];
-                if (!buttonData.element) continue;
-                
-                const counterElement = buttonData.element.querySelector('.adm-counter');
-                counterElement.textContent = `${buttonData.count}/${requiredClicks}`;
-                
-                buttonData.element.addEventListener('click', () => {
-                    if (buttonData.count < requiredClicks) {
-                        buttonData.count++;
-                        totalClicks++;
-                        counterElement.textContent = `${buttonData.count}/${requiredClicks}`;
-                        updateProgressBar();
-                        
-                        if (buttonData.count === requiredClicks) {
-                            buttonData.element.disabled = true;
-                            buttonData.element.classList.add('adm-is-completed');
-                            const textSpan = buttonData.element.querySelector('.adm-btn-text');
-                            const iconHTML = textSpan.querySelector('.adm-icon')?.outerHTML || '';
-                            textSpan.innerHTML = iconHTML + 'أُنجِز';
-                        }
-                        
-                        checkAllTasksCompletion();
-                    }
+            if (priceSort === 'asc') {
+                filteredProducts.sort((a, b) => a.price - b.price);
+            } else if (priceSort === 'desc') {
+                filteredProducts.sort((a, b) => b.price - a.price);
+            }
+            if (filteredProducts.length === 0) {
+                elements.grid.classList.add('hidden');
+                elements.noProductsMsg.classList.remove('hidden');
+            } else {
+                elements.grid.classList.remove('hidden');
+                elements.noProductsMsg.classList.add('hidden');
+                filteredProducts.forEach(product => {
+                    const image = (product.imageUrls && product.imageUrls.length > 0) ? product.imageUrls[0] : (product.imageUrl || '');
+                    const card = document.createElement('div');
+                    card.className = 'bg-white rounded-xl shadow-md overflow-hidden flex flex-col transition-shadow hover:shadow-lg';
+                    card.innerHTML = `
+                        <div class="h-56 overflow-hidden relative group">
+                            <img src="${image}" alt="${product.name}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" onerror="this.onerror=null;this.src='https://placehold.co/600x400/e2e8f0/4a5568?text=Image+Not+Found';">
+                        </div>
+                        <div class="p-4 flex flex-col flex-grow">
+                            <h3 class="text-lg font-bold text-gray-800 truncate" title="${product.name}">${product.name}</h3>
+                            <p class="text-blue-600 text-2xl font-extrabold my-3">${product.price.toLocaleString()} د.ج</p>
+                            <div class="mt-auto pt-4 border-t border-gray-100">
+                               <button class="order-btn w-full bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2">
+                                  <i class="fas fa-shopping-cart"></i> طلب المنتج
+                               </button>
+                            </div>
+                        </div>`;
+                    card.querySelector('.order-btn').addEventListener('click', () => showOrderModal(product));
+                    elements.grid.appendChild(card);
                 });
             }
         }
-    });
-    </script>
+        
+        function setupImageZoom(modalId) {
+            const imagesToZoom = document.querySelectorAll(`#slider-track-${modalId} img`);
+            imagesToZoom.forEach(img => {
+                img.addEventListener('click', () => {
+                    const fullscreenView = document.createElement('div');
+                    fullscreenView.className = 'fullscreen-backdrop';
+                    fullscreenView.innerHTML = `
+                        <span class="fullscreen-close-btn">&times;</span>
+                        <img src="${img.src}" alt="${img.alt}">`;
+                    document.body.appendChild(fullscreenView);
+                    fullscreenView.onclick = () => fullscreenView.remove();
+                });
+            });
+        }
+        function showOrderModal(product) {
+            const modalId = `modal-${product.id}`;
+            const images = (product.imageUrls && product.imageUrls.length > 0) ? product.imageUrls : [product.imageUrl || 'https://placehold.co/600x600/e2e8f0/4a5568?text=No+Image'];
+            const sliderItemsHTML = images.map(url => `
+                <div class="slider-item"><img src="${url}" alt="${product.name}" class="w-full h-full object-cover cursor-zoom-in" onerror="this.onerror=null;this.src='https://placehold.co/600x600/e2e8f0/4a5568?text=Error';"></div>
+            `).join('');
+            const dotsHTML = images.length > 1 ? images.map((_, i) => `<div class="dot ${i === 0 ? 'active' : ''}" data-index="${i}"></div>`).join('') : '';
+            const modalHTML = `
+            <div class="modal-backdrop" id="modal-backdrop-${modalId}">
+                <div class="modal-content">
+                    <button id="modal-close-btn-${modalId}" class="absolute top-3 left-3 bg-black bg-opacity-40 rounded-full w-8 h-8 flex items-center justify-center hover:bg-opacity-60 z-20 text-xl text-white">&times;</button>
+                    <div class="modal-body-container">
+                        <div class="modal-image-pane">
+                            <div id="slider-container-${modalId}" class="slider-container">${sliderItemsHTML ? `
+                                <div id="slider-track-${modalId}" class="slider-track">${sliderItemsHTML}</div>
+                                ${images.length > 1 ? `<div id="prev-btn-${modalId}" class="slider-btn prev"><i class="fas fa-chevron-right"></i></div><div id="next-btn-${modalId}" class="slider-btn next"><i class="fas fa-chevron-left"></i></div><div class="slider-dots">${dotsHTML}</div>` : ''}
+                            ` : `<div class="w-full h-full flex items-center justify-center bg-gray-100 text-gray-500">لا توجد صورة</div>`}
+                            </div>
+                        </div>
+                        <div id="modal-form-content-${modalId}" class="modal-form-pane">
+                           </div>
+                    </div>
+                </div>
+            </div>`;
+            elements.modalContainer.innerHTML = modalHTML;
+            
+            setupImageZoom(modalId);
+            if (images.length > 1) {
+                const track = document.getElementById(`slider-track-${modalId}`);
+                const dots = document.querySelectorAll(`#slider-container-${modalId} .dot`);
+                let currentIndex = 0;
+                const updateSlider = () => {
+                    track.style.transform = `translateX(${currentIndex * 100}%)`;
+                    dots.forEach(d => d.classList.remove('active'));
+                    dots[currentIndex].classList.add('active');
+                };
+                document.getElementById(`next-btn-${modalId}`).onclick = () => { currentIndex = (currentIndex - 1 + images.length) % images.length; updateSlider(); };
+                document.getElementById(`prev-btn-${modalId}`).onclick = () => { currentIndex = (currentIndex + 1) % images.length; updateSlider(); };
+                dots.forEach(d => { d.onclick = () => { currentIndex = parseInt(d.dataset.index); updateSlider(); }; });
+            }
+            const close = () => elements.modalContainer.innerHTML = '';
+            document.getElementById(`modal-close-btn-${modalId}`).onclick = close;
+            const backdrop = document.getElementById(`modal-backdrop-${modalId}`);
+            backdrop.onclick = (e) => { if (e.target === backdrop) close(); };
+            
+            const formContainer = document.getElementById(`modal-form-content-${modalId}`);
+            let quantity = 1;
+            
+            const showStep1_Quantity = () => {
+                formContainer.innerHTML = `
+                    <div class="flex-grow overflow-y-auto pr-2">
+                        <h2 class="text-2xl lg:text-3xl font-extrabold text-gray-900 mb-2">${product.name}</h2>
+                        <p id="total-price-display" class="text-blue-600 text-2xl font-bold mb-4">${product.price.toLocaleString()} د.ج</p>
+                        <div class="text-gray-600 space-y-2 mb-4 border-t pt-4">
+                            <h4 class="font-bold text-gray-800">الوصف:</h4>
+                            <p class="text-sm leading-relaxed">${product.description ? product.description.replace(/\n/g, '<br>') : 'لا يوجد وصف متاح حاليا.'}</p>
+                        </div>
+                    </div>
+                    <div class="mt-auto pt-4 border-t">
+                        <label for="quantity-input" class="font-semibold text-gray-700">الكمية المطلوبة:</label>
+                        <div class="flex items-center mt-2">
+                            <button type="button" id="decrease-qty" class="bg-gray-200 text-gray-800 font-bold w-12 h-12 rounded-r-lg text-2xl">-</button>
+                            <input type="number" id="quantity-input" value="1" min="1" class="w-full h-12 p-2 text-center font-bold text-xl border-t border-b border-gray-300 focus:outline-none" readonly>
+                            <button type="button" id="increase-qty" class="bg-gray-200 text-gray-800 font-bold w-12 h-12 rounded-l-lg text-2xl">+</button>
+                        </div>
+                        <button id="next-step-btn" class="w-full mt-4 bg-blue-600 text-white font-bold py-3 px-5 rounded-lg text-lg">متابعة للطلب <i class="fas fa-arrow-left mr-2"></i></button>
+                    </div>`;
+                const qtyInput = document.getElementById('quantity-input');
+                const priceDisplay = document.getElementById('total-price-display');
+                const updatePrice = () => {
+                    quantity = parseInt(qtyInput.value);
+                    priceDisplay.textContent = `${(quantity * product.price).toLocaleString()} د.ج`;
+                };
+                document.getElementById('decrease-qty').onclick = () => { if(qtyInput.value > 1) { qtyInput.value--; updatePrice(); }};
+                document.getElementById('increase-qty').onclick = () => { qtyInput.value++; updatePrice(); };
+                document.getElementById('next-step-btn').onclick = showStep2_ContactInfo;
+            };
+            const showStep2_ContactInfo = () => {
+                formContainer.innerHTML = `
+                    <div class="flex-grow overflow-y-auto pr-2">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">معلومات التوصيل</h2>
+                        <form id="order-form" class="space-y-4">
+                            <div>
+                                <label for="customer-name" class="font-semibold text-gray-700">الاسم الكامل</label>
+                                <input type="text" id="customer-name" placeholder="أدخل اسمك" class="mt-1 w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                            </div>
+                            <div>
+                                <label for="customer-contact" class="font-semibold text-gray-700">رقم الهاتف</label>
+                                <input type="tel" id="customer-contact" placeholder="0x xx xx xx xx" class="mt-1 w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                            </div>
+                            <div>
+                                <label for="customer-location" class="font-semibold text-gray-700">الموقع (الولاية والمدينة)</label>
+                                <input type="text" id="customer-location" placeholder="مثال: الجزائر العاصمة، باب الزوار" class="mt-1 w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                            </div>
+                            <div>
+                                <label for="customer-inquiry" class="font-semibold text-gray-700">استفسار أو ملاحظات (اختياري)</label>
+                                <textarea id="customer-inquiry" rows="3" placeholder="اكتب سؤالك أو ملاحظاتك هنا..." class="mt-1 w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="mt-auto pt-4 border-t">
+                        <button id="confirm-order-btn" class="w-full bg-blue-600 text-white font-bold py-3 px-5 rounded-lg text-lg flex items-center justify-center gap-2"><i class="fas fa-check-circle"></i> تأكيد الطلب</button>
+                        <button id="whatsapp-order-btn" class="w-full mt-2 bg-green-500 text-white font-bold py-3 px-5 rounded-lg text-lg flex items-center justify-center gap-3"><i class="fab fa-whatsapp text-2xl"></i> أو أرسل الطلب عبر واتساب</button>
+                        <button id="back-step-btn" class="w-full mt-2 text-gray-600 font-semibold py-2 hover:text-black transition">رجوع</button>
+                    </div>`;
+                document.getElementById('back-step-btn').onclick = showStep1_Quantity;
+                document.getElementById('confirm-order-btn').onclick = handleFormSubmit;
+                document.getElementById('whatsapp-order-btn').onclick = handleFormSubmit;
+            };
+            const handleFormSubmit = async (e) => {
+                const form = document.getElementById('order-form');
+                if (!form.checkValidity()) { form.reportValidity(); return; }
+                
+                const btn = e.currentTarget;
+                const customerName = document.getElementById('customer-name').value.trim();
+                const customerContact = document.getElementById('customer-contact').value.trim();
+                const customerLocation = document.getElementById('customer-location').value.trim(); // Get location
+                const customerInquiry = document.getElementById('customer-inquiry').value.trim(); // Get inquiry
+                const price = quantity * product.price;
+                const pageUrl = window.location.href; 
 
+                if (btn.id === 'whatsapp-order-btn') {
+                    const message = encodeURIComponent(`*طلب جديد*\n\n*المنتج:* ${product.name}\n*الكمية:* ${quantity}\n*السعر الإجمالي:* ${price.toLocaleString()} د.ج\n*رابط المنتج:* ${pageUrl}\n\n*معلومات الزبون:*\n*الاسم:* ${customerName}\n*الهاتف:* ${customerContact}\n*الموقع:* ${customerLocation}\n*استفسار:* ${customerInquiry || 'لا يوجد.'}`);
+                    window.open(`https://wa.me/${CONTACT_PHONE_NUMBER}?text=${message}`, '_blank');
+                    close();
+                    return;
+                }
+                
+                btn.disabled = true;
+                btn.innerHTML = `<div class="small-loader"></div> <span class="mr-2">جاري تسجيل الطلب...</span>`;
+                try {
+                    await addDoc(collection(db, "orders"), {
+                        customerName, customerContact, customerLocation, customerInquiry,
+                        quantity, price, productName: product.name, productId: product.id,
+                        status: 'new', createdAt: serverTimestamp(), profit: 0,
+                        pageUrl,
+                    });
+                    close();
+                    showToast('تم إرسال طلبك بنجاح!');
+                } catch (error) {
+                    console.error("Error adding order:", error);
+                    alert("حدث خطأ ما. الرجاء المحاولة مرة أخرى.");
+                    btn.disabled = false;
+                    btn.innerHTML = `<i class="fas fa-check-circle mr-2"></i> تأكيد الطلب`;
+                }
+            };
+            
+            showStep1_Quantity();
+        }
+        async function initializeStore() {
+            elements.loader.style.display = 'block';
+            elements.grid.classList.add('hidden');
+            
+            const [catSnapshot, prodSnapshot] = await Promise.all([
+                getDocs(query(collection(db, "categories"), orderBy("name"))),
+                getDocs(query(collection(db, "products"), orderBy("createdAt", "desc")))
+            ]);
+            catSnapshot.forEach(doc => categoriesCache.push({ id: doc.id, ...doc.data() }));
+            prodSnapshot.forEach(doc => productsCache.push({ id: doc.id, ...doc.data() }));
+            elements.categoriesContainer.innerHTML = '<button class="category-filter-btn active bg-blue-100 text-blue-800 font-bold w-full text-right p-2 rounded-md transition-colors" data-id="all">كل المنتجات</button>';
+            categoriesCache.forEach(cat => {
+                if(productsCache.some(p => p.categoryId === cat.id)) {
+                    elements.categoriesContainer.innerHTML += `<button class="category-filter-btn w-full text-right p-2 rounded-md hover:bg-gray-100 transition-colors" data-id="${cat.id}">${cat.name}</button>`;
+                }
+            });
+            document.querySelectorAll('.category-filter-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('.category-filter-btn').forEach(b => b.classList.remove('active', 'bg-blue-100', 'text-blue-800', 'font-bold'));
+                    e.currentTarget.classList.add('active', 'bg-blue-100', 'text-blue-800', 'font-bold');
+                    renderStoreProducts();
+                });
+            });
+            
+            elements.socialLinksContainer.innerHTML = `
+                <a href="${SOCIAL_LINKS.whatsapp}" target="_blank" class="w-12 h-12 flex items-center justify-center bg-green-500 rounded-full text-2xl hover:bg-green-600 transition-transform hover:scale-110"><i class="fab fa-whatsapp"></i></a>
+                <a href="${SOCIAL_LINKS.facebook}" target="_blank" class="w-12 h-12 flex items-center justify-center bg-blue-600 rounded-full text-2xl hover:bg-blue-700 transition-transform hover:scale-110"><i class="fab fa-facebook-f"></i></a>
+                <a href="${SOCIAL_LINKS.instagram}" target="_blank" class="w-12 h-12 flex items-center justify-center bg-pink-500 rounded-full text-2xl hover:bg-pink-600 transition-transform hover:scale-110"><i class="fab fa-instagram"></i></a>
+                <a href="${SOCIAL_LINKS.telegram}" target="_blank" class="w-12 h-12 flex items-center justify-center bg-sky-500 rounded-full text-2xl hover:bg-sky-600 transition-transform hover:scale-110"><i class="fab fa-telegram"></i></a>
+            `;
+            elements.loader.style.display = 'none';
+            renderStoreProducts();
+            elements.searchInput.addEventListener('input', renderStoreProducts);
+            elements.priceFilter.addEventListener('change', renderStoreProducts);
+        }
+        initializeStore();
+    </script>
 </body>
 </html>
