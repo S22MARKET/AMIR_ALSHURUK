@@ -2411,28 +2411,6 @@ body.dark-mode .card-right {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -2489,17 +2467,18 @@ body.dark-mode .card-right {
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
             
-            /* تحسين: السماح بالتمرير إذا كان المحتوى أطول من الشاشة */
             overflow-y: auto;
 
             opacity: 0;
-            animation: adm-fadeIn 0.5s ease-out forwards;
+            visibility: hidden; /* تحسين: استخدام visibility للوصولية */
+            transition: opacity 0.4s ease-out, visibility 0.4s;
         }
 
-        @keyframes adm-fadeIn {
-            to { opacity: 1; }
+        .adm-modal-overlay.is-visible {
+             opacity: 1;
+             visibility: visible;
         }
-        
+
         /* تصميم موحد لكل النوافذ المنبثقة */
         .adm-modal-content, .adm-jumaa-message-content, .isn-modal-content {
             background: var(--adm-modal-bg);
@@ -2512,19 +2491,17 @@ body.dark-mode .card-right {
             border: 1px solid rgba(255, 255, 255, 0.8);
             
             transform: translateY(20px) scale(0.98);
-            opacity: 0;
-            animation: adm-scaleUp 0.5s 0.2s ease-out forwards;
-            
+            transition: transform 0.4s 0.1s ease-out;
+
             display: flex;
             flex-direction: column;
             gap: clamp(1rem, 3.5vw, 1.5rem);
         }
 
-        @keyframes adm-scaleUp {
-            to {
-                transform: translateY(0) scale(1);
-                opacity: 1;
-            }
+        .is-visible .adm-modal-content,
+        .is-visible .adm-jumaa-message-content,
+        .is-visible .isn-modal-content {
+            transform: translateY(0) scale(1);
         }
         
         .adm-hidden {
@@ -2594,6 +2571,12 @@ body.dark-mode .card-right {
             font-weight: 900;
             color: #fff;
             margin-right: 10px;
+            animation: adm-popIn 0.3s ease-out;
+        }
+        
+        @keyframes adm-popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
         }
 
         .adm-dhikr-btn .adm-counter {
@@ -2684,7 +2667,6 @@ body.dark-mode .card-right {
             font-weight: bold;
             margin: 0;
         }
-        /* تحسين: تصميم زر التحديث ليتناسب مع الهوية البصرية */
         .adm-jumaa-refresh-btn {
             font-family: 'Tajawal', sans-serif;
             font-size: clamp(0.8rem, 3vw, 0.9rem);
@@ -2758,7 +2740,6 @@ body.dark-mode .card-right {
             background-color: #dee2e6;
         }
 
-        /* تحسين: جعل أزرار نافذة الكهف عمودية على الشاشات الصغيرة جدًا */
         @media (max-width: 360px) {
             .isn-modal-content .buttons-container {
                 flex-direction: column;
@@ -2769,23 +2750,23 @@ body.dark-mode .card-right {
 </head>
 <body>
 
-    <div id="adm-modal-overlay" class="adm-modal-overlay">
+    <div id="adm-modal-overlay" class="adm-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="adm-modal-main-title">
         
         <div id="adm-modal-content" class="adm-modal-content">
             <div class="adm-modal-header">
-                <h2>أهلاً بكم، طبتم وطاب ممشاكم</h2>
+                <h2 id="adm-modal-main-title">أهلاً بكم، طبتم وطاب ممشاكم</h2>
                 <p class="adm-tasks-header">للمتابعة، نرجو منك إنجاز هذه الأذكار اليسيرة.</p>
             </div>
             <div id="adm-dhikr-tasks" class="adm-dhikr-tasks">
-                <button id="adm-btn-salat" class="adm-dhikr-btn">
+                <button class="adm-dhikr-btn" data-key="salat">
                     <span class="adm-btn-text"><i class="fa-solid fa-moon adm-icon"></i>صلِّ على النبي ﷺ</span>
                     <span class="adm-counter">0/1</span>
                 </button>
-                <button id="adm-btn-tasbih" class="adm-dhikr-btn">
+                <button class="adm-dhikr-btn" data-key="tasbih">
                     <span class="adm-btn-text"><i class="fa-solid fa-leaf adm-icon"></i>سبحان الله وبحمده</span>
                     <span class="adm-counter">0/1</span>
                 </button>
-                <button id="adm-btn-istighfar" class="adm-dhikr-btn">
+                <button class="adm-dhikr-btn" data-key="istighfar">
                     <span class="adm-btn-text"><i class="fa-solid fa-hands-praying adm-icon"></i>استغفر الله</span>
                     <span class="adm-counter">0/1</span>
                 </button>
@@ -2809,19 +2790,17 @@ body.dark-mode .card-right {
             <h2 class="jumaa-header">📿 تذكير بصلاة الجمعة</h2>
             <div class="jumaa-body">
                 <p>
-                    
- يَٰٓأَيُّهَا ٱلَّذِينَ ءَامَنُوٓاْ إِذَا نُودِيَ لِلصَّلَوٰةِ مِن يَوۡمِ ٱلۡجُمُعَةِ فَٱسۡعَوۡاْ إِلَىٰ ذِكۡرِ ٱللَّهِ وَذَرُواْ ٱلۡبَيۡعَۚ ذَٰلِكُمۡ خَيۡرٞ لَّكُمۡ إِن كُنتُمۡ تَعۡلَمُونَ (9) فَإِذَا قُضِيَتِ ٱلصَّلَوٰةُ فَٱنتَشِرُواْ فِي ٱلۡأَرۡضِ وَٱبۡتَغُواْ مِن فَضۡلِ ٱللَّهِ وَٱذۡكُرُواْ ٱللَّهَ كَثِيرٗا لَّعَلَّكُمۡ تُفۡلِحُونَ (10) وَإِذَا رَأَوۡاْ تِجَٰرَةً أَوۡ لَهۡوًا ٱنفَضُّوٓاْ إِلَيۡهَا وَتَرَكُوكَ قَآئِمٗاۚ قُلۡ مَا عِندَ ٱللَّهِ خَيۡرٞ مِّنَ ٱللَّهۡوِ وَمِنَ ٱلتِّجَٰرَةِۚ وَٱللَّهُ خَيۡرُ ٱلرَّٰزِقِينَ (11)                
-                
+                    يَٰٓأَيُّهَا ٱلَّذِينَ ءَامَنُوٓاْ إِذَا نُودِيَ لِلصَّلَوٰةِ مِن يَوۡمِ ٱلۡجُمُعَةِ فَٱسۡعَوۡاْ إِلَىٰ ذِكۡرِ ٱللَّهِ وَذَرُواْ ٱلۡبَيۡعَۚ ذَٰلِكُمۡ خَيۡرٞ لَّكُمۡ إِن كُنتُمۡ تَعۡلَمُونَ (9) فَإِذَا قُضِيَتِ ٱلصَّلَوٰةُ فَٱنتَشِرُواْ فِي ٱلۡأَرۡضِ وَٱبۡتَغُواْ مِن فَضۡلِ ٱللَّهِ وَٱذۡكُرُواْ ٱللَّهَ كَثِيرٗا لَّعَلَّكُمۡ تُفۡلِحُونَ (10)
                 </p>
             </div>
-            <p class="jumaa-source">[سورة الجمعة: 9-11]</p>
+            <p class="jumaa-source">[سورة الجمعة: 9-10]</p>
             <button id="play-jumaa-audio" class="adm-dhikr-btn">
                 <span class="adm-btn-text"><i class="fa-solid fa-volume-high adm-icon"></i> تشغيل التلاوة</span>
             </button>
             <div class="closing-message">
                 <p>⛔ تُغلق <strong>مؤسسة أمير الشروق</strong> أبوابها يوم الجمعة من الساعة <strong>11:30</strong> إلى <strong>14:00</strong> احترامًا للصلاة.</p>
             </div>
-            <button id="refresh-btn" class="adm-jumaa-refresh-btn" aria-label="تحديث الصفحة" onclick="location.reload();">
+            <button class="adm-jumaa-refresh-btn" aria-label="تحديث الصفحة" onclick="location.reload();">
                 <i class="fas fa-sync-alt"></i>
                 <span>اضغط هنا بعد الساعة 14:00</span>
             </button>
@@ -2843,31 +2822,57 @@ body.dark-mode .card-right {
     <script>
     document.addEventListener('DOMContentLoaded', () => {
 
-        const overlay = document.getElementById('adm-modal-overlay');
-        const dhikrModal = document.getElementById('adm-modal-content');
-        const jumaaMessage = document.getElementById('adm-jumaa-message');
-        const jumaaAudio = document.getElementById('jumaa-audio');
-        const kahfModal = document.getElementById('kahfModal');
+        // ===================================================================
+        // 1. الإعدادات وعناصر DOM
+        // ===================================================================
+        const config = {
+            dhikrRequiredClicks: 1,
+            fridayPrayerStart: { hour: 11, minute: 30 },
+            fridayPrayerEnd: { hour: 14, minute: 0 },
+            completionMessage: `<p style="color: var(--adm-primary-accent); font-size: 1.2rem; font-weight: bold;">جزاكم الله خيرًا، تم إنجاز الأذكار!</p>`,
+            autoCloseDelay: 2000,
+        };
 
-        function showHideOverlay(show) {
+        const elements = {
+            overlay: document.getElementById('adm-modal-overlay'),
+            modals: {
+                dhikr: document.getElementById('adm-modal-content'),
+                jumaa: document.getElementById('adm-jumaa-message'),
+                kahf: document.getElementById('kahfModal'),
+            },
+            dhikrTasksContainer: document.getElementById('adm-dhikr-tasks'),
+            progressBar: document.getElementById('adm-progress-bar'),
+            jumaaAudio: document.getElementById('jumaa-audio'),
+            playJumaaBtn: document.getElementById('play-jumaa-audio'),
+            closeKahfBtn: document.getElementById('closeKahfModal'),
+        };
+
+        const state = {
+            buttons: {},
+            totalClicks: 0,
+            totalRequiredClicks: 0,
+            activeModal: null,
+        };
+
+        // ===================================================================
+        // 2. الدوال الرئيسية
+        // ===================================================================
+
+        /**
+         * يعرض أو يخفي النافذة المنبثقة مع تأثيرات CSS.
+         * @param {boolean} show - true للعرض, false للإخفاء.
+         */
+        function toggleOverlay(show) {
             if (show) {
-                overlay.classList.remove('adm-hidden');
-                // Ensure correct display property for flexbox
-                overlay.style.display = 'flex'; 
-                overlay.style.opacity = '0';
-                // Force a reflow before adding the animation class
-                void overlay.offsetWidth; 
-                overlay.style.transition = 'opacity 0.5s ease';
-                overlay.style.opacity = '1';
+                elements.overlay.classList.add('is-visible');
             } else {
-                overlay.style.transition = 'opacity 0.5s ease';
-                overlay.style.opacity = '0';
-                setTimeout(() => { 
-                    overlay.style.display = 'none';
-                }, 500);
+                elements.overlay.classList.remove('is-visible');
             }
         }
-
+        
+        /**
+         * يحدد أي نافذة يجب عرضها بناءً على اليوم والوقت.
+         */
         function handleModalsVisibility() {
             const now = new Date();
             const day = now.getDay();
@@ -2875,122 +2880,141 @@ body.dark-mode .card-right {
             const minutes = now.getMinutes();
             
             const currentTimeInMinutes = hours * 60 + minutes;
-            const startTime = 11 * 60 + 30; // 11:30
-            const endTime = 14 * 60;        // 14:00
+            const startTime = config.fridayPrayerStart.hour * 60 + config.fridayPrayerStart.minute;
+            const endTime = config.fridayPrayerEnd.hour * 60;
 
             const isFriday = (day === 5);
             const isJumaaClosingTime = (isFriday && currentTimeInMinutes >= startTime && currentTimeInMinutes < endTime);
 
-            // Hide all modals first
-            dhikrModal.classList.add('adm-hidden');
-            jumaaMessage.classList.add('adm-hidden');
-            kahfModal.classList.add('adm-hidden');
-            
-            let shouldShowOverlay = true;
+            // إخفاء جميع النوافذ أولاً
+            Object.values(elements.modals).forEach(modal => modal.classList.add('adm-hidden'));
 
             if (isJumaaClosingTime) {
-                // In Friday prayer time: show Jumaa message
-                jumaaMessage.classList.remove('adm-hidden');
+                state.activeModal = elements.modals.jumaa;
             } else if (isFriday) {
-                // On Friday (outside prayer time): show Kahf modal
-                kahfModal.classList.remove('adm-hidden');
+                state.activeModal = elements.modals.kahf;
             } else {
-                // On other days: show standard Dhikr modal
-                dhikrModal.classList.remove('adm-hidden');
+                state.activeModal = elements.modals.dhikr;
+                initializeDhikrModule();
             }
             
-            if(shouldShowOverlay) {
-                showHideOverlay(true);
+            if (state.activeModal) {
+                state.activeModal.classList.remove('adm-hidden');
+                toggleOverlay(true);
             }
         }
         
-        handleModalsVisibility();
-
-        // --- Buttons Logic ---
-
-        const playButton = document.getElementById('play-jumaa-audio');
-        if (playButton && jumaaAudio) {
-            playButton.addEventListener('click', () => {
-                if (jumaaAudio.paused) {
-                    jumaaAudio.play().catch(e => console.error("Error playing audio:", e));
-                    playButton.querySelector('.adm-btn-text').innerHTML = '<i class="fa-solid fa-pause adm-icon"></i> جارٍ التشغيل...';
-                } else {
-                    jumaaAudio.pause();
-                    playButton.querySelector('.adm-btn-text').innerHTML = '<i class="fa-solid fa-volume-high adm-icon"></i> تشغيل التلاوة';
-                }
+        // ===================================================================
+        // 3. منطق نافذة الأذكار
+        // ===================================================================
+        function initializeDhikrModule() {
+            if (!elements.dhikrTasksContainer) return;
+            const dhikrButtons = elements.dhikrTasksContainer.querySelectorAll('.adm-dhikr-btn');
+            
+            dhikrButtons.forEach(btn => {
+                const key = btn.dataset.key;
+                state.buttons[key] = {
+                    element: btn,
+                    count: 0,
+                    counterElement: btn.querySelector('.adm-counter'),
+                    textElement: btn.querySelector('.adm-btn-text')
+                };
+                state.buttons[key].counterElement.textContent = `0/${config.dhikrRequiredClicks}`;
             });
-            jumaaAudio.onended = () => {
-                 playButton.querySelector('.adm-btn-text').innerHTML = '<i class="fa-solid fa-volume-high adm-icon"></i> تشغيل التلاوة';
-            };
+
+            state.totalRequiredClicks = Object.keys(state.buttons).length * config.dhikrRequiredClicks;
+            
+            // تحسين: استخدام تفويض الأحداث
+            elements.dhikrTasksContainer.addEventListener('click', handleDhikrClick);
+        }
+
+        function handleDhikrClick(event) {
+            const clickedButton = event.target.closest('.adm-dhikr-btn');
+            if (!clickedButton) return;
+
+            const key = clickedButton.dataset.key;
+            const buttonData = state.buttons[key];
+
+            if (buttonData && buttonData.count < config.dhikrRequiredClicks) {
+                buttonData.count++;
+                state.totalClicks++;
+                
+                buttonData.counterElement.textContent = `${buttonData.count}/${config.dhikrRequiredClicks}`;
+                updateProgressBar();
+
+                if (buttonData.count === config.dhikrRequiredClicks) {
+                    buttonData.element.disabled = true;
+                    buttonData.element.classList.add('adm-is-completed');
+                    const iconHTML = buttonData.textElement.querySelector('.adm-icon')?.outerHTML || '';
+                    buttonData.textElement.innerHTML = iconHTML + 'أُنجِز';
+                }
+                
+                checkAllTasksCompletion();
+            }
         }
         
-        const closeKahfBtn = document.getElementById('closeKahfModal');
-        if(closeKahfBtn) {
-            closeKahfBtn.addEventListener('click', () => {
-                showHideOverlay(false);
-            });
+        function updateProgressBar() {
+            if (!elements.progressBar || state.totalRequiredClicks === 0) return;
+            const progressPercentage = (state.totalClicks / state.totalRequiredClicks) * 100;
+            elements.progressBar.style.width = `${progressPercentage}%`;
         }
 
-        // --- Dhikr Modal Logic ---
-        const progressBar = document.getElementById('adm-progress-bar');
-        const requiredClicks = 1;
-
-        const buttons = {
-            salat:     { element: document.getElementById('adm-btn-salat'),     count: 0 },
-            tasbih:    { element: document.getElementById('adm-btn-tasbih'),    count: 0 },
-            istighfar: { element: document.getElementById('adm-btn-istighfar'), count: 0 }
-        };
-
-        const totalButtons = Object.values(buttons).filter(b => b.element).length;
-        if (totalButtons > 0) {
-            const totalRequiredClicks = requiredClicks * totalButtons;
-            let totalClicks = 0;
-
-            function updateProgressBar() {
-                const progressPercentage = (totalClicks / totalRequiredClicks) * 100;
-                progressBar.style.width = `${progressPercentage}%`;
+        function checkAllTasksCompletion() {
+            if (state.totalClicks >= state.totalRequiredClicks) {
+                elements.dhikrTasksContainer.innerHTML = config.completionMessage;
+                setTimeout(() => toggleOverlay(false), config.autoCloseDelay);
             }
+        }
 
-            function checkAllTasksCompletion() {
-                if (totalClicks >= totalRequiredClicks) {
-                    const taskContainer = document.getElementById('adm-dhikr-tasks');
-                    taskContainer.innerHTML = `<p style="color: var(--adm-primary-accent); font-size: 1.2rem; font-weight: bold;">جزاكم الله خيرًا، تم إنجاز الأذكار!</p>`;
-                    
-                    setTimeout(() => {
-                        showHideOverlay(false);
-                    }, 2000);
-                }
-            }
-            
-            for (const key in buttons) {
-                const buttonData = buttons[key];
-                if (!buttonData.element) continue;
-                
-                const counterElement = buttonData.element.querySelector('.adm-counter');
-                counterElement.textContent = `${buttonData.count}/${requiredClicks}`;
-                
-                buttonData.element.addEventListener('click', () => {
-                    if (buttonData.count < requiredClicks) {
-                        buttonData.count++;
-                        totalClicks++;
-                        counterElement.textContent = `${buttonData.count}/${requiredClicks}`;
-                        updateProgressBar();
-                        
-                        if (buttonData.count === requiredClicks) {
-                            buttonData.element.disabled = true;
-                            buttonData.element.classList.add('adm-is-completed');
-                            const textSpan = buttonData.element.querySelector('.adm-btn-text');
-                            const iconHTML = textSpan.querySelector('.adm-icon')?.outerHTML || '';
-                            textSpan.innerHTML = iconHTML + 'أُنجِز';
-                        }
-                        
-                        checkAllTasksCompletion();
+        // ===================================================================
+        // 4. منطق النوافذ الأخرى والمستمعين
+        // ===================================================================
+        function setupEventListeners() {
+            // زر تشغيل صوت الجمعة
+            if (elements.playJumaaBtn && elements.jumaaAudio) {
+                elements.playJumaaBtn.addEventListener('click', () => {
+                    if (elements.jumaaAudio.paused) {
+                        elements.jumaaAudio.play().catch(e => console.error("Error playing audio:", e));
+                        elements.playJumaaBtn.querySelector('.adm-btn-text').innerHTML = '<i class="fa-solid fa-pause adm-icon"></i> جارٍ التشغيل...';
+                    } else {
+                        elements.jumaaAudio.pause();
+                        elements.playJumaaBtn.querySelector('.adm-btn-text').innerHTML = '<i class="fa-solid fa-volume-high adm-icon"></i> تشغيل التلاوة';
                     }
                 });
+                elements.jumaaAudio.onended = () => {
+                    elements.playJumaaBtn.querySelector('.adm-btn-text').innerHTML = '<i class="fa-solid fa-volume-high adm-icon"></i> تشغيل التلاوة';
+                };
             }
+            
+            // زر إغلاق نافذة الكهف
+            if (elements.closeKahfBtn) {
+                elements.closeKahfBtn.addEventListener('click', () => toggleOverlay(false));
+            }
+
+            // تحسين: إغلاق النافذة عند الضغط خارجها أو على مفتاح Esc
+            elements.overlay.addEventListener('click', (event) => {
+                // أغلق فقط إذا كانت نافذة الكهف هي المفتوحة وتم النقر على الخلفية مباشرة
+                if (state.activeModal === elements.modals.kahf && event.target === elements.overlay) {
+                    toggleOverlay(false);
+                }
+            });
+
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape' && elements.overlay.classList.contains('is-visible')) {
+                    // أغلق فقط إذا كانت نافذة الكهف هي المفتوحة
+                    if (state.activeModal === elements.modals.kahf) {
+                        toggleOverlay(false);
+                    }
+                }
+            });
         }
+        
+        // ===================================================================
+        // 5. التشغيل
+        // ===================================================================
+        handleModalsVisibility();
+        setupEventListeners();
     });
     </script>
-
 </body>
 </html>
