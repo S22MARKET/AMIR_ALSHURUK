@@ -1210,6 +1210,104 @@ footer {
     }
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Styles for Product Slideshow */
+.slideshow-container {
+    position: relative;
+    width: 100%;
+    height: 280px;
+    overflow: hidden;
+    background-color: #fff;
+    /* --- الإضافات الجديدة للتوسيط --- */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.slideshow-container img {
+    display: none; /* إخفاء الصور بشكل افتراضي */
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 10px;
+    /* ملاحظة: تأثير التلاشي لن يعمل مع هذه الطريقة، لكن التوسيط مضمون */
+}
+
+.slideshow-container img.active {
+    display: block; /* إظهار الصورة النشطة فقط */
+}
+
+
+.slide-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.4);
+    color: white;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    font-size: 1.2rem;
+    z-index: 10;
+    transition: background-color 0.3s;
+}
+
+.slide-nav:hover {
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.slide-prev {
+    left: 5px;
+    border-radius: 0 5px 5px 0;
+}
+
+.slide-next {
+    right: 5px;
+    border-radius: 5px 0 0 5px;
+}
+
+.slide-dots {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    background-color: rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.dot.active {
+    background-color: #fff;
+}
+
 </style>
 </head>
 </head>
@@ -1993,8 +2091,6 @@ body.dark-mode .card-right {
 
 
 
-
-
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
@@ -2015,42 +2111,112 @@ body.dark-mode .card-right {
 
     document.addEventListener('DOMContentLoaded', function() {
         const products = [
-
-
-    { name: 'جافيل 5 لتر', gros: '135.00 د.ج', superGros: '125.00 د.ج', prixUnite: '150.00 د.ج', image: 'PIC/JAVAIL 5L.jpg' },
-    { name: 'جافيل 1 لتر', gros: '42.00 د.ج', superGros: '35.00 د.ج', prixUnite: '50.00 د.ج', image: 'PIC/JAVAIL 1 L.jpg' },
-    { name: 'صانيبون 5 لتر', gros: '165.00 د.ج', superGros: '155.00 د.ج', prixUnite: '200.00 د.ج', image: 'PIC/SANIBON 5 L.jpg' },
-    { name: 'صانيبون 1 لتر', gros: '85.00 د.ج', superGros: '75.00 د.ج', prixUnite: '100.00 د.ج', image: 'PIC/SANIBON 1L.jpg' },
-    { name: 'منظف الأرضيات 1 لتر', gros: '95.00 د.ج', superGros: '85.50 د.ج', prixUnite: '110.00 د.ج', image: 'PIC/LAVESOLE 1L.jpg' },
-    { name: 'سائل الأواني 5 لتر', gros: '310.00 د.ج', superGros: '290.00 د.ج', prixUnite: '330.00 د.ج', image: 'PIC/AWANI 5 L.png' },
-    { name: 'سائل الأواني 1 لتر', gros: '105.00 د.ج', superGros: '90.00 د.ج', prixUnite: '120.00 د.ج', image: 'PIC/AWANI 1 L.png' },
-
-
-  ];
+            { name: 'جافيل 5 لتر', gros: '135.00 د.ج', superGros: '125.00 د.ج', prixUnite: '150.00 د.ج', image: 'PIC/JAVAIL 5L.png' },
+            { name: 'جافيل 1 لتر', gros: '42.00 د.ج', superGros: '35.00 د.ج', prixUnite: '50.00 د.ج', image: 'PIC/JAVAIL 1 L.png' },
+            { 
+                name: 'صانيبون 5 لتر', 
+                gros: '165.00 د.ج', 
+                superGros: '155.00 د.ج', 
+                prixUnite: '200.00 د.ج', 
+                images: ['PIC/SANIDO 5L WHITE.png', 'PIC/SANOBO 5 L PINK.png','PIC/SANIDO 5L PURPLE.png' ] 
+            },
+            { 
+                name: 'صانيبون 1 لتر', 
+                gros: '85.00 د.ج', 
+                superGros: '75.00 د.ج', 
+                prixUnite: '100.00 د.ج', 
+                images: ['PIC/SANIBO 1L WHITE.png', 'PIC/SANIBO 1L PINK.png', 'PIC/SANIBO 1L PURPLE.png'] 
+            },
+            { name: 'منظف الأرضيات 1 لتر', gros: '95.00 د.ج', superGros: '85.50 د.ج', prixUnite: '110.00 د.ج', image: 'PIC/LAVESOLE 1L.jpg' },
+            { name: 'سائل الأواني 5 لتر', gros: '310.00 د.ج', superGros: '290.00 د.ج', prixUnite: '330.00 د.ج', image: 'PIC/AWANI 5 L.png' },
+            { name: 'سائل الأواني 1 لتر', gros: '105.00 د.ج', superGros: '90.00 د.ج', prixUnite: '120.00 د.ج', image: 'PIC/AWANI 1 L.png' },
+        ];
 
         const productsContainer = document.getElementById('products-container');
-        if(productsContainer) 
-        
-        {products.forEach(product => {
-    const card = `
-        <div class="product-card reveal">
-            <img src="${product.image}" alt="${product.name}" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/280x280/ffffff/cccccc?text=Image+Not+Found';">
-            <div class="product-info">
-                <h3>${product.name}</h3>
-                <div class="price-info">
-                    <p>سعر الوحدة: <span class="price-unite">${product.prixUnite}</span></p>
-                    <p>سعر الجملة: <span class="price-super-gros">${product.superGros}</span></p>
-                    <p>شبه جملة: <span class="price-gros">${product.gros}</span></p>
-                </div>
-                <div class="product-actions">
-                    <button class="action-btn order-btn" data-product-name="${product.name}"><i class="fas fa-shopping-cart"></i> اطلب الآن</button>
-                </div>
-            </div>
-        </div>`;
-    productsContainer.innerHTML += card;
-});
+        if (productsContainer) {
+            products.forEach((product, index) => {
+                let imageHtml;
+                // التحقق إذا كان المنتج يحتوي على معرض صور
+                if (product.images && product.images.length > 0) {
+                    const slides = product.images.map((img, i) => 
+                        `<img src="${img}" alt="${product.name} ${i + 1}" class="${i === 0 ? 'active' : ''}" loading="lazy">`
+                    ).join('');
 
+                    const dots = product.images.map((_, i) => 
+                        `<span class="dot ${i === 0 ? 'active' : ''}" data-slide-index="${i}"></span>`
+                    ).join('');
+
+                    imageHtml = `
+                        <div class="slideshow-container" data-product-index="${index}">
+                            ${slides}
+                            <button class="slide-nav slide-prev"><i class="fas fa-chevron-left"></i></button>
+                            <button class="slide-nav slide-next"><i class="fas fa-chevron-right"></i></button>
+                            <div class="slide-dots">${dots}</div>
+                        </div>`;
+                } else {
+                    // استخدام الصورة الواحدة كالمعتاد
+                    imageHtml = `<img src="${product.image}" alt="${product.name}" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/280x280/ffffff/cccccc?text=Image+Not+Found';">`;
+                }
+
+                const card = `
+                    <div class="product-card reveal">
+                        ${imageHtml}
+                        <div class="product-info">
+                            <h3>${product.name}</h3>
+                            <div class="price-info">
+                                <p>سعر الوحدة: <span class="price-unite">${product.prixUnite}</span></p>
+                                <p>سعر الجملة: <span class="price-super-gros">${product.superGros}</span></p>
+                                <p>شبه جملة: <span class="price-gros">${product.gros}</span></p>
+                            </div>
+                            <div class="product-actions">
+                                <button class="action-btn order-btn" data-product-name="${product.name}"><i class="fas fa-shopping-cart"></i> اطلب الآن</button>
+                            </div>
+                        </div>
+                    </div>`;
+                productsContainer.innerHTML += card;
+            });
         }
+
+        // --- إضافة كود التحكم في معارض الصور ---
+        function setupSlideshows() {
+            const slideshows = document.querySelectorAll('.slideshow-container');
+            slideshows.forEach(container => {
+                let currentIndex = 0;
+                const images = container.querySelectorAll('img');
+                const dots = container.querySelectorAll('.dot');
+                const nextBtn = container.querySelector('.slide-next');
+                const prevBtn = container.querySelector('.slide-prev');
+
+                function showSlide(index) {
+                    images.forEach((img, i) => img.classList.toggle('active', i === index));
+                    dots.forEach((dot, i) => dot.classList.toggle('active', i === index));
+                    currentIndex = index;
+                }
+
+                nextBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    let nextIndex = (currentIndex + 1) % images.length;
+                    showSlide(nextIndex);
+                });
+
+                prevBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    let prevIndex = (currentIndex - 1 + images.length) % images.length;
+                    showSlide(prevIndex);
+                });
+
+                dots.forEach(dot => {
+                    dot.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const index = parseInt(e.target.dataset.slideIndex, 10);
+                        showSlide(index);
+                    });
+                });
+            });
+        }
+
+        setupSlideshows(); // استدعاء الدالة بعد إنشاء البطاقات
+
         const themeToggle = document.getElementById('theme-toggle');
         const body = document.body;
         const currentTheme = localStorage.getItem('theme');
@@ -2222,6 +2388,20 @@ body.dark-mode .card-right {
 
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
