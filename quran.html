@@ -3,29 +3,188 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>القرآن الكريم</title>
+    <title>القرآن الكريم - أمير الشروق</title>
+    <meta name="description" content="استمع واقرأ القرآن الكريم مباشرة من موقع أمير الشروق.">
+    <link href="PIC/LOGGGOOO.jpg" rel="icon">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
-        /* General styles */
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            overflow: hidden; /* To prevent scrollbars on the body */
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f4f4;
+        /* ====================
+           Shared Styles (From your site)
+           ==================== */
+        :root {
+            --primary-color: #0d6efd;
+            --primary-dark: #0a58ca;
+            --primary-light: #e7f1ff;
+            --secondary-color: #6c757d;
+            --bg-body: #f8f9fa;
+            --bg-card: #ffffff;
+            --text-primary: #212529;
+            --text-secondary: #6c757d;
+            --border-color: #dee2e6;
+            --white: #ffffff;
+            --shadow-md: 0 5px 15px rgba(0, 0, 0, 0.1);
+            --radius: 0.8rem;
+            --sidebar-width: 280px;
         }
 
-        /* Iframe styling */
+        body.dark-mode {
+            --bg-body: #121212;
+            --bg-card: #1e1e1e;
+            --text-primary: #e0e0e0;
+            --text-secondary: #a0a0a0;
+            --border-color: #333;
+            --primary-light: #2a2a35;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        html { 
+            font-size: 16px; 
+            height: 100%; /* Ensure html takes full height */
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-primary);
+            line-height: 1.7;
+            transition: background-color 0.3s, color 0.3s;
+            overflow: hidden; /* Prevent unwanted scrolling on the body */
+            height: 100%; /* Make body take full height of html */
+        }
+        
+        a { text-decoration: none; color: var(--primary-color); }
+        h1 { font-weight: 700; font-size: 1.25rem; }
+
+        /* --- Sidebar --- */
+        .sidebar { position: fixed; top: 0; right: -100%; width: var(--sidebar-width); max-width: 90%; height: 100vh; background-color: var(--bg-card); border-left: 1px solid var(--border-color); z-index: 1200; transition: right 0.3s ease-in-out; display: flex; flex-direction: column; box-shadow: var(--shadow-md); }
+        .sidebar.active { right: 0; }
+        .sidebar-header { padding: 1.5rem; text-align: center; border-bottom: 1px solid var(--border-color); }
+        .sidebar-header img { width: 90px; height: 90px; border-radius: 50%; border: 4px solid var(--primary-color); object-fit: cover; }
+        .sidebar-header h2 { font-size: 1.8rem; margin-top: 10px; color: var(--primary-dark); }
+        .sidebar-nav { list-style: none; padding-top: 1rem; flex-grow: 1; overflow-y: auto; }
+        .sidebar-nav a { display: flex; align-items: center; gap: 1rem; padding: 1rem 1.5rem; color: var(--text-secondary); text-decoration: none; font-size: 1.1rem; font-weight: 700; transition: all .2s; }
+        .sidebar-nav a:hover { background-color: var(--primary-light); color: var(--primary-color); padding-right: 2rem; }
+        .sidebar-nav a.active { color: var(--primary-color); background-color: var(--primary-light); border-right: 4px solid var(--primary-color); }
+        .sidebar-nav a i { font-size: 1.2rem; width: 25px; text-align: center; }
+        
+        /* --- Header --- */
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; background-color: var(--bg-card); box-shadow: var(--shadow-md); position: sticky; top: 0; z-index: 1000; flex-shrink: 0; }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); z-index: 1199; opacity: 0; visibility: hidden; transition: opacity 0.3s ease; }
+        .overlay.active { opacity: 1; visibility: visible; }
+        .icon-btn { background: transparent; border: none; color: var(--primary-color); font-size: 1.8rem; cursor: pointer; }
+        
+        /* --- Footer --- */
+        .site-footer { background-color: #1A202C; color: #A0AEC0; padding: 1.5rem 1rem; text-align: center; flex-shrink: 0; }
+
+        /* ====================
+           Improved Responsive Layout
+           ==================== */
+        #main-content {
+            display: flex;
+            flex-direction: column;
+            height: 100%; /* Full viewport height */
+            width: 100%;
+            transition: margin-right 0.3s ease-in-out;
+        }
+        main {
+            flex-grow: 1; /* Main content takes all available vertical space */
+            overflow: hidden; /* Hide overflow from the iframe container */
+        }
         .quran-iframe {
             width: 100%;
-            height: 100%;
-            border: none; /* Removes the default iframe border */
+            height: 100%; /* Iframe fills the 'main' area completely */
+            border: none;
+        }
+        
+        /* --- Responsive Design for Desktop --- */
+        @media (min-width: 1024px) {
+            body { padding-right: var(--sidebar-width); } /* Reserve space for sidebar */
+            .sidebar { right: 0; box-shadow: none; }
+            #menu-toggle, .overlay { display: none !important; }
         }
     </style>
 </head>
 <body>
 
-    <iframe class="quran-iframe" src="https://s22mcs.github.io/S22MCS02-/mushaf_el_quran_el_karim.html" title="المصحف الإلكتروني"></iframe>
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <img src="PIC/LOGO.jpg" alt="شعار أمير الشروق">
+        <h2>أمير الشروق</h2>
+    </div>
+    <nav class="sidebar-nav">
+        <a href="index.html" class="nav-link"><i class="fas fa-home"></i><span>الصفحة الرئيسية</span></a>
+        <a href="index.html#products" class="nav-link"><i class="fas fa-box-open"></i><span>منتجاتنا</span></a>
+        <a href="BORED.html" class="nav-link"><i class="fas fa-bullhorn"></i><span>كل العروض والأخبار</span></a>
+        <a href="offers.html" class="nav-link"><i class="fas fa-star"></i><span>العروض الحصرية</span></a>
+        <a href="maps.html" class="nav-link"><i class="fas fa-map-marked-alt"></i><span>خرائط نقاط البيع</span></a>
+        <a href="suggestions.html" class="nav-link"><i class="fas fa-lightbulb"></i><span>اقتراحات الزبائن</span></a>
+        <a href="quran.html" class="nav-link active"><i class="fas fa-quran"></i><span>القرآن الكريم</span></a>
+        <a href="index.html#download-app" class="nav-link"><i class="fab fa-android"></i><span>تحميل تطبيقنا</span></a>
+    </nav>
+</aside>
+
+<div class="overlay" id="overlay"></div>
+
+<div id="main-content">
+    <header class="header">
+        <button id="menu-toggle" class="icon-btn" aria-label="فتح القائمة"><i class="fas fa-bars"></i></button>
+        <h1>القرآن الكريم</h1>
+        <button id="theme-toggle" class="icon-btn" aria-label="تبديل الوضع"><i class="fas fa-sun"></i></button>
+    </header>
+
+    <main>
+        <iframe 
+            src="https://s22mcs.github.io/S22MCS02-/mushaf_el_quran_el_karim.html" 
+            title="المصحف الإلكتروني" 
+            class="quran-iframe">
+        </iframe>
+    </main>
+
+    <footer class="site-footer">
+        <p>جميع الحقوق محفوظة &copy; أمير الشروق <span id="year"></span>.</p>
+    </footer>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const sidebar = document.getElementById('sidebar');
+        const menuToggle = document.getElementById('menu-toggle');
+        const overlay = document.getElementById('overlay');
+        const themeToggle = document.getElementById('theme-toggle');
+
+        if (menuToggle) {
+            menuToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('active');
+                overlay.classList.toggle('active');
+            });
+        }
+        if (overlay) {
+            overlay.addEventListener('click', () => {
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+            });
+        }
+        
+        if (themeToggle) {
+            themeToggle.addEventListener('click', () => {
+                document.body.classList.toggle('dark-mode');
+                const isDark = document.body.classList.contains('dark-mode');
+                themeToggle.querySelector('i').className = isDark ? 'fas fa-moon' : 'fas fa-sun';
+                localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            });
+        }
+
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+            if (themeToggle) themeToggle.querySelector('i').className = 'fas fa-moon';
+        }
+
+        const yearSpan = document.getElementById('year');
+        if (yearSpan) yearSpan.textContent = new Date().getFullYear();
+    });
+</script>
 
 </body>
 </html>
