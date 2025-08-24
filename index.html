@@ -204,10 +204,23 @@ body.dark-mode .qr-code-container img { filter: invert(0.9); }
 .modal-btn { padding: 0.8rem 1.5rem; border-radius: 8px; font-weight: 700; cursor: pointer; border: none; transition: all 0.2s; }
 .confirm-btn { background: var(--primary-color); color: var(--white); }
 .cancel-btn { background: var(--secondary-color); color: var(--white); }
-#quantityModal .modal-box, #customerTypeModal .modal-box, #contactModal .modal-box { max-width: 450px; }
+#quantityModal .modal-box, #customerTypeModal .modal-box, #contactModal .modal-box, #customerInfoModal .modal-box { max-width: 450px; }
 .quantity-controls { display: flex; align-items: center; justify-content: center; margin: 1.5rem 0; gap: 1rem; }
 .quantity-btn { background: var(--primary-color); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; }
 .quantity-input { width: 80px; text-align: center; font-size: 1.5rem; padding: 0.5rem; border: 2px solid var(--border-color); border-radius: 8px; background: var(--bg-body); color: var(--text-primary); }
+
+/* NEW: Styles for Customer Info Form */
+.form-group { text-align: right; margin-bottom: 1.2rem; }
+.form-group label { display: block; font-weight: 700; margin-bottom: 0.5rem; }
+.form-group input {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-body);
+    color: var(--text-primary);
+    border-radius: 8px;
+    font-size: 1rem;
+}
 
 .contact-option-btn { display: flex; align-items: center; justify-content: center; gap: 1rem; font-size: 1.1rem; color: var(--white) !important; }
 .contact-option-btn.whatsapp { background-color: var(--whatsapp-color); }
@@ -219,7 +232,7 @@ body.dark-mode .qr-code-container img { filter: invert(0.9); }
 .fab { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: white; cursor: pointer; box-shadow: var(--shadow-md); z-index: 1050; position: fixed; transition: transform 0.3s, background-color 0.3s; border: none; }
 .cart-fab { bottom: 2rem; left: 2rem; background: var(--secondary-color); transform: scale(0); }
 .cart-fab.visible { transform: scale(1); }
-.contact-fab { bottom: 2rem; right: 2rem; background: var(--primary-color); }
+/* REMOVED: .contact-fab */
 .cart-count { position: absolute; top: -5px; right: -5px; background-color: #dc3545; color: white; font-size: 0.8rem; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
 
 #cartModal .modal-box { max-width: 700px; }
@@ -614,12 +627,37 @@ body.dark-mode .adm-jumaa-message-content .closing-message {
 </div>
 
 <button class="cart-fab fab" id="cart-fab"><i class="fas fa-shopping-cart"></i><span class="cart-count" id="cart-count">0</span></button>
-<button class="contact-fab fab" id="contact-fab" aria-label="تواصل معنا"><i class="fas fa-comments"></i></button>
-
 <div id="customerTypeModal" class="modal"><div class="modal-box"><span class="modal-close">&times;</span><h3 class="modal-title">اختر نوع التسعير</h3><p class="text-secondary">يرجى تحديد نوع العميل لعرض السعر المناسب.</p><div class="modal-actions"><button class="modal-btn confirm-btn" data-type="زبون عادي">زبون عادي (سعر التجزئة)</button><button class="modal-btn confirm-btn" data-type="تاجر شبه جملة">تاجر شبه جملة</button><button class="modal-btn confirm-btn" data-type="تاجر جملة">تاجر جملة</button></div></div></div>
 <div id="quantityModal" class="modal"><div class="modal-box"><span class="modal-close">&times;</span><h3 class="modal-title" id="quantityProductTitle"></h3><p>الرجاء تحديد الكمية المطلوبة</p><div class="quantity-controls"><button class="quantity-btn" id="decreaseQty">-</button><input type="number" min="1" value="1" class="quantity-input" id="quantityInput"><button class="quantity-btn" id="increaseQty">+</button></div><div class="modal-actions"><button class="modal-btn cancel-btn" data-close>إلغاء</button><button class="modal-btn confirm-btn" id="confirmQuantityBtn">تأكيد وإضافة للسلة</button></div></div></div>
-<div id="cartModal" class="modal"><div class="modal-box"><span class="modal-close">&times;</span><h3 class="modal-title">سلة المشتريات</h3><div id="cart-items-container" class="cart-items"></div><div id="cart-total" class="cart-total"></div><button class="modal-btn confirm-btn" style="width:100%" id="proceedToOrderBtn">متابعة لإتمام الطلب عبر واتساب</button></div></div>
-<div id="contactModal" class="modal"><div class="modal-box"><span class="modal-close">&times;</span><h3 class="modal-title">تواصل معنا</h3><p class="text-secondary" style="margin-bottom: 1.5rem;">اختر الوسيلة التي تناسبك للتواصل معنا مباشرة.</p><div class="modal-actions"><a href="https://wa.me/213699443914" target="_blank" class="modal-btn contact-option-btn whatsapp"><i class="fab fa-whatsapp"></i> واتساب (الرقم الأول)</a><a href="https://wa.me/213781465477" target="_blank" class="modal-btn contact-option-btn whatsapp"><i class="fab fa-whatsapp"></i> واتساب (الرقم الثاني)</a><a href="https://web.facebook.com/p/أ%D9%85%D9%8A%D8%B1-%D8%A7%D9%84%D8%B4%D8%B1%D9%88%D9%82-61559518204192/" target="_blank" class="modal-btn contact-option-btn facebook"><i class="fab fa-facebook-f"></i> صفحتنا على فيسبوك</a><a href="https://www.instagram.com/amir_el_chorouk?igsh=OHhyNnE0MGd5cGpo" target="_blank" class="modal-btn contact-option-btn instagram"><i class="fab fa-instagram"></i> حسابنا على انستغرام</a><a href="https://t.me/amirchourouk" target="_blank" rel="noopener noreferrer" class="modal-btn contact-option-btn telegram"><i class="fab fa-telegram"></i> قناتنا على تيليجرام</a></div></div></div>
+<div id="cartModal" class="modal"><div class="modal-box"><span class="modal-close">&times;</span><h3 class="modal-title">سلة المشتريات</h3><div id="cart-items-container" class="cart-items"></div><div id="cart-total" class="cart-total"></div><button class="modal-btn confirm-btn" style="width:100%" id="proceedToInfoBtn">متابعة لإتمام الطلب</button></div></div>
+<div id="contactModal" class="modal"><div class="modal-box"><span class="modal-close">&times;</span><h3 class="modal-title">تواصل معنا</h3><p class="text-secondary" style="margin-bottom: 1.5rem;">اختر الوسيلة التي تناسبك للتواصل معنا مباشرة.</p><div class="modal-actions"><a href="https://wa.me/213781465477 " target="_blank" class="modal-btn contact-option-btn whatsapp"><i class="fab fa-whatsapp"></i> واتساب (الرقم الأول)</a><a href="https://wa.me/213781465477" target="_blank" class="modal-btn contact-option-btn whatsapp"><i class="fab fa-whatsapp"></i> واتساب (الرقم الثاني)</a><a href="https://web.facebook.com/p/أ%D9%85%D9%8A%D8%B1-%D8%A7%D9%84%D8%B4%D8%B1%D9%88%D9%82-61559518204192/" target="_blank" class="modal-btn contact-option-btn facebook"><i class="fab fa-facebook-f"></i> صفحتنا على فيسبوك</a><a href="https://www.instagram.com/amir_el_chorouk?igsh=OHhyNnE0MGd5cGpo" target="_blank" class="modal-btn contact-option-btn instagram"><i class="fab fa-instagram"></i> حسابنا على انستغرام</a><a href="https://t.me/amirchourouk" target="_blank" rel="noopener noreferrer" class="modal-btn contact-option-btn telegram"><i class="fab fa-telegram"></i> قناتنا على تيليجرام</a></div></div></div>
+
+<div id="customerInfoModal" class="modal">
+    <div class="modal-box">
+        <span class="modal-close">&times;</span>
+        <h3 class="modal-title">معلومات الزبون</h3>
+        <p class="text-secondary">الرجاء إدخال معلوماتك لإتمام الطلب.</p>
+        <form id="customer-info-form" style="margin-top: 2rem;">
+            <div class="form-group">
+                <label for="customerName">الاسم الكامل</label>
+                <input type="text" id="customerName" required>
+            </div>
+            <div class="form-group">
+                <label for="customerPhone">رقم الهاتف</label>
+                <input type="tel" id="customerPhone" required>
+            </div>
+            <div class="form-group">
+                <label for="customerLocation">العنوان (الولاية والبلدية)</label>
+                <input type="text" id="customerLocation" required>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="modal-btn cancel-btn" data-close>إلغاء</button>
+                <button type="submit" class="modal-btn confirm-btn" id="confirmOrderBtn">تأكيد الطلب وإرسال عبر واتساب</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <div id="toast" class="toast-notification"></div>
 
 <div id="adm-modal-overlay" class="adm-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="adm-modal-main-title">
@@ -687,8 +725,9 @@ body.dark-mode .adm-jumaa-message-content .closing-message {
 
 
 <script type="module">
+    // MODIFIED: Added addDoc, serverTimestamp, collection to imports
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getFirestore, collection, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { getFirestore, collection, getDocs, query, orderBy, limit, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyA1VBBOZQOUwnHp8x487g7lkn14x6Sp-7g", authDomain: "stoke-c650a.firebaseapp.com",
@@ -715,7 +754,7 @@ body.dark-mode .adm-jumaa-message-content .closing-message {
                 gros: '85.00 د.ج', 
                 superGros: '75.00 د.ج', 
                 prixUnite: '100.00 د.ج', 
-                images: ['PIC/SANIBON 1L.jpg','PIC/sanibo1lpink .png','PIC/SANIBO 1L PURPLE.png'] 
+                images: ['PIC/SANIBO 1L WHITE.png'] 
             },
             { name: 'منظف الأرضيات 1 لتر', gros: '95.00 د.ج', superGros: '85.50 د.ج', prixUnite: '110.00 د.ج', image: 'PIC/LAVESOLE 1L.jpg' },
             { name: 'سائل الأواني 5 لتر', gros: '310.00 د.ج', superGros: '290.00 د.ج', prixUnite: '330.00 د.ج', image: 'PIC/AWANI 5 L.png' },
@@ -728,14 +767,13 @@ body.dark-mode .adm-jumaa-message-content .closing-message {
         const productsContainer = document.getElementById('products-container');
         const cartFab = document.getElementById('cart-fab');
         const cartCount = document.getElementById('cart-count');
-        const contactFab = document.getElementById('contact-fab');
+        // REMOVED: contactFab variable
         const contactSidebarLink = document.getElementById('contact-sidebar-link');
         
         function renderProducts() {
             if (!productsContainer) return;
             productsContainer.innerHTML = products.map((product, index) => {
                 let imageHtml;
-                // التحقق إذا كان المنتج يحتوي على معرض صور
                 if (product.images && product.images.length > 0) {
                     const slides = product.images.map((img, i) => 
                         `<img src="${img}" alt="${product.name} ${i + 1}" class="${i === 0 ? 'active' : ''}" loading="lazy">`
@@ -753,7 +791,6 @@ body.dark-mode .adm-jumaa-message-content .closing-message {
                             <div class="slide-dots">${dots}</div>
                         </div>`;
                 } else {
-                    // استخدام الصورة الواحدة كالمعتاد
                     imageHtml = `<img src="${product.image}" alt="${product.name}" class="product-image" loading="lazy">`;
                 }
                 
@@ -772,10 +809,9 @@ body.dark-mode .adm-jumaa-message-content .closing-message {
                             </div>
                         </div>`;
             }).join('');
-            setupSlideshows(); // استدعاء دالة تهيئة السلايدر الجديدة
+            setupSlideshows();
         }
-
-        // --- دالة التحكم في عروض الصور (مقتبسة من ببب.html) ---
+        
         function setupSlideshows() {
             const slideshows = document.querySelectorAll('.slideshow-container');
             slideshows.forEach(container => {
@@ -785,7 +821,6 @@ body.dark-mode .adm-jumaa-message-content .closing-message {
                 const nextBtn = container.querySelector('.slide-next');
                 const prevBtn = container.querySelector('.slide-prev');
                 
-                // التأكد من وجود العناصر قبل إضافة المستمعين
                 if (images.length <= 1) return;
 
                 function showSlide(index) {
@@ -821,7 +856,8 @@ body.dark-mode .adm-jumaa-message-content .closing-message {
             if(modal) modal.classList.add('show');
         }
         function closeModal(modal) {
-            modal.classList.remove('show');
+            if (typeof modal === 'string') modal = document.getElementById(modal);
+            if(modal) modal.classList.remove('show');
         }
 
         function openCustomerTypeModal(productIndex) {
@@ -836,7 +872,7 @@ body.dark-mode .adm-jumaa-message-content .closing-message {
                 if (currentProductForOrder.customerType === 'زبون عادي') currentProductForOrder.price = currentProductForOrder.prixUnite;
                 else if (currentProductForOrder.customerType === 'تاجر شبه جملة') currentProductForOrder.price = currentProductForOrder.superGros;
                 else currentProductForOrder.price = currentProductForOrder.gros;
-                closeModal(document.getElementById('customerTypeModal'));
+                closeModal('customerTypeModal');
                 const qModal = document.getElementById('quantityModal');
                 qModal.querySelector('#quantityProductTitle').textContent = `تحديد كمية: ${currentProductForOrder.name}`;
                 qModal.querySelector('#quantityInput').value = 1;
@@ -848,7 +884,7 @@ body.dark-mode .adm-jumaa-message-content .closing-message {
             const quantity = parseInt(document.getElementById('quantityInput').value, 10);
             if (currentProductForOrder && quantity > 0) {
                 addToCart(currentProductForOrder, quantity);
-                closeModal(document.getElementById('quantityModal'));
+                closeModal('quantityModal');
                 currentProductForOrder = null;
             }
         });
@@ -876,15 +912,66 @@ body.dark-mode .adm-jumaa-message-content .closing-message {
             const grandTotal = cart.reduce((total, item) => total + (item.quantity * item.price), 0);
             totalContainer.innerHTML = `الإجمالي: <strong>${grandTotal.toFixed(2)} د.ج</strong>`;
         }
-
-        document.getElementById('proceedToOrderBtn')?.addEventListener('click', () => {
+        
+        // MODIFIED: This button now opens the customer info modal
+        document.getElementById('proceedToInfoBtn')?.addEventListener('click', () => {
             if (cart.length === 0) return showToast("⚠️ سلتك فارغة!");
-            let message = "السلام عليكم، أود طلب المنتجات التالية:\n\n" +
-                cart.map(item => `*المنتج*: ${item.name}\n*الكمية*: ${item.quantity}\n*نوع التسعير*: ${item.customerType}\n*الإجمالي*: ${(item.quantity * item.price).toFixed(2)} د.ج\n---------------------\n`).join('');
-            const grandTotal = cart.reduce((total, item) => total + (item.quantity * item.price), 0);
-            message += `\n*الإجمالي الكلي للطلب: ${grandTotal.toFixed(2)} د.ج*`;
-            window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, '_blank');
+            closeModal('cartModal');
+            openModal('customerInfoModal');
         });
+
+        // NEW: Handle final order submission
+        document.getElementById('customer-info-form')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const customerName = document.getElementById('customerName').value.trim();
+            const customerPhone = document.getElementById('customerPhone').value.trim();
+            const customerLocation = document.getElementById('customerLocation').value.trim();
+
+            if (!customerName || !customerPhone || !customerLocation) {
+                showToast("⚠️ الرجاء ملء جميع الحقول.", true);
+                return;
+            }
+
+            const orderData = {
+                customerName,
+                customerPhone,
+                customerLocation,
+                items: cart.map(item => ({ name: item.name, quantity: item.quantity, type: item.customerType })),
+                status: 'مازال',
+                createdAt: serverTimestamp()
+            };
+
+            try {
+                // Save to Firestore
+                await addDoc(collection(db, "orders"), orderData);
+                
+                // Prepare WhatsApp message
+                let message = `*طلب جديد من موقع أمير الشروق*\n\n` +
+                    `*اسم العميل:* ${customerName}\n` +
+                    `*رقم الهاتف:* ${customerPhone}\n` +
+                    `*العنوان:* ${customerLocation}\n\n` +
+                    `---------------------\n*تفاصيل الطلب:*\n---------------------\n\n` +
+                    cart.map(item => `*المنتج*: ${item.name}\n*الكمية*: ${item.quantity}\n*نوع التسعير*: ${item.customerType}\n*الإجمالي*: ${(item.quantity * item.price).toFixed(2)} د.ج\n---------------------\n`).join('');
+                
+                const grandTotal = cart.reduce((total, item) => total + (item.quantity * item.price), 0);
+                message += `\n*الإجمالي الكلي للطلب: ${grandTotal.toFixed(2)} د.ج*`;
+                
+                // Open WhatsApp
+                window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, '_blank');
+                
+                // Finalize
+                showToast("✅ تم إرسال طلبك بنجاح!");
+                closeModal('customerInfoModal');
+                cart = [];
+                updateCartUI();
+                document.getElementById('customer-info-form').reset();
+
+            } catch (error) {
+                console.error("Error adding document: ", error);
+                showToast("❌ حدث خطأ، لم يتم إرسال الطلب.", true);
+            }
+        });
+
 
         async function fetchAnnouncements() {
             const container = document.getElementById('announcements-container');
@@ -909,11 +996,13 @@ body.dark-mode .adm-jumaa-message-content .closing-message {
                 cart = cart.filter(item => !(item.name === btn.dataset.name && item.customerType === btn.dataset.type));
                 updateCartUI();
             }
-            if (e.target.matches('.modal-close, .modal[data-close]')) closeModal(e.target.closest('.modal'));
+            if (e.target.closest('.modal-close') || e.target.closest('.modal-btn[data-close]')) {
+                closeModal(e.target.closest('.modal'));
+            }
         });
         
         cartFab?.addEventListener('click', () => openModal('cartModal'));
-        contactFab?.addEventListener('click', () => openModal('contactModal'));
+        // REMOVED: contactFab event listener
         contactSidebarLink?.addEventListener('click', (e) => { e.preventDefault(); openModal('contactModal'); });
         
         document.getElementById('increaseQty')?.addEventListener('click', () => document.getElementById('quantityInput').value++);
@@ -940,9 +1029,10 @@ body.dark-mode .adm-jumaa-message-content .closing-message {
         }
 
         // --- Toast Notification ---
-        function showToast(message) {
+        function showToast(message, isError = false) {
             const toastEl = document.getElementById('toast');
-            toastEl.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
+            toastEl.innerHTML = `<i class="fas ${isError ? 'fa-times-circle' : 'fa-check-circle'}"></i> ${message}`;
+            toastEl.style.backgroundColor = isError ? '#dc3545' : 'var(--success-color)';
             toastEl.classList.add('show');
             setTimeout(() => toastEl.classList.remove('show'), 3000);
         }
@@ -967,6 +1057,7 @@ body.dark-mode .adm-jumaa-message-content .closing-message {
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+    // This script for the Dhikr/Jumaa modal remains unchanged.
     const config = {
         dhikrRequiredClicks: 1,
         fridayPrayerStart: { hour: 11, minute: 30 },
