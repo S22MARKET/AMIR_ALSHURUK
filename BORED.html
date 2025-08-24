@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>آخر الأخبار والعروض - أمير الشروق</title>
+    <meta name="description" content="تابع آخر أخبار وعروض أمير الشروق لمواد التنظيف.">
+    <link href="PIC/LOGGGOOO.jpg" rel="icon">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+:root {
+    --primary-color: #0d6efd;
+    --primary-dark: #0a58ca;
+    --primary-light: #e7f1ff;
+    --secondary-color: #6c757d;
+    --bg-body: #f8f9fa;
+    --bg-card: #ffffff;
+    --text-primary: #212529;
+    --text-secondary: #6c757d;
+    --border-color: #dee2e6;
+    --white: #ffffff;
+    --success: #198754;
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.06);
+    --shadow-md: 0 5px 15px rgba(0, 0, 0, 0.1);
+    --radius: 0.8rem;
+    --sidebar-width: 280px;
+}
+
+body.dark-mode {
+    --bg-body: #121212;
+    --bg-card: #1e1e1e;
+    --text-primary: #e0e0e0;
+    --text-secondary: #a0a0a0;
+    --border-color: #333;
+    --primary-light: #2a2a35;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+    font-family: 'Tajawal', sans-serif;
+    background-color: var(--bg-body);
+    color: var(--text-primary);
+    line-height: 1.7;
+    transition: background-color 0.3s, color 0.3s;
+    overflow-x: hidden;
+}
+.container { width: 90%; max-width: 900px; margin: 0 auto; }
+.py-16 { padding-top: 4rem; padding-bottom: 4rem; }
+h1, h2, h3 { color: var(--text-primary); font-weight: 800; }
+h2.section-title { color: var(--primary-color); }
+a { text-decoration: none; }
+
+/* --- Sidebar, Header, Footer --- */
+.sidebar { position: fixed; top: 0; right: -100%; width: var(--sidebar-width); max-width: 90%; height: 100vh; background-color: var(--bg-card); border-left: 1px solid var(--border-color); z-index: 1200; transition: right 0.3s ease-in-out; display: flex; flex-direction: column; box-shadow: var(--shadow-md); }
+.sidebar.active { right: 0; }
+.sidebar-header { padding: 1.5rem; text-align: center; border-bottom: 1px solid var(--border-color); }
+.sidebar-header img { width: 90px; height: 90px; border-radius: 50%; border: 4px solid var(--primary-color); object-fit: cover; }
+.sidebar-header h2 { font-size: 1.8rem; margin-top: 10px; color: var(--primary-dark); }
+.sidebar-nav { list-style: none; padding-top: 1rem; flex-grow: 1; overflow-y: auto; }
+.sidebar-nav a { display: flex; align-items: center; gap: 1rem; padding: 1rem 1.5rem; color: var(--text-secondary); text-decoration: none; font-size: 1.1rem; font-weight: 700; transition: all .2s; }
+.sidebar-nav a:hover { background-color: var(--primary-light); color: var(--primary-color); padding-right: 2rem; }
+.sidebar-nav a.active { color: var(--primary-color); background-color: var(--primary-light); border-right: 4px solid var(--primary-color); }
+.sidebar-nav a i { font-size: 1.2rem; width: 25px; text-align: center; }
+.header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; background-color: var(--bg-card); box-shadow: var(--shadow-md); position: sticky; top: 0; z-index: 1000; }
+.overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); z-index: 1199; opacity: 0; visibility: hidden; transition: opacity 0.3s ease; }
+.overlay.active { opacity: 1; visibility: visible; }
+.icon-btn { background: transparent; border: none; color: var(--primary-color); font-size: 1.8rem; cursor: pointer; }
+.site-footer { background-color: #1A202C; color: #A0AEC0; padding: 2rem 1rem; text-align: center; margin-top: 3rem; }
+.section-title { text-align: center; margin-bottom: 3rem; font-size: clamp(2rem, 5vw, 2.8rem); position: relative; }
+.section-title::after { content: ''; display: block; width: 80px; height: 4px; background: var(--primary-color); margin: 0.5rem auto 0; border-radius: 2px; }
+
+/* --- Styles for Announcements Page --- */
+.announcements-list { display: flex; flex-direction: column; gap: 2rem; }
+.announcement-item-full {
+    background-color: var(--bg-card);
+    border-radius: var(--radius);
+    padding: 2.5rem;
+    box-shadow: var(--shadow-md);
+    border-top: 5px solid var(--primary-color);
+    transition: transform 0.2s;
+}
+.announcement-item-full:hover {
+    transform: translateY(-5px);
+}
+.announcement-item-full h3 { font-size: 2rem; color: var(--primary-dark); margin-bottom: 0.75rem; }
+.announcement-item-full p { font-size: 1.2rem; color: var(--text-secondary); margin-top: 0.5rem; line-height: 1.8; }
+.announcement-item-full small { font-size: 1rem; color: #aaa; }
+.loader {
+    border: 5px solid var(--border-color);
+    border-top: 5px solid var(--primary-color);
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    margin: 4rem auto;
+}
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+@media (min-width: 1024px) {
+    body { padding-right: var(--sidebar-width); }
+    .sidebar { right: 0; }
+    #menu-toggle, .overlay { display: none !important; }
+}
+</style>
+</head>
+<body>
+
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <img src="PIC/LOGO.jpg" alt="شعار أمير الشروق">
+        <h2>أمير الشروق</h2>
+    </div>
+    <nav class="sidebar-nav">
+        <a href="index.html" class="nav-link"><i class="fas fa-home"></i><span>الصفحة الرئيسية</span></a>
+        <a href="index.html#products" class="nav-link"><i class="fas fa-box-open"></i><span>منتجاتنا</span></a>
+        <a href="BORED.html" class="nav-link active"><i class="fas fa-bullhorn"></i><span>كل العروض والأخبار</span></a>
+        <a href="offers.html" class="nav-link"><i class="fas fa-star"></i><span>العروض الحصرية</span></a>
+        <a href="maps.html" class="nav-link"><i class="fas fa-map-marked-alt"></i><span>خرائط نقاط البيع</span></a>
+        <a href="suggestions.html" class="nav-link"><i class="fas fa-lightbulb"></i><span>اقتراحات الزبائن</span></a>
+        <a href="quran.html" class="nav-link"><i class="fas fa-quran"></i><span>القرآن الكريم</span></a>
+        <a href="index.html#download-app" class="nav-link"><i class="fab fa-android"></i><span>تحميل تطبيقنا</span></a>
+    </nav>
+</aside>
+
+<div class="overlay" id="overlay"></div>
+
+<div id="main-content">
+    <header class="header">
+        <button id="menu-toggle" class="icon-btn lg:hidden"><i class="fas fa-bars"></i></button>
+        <h1>&nbsp;</h1> <button id="theme-toggle" class="icon-btn"><i class="fas fa-sun"></i></button>
+    </header>
+
+    <main>
+        <section id="announcements-page" class="container py-16">
+            <h2 class="section-title">كل الأخبار والعروض</h2>
+            <div id="announcements-list-container" class="announcements-list">
+                <div class="loader"></div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p>جميع الحقوق محفوظة &copy; أمير الشروق <span id="year"></span>.</p>
+    </footer>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyA1VBBOZQOUwnHp8x487g7lkn14x6Sp-7g", authDomain: "stoke-c650a.firebaseapp.com",
+        databaseURL: "https://stoke-c650a-default-rtdb.firebaseio.com", projectId: "stoke-c650a",
+        storageBucket: "stoke-c650a.appspot.com", messagingSenderId: "464151163343",
+        appId: "1:464151163343:web:c77c7dfd093ce9c1c822ba", measurementId: "G-EP0R97CYLS"
+    };
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    async function fetchAllAnnouncements() {
+        const container = document.getElementById('announcements-list-container');
+        try {
+            const q = query(collection(db, "announcements"), orderBy("createdAt", "desc"));
+            const querySnapshot = await getDocs(q);
+            if (querySnapshot.empty) {
+                container.innerHTML = '<p style="text-align:center;">لا توجد عروض أو أخبار حالياً.</p>';
+                return;
+            }
+            container.innerHTML = querySnapshot.docs.map(doc => {
+                const announcement = doc.data();
+                const date = announcement.createdAt ? announcement.createdAt.toDate().toLocaleDateString('ar-EG', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
+                return `
+                <div class="announcement-item-full">
+                    <small>${date}</small>
+                    <h3>${announcement.title}</h3>
+                    <p>${announcement.content.replace(/\n/g, '<br>')}</p>
+                </div>`;
+            }).join('');
+        } catch (error) {
+            console.error("Error fetching announcements: ", error);
+            container.innerHTML = '<p style="text-align:center;">حدث خطأ في تحميل العروض.</p>';
+        }
+    }
+    
+    // Sidebar and Theme Toggle Logic
+    document.addEventListener('DOMContentLoaded', () => {
+        const sidebar = document.getElementById('sidebar');
+        const menuToggle = document.getElementById('menu-toggle');
+        const overlay = document.getElementById('overlay');
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        });
+        overlay.addEventListener('click', () => {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+        });
+
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = themeToggle.querySelector('i');
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            const isDarkMode = document.body.classList.contains('dark-mode');
+            themeIcon.className = isDarkMode ? 'fas fa-moon' : 'fas fa-sun';
+            localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+        });
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+            themeIcon.className = 'fas fa-moon';
+        }
+
+        fetchAllAnnouncements();
+        document.getElementById('year').textContent = new Date().getFullYear();
+    });
+</script>
+
+</body>
+</html>
