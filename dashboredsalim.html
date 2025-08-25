@@ -3,259 +3,344 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة تحكم العم صالحي سليم | تصميم مطوّر</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap');
-
-        :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #3498db;
-            --background-color: #f4f7f9;
-            --sidebar-bg: #ffffff;
-            --card-bg: #ffffff;
-            --text-color: #333333;
-            --text-light-color: #7f8c8d;
-            --description-color: #555;
-            --border-color: #e0e0e0;
-            --shadow-color: rgba(0, 0, 0, 0.08);
-            --hover-color: #2980b9;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: 'Tajawal', sans-serif;
-            background-color: var(--background-color);
-            color: var(--text-color);
-            line-height: 1.8;
-            font-size: 16px;
-        }
-
-        .dashboard-container {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        /* --- القائمة الجانبية --- */
-        #sidebar {
-            width: 260px;
-            background-color: var(--sidebar-bg);
-            border-left: 1px solid var(--border-color);
-            padding: 25px;
-            display: flex;
-            flex-direction: column;
-            position: fixed;
-            right: 0;
-            top: 0;
-            bottom: 0;
-            transition: transform 0.3s ease-in-out;
-            z-index: 1000;
-        }
-
-        .sidebar-header {
-            text-align: center;
-            margin-bottom: 40px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .sidebar-header h2 {
-            font-size: 1.5rem;
-            color: var(--primary-color);
-            font-weight: 700;
-        }
-
-        #sidebar nav ul {
-            list-style-type: none;
-            flex-grow: 1;
-        }
-
-        #sidebar nav ul li a {
-            display: flex;
-            align-items: center;
-            padding: 15px 10px;
-            text-decoration: none;
-            color: var(--text-color);
-            border-radius: 8px;
-            transition: background-color 0.3s, color 0.3s;
-            font-size: 1.1rem;
-            font-weight: 500;
-        }
-        
-        #sidebar nav ul li a .icon {
-            font-size: 1.5rem;
-            margin-left: 15px;
-            width: 25px;
-            text-align: center;
-        }
-
-        #sidebar nav ul li a:hover {
-            background-color: var(--secondary-color);
-            color: white;
-        }
-        
-        .sidebar-footer {
-            text-align: center;
-            font-size: 0.9rem;
-            color: var(--text-light-color);
-            padding-top: 20px;
-            border-top: 1px solid var(--border-color);
-        }
-
-        /* --- المحتوى الرئيسي --- */
-        #main-content {
-            flex-grow: 1;
-            padding: 30px;
-            margin-right: 260px; /* لإعطاء مساحة للقائمة الجانبية */
-            animation: fadeIn 0.6s ease-in-out;
-        }
-
-        header.main-header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        header.main-header h1 {
-            color: var(--primary-color);
-            font-size: 2.8rem;
-            font-weight: 700;
-        }
-        
-        header.main-header p {
-            font-size: 1.3rem;
-            color: var(--text-light-color);
-        }
-
-        .category-title {
-            font-size: 2rem;
-            color: var(--primary-color);
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 3px solid var(--secondary-color);
-            grid-column: 1 / -1;
-        }
-
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 30px;
-        }
-        
-        .card {
-            background-color: var(--card-bg);
-            border-radius: 15px;
-            box-shadow: 0 4px 20px var(--shadow-color);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            transition: transform 0.3s, box-shadow 0.3s;
-            border: 1px solid var(--border-color);
-        }
-
-        .card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
-        }
-
-        .card a {
-            text-decoration: none;
-            color: inherit;
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-        }
-
-        .card-content {
-            padding: 30px;
-            text-align: center;
-            flex-grow: 1;
-        }
-        
-        .card-icon {
-            font-size: 3.5rem;
-            line-height: 1;
-            color: var(--secondary-color);
-            margin-bottom: 20px;
-        }
-
-        .card h3 {
-            margin-bottom: 10px;
-            font-size: 1.5rem;
-            font-weight: 700;
-        }
-        
-        .card p {
-            font-size: 1rem;
-            color: var(--description-color);
-            line-height: 1.6;
-            min-height: 50px; /* لتوحيد ارتفاع البطاقات */
-        }
-
-        .card-footer {
-            background-color: #f9fafb;
-            padding: 18px;
-            text-align: center;
-            border-top: 1px solid var(--border-color);
-            margin-top: auto; /* يدفع الفوتر لأسفل البطاقة */
-        }
-
-        .card-footer span {
-            color: var(--secondary-color);
-            font-weight: bold;
-            font-size: 1.1rem;
-            transition: color 0.3s;
-        }
-        
-        .card:hover .card-footer span {
-            color: var(--hover-color);
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        #menu-toggle {
-            display: none;
-            position: fixed;
-            top: 15px;
-            right: 15px;
-            z-index: 1001;
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1.5rem;
-        }
-
-        @media (max-width: 992px) {
-            #sidebar {
-                transform: translateX(260px);
-            }
-            #sidebar.active {
-                transform: translateX(0);
-            }
-            #main-content {
-                margin-right: 0;
-            }
-            #menu-toggle {
-                display: block;
-            }
-            header.main-header h1 {
-                font-size: 2.2rem;
-            }
-            .category-title {
-                font-size: 1.8rem;
-            }
-        }
-    </style>
+    <title>لوحة تحكم العم صالحي سليم | نسخة مطوّرة</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
+<style>/* --- Google Fonts --- */
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap');
+
+/* --- CSS Variables (Light & Dark Mode) --- */
+:root {
+    --primary-color: #2c3e50;
+    --secondary-color: #3498db;
+    --background-gradient-start: #f4f7f9;
+    --background-gradient-end: #e9eef2;
+    --sidebar-bg: #ffffff;
+    --card-bg: #ffffff;
+    --text-color: #333333;
+    --text-light-color: #7f8c8d;
+    --border-color: #e0e0e0;
+    --shadow-color: rgba(44, 62, 80, 0.1);
+    --hover-color: #2980b9;
+    --card-footer-bg: #f9fafb;
+}
+
+body.dark-mode {
+    --primary-color: #ecf0f1;
+    --secondary-color: #3498db;
+    --background-gradient-start: #1a202c;
+    --background-gradient-end: #2d3748;
+    --sidebar-bg: #2d3748;
+    --card-bg: #4a5568;
+    --text-color: #f7fafc;
+    --text-light-color: #a0aec0;
+    --border-color: #4a5568;
+    --shadow-color: rgba(0, 0, 0, 0.4);
+    --hover-color: #5dade2;
+    --card-footer-bg: #2d3748;
+}
+
+/* --- Global Styles --- */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Tajawal', sans-serif;
+    background-image: linear-gradient(135deg, var(--background-gradient-start), var(--background-gradient-end));
+    color: var(--text-color);
+    line-height: 1.8;
+    font-size: 16px;
+    transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+/* --- Layout --- */
+.dashboard-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* --- Sidebar --- */
+#sidebar {
+    width: 260px;
+    background-color: var(--sidebar-bg);
+    border-left: 1px solid var(--border-color);
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), background-color 0.4s ease;
+    z-index: 1000;
+}
+
+.sidebar-header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.sidebar-header h2 {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    font-weight: 700;
+}
+
+#sidebar nav ul {
+    list-style-type: none;
+    flex-grow: 1;
+}
+
+#sidebar nav ul li a {
+    display: flex;
+    align-items: center;
+    padding: 15px 10px;
+    text-decoration: none;
+    color: var(--text-color);
+    border-radius: 8px;
+    transition: background-color 0.3s, color 0.3s;
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+#sidebar nav ul li a .icon {
+    margin-left: 15px;
+    width: 25px;
+    text-align: center;
+    color: var(--secondary-color);
+    transition: color 0.3s;
+}
+
+#sidebar nav ul li a:hover {
+    background-color: var(--secondary-color);
+    color: white;
+}
+
+#sidebar nav ul li a:hover .icon {
+    color: white;
+}
+
+.sidebar-footer {
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--text-light-color);
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+}
+
+/* --- Main Content --- */
+#main-content {
+    flex-grow: 1;
+    padding: 30px;
+    margin-right: 260px;
+    animation: fadeIn 0.6s ease-in-out;
+}
+
+.main-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.main-header h1 {
+    color: var(--primary-color);
+    font-size: 2.8rem;
+    font-weight: 700;
+}
+
+.main-header p {
+    font-size: 1.3rem;
+    color: var(--text-light-color);
+}
+
+/* Header Controls (Menu & Theme Toggle) */
+.header-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    z-index: 1001;
+}
+
+#menu-toggle, #theme-toggle {
+    display: none; /* Hidden by default on large screens */
+    background: var(--card-bg);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    padding: 10px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.5rem;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 12px var(--shadow-color);
+    transition: all 0.3s ease;
+}
+#theme-toggle { display: flex; margin-left: 10px; } /* Always visible */
+
+#menu-toggle:hover, #theme-toggle:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px var(--shadow-color);
+    background-color: var(--secondary-color);
+    color: white;
+}
+
+/* Search Box */
+.search-container {
+    margin-top: 30px;
+}
+
+#search-box {
+    width: 100%;
+    max-width: 600px;
+    padding: 15px 25px;
+    border: 1px solid var(--border-color);
+    border-radius: 30px;
+    font-size: 1.1rem;
+    font-family: 'Tajawal', sans-serif;
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    transition: all 0.3s ease;
+}
+
+#search-box:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.2);
+}
+
+/* --- Content Grid & Cards --- */
+.category-title {
+    font-size: 2rem;
+    color: var(--primary-color);
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 3px solid var(--secondary-color);
+    grid-column: 1 / -1;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 30px;
+}
+
+.card {
+    background-color: var(--card-bg);
+    border-radius: 15px;
+    box-shadow: 0 4px 20px var(--shadow-color);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid var(--border-color);
+}
+.card.hidden { display: none; }
+
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 12px 30px var(--shadow-color);
+}
+
+.card a {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.card-content {
+    padding: 30px;
+    text-align: center;
+    flex-grow: 1;
+}
+
+.card h3 {
+    margin-bottom: 10px;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.card p {
+    font-size: 1rem;
+    color: var(--text-light-color);
+    line-height: 1.6;
+    min-height: 50px;
+}
+
+.card-footer {
+    background-color: var(--card-footer-bg);
+    padding: 18px;
+    text-align: center;
+    border-top: 1px solid var(--border-color);
+    margin-top: auto;
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: var(--secondary-color);
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.card:hover .card-footer {
+    background-color: var(--secondary-color);
+    color: white;
+}
+
+/* --- Animations --- */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Responsive Design --- */
+@media (max-width: 992px) {
+    #sidebar {
+        transform: translateX(260px);
+    }
+    #sidebar.active {
+        transform: translateX(0);
+        box-shadow: -5px 0 25px rgba(0,0,0,0.1);
+    }
+    #main-content {
+        margin-right: 0;
+    }
+    .header-controls {
+        /* On mobile, controls are visible */
+        display: flex;
+    }
+    #menu-toggle {
+        display: flex; /* Show on mobile */
+    }
+    .main-header h1 {
+        font-size: 2.2rem;
+        margin-top: 60px; /* Space for fixed buttons */
+    }
+    .category-title {
+        font-size: 1.8rem;
+    }
+}
+@media (min-width: 993px) {
+    .header-controls {
+        /* On desktop, only theme toggle is needed */
+        justify-content: flex-end;
+    }
+    #menu-toggle {
+        display: none; /* Hide hamburger on desktop */
+    }
+}</style>
 <body>
 
     <div class="dashboard-container">
@@ -265,21 +350,40 @@
             </div>
             <nav>
                 <ul>
-                    <li><a href="#management-tools"><span class="icon">🛠️</span> أدوات الإدارة</a></li>
-                    <li><a href="#religious-tools"><span class="icon">🕌</span> أدوات دينية</a></li>
+                    <li><a href="#management-tools">
+                        <span class="icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-tools" viewBox="0 0 16 16"><path d="M1 0 0 1l2.2 3.081a1 1 0 0 0 .815.419h.07a1 1 0 0 1 .708.293l2.675 2.675-2.617 2.654A3.003 3.003 0 0 0 0 13a3 3 0 1 0 5.878-.851l2.654-2.617.968.968-.305.914a1 1 0 0 0 .242 1.023l3.27 3.27a.997.997 0 0 0 1.414 0l1.586-1.586a.997.997 0 0 0 0-1.414l-3.27-3.27a1 1 0 0 0-1.023-.242L10.5 9.5l-.968-.968 2.617-2.654A3.003 3.003 0 0 0 16 3c0-.992-.49-1.87-1.227-2.435L14 0H1zm11.586 3.586a2 2 0 1 1-2.828-2.828 2 2 0 0 1 2.828 2.828zM3 14a2 2 0 1 1-2.828-2.828 2 2 0 0 1 2.828 2.828z"/></svg>
+                        </span>
+                        أدوات الإدارة
+                    </a></li>
+                    <li><a href="#religious-tools">
+                        <span class="icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-moon-stars-fill" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z"/><path d="M10.794 3.148a.217.217 0 0 1 .412 0l.387 1.162h1.212a.217.217 0 0 1 .162.321l-.988.724.387 1.162a.217.217 0 0 1-.321.242l-.988-.724-.988.724a.217.217 0 0 1-.321-.242l.387-1.162-.988-.724a.217.217 0 0 1 .162-.321h1.212l.387-1.162zM13.863.099a.145.145 0 0 1 .274 0l.258.774c.115.346.386.617.732.732l.774.258a.145.145 0 0 1 0 .274l-.774.258a1.156 1.156 0 0 0-.732.732l-.258.774a.145.145 0 0 1-.274 0l-.258-.774a1.156 1.156 0 0 0-.732-.732l-.774-.258a.145.145 0 0 1 0-.274l.774-.258c.346-.115.617-.386.732-.732L13.863.1z"/></svg>
+                        </span>
+                        أدوات دينية
+                    </a></li>
                 </ul>
             </nav>
-             <div class="sidebar-footer">
+            <div class="sidebar-footer">
                 <p>&copy; 2025 صالحي سليم</p>
             </div>
         </aside>
 
-        <button id="menu-toggle">☰</button>
-
         <main id="main-content">
             <header class="main-header">
+                <div class="header-controls">
+                    <button id="menu-toggle" aria-label="فتح/إغلاق القائمة" aria-expanded="false" aria-controls="sidebar">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/></svg>
+                    </button>
+                     <button id="theme-toggle" aria-label="تبديل الوضع الليلي">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-sun-fill" viewBox="0 0 16 16"><path d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"/></svg>
+                    </button>
+                </div>
                 <h1>لوحة تحكم العم صالحي سليم</h1>
                 <p>وصول سريع ومنظم لجميع أدواتك.</p>
+                <div class="search-container">
+                    <input type="text" id="search-box" placeholder="ابحث عن أداة...">
+                </div>
             </header>
 
             <section id="management-tools">
@@ -288,61 +392,55 @@
                     <div class="card">
                         <a href="indexdashboard.html">
                             <div class="card-content">
-                                <div class="card-icon">⚙️</div>
                                 <h3>لوحة تحكم الموقع</h3>
                                 <p>لإدارة الإعدادات الرئيسية والوصول السريع للأدوات الأخرى.</p>
                             </div>
-                            <div class="card-footer"><span>افتح الآن &larr;</span></div>
+                            <div class="card-footer"><span>افتح الآن</span></div>
                         </a>
                     </div>
                     <div class="card">
                          <a href="dashboard.html">
                             <div class="card-content">
-                                <div class="card-icon">📅</div>
                                 <h3>نظام الحضور</h3>
                                 <p>لتسجيل ومتابعة حضور وغياب الموظفين بسهولة ودقة.</p>
                             </div>
-                            <div class="card-footer"><span>افتح الآن &larr;</span></div>
+                            <div class="card-footer"><span>افتح الآن</span></div>
                         </a>
                     </div>
                     <div class="card">
                          <a href="صناعة شهادات العمل وحسن السلوك.html">
                             <div class="card-content">
-                                <div class="card-icon">📄</div>
                                 <h3>صناعة شهادات العمل</h3>
                                 <p>لإنشاء شهادات العمل وحسن السيرة والسلوك للموظفين.</p>
                             </div>
-                            <div class="card-footer"><span>افتح الآن &larr;</span></div>
+                            <div class="card-footer"><span>افتح الآن</span></div>
                         </a>
                     </div>
                     <div class="card">
                         <a href="stoke.html">
                             <div class="card-content">
-                                <div class="card-icon">📦</div>
                                 <h3>إدارة المخزن</h3>
                                 <p>لمتابعة المخزون، تسجيل المنتجات الواردة والصادرة.</p>
                             </div>
-                             <div class="card-footer"><span>افتح الآن &larr;</span></div>
+                             <div class="card-footer"><span>افتح الآن</span></div>
                         </a>
                     </div>
                     <div class="card">
                         <a href="invoice.html">
                             <div class="card-content">
-                                <div class="card-icon">🧾</div>
                                 <h3>مولد فواتير</h3>
                                 <p>لإنشاء فواتير احترافية للعملاء بسرعة وسهولة.</p>
                             </div>
-                            <div class="card-footer"><span>افتح الآن &larr;</span></div>
+                            <div class="card-footer"><span>افتح الآن</span></div>
                         </a>
                     </div>
                     <div class="card">
                         <a href="invoices.html">
                             <div class="card-content">
-                                <div class="card-icon">🗃️</div>
                                 <h3>محفوظات الفواتير</h3>
                                 <p>للاطلاع على جميع الفواتير التي تم إنشاؤها مسبقًا.</p>
                             </div>
-                            <div class="card-footer"><span>افتح الآن &larr;</span></div>
+                            <div class="card-footer"><span>افتح الآن</span></div>
                         </a>
                     </div>
                 </div>
@@ -352,63 +450,57 @@
                 <h2 class="category-title">أدوات دينية وروحانية</h2>
                  <div class="dashboard-grid">
                     <div class="card">
-                        <a href="https://surahquran.com/warsh/fahras.html" target="_blank">
+                        <a href="https://surahquran.com/warsh/fahras.html" target="_blank" rel="noopener noreferrer">
                             <div class="card-content">
-                                <div class="card-icon">📖</div>
                                 <h3>القرآن الكريم (ورش)</h3>
                                 <p>لتصفح وقراءة القرآن الكريم كاملاً برواية ورش عن نافع.</p>
                             </div>
-                            <div class="card-footer"><span>افتح الآن &larr;</span></div>
+                            <div class="card-footer"><span>افتح الآن</span></div>
                         </a>
                     </div>
                     <div class="card">
-                        <a href="https://s22mcs.github.io/S22MCS02-/%D9%B1%D8%AE%D9%92%D8%AA%D9%90%D9%85%D9%92%20%D9%82%D9%8F%D8%B1%D9%92%D8%A2%D9%86%D9%8E%D9%83%D9%8E%20%D9%8A%D9%8E%D8%B4%D9%92%D9%81%D9%8E%D8%B9%D9%92%20%D9%84%D9%8E%D9%83%D9%8E.html" target="_blank">
+                        <a href="https://s22mcs.github.io/S22MCS02-/%D9%B1%D8%AE%D9%92%D8%AA%D9%90%D9%85%D9%92%20%D9%82%D9%8F%D8%B1%D9%92%D8%A2%D9%86%D9%8E%D9%83%D9%8E%20%D9%8A%D9%8E%D8%B4%D9%92%D9%81%D9%8E%D8%B9%D9%92%20%D9%84%D9%8E%D9%83%D9%8E.html" target="_blank" rel="noopener noreferrer">
                             <div class="card-content">
-                                <div class="card-icon">⭐</div>
                                 <h3>وردك اليومي من القرآن</h3>
                                 <p>لمساعدتك على متابعة ختمة القرآن الكريم بشكل منظم.</p>
                             </div>
-                            <div class="card-footer"><span>افتح الآن &larr;</span></div>
+                            <div class="card-footer"><span>افتح الآن</span></div>
                         </a>
                     </div>
                     <div class="card">
-                        <a href="https://s22mcs.github.io/S22MCS02-/%D8%A7%D9%90%D9%82%D9%92%D8%B1%D9%8E%D8%A3%D9%92%20%D8%A3%D9%8E%D8%B0%D9%92%D9%83%D9%8E%D8%A7%D8%B1%D9%8E%D9%83%D9%8E%20%D8%AA%D9%8E%D8%B4%D9%92%D9_81%D9%81%D9%8E%D8%B9%D9%92%20%D9%84%D9_8E%D9%83%D9%8E.html" target="_blank">
+                        <a href="https://s22mcs.github.io/S22MCS02-/%D8%A7%D9%90%D9%82%D9%92%D8%B1%D9%8E%D8%A3%D9%92%20%D8%A3%D9%8E%D8%B0%D9%92%D9%83%D9%8E%D8%A7%D8%B1%D9%8E%D9%83%D9%8E%20%D8%AA%D9%8E%D8%B4%D9%92%D9_81%D9%81%D9%8E%D8%B9%D9%92%20%D9%84%D9_8E%D9%83%D9%8E.html" target="_blank" rel="noopener noreferrer">
                             <div class="card-content">
-                                <div class="card-icon">📿</div>
                                 <h3>زر الاستغفار والتسبيح</h3>
                                 <p>مسبحة إلكترونية لمساعدتك على الذكر والاستغفار.</p>
                             </div>
-                             <div class="card-footer"><span>افتح الآن &larr;</span></div>
+                             <div class="card-footer"><span>افتح الآن</span></div>
                         </a>
                     </div>
                     <div class="card">
-                        <a href="https://s22mcs.github.io/S22MCS02-/mushaf_el_quran_el_karim.html" target="_blank">
+                        <a href="https://s22mcs.github.io/S22MCS02-/mushaf_el_quran_el_karim.html" target="_blank" rel="noopener noreferrer">
                             <div class="card-content">
-                                <div class="card-icon">🕋</div>
                                 <h3>مصحف القرآن الكريم</h3>
                                 <p>نسخة رقمية من المصحف الشريف للقراءة المباشرة.</p>
                             </div>
-                            <div class="card-footer"><span>افتح الآن &larr;</span></div>
+                            <div class="card-footer"><span>افتح الآن</span></div>
                         </a>
                     </div>
                     <div class="card">
                         <a href="سورة الكهف مكتوبة.html">
                             <div class="card-content">
-                                <div class="card-icon">💡</div>
                                 <h3>سورة الكهف مكتوبة</h3>
                                 <p>لقراءة سورة الكهف يوم الجمعة، مكتوبة بخط واضح.</p>
                             </div>
-                            <div class="card-footer"><span>افتح الآن &larr;</span></div>
+                            <div class="card-footer"><span>افتح الآن</span></div>
                         </a>
                     </div>
                     <div class="card">
-                        <a href="https://s22market.github.io/AMIR_ALSHURUK/" target="_blank">
+                        <a href="https://s22market.github.io/AMIR_ALSHURUK/" target="_blank" rel="noopener noreferrer">
                             <div class="card-content">
-                                <div class="card-icon">📰</div>
                                 <h3>موقع أمير الشروق</h3>
                                 <p>للاطلاع على آخر الأخبار والمقالات من موقع أمير الشروق.</p>
                             </div>
-                            <div class="card-footer"><span>افتح الآن &larr;</span></div>
+                            <div class="card-footer"><span>افتح الآن</span></div>
                         </a>
                     </div>
                 </div>
@@ -416,14 +508,56 @@
         </main>
     </div>
 
-    <script>
-        const menuToggle = document.getElementById('menu-toggle');
-        const sidebar = document.getElementById('sidebar');
+    <script>document.addEventListener('DOMContentLoaded', () => {
 
-        menuToggle.addEventListener('click', () => {
-            sidebar.classList.toggle('active');
+    // --- Sidebar Toggle for Mobile ---
+    const menuToggle = document.getElementById('menu-toggle');
+    const sidebar = document.getElementById('sidebar');
+
+    menuToggle.addEventListener('click', () => {
+        sidebar.classList.toggle('active');
+        const isExpanded = sidebar.classList.contains('active');
+        menuToggle.setAttribute('aria-expanded', isExpanded);
+    });
+
+    // --- Theme Toggle (Dark/Light Mode) ---
+    const themeToggle = document.getElementById('theme-toggle');
+    const currentTheme = localStorage.getItem('theme');
+
+    // Apply saved theme on load
+    if (currentTheme === 'dark') {
+        document.body.classList.add('dark-mode');
+    }
+
+    themeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        
+        // Save theme preference
+        let theme = 'light';
+        if (document.body.classList.contains('dark-mode')) {
+            theme = 'dark';
+        }
+        localStorage.setItem('theme', theme);
+    });
+
+    // --- Live Search Functionality ---
+    const searchBox = document.getElementById('search-box');
+    const cards = document.querySelectorAll('.card');
+
+    searchBox.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase().trim();
+
+        cards.forEach(card => {
+            const title = card.querySelector('h3').textContent.toLowerCase();
+            const description = card.querySelector('p').textContent.toLowerCase();
+
+            if (title.includes(searchTerm) || description.includes(searchTerm)) {
+                card.classList.remove('hidden');
+            } else {
+                card.classList.add('hidden');
+            }
         });
-    </script>
-
+    });
+});</script>
 </body>
 </html>
