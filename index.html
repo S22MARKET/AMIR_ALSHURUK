@@ -204,8 +204,13 @@ body.dark-mode .qr-code-container img { filter: invert(0.9); }
 .modal-btn { padding: 0.8rem 1.5rem; border-radius: 8px; font-weight: 700; cursor: pointer; border: none; transition: all 0.2s; }
 .confirm-btn { background: var(--primary-color); color: var(--white); }
 .cancel-btn { background: var(--secondary-color); color: var(--white); }
-#quantityModal .modal-box, #customerTypeModal .modal-box, #contactModal .modal-box, #customerInfoModal .modal-box { max-width: 450px; }
-.quantity-controls { display: flex; align-items: center; justify-content: center; margin: 1.5rem 0; gap: 1rem; }
+#quantityModal .modal-box, #customerTypeModal .modal-box, #contactModal .modal-box {
+    max-width: 450px;
+}
+
+#customerInfoModal .modal-box {
+    max-width: 500px; /* تمت زيادة العرض هنا */
+}.quantity-controls { display: flex; align-items: center; justify-content: center; margin: 1.5rem 0; gap: 1rem; }
 .quantity-btn { background: var(--primary-color); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; }
 .quantity-input { width: 80px; text-align: center; font-size: 1.5rem; padding: 0.5rem; border: 2px solid var(--border-color); border-radius: 8px; background: var(--bg-body); color: var(--text-primary); }
 
@@ -763,8 +768,6 @@ body.dark-mode .adm-jumaa-message-content .closing-message {
     </div>
 </div>
 <audio id="jumaa-audio" src="JOMAA.mp3" preload="auto"></audio>
-
-
 <script type="module">
     // MODIFIED: Added addDoc, serverTimestamp, collection to imports
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
@@ -808,7 +811,6 @@ body.dark-mode .adm-jumaa-message-content .closing-message {
         const productsContainer = document.getElementById('products-container');
         const cartFab = document.getElementById('cart-fab');
         const cartCount = document.getElementById('cart-count');
-        // REMOVED: contactFab variable
         const contactSidebarLink = document.getElementById('contact-sidebar-link');
         
         function renderProducts() {
@@ -896,6 +898,7 @@ body.dark-mode .adm-jumaa-message-content .closing-message {
             const modal = document.getElementById(modalId);
             if(modal) modal.classList.add('show');
         }
+
         function closeModal(modal) {
             if (typeof modal === 'string') modal = document.getElementById(modal);
             if(modal) modal.classList.remove('show');
@@ -910,9 +913,15 @@ body.dark-mode .adm-jumaa-message-content .closing-message {
             const btn = e.target.closest('.confirm-btn');
             if (btn) {
                 currentProductForOrder.customerType = btn.dataset.type;
-                if (currentProductForOrder.customerType === 'زبون عادي') currentProductForOrder.price = currentProductForOrder.prixUnite;
-                else if (currentProductForOrder.customerType === 'تاجر شبه جملة') currentProductForOrder.price = currentProductForOrder.superGros;
-                else currentProductForOrder.price = currentProductForOrder.gros;
+                if (currentProductForOrder.customerType === 'زبون عادي') {
+                    currentProductForOrder.price = currentProductForOrder.prixUnite;
+                } else if (currentProductForOrder.customerType === 'تاجر شبه جملة') {
+                    // *** CORRECTED LINE ***
+                    currentProductForOrder.price = currentProductForOrder.gros;
+                } else { // This handles 'تاجر جملة'
+                    // *** CORRECTED LINE ***
+                    currentProductForOrder.price = currentProductForOrder.superGros;
+                }
                 closeModal('customerTypeModal');
                 const qModal = document.getElementById('quantityModal');
                 qModal.querySelector('#quantityProductTitle').textContent = `تحديد كمية: ${currentProductForOrder.name}`;
@@ -923,17 +932,70 @@ body.dark-mode .adm-jumaa-message-content .closing-message {
         
         document.getElementById('confirmQuantityBtn')?.addEventListener('click', () => {
             const quantity = parseInt(document.getElementById('quantityInput').value, 10);
-            if (currentProductForOrder && quantity > 0) {
-                addToCart(currentProductForOrder, quantity);
-                closeModal('quantityModal');
-                currentProductForOrder = null;
+            if (!currentProductForOrder || quantity <= 0) return;
+
+            const product = currentProductForOrder;
+            const productName = product.name;
+            const originalCustomerType = product.customerType; 
+
+            let productSize = null;
+            if (productName.includes('1 لتر')) {
+                productSize = '1 لتر';
+            } else if (productName.includes('5 لتر')) {
+                productSize = '5 لتر';
             }
+
+            let bestTier = null;
+            
+            // *** CORRECTED PRICE TIER DEFINITIONS ***
+            const priceTiers = [
+                { type: 'تاجر جملة', priceString: product.superGros, min: { '1 لتر': 60, '5 لتر': 15 } },
+                { type: 'تاجر شبه جملة', priceString: product.gros, min: { '1 لتر': 30, '5 لتر': 3 } },
+                { type: 'زبون عادي', priceString: product.prixUnite, min: { '1 لتر': 1, '5 لتر': 1 } }
+            ];
+
+            if (productSize) {
+                for (const tier of priceTiers) {
+                    if (quantity >= tier.min[productSize]) {
+                        bestTier = tier;
+                        break; 
+                    }
+                }
+            }
+            
+            if (!bestTier) {
+                bestTier = priceTiers.find(t => t.type === 'زبون عادي');
+            }
+            
+            const productForCart = {
+                ...product,
+                customerType: bestTier.type,
+                price: bestTier.priceString
+            };
+
+            addToCart(productForCart, quantity);
+
+            if (originalCustomerType !== bestTier.type) {
+                showToast(`✅ تم تطبيق سعر "${bestTier.type}" تلقائياً لأفضل سعر!`);
+            }
+
+            closeModal('quantityModal');
+            currentProductForOrder = null;
         });
 
         function addToCart(product, quantity) {
             const existingProduct = cart.find(item => item.name === product.name && item.customerType === product.customerType);
-            if (existingProduct) existingProduct.quantity += quantity;
-            else cart.push({ name: product.name, quantity, customerType: product.customerType, price: parseFloat(product.price), priceString: product.price });
+            if (existingProduct) {
+                existingProduct.quantity += quantity;
+            } else {
+                cart.push({ 
+                    name: product.name, 
+                    quantity, 
+                    customerType: product.customerType, 
+                    price: parseFloat(product.price), 
+                    priceString: product.price 
+                });
+            }
             updateCartUI();
             showToast(`✅ تمت إضافة ${quantity} من "${product.name}" للسلة.`);
         }
@@ -954,14 +1016,12 @@ body.dark-mode .adm-jumaa-message-content .closing-message {
             totalContainer.innerHTML = `الإجمالي: <strong>${grandTotal.toFixed(2)} د.ج</strong>`;
         }
         
-        // MODIFIED: This button now opens the customer info modal
         document.getElementById('proceedToInfoBtn')?.addEventListener('click', () => {
-            if (cart.length === 0) return showToast("⚠️ سلتك فارغة!");
+            if (cart.length === 0) return showToast("⚠️ سلتك فارغة!", true);
             closeModal('cartModal');
             openModal('customerInfoModal');
         });
 
-        // NEW: Handle final order submission
         document.getElementById('customer-info-form')?.addEventListener('submit', async (e) => {
             e.preventDefault();
             const customerName = document.getElementById('customerName').value.trim();
@@ -983,10 +1043,8 @@ body.dark-mode .adm-jumaa-message-content .closing-message {
             };
 
             try {
-                // Save to Firestore
                 await addDoc(collection(db, "orders"), orderData);
                 
-                // Prepare WhatsApp message
                 let message = `*طلب جديد من موقع أمير الشروق*\n\n` +
                     `*اسم العميل:* ${customerName}\n` +
                     `*رقم الهاتف:* ${customerPhone}\n` +
@@ -997,10 +1055,8 @@ body.dark-mode .adm-jumaa-message-content .closing-message {
                 const grandTotal = cart.reduce((total, item) => total + (item.quantity * item.price), 0);
                 message += `\n*الإجمالي الكلي للطلب: ${grandTotal.toFixed(2)} د.ج*`;
                 
-                // Open WhatsApp
                 window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, '_blank');
                 
-                // Finalize
                 showToast("✅ تم إرسال طلبك بنجاح!");
                 closeModal('customerInfoModal');
                 cart = [];
@@ -1012,7 +1068,6 @@ body.dark-mode .adm-jumaa-message-content .closing-message {
                 showToast("❌ حدث خطأ، لم يتم إرسال الطلب.", true);
             }
         });
-
 
         async function fetchAnnouncements() {
             const container = document.getElementById('announcements-container');
@@ -1029,9 +1084,10 @@ body.dark-mode .adm-jumaa-message-content .closing-message {
             } catch (error) { console.error(error); container.innerHTML = '<p>حدث خطأ في تحميل العروض.</p>'; }
         }
 
-        // --- Event Listeners ---
         document.addEventListener('click', e => {
-            if (e.target.closest('.add-to-cart-btn')) openCustomerTypeModal(e.target.closest('.product-card').dataset.productIndex);
+            if (e.target.closest('.add-to-cart-btn')) {
+                openCustomerTypeModal(e.target.closest('.product-card').dataset.productIndex);
+            }
             if (e.target.closest('.cart-item-remove')) {
                 const btn = e.target.closest('.cart-item-remove');
                 cart = cart.filter(item => !(item.name === btn.dataset.name && item.customerType === btn.dataset.type));
@@ -1043,7 +1099,6 @@ body.dark-mode .adm-jumaa-message-content .closing-message {
         });
         
         cartFab?.addEventListener('click', () => openModal('cartModal'));
-        // REMOVED: contactFab event listener
         contactSidebarLink?.addEventListener('click', (e) => { e.preventDefault(); openModal('contactModal'); });
         
         document.getElementById('increaseQty')?.addEventListener('click', () => document.getElementById('quantityInput').value++);
@@ -1052,7 +1107,6 @@ body.dark-mode .adm-jumaa-message-content .closing-message {
             if (input.value > 1) input.value--;
         });
 
-        // --- Sidebar and Theme Toggle ---
         const sidebar = document.getElementById('sidebar');
         const menuToggle = document.getElementById('menu-toggle');
         const overlay = document.getElementById('overlay');
@@ -1069,16 +1123,14 @@ body.dark-mode .adm-jumaa-message-content .closing-message {
             document.querySelector('#theme-toggle i').className = 'fas fa-moon';
         }
 
-        // --- Toast Notification ---
         function showToast(message, isError = false) {
             const toastEl = document.getElementById('toast');
             toastEl.innerHTML = `<i class="fas ${isError ? 'fa-times-circle' : 'fa-check-circle'}"></i> ${message}`;
             toastEl.style.backgroundColor = isError ? '#dc3545' : 'var(--success-color)';
             toastEl.classList.add('show');
-            setTimeout(() => toastEl.classList.remove('show'), 3000);
+            setTimeout(() => toastEl.classList.remove('show'), 4000);
         }
         
-        // --- Scroll Reveal Animation ---
         const revealObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -1089,156 +1141,8 @@ body.dark-mode .adm-jumaa-message-content .closing-message {
         }, { threshold: 0.1 });
         document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
-        // --- Initializations ---
         renderProducts();
         fetchAnnouncements();
         document.getElementById('year').textContent = new Date().getFullYear();
     });
 </script>
-
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    // This script for the Dhikr/Jumaa modal remains unchanged.
-    const config = {
-        dhikrRequiredClicks: 1,
-        fridayPrayerStart: { hour: 11, minute: 30 },
-        fridayPrayerEnd: { hour: 14, minute: 0 },
-        completionMessage: `<p style="color: var(--success-color); font-size: 1.2rem; font-weight: bold;">جزاكم الله خيرًا، تم إنجاز الأذكار!</p>`,
-        autoCloseDelay: 2000,
-    };
-    const elements = {
-        overlay: document.getElementById('adm-modal-overlay'),
-        modals: {
-            dhikr: document.getElementById('adm-modal-content'),
-            jumaa: document.getElementById('adm-jumaa-message'),
-            kahf: document.getElementById('kahfModal'),
-        },
-        dhikrTasksContainer: document.getElementById('adm-dhikr-tasks'),
-        progressBar: document.getElementById('adm-progress-bar'),
-        jumaaAudio: document.getElementById('jumaa-audio'),
-        playJumaaBtn: document.getElementById('play-jumaa-audio'),
-        closeKahfBtn: document.getElementById('closeKahfModal'),
-    };
-    const state = { buttons: {}, totalClicks: 0, totalRequiredClicks: 0, activeModal: null };
-
-    function toggleOverlay(show) {
-        elements.overlay.classList.toggle('is-visible', show);
-    }
-    
-    function handleModalsVisibility() {
-        const now = new Date();
-        const day = now.getDay();
-        const hours = now.getHours();
-        const minutes = now.getMinutes();
-        const currentTimeInMinutes = hours * 60 + minutes;
-        const startTime = config.fridayPrayerStart.hour * 60 + config.fridayPrayerStart.minute;
-        const endTime = config.fridayPrayerEnd.hour * 60;
-        const isFriday = (day === 5);
-        const isJumaaClosingTime = (isFriday && currentTimeInMinutes >= startTime && currentTimeInMinutes < endTime);
-
-        Object.values(elements.modals).forEach(modal => modal.classList.add('adm-hidden'));
-
-        if (isJumaaClosingTime) {
-            state.activeModal = elements.modals.jumaa;
-        } else if (isFriday) {
-            state.activeModal = elements.modals.kahf;
-        } else {
-            state.activeModal = elements.modals.dhikr;
-            initializeDhikrModule();
-        }
-        
-        if (state.activeModal) {
-            state.activeModal.classList.remove('adm-hidden');
-            toggleOverlay(true);
-        }
-    }
-    
-    function initializeDhikrModule() {
-        if (!elements.dhikrTasksContainer) return;
-        const dhikrButtons = elements.dhikrTasksContainer.querySelectorAll('.adm-dhikr-btn');
-        dhikrButtons.forEach(btn => {
-            const key = btn.dataset.key;
-            state.buttons[key] = {
-                element: btn, count: 0,
-                counterElement: btn.querySelector('.adm-counter'),
-                textElement: btn.querySelector('.adm-btn-text')
-            };
-            state.buttons[key].counterElement.textContent = `0/${config.dhikrRequiredClicks}`;
-        });
-        state.totalRequiredClicks = Object.keys(state.buttons).length * config.dhikrRequiredClicks;
-        elements.dhikrTasksContainer.addEventListener('click', handleDhikrClick);
-    }
-
-    function handleDhikrClick(event) {
-        const clickedButton = event.target.closest('.adm-dhikr-btn');
-        if (!clickedButton) return;
-        const key = clickedButton.dataset.key;
-        const buttonData = state.buttons[key];
-        if (buttonData && buttonData.count < config.dhikrRequiredClicks) {
-            buttonData.count++;
-            state.totalClicks++;
-            buttonData.counterElement.textContent = `${buttonData.count}/${config.dhikrRequiredClicks}`;
-            updateProgressBar();
-            if (buttonData.count === config.dhikrRequiredClicks) {
-                buttonData.element.disabled = true;
-                const iconHTML = buttonData.textElement.querySelector('.adm-icon')?.outerHTML || '';
-                buttonData.textElement.innerHTML = iconHTML + 'أُنجِز ✔';
-            }
-            checkAllTasksCompletion();
-        }
-    }
-    
-    function updateProgressBar() {
-        if (!elements.progressBar || state.totalRequiredClicks === 0) return;
-        const progressPercentage = (state.totalClicks / state.totalRequiredClicks) * 100;
-        elements.progressBar.style.width = `${progressPercentage}%`;
-    }
-
-    function checkAllTasksCompletion() {
-        if (state.totalClicks >= state.totalRequiredClicks) {
-            elements.dhikrTasksContainer.innerHTML = config.completionMessage;
-            setTimeout(() => toggleOverlay(false), config.autoCloseDelay);
-        }
-    }
-
-    function setupEventListeners() {
-        if (elements.playJumaaBtn && elements.jumaaAudio) {
-            elements.playJumaaBtn.addEventListener('click', () => {
-                if (elements.jumaaAudio.paused) {
-                    elements.jumaaAudio.play().catch(e => console.error("Error playing audio:", e));
-                    elements.playJumaaBtn.querySelector('.adm-btn-text').innerHTML = '<i class="fa-solid fa-pause adm-icon"></i> جارٍ التشغيل...';
-                } else {
-                    elements.jumaaAudio.pause();
-                    elements.playJumaaBtn.querySelector('.adm-btn-text').innerHTML = '<i class="fa-solid fa-volume-high adm-icon"></i> تشغيل التلاوة';
-                }
-            });
-            elements.jumaaAudio.onended = () => {
-                elements.playJumaaBtn.querySelector('.adm-btn-text').innerHTML = '<i class="fa-solid fa-volume-high adm-icon"></i> تشغيل التلاوة';
-            };
-        }
-        
-        if (elements.closeKahfBtn) {
-            elements.closeKahfBtn.addEventListener('click', () => toggleOverlay(false));
-        }
-
-        elements.overlay.addEventListener('click', (event) => {
-            if (state.activeModal === elements.modals.kahf && event.target === elements.overlay) {
-                toggleOverlay(false);
-            }
-        });
-        document.addEventListener('keydown', (event) => {
-            if (event.key === 'Escape' && elements.overlay.classList.contains('is-visible')) {
-                if (state.activeModal === elements.modals.kahf) {
-                    toggleOverlay(false);
-                }
-            }
-        });
-    }
-    
-    handleModalsVisibility();
-    setupEventListeners();
-});
-</script>
-
-</body>
-</html>
