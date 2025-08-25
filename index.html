@@ -631,7 +631,47 @@ body.dark-mode .adm-jumaa-message-content .closing-message {
 <div id="customerTypeModal" class="modal"><div class="modal-box"><span class="modal-close">&times;</span><h3 class="modal-title">اختر نوع التسعير</h3><p class="text-secondary">يرجى تحديد نوع العميل لعرض السعر المناسب.</p><div class="modal-actions"><button class="modal-btn confirm-btn" data-type="زبون عادي">زبون عادي (سعر التجزئة)</button><button class="modal-btn confirm-btn" data-type="تاجر شبه جملة">تاجر شبه جملة</button><button class="modal-btn confirm-btn" data-type="تاجر جملة">تاجر جملة</button></div></div></div>
 <div id="quantityModal" class="modal"><div class="modal-box"><span class="modal-close">&times;</span><h3 class="modal-title" id="quantityProductTitle"></h3><p>الرجاء تحديد الكمية المطلوبة</p><div class="quantity-controls"><button class="quantity-btn" id="decreaseQty">-</button><input type="number" min="1" value="1" class="quantity-input" id="quantityInput"><button class="quantity-btn" id="increaseQty">+</button></div><div class="modal-actions"><button class="modal-btn cancel-btn" data-close>إلغاء</button><button class="modal-btn confirm-btn" id="confirmQuantityBtn">تأكيد وإضافة للسلة</button></div></div></div>
 <div id="cartModal" class="modal"><div class="modal-box"><span class="modal-close">&times;</span><h3 class="modal-title">سلة المشتريات</h3><div id="cart-items-container" class="cart-items"></div><div id="cart-total" class="cart-total"></div><button class="modal-btn confirm-btn" style="width:100%" id="proceedToInfoBtn">متابعة لإتمام الطلب</button></div></div>
-<div id="contactModal" class="modal"><div class="modal-box"><span class="modal-close">&times;</span><h3 class="modal-title">تواصل معنا</h3><p class="text-secondary" style="margin-bottom: 1.5rem;">اختر الوسيلة التي تناسبك للتواصل معنا مباشرة.</p><div class="modal-actions"><a href="https://wa.me/213781465477 " target="_blank" class="modal-btn contact-option-btn whatsapp"><i class="fab fa-whatsapp"></i> واتساب (الرقم الأول)</a><a href="https://wa.me/213781465477" target="_blank" class="modal-btn contact-option-btn whatsapp"><i class="fab fa-whatsapp"></i> واتساب (الرقم الثاني)</a><a href="https://web.facebook.com/p/أ%D9%85%D9%8A%D8%B1-%D8%A7%D9%84%D8%B4%D8%B1%D9%88%D9%82-61559518204192/" target="_blank" class="modal-btn contact-option-btn facebook"><i class="fab fa-facebook-f"></i> صفحتنا على فيسبوك</a><a href="https://www.instagram.com/amir_el_chorouk?igsh=OHhyNnE0MGd5cGpo" target="_blank" class="modal-btn contact-option-btn instagram"><i class="fab fa-instagram"></i> حسابنا على انستغرام</a><a href="https://t.me/amirchourouk" target="_blank" rel="noopener noreferrer" class="modal-btn contact-option-btn telegram"><i class="fab fa-telegram"></i> قناتنا على تيليجرام</a></div></div></div>
+
+
+
+<div id="contactModal" class="modal">
+  <div class="modal-box">
+    <span class="modal-close">&times;</span>
+    <h3 class="modal-title">تواصل معنا</h3>
+    <p class="text-secondary" style="margin-bottom: 1.5rem;">
+      اختر الوسيلة التي تناسبك للتواصل معنا مباشرة.
+    </p>
+    <div class="modal-actions">
+      <!-- رقم واتساب الأول مصحح -->
+      <a href="https://wa.me/213699443914" target="_blank" class="modal-btn contact-option-btn whatsapp">
+        <i class="fab fa-whatsapp"></i> واتساب (الرقم الأول)
+      </a>
+
+      <!-- رقم واتساب الثاني كما هو -->
+      <a href="https://wa.me/213781465477" target="_blank" class="modal-btn contact-option-btn whatsapp">
+        <i class="fab fa-whatsapp"></i> واتساب (الرقم الثاني)
+      </a>
+
+      <a href="https://web.facebook.com/p/أ%D9%85%D9%8A%D8%B1-%D8%A7%D9%84%D8%B4%D8%B1%D9%88%D9%82-61559518204192/" target="_blank" class="modal-btn contact-option-btn facebook">
+        <i class="fab fa-facebook-f"></i> صفحتنا على فيسبوك
+      </a>
+
+      <a href="https://www.instagram.com/amir_el_chorouk?igsh=OHhyNnE0MGd5cGpo" target="_blank" class="modal-btn contact-option-btn instagram">
+        <i class="fab fa-instagram"></i> حسابنا على انستغرام
+      </a>
+
+      <a href="https://t.me/amirchourouk" target="_blank" rel="noopener noreferrer" class="modal-btn contact-option-btn telegram">
+        <i class="fab fa-telegram"></i> قناتنا على تيليجرام
+      </a>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
 
 <div id="customerInfoModal" class="modal">
     <div class="modal-box">
@@ -763,7 +803,7 @@ body.dark-mode .adm-jumaa-message-content .closing-message {
         ];
         let cart = [];
         let currentProductForOrder = null;
-        const WHATSAPP_NUMBER = "213699443914"; 
+        const WHATSAPP_NUMBER = "213781465477"; 
 
         const productsContainer = document.getElementById('products-container');
         const cartFab = document.getElementById('cart-fab');
