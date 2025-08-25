@@ -110,18 +110,9 @@
 </head>
 <body class="bg-gray-100">
 
-<div id="password-overlay" class="fixed top-0 left-0 w-full h-full bg-gray-100 z-50 flex justify-center items-center flex-col gap-5 p-5">
-    <div class="text-center">
-        <h2 class="text-2xl font-bold" style="color: var(--primary-color);">مولد الفواتير</h2>
-        <p class="text-gray-600">الرجاء إدخال كلمة السر للوصول</p>
-    </div>
-    <div class="flex flex-col gap-3">
-        <input type="password" id="password-input" class="p-3 border border-gray-300 rounded-lg w-64 text-center" placeholder="كلمة السر">
-        <button id="password-submit" class="action-btn justify-center" style="background-color: var(--primary-color);">دخـول</button>
-        <p id="password-error" class="text-red-500 text-center hidden">كلمة السر غير صحيحة.</p>
-    </div>
-</div>
-<div id="app-wrapper" class="hidden">
+<!-- The password overlay has been removed -->
+
+<div id="app-wrapper">
     <datalist id="product-suggestions"></datalist>
 
     <div id="edit-modal" class="modal-overlay">
@@ -826,37 +817,7 @@
     // --- END: Event Handlers and Initialization ---
 </script>
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const passwordOverlay = document.getElementById('password-overlay');
-        const passwordInput = document.getElementById('password-input');
-        const passwordSubmit = document.getElementById('password-submit');
-        const passwordError = document.getElementById('password-error');
-        const appWrapper = document.getElementById('app-wrapper');
+<!-- The password script has been removed -->
 
-        const correctPassword = 'SIDIKASI';
-
-        const unlockApp = () => {
-            if (passwordInput.value === correctPassword) {
-                passwordOverlay.classList.add('hidden');
-                appWrapper.classList.remove('hidden');
-            } else {
-                passwordError.classList.remove('hidden');
-                passwordInput.focus();
-            }
-        };
-
-        passwordSubmit.addEventListener('click', unlockApp);
-
-        passwordInput.addEventListener('keyup', (event) => {
-            passwordError.classList.add('hidden');
-            if (event.key === 'Enter') {
-                unlockApp();
-            }
-        });
-        
-        passwordInput.focus();
-    });
-</script>
 </body>
 </html>
