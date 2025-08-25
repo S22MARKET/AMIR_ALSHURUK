@@ -1045,7 +1045,10 @@ body.dark-mode .adm-jumaa-message-content .closing-message {
             try {
                 await addDoc(collection(db, "orders"), orderData);
                 
-                let message = `*طلب جديد من موقع أمير الشروق*\n\n` +
+                let message = `
+                
+                السلام عليكم ورحمة الله تعالى وبركاته 
+                *طلب جديد من موقع أمير الشروق*\n\n` +
                     `*اسم العميل:* ${customerName}\n` +
                     `*رقم الهاتف:* ${customerPhone}\n` +
                     `*العنوان:* ${customerLocation}\n\n` +
