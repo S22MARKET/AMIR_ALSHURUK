@@ -25,7 +25,7 @@
         }
         *, *::before, *::after { transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; box-sizing: border-box; }
         body { font-family: 'Cairo', sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 15px; min-height: 100vh; line-height: 1.6; }
-        .container { max-width: 1400px; margin: auto; padding-bottom: 30px; display: none; } /* Hidden by default */
+        .container { max-width: 1400px; margin: auto; padding-bottom: 30px; display: block; } /* Changed to block */
         header { display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 20px; padding-top: 10px; gap: 15px; }
         header h1 { color: var(--primary-color); font-size: clamp(2em, 5vw, 2.8em); font-weight: 800; margin: 0; }
         .header-controls { display: flex; align-items: center; gap: 10px; width: 100%; justify-content: flex-start; flex-wrap: wrap; }
@@ -40,7 +40,6 @@
         .btn.primary.outline:hover { background-color: var(--primary-color); color: #fff; }
         .btn.danger.outline { background-color: transparent; border-color: var(--danger-color); color: var(--danger-color); }
         .btn.danger.outline:hover { background-color: var(--danger-color); color: #fff; }
-        /* --- ألوان أزرار الحضور والغياب المحسنة --- */
         .btn.success { background-color: var(--success-color); border-color: var(--success-color); }
         .btn.danger { background-color: var(--danger-color); border-color: var(--danger-color); }
         .btn.success:hover:not(:disabled) { background-color: color-mix(in srgb, var(--success-color) 80%, black); }
@@ -79,13 +78,7 @@
         #report-chart-container { max-height: 400px; margin-top: 20px; }
         .empty-state { text-align: center; padding: 40px; color: var(--light-text); }
         .empty-state i { font-size: 3em; margin-bottom: 10px; }
-
-        /* --- شاشة كلمة المرور --- */
-        #login-modal { display: flex; }
-        #login-modal .modal-content { max-width: 400px; }
-        #login-spinner { display: none; }
         
-        /* --- تحسينات الشاشات الصغيرة --- */
         @media (min-width: 768px) {
             header { flex-direction: row; justify-content: space-between; align-items: center; }
             .header-controls { width: auto; }
@@ -101,7 +94,7 @@
             .container { max-width: 100%; display: block !important; }
             table { min-width: 100%; font-size: 10pt; }
             th, td { padding: 8px; }
-            #report-chart-container, #login-modal, #password-modal, #attendance-date-picker-container { display: none; } /* Hide chart and modals in print */
+            #report-chart-container, #password-modal, #attendance-date-picker-container { display: none; }
         }
     </style>
 </head>
@@ -109,44 +102,11 @@
 
     <div id="toast-container"></div>
 
-    <div id="login-modal" class="modal">
-        <div class="modal-content">
-            <h2><i class="fas fa-lock"></i> تسجيل الدخول</h2>
-            <form id="login-form">
-                <div style="margin-bottom: 15px;">
-                    <label for="password-input">كلمة المرور</label>
-                    <input type="password" id="password-input" required>
-                </div>
-                <button type="submit" class="btn primary" style="width:100%;"><i class="fas fa-sign-in-alt"></i> دخول</button>
-                <div id="login-spinner" class="spinner"></div>
-            </form>
-        </div>
-    </div>
-    
-    <div id="password-modal" class="modal">
-        <div class="modal-content">
-             <span class="close-btn">&times;</span>
-            <h2>تغيير كلمة المرور</h2>
-            <form id="password-change-form">
-                 <div style="margin-bottom: 15px;">
-                    <label for="current-password">كلمة المرور الحالية</label>
-                    <input type="password" id="current-password" required>
-                </div>
-                <div style="margin-bottom: 15px;">
-                    <label for="new-password">كلمة المرور الجديدة</label>
-                    <input type="password" id="new-password" required>
-                </div>
-                <button type="submit" class="btn primary" style="width:100%;"><i class="fas fa-key"></i> حفظ كلمة المرور الجديدة</button>
-            </form>
-        </div>
-    </div>
-
     <div class="container" id="main-container">
         <header>
             <h1><i class="fas fa-calendar-check" style="color: var(--primary-color);"></i> نظام الحضور</h1>
             <div class="header-controls no-print">
                 <button id="add-employee-btn" class="btn primary"><i class="fas fa-user-plus"></i> <span>إضافة عامل</span></button>
-                <button id="change-password-btn" class="btn primary outline"><i class="fas fa-key"></i> <span>تغيير كلمة المرور</span></button>
                 <button id="theme-toggle" class="btn primary outline" style="min-width: 45px;"><i class="fas fa-moon"></i></button>
             </div>
         </header>
@@ -246,8 +206,6 @@
     // --- تهيئة التطبيق والحالة العامة ---
     let db, attendanceChart;
     let unsubscribeAttendanceListener = null; // To detach old listeners
-    const APP_PASSWORD_KEY = 'attendanceAppPassword';
-    const DEFAULT_PASSWORD = 'SIDIKASI';
 
     try {
         const app = initializeApp(firebaseConfig);
@@ -264,7 +222,6 @@
         employees: new Map(),
         dailyAttendance: {},
         currentEditingId: null,
-        isAuthenticated: false,
         selectedDateString: todayDateString,
     };
     
@@ -272,13 +229,6 @@
     // --- عناصر الواجهة الرسومية ---
     const DOMElements = {
         mainContainer: document.getElementById('main-container'),
-        loginModal: document.getElementById('login-modal'),
-        loginForm: document.getElementById('login-form'),
-        passwordInput: document.getElementById('password-input'),
-        loginSpinner: document.getElementById('login-spinner'),
-        passwordModal: document.getElementById('password-modal'),
-        changePasswordBtn: document.getElementById('change-password-btn'),
-        passwordChangeForm: document.getElementById('password-change-form'),
         employeesTableBody: document.getElementById('employees-table-body'),
         loaderContainer: document.getElementById('loader-container'),
         emptyStateContainer: document.getElementById('empty-state-container'),
@@ -316,8 +266,6 @@
         setTimeout(() => toast.remove(), 4000);
     };
     
-    const getStoredPassword = () => localStorage.getItem(APP_PASSWORD_KEY) || DEFAULT_PASSWORD;
-
     // --- خدمات Firebase ---
     const firebaseService = {
         updateEmployee: (id, data) => updateDoc(doc(db, 'employees', id), data),
@@ -393,7 +341,6 @@
         try {
             await firebaseService.setAttendance(empId, status, state.selectedDateString);
         } catch (err) {
-            // If the doc doesn't exist, create it first, then set status
             if (err.code === 'not-found' || err.code === 'INVALID_ARGUMENT') {
                 await firebaseService.createDailyAttendanceDoc(state.selectedDateString);
                 await firebaseService.setAttendance(empId, status, state.selectedDateString);
@@ -630,47 +577,6 @@
         window.print();
     };
 
-    // --- وظائف المصادقة ---
-    const handleLogin = (e) => {
-        e.preventDefault();
-        const enteredPassword = DOMElements.passwordInput.value;
-        const correctPassword = getStoredPassword();
-
-        DOMElements.loginSpinner.style.display = 'block';
-        DOMElements.loginForm.querySelector('button').style.display = 'none';
-
-        setTimeout(() => {
-            if (enteredPassword === correctPassword) {
-                state.isAuthenticated = true;
-                DOMElements.loginModal.style.display = 'none';
-                initApp();
-            } else {
-                showToast('كلمة المرور غير صحيحة!', 'error');
-                DOMElements.passwordInput.value = '';
-                DOMElements.loginSpinner.style.display = 'none';
-                DOMElements.loginForm.querySelector('button').style.display = 'block';
-            }
-        }, 500);
-    };
-
-    const handleChangePassword = (e) => {
-        e.preventDefault();
-        const currentPassword = e.target['current-password'].value;
-        const newPassword = e.target['new-password'].value;
-        
-        if (currentPassword !== getStoredPassword()) {
-            return showToast('كلمة المرور الحالية غير صحيحة.', 'error');
-        }
-        if (!newPassword || newPassword.length < 4) {
-             return showToast('كلمة المرور الجديدة يجب أن تكون 4 أحرف على الأقل.', 'error');
-        }
-
-        localStorage.setItem(APP_PASSWORD_KEY, newPassword);
-        showToast('تم تغيير كلمة المرور بنجاح.', 'success');
-        DOMElements.passwordChangeForm.reset();
-        DOMElements.passwordModal.style.display = 'none';
-    };
-
     // --- إعدادات التهيئة الأولية ---
     const setupEventListeners = () => {
         DOMElements.employeeForm.addEventListener('submit', handleSaveEmployee);
@@ -687,13 +593,6 @@
         DOMElements.exportCsvBtn.addEventListener('click', exportTableToCSV);
         DOMElements.printReportBtn.addEventListener('click', printReport);
         
-        DOMElements.changePasswordBtn.addEventListener('click', () => {
-            DOMElements.passwordChangeForm.reset();
-            DOMElements.passwordModal.style.display = 'flex';
-        });
-        DOMElements.passwordModal.querySelector('.close-btn').addEventListener('click', () => DOMElements.passwordModal.style.display = 'none');
-        DOMElements.passwordChangeForm.addEventListener('submit', handleChangePassword);
-
         DOMElements.attendanceDatePicker.addEventListener('change', (e) => {
             const newDate = e.target.value;
             if (newDate) {
@@ -715,7 +614,6 @@
     };
     
     const initApp = () => {
-        if (!state.isAuthenticated) return;
         DOMElements.mainContainer.style.display = 'block';
         DOMElements.loaderContainer.style.display = 'block';
 
@@ -738,7 +636,7 @@
     };
 
     // --- بدء تشغيل التطبيق ---
-    DOMElements.loginForm.addEventListener('submit', handleLogin);
+    initApp();
     
 </script>
 </body>

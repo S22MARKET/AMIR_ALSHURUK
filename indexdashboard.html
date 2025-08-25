@@ -26,20 +26,7 @@
 </head>
 <body class="text-slate-800">
 
-    <div id="login-container" class="flex items-center justify-center min-h-screen bg-slate-100">
-        <div class="bg-white p-10 rounded-2xl shadow-xl text-center w-full max-w-sm mx-4">
-            <i class="fas fa-shield-halved text-6xl text-blue-600 mb-5"></i>
-            <h1 class="text-3xl font-bold text-slate-800 mb-2">لوحة التحكم</h1>
-            <p class="text-slate-500 mb-8">الرجاء إدخال رمز الوصول للمتابعة.</p>
-            <form id="login-form">
-                <input type="password" id="login-code" class="w-full text-center tracking-[0.5em] text-lg p-3 bg-slate-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition" placeholder="********">
-                <p id="error-message" class="hidden text-red-500 mt-4">الرمز غير صحيح.</p>
-                <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg mt-6 hover:bg-blue-700 transition-colors duration-300 transform hover:scale-105">دخول</button>
-            </form>
-        </div>
-    </div>
-
-    <div id="dashboard-wrapper" class="hidden">
+    <div id="dashboard-wrapper">
         <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden lg:hidden"></div>
         <aside id="sidebar" class="sidebar bg-white h-screen p-4 flex flex-col shadow-lg fixed top-0 right-0">
             <div class="text-center py-4 mb-4 border-b border-slate-200">
@@ -55,7 +42,7 @@
                 </ul>
             </nav>
             <div>
-                <button id="logout-btn" class="w-full flex items-center p-3 text-red-600 rounded-lg hover:bg-red-50 transition-colors font-bold"><i class="fas fa-sign-out-alt ml-4"></i> تسجيل الخروج</button>
+                <button id="logout-btn" class="w-full flex items-center p-3 text-red-600 rounded-lg hover:bg-red-50 transition-colors font-bold"><i class="fas fa-sign-out-alt ml-4"></i> تحديث الصفحة</button>
             </div>
         </aside>
 
@@ -185,31 +172,9 @@
     const db = getFirestore(app);
 
     document.addEventListener('DOMContentLoaded', () => {
-        const loginForm = document.getElementById('login-form');
-        const loginContainer = document.getElementById('login-container');
-        const dashboardWrapper = document.getElementById('dashboard-wrapper');
-        const ACCESS_CODE = 'AMIRELCHOROUK36';
-
-        if (sessionStorage.getItem('isLoggedIn') === 'true') {
-            showDashboard();
-        }
-
-        loginForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            if (document.getElementById('login-code').value === ACCESS_CODE) {
-                sessionStorage.setItem('isLoggedIn', 'true');
-                showDashboard();
-            } else {
-                const err = document.getElementById('error-message');
-                err.classList.remove('hidden');
-            }
-        });
-
-        function showDashboard() {
-            loginContainer.classList.add('hidden');
-            dashboardWrapper.classList.remove('hidden');
-            initializeDashboard();
-        }
+        
+        // تم حذف منطق تسجيل الدخول، ويتم الآن تهيئة لوحة التحكم مباشرة
+        initializeDashboard();
         
         function initializeDashboard() {
             const navLinks = document.querySelectorAll('.nav-link');
@@ -236,6 +201,7 @@
             initExclusiveOffers();
             initSalesPoints();
             
+            // يتم الآن عرض صفحة الطلبات بشكل افتراضي
             switchPage('orders');
         }
         
@@ -478,7 +444,11 @@
         const sidebar = document.getElementById('sidebar'), menuToggle = document.getElementById('menu-toggle'), overlay = document.getElementById('overlay');
         menuToggle.addEventListener('click', () => { sidebar.classList.toggle('active'); overlay.classList.toggle('active'); });
         overlay.addEventListener('click', () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); });
-        document.getElementById('logout-btn').addEventListener('click', () => { sessionStorage.removeItem('isLoggedIn'); window.location.reload(); });
+        
+        // زر الخروج الآن يقوم فقط بإعادة تحميل الصفحة
+        document.getElementById('logout-btn').addEventListener('click', () => { 
+            window.location.reload(); 
+        });
     });
 </script>
 </body>
