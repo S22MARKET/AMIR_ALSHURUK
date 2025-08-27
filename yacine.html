@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أرشيف كلمات السر (وصول خاص)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50; --secondary-color: #27ae60; --background-gradient-start: #f4f7f9;
+            --background-gradient-end: #e9eef2; --card-bg: #ffffff; --text-color: #333333;
+            --border-color: #e0e0e0; --shadow-color: rgba(44, 62, 80, 0.1);
+            --error-color: #e74c3c; --hover-color: #229954;
+        }
+        body.dark-mode {
+            --primary-color: #ecf0f1; --background-gradient-start: #1a202c; --background-gradient-end: #2d3748;
+            --card-bg: #4a5568; --text-color: #f7fafc; --border-color: #4a5568;
+        }
+        body { font-family: 'Tajawal', sans-serif; background-image: linear-gradient(135deg, var(--background-gradient-start), var(--background-gradient-end)); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .container { max-width: 800px; width:100%; padding: 40px; margin: 20px; background-color: var(--card-bg); border-radius: 15px; box-shadow: 0 10px 40px var(--shadow-color); text-align: center; }
+        .container h1 { color: var(--primary-color); font-size: 2rem; margin-bottom: 15px; }
+        .container p { color: #7f8c8d; margin-bottom: 30px; font-size: 1.1rem; }
+        input[type="password"] { width: 100%; max-width: 400px; padding: 15px 20px; border: 1px solid var(--border-color); border-radius: 10px; font-size: 1.1rem; font-family: 'Tajawal', sans-serif; }
+        button { width: 100%; max-width: 400px; padding: 15px; background-color: var(--secondary-color); color: white; border: none; border-radius: 10px; font-size: 1.2rem; font-weight: 700; cursor: pointer; margin-top: 20px; }
+        button:hover { background-color: var(--hover-color); }
+        #error-message { color: var(--error-color); margin-top: 15px; font-weight: 500; min-height: 24px; }
+        #content-section { display: none; }
+        .back-link { display: block; max-width: 400px; margin: 20px auto 0; padding: 10px 20px; background-color: #34495e; color: white; text-decoration: none; border-radius: 8px; }
+        /* History Table Styles */
+        .history-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .history-table th, .history-table td { padding: 15px; text-align: right; border-bottom: 1px solid var(--border-color); }
+        .history-table th { font-weight: 700; }
+        .status-current { color: #27ae60; font-weight: bold; }
+        .status-old { color: #e74c3c; }
+    </style>
+</head>
+<body>
+    <div class="container" id="login-container">
+        <h1>الوصول الخاص للأرشيف</h1>
+        <p>الرجاء إدخال رمز الوصول.</p>
+        <form id="login-form">
+            <input type="password" id="password-input" placeholder="رمز الوصول" required>
+            <button type="submit">دخول</button>
+            <p id="error-message"></p>
+        </form>
+         <a href="dashboredsalim.html" class="back-link" style="background: #7f8c8d;">العودة إلى لوحة التحكم الرئيسية</a>
+    </div>
+
+    <div class="container" id="content-section">
+        <h1>سجل كلمات المرور</h1>
+        <table class="history-table">
+            <thead><tr><th>كلمة المرور</th><th>الحالة</th><th>تاريخ الإنشاء</th></tr></thead>
+            <tbody id="history-body"></tbody>
+        </table>
+        <a href="dashboredsalim.html" class="back-link">العودة إلى لوحة التحكم</a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+             if (localStorage.getItem('theme') === 'dark') { document.body.classList.add('dark-mode'); }
+        });
+
+        document.getElementById('login-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const passwordInput = document.getElementById('password-input');
+            const errorMessage = document.getElementById('error-message');
+            const correctPassword = 'YACINEE474474';
+
+            if (passwordInput.value === correctPassword) {
+                document.getElementById('login-container').style.display = 'none';
+                document.getElementById('content-section').style.display = 'block';
+                displayHistory();
+            } else {
+                errorMessage.textContent = 'رمز الوصول غير صحيح.';
+            }
+        });
+
+        function displayHistory() {
+            const historyBody = document.getElementById('history-body');
+            const history = JSON.parse(localStorage.getItem('passwordHistory')) || [];
+            if (history.length === 0) {
+                historyBody.innerHTML = '<tr><td colspan="3" style="text-align:center;">لا يوجد سجل لعرضه.</td></tr>';
+                return;
+            }
+            history.sort((a, b) => new Date(b.date) - new Date(a.date));
+            history.forEach(item => {
+                const row = document.createElement('tr');
+                const date = new Date(item.date).toLocaleString('ar-DZ');
+                const statusClass = item.status === 'Current' ? 'status-current' : 'status-old';
+                const statusText = item.status === 'Current' ? 'حالي' : 'قديم';
+                row.innerHTML = `<td>${item.password}</td><td class="${statusClass}">${statusText}</td><td>${date}</td>`;
+                historyBody.appendChild(row);
+            });
+        }
+    </script>
+</body>
+</html>

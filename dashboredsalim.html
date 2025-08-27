@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -26,6 +27,7 @@
             --hover-color: #2980b9;
             --card-footer-bg: #f9fafb;
             --sidebar-bg: #ffffff;
+            --overlay-bg: rgba(0, 0, 0, 0.5);
         }
 
         body.dark-mode {
@@ -41,15 +43,11 @@
             --shadow-color: rgba(0, 0, 0, 0.4);
             --hover-color: #5dade2;
             --card-footer-bg: #2d3748;
+            --overlay-bg: rgba(0, 0, 0, 0.7);
         }
 
         /* --- Global Styles --- */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: 'Tajawal', sans-serif;
             background-image: linear-gradient(135deg, var(--background-gradient-start), var(--background-gradient-end));
@@ -65,369 +63,159 @@
 
         /* --- Login Page Styles --- */
         .login-container {
-            width: 100%;
-            max-width: 420px;
-            padding: 40px;
-            background-color: var(--card-bg);
-            border-radius: 15px;
-            box-shadow: 0 10px 40px var(--shadow-color);
-            text-align: center;
+            width: 100%; max-width: 420px; padding: 40px; margin: 20px;
+            background-color: var(--card-bg); border-radius: 15px;
+            box-shadow: 0 10px 40px var(--shadow-color); text-align: center;
             animation: fadeIn 0.6s ease-in-out;
         }
-
-        .login-container h1 {
-            color: var(--primary-color);
-            font-size: 2rem;
-            margin-bottom: 15px;
-            font-weight: 700;
-        }
-
-        .login-container p {
-            color: #7f8c8d;
-            margin-bottom: 30px;
-            font-size: 1.1rem;
-        }
-
-        .password-wrapper {
-            position: relative;
-            margin-bottom: 20px;
-        }
-
+        .login-container h1 { color: var(--primary-color); font-size: 2rem; margin-bottom: 15px; font-weight: 700; }
+        .login-container p { color: #7f8c8d; margin-bottom: 30px; font-size: 1.1rem; }
+        .password-wrapper { position: relative; margin-bottom: 20px; }
         #password-input {
-            width: 100%;
-            padding: 15px 50px 15px 20px; /* Add padding for the icon */
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            font-size: 1.1rem;
-            font-family: 'Tajawal', sans-serif;
+            width: 100%; padding: 15px 50px 15px 20px; border: 1px solid var(--border-color);
+            border-radius: 10px; font-size: 1.1rem; font-family: 'Tajawal', sans-serif;
             transition: all 0.3s ease;
         }
-
-        #password-input:focus {
-            outline: none;
-            border-color: var(--secondary-color);
-            box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.2);
-        }
-
-        #toggle-password {
-            position: absolute;
-            left: 15px; /* Position icon on the left for RTL */
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: #95a5a6;
-            padding: 5px;
-        }
-
+        #password-input:focus { outline: none; border-color: var(--secondary-color); box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.2); }
+        #toggle-password { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: #95a5a6; padding: 5px; }
         #login-button {
-            width: 100%;
-            padding: 15px;
-            background-color: var(--secondary-color);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 1.2rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.2s;
+            width: 100%; padding: 15px; background-color: var(--secondary-color); color: white;
+            border: none; border-radius: 10px; font-size: 1.2rem; font-weight: 700;
+            cursor: pointer; transition: background-color 0.3s, transform 0.2s;
         }
-
-        #login-button:hover {
-            background-color: #2980b9;
-            transform: translateY(-2px);
-        }
-
-        #error-message {
-            color: var(--error-color);
-            margin-top: 15px;
-            font-weight: 500;
-            min-height: 24px;
-        }
+        #login-button:hover { background-color: var(--hover-color); transform: translateY(-2px); }
+        #error-message { color: var(--error-color); margin-top: 15px; font-weight: 500; min-height: 24px; }
         
         /* --- Dashboard Styles --- */
-        .dashboard-container {
-            display: none; /* Hidden by default */
-            width: 100%;
-            min-height: 100vh;
-        }
-
+        .dashboard-container { display: none; width: 100%; min-height: 100vh; }
         #sidebar {
-            width: 260px;
-            background-color: var(--sidebar-bg);
-            border-left: 1px solid var(--border-color);
-            padding: 25px;
-            display: flex;
-            flex-direction: column;
-            position: fixed;
-            right: 0;
-            top: 0;
-            bottom: 0;
-            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), background-color 0.4s ease;
-            z-index: 1000;
+            width: 260px; background-color: var(--sidebar-bg); border-left: 1px solid var(--border-color);
+            padding: 25px; display: flex; flex-direction: column; position: fixed; right: 0;
+            top: 0; bottom: 0; transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), background-color 0.4s ease;
+            z-index: 1100;
         }
-
-        .sidebar-header {
-            text-align: center;
-            margin-bottom: 40px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .sidebar-header h2 {
-            font-size: 1.5rem;
-            color: var(--primary-color);
-            font-weight: 700;
-        }
-
-        #sidebar nav ul {
-            list-style-type: none;
-            flex-grow: 1;
-        }
-
+        .sidebar-header { text-align: center; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 1px solid var(--border-color); }
+        .sidebar-header h2 { font-size: 1.5rem; color: var(--primary-color); font-weight: 700; }
+        #sidebar nav ul { list-style-type: none; flex-grow: 1; }
         #sidebar nav ul li a {
-            display: flex;
-            align-items: center;
-            padding: 15px 10px;
-            text-decoration: none;
-            color: var(--text-color);
-            border-radius: 8px;
-            transition: background-color 0.3s, color 0.3s;
-            font-size: 1.1rem;
-            font-weight: 500;
+            display: flex; align-items: center; padding: 15px 10px; text-decoration: none;
+            color: var(--text-color); border-radius: 8px; transition: background-color 0.3s, color 0.3s;
+            font-size: 1.1rem; font-weight: 500;
         }
-
-        #sidebar nav ul li a .icon {
-            margin-left: 15px;
-            width: 25px;
-            text-align: center;
-            color: var(--secondary-color);
-            transition: color 0.3s;
-        }
-
-        #sidebar nav ul li a:hover, #sidebar nav ul li a.active {
-            background-color: var(--secondary-color);
-            color: white;
-        }
-
-        #sidebar nav ul li a:hover .icon, #sidebar nav ul li a.active .icon {
-            color: white;
-        }
-
-        .sidebar-footer {
-            text-align: center;
-            font-size: 0.9rem;
-            color: var(--text-light-color);
-            padding-top: 20px;
-            border-top: 1px solid var(--border-color);
-        }
-
+        #sidebar nav ul li a .icon { margin-left: 15px; width: 25px; text-align: center; color: var(--secondary-color); transition: color 0.3s; }
+        #sidebar nav ul li a:hover, #sidebar nav ul li a.active { background-color: var(--secondary-color); color: white; }
+        #sidebar nav ul li a:hover .icon, #sidebar nav ul li a.active .icon { color: white; }
+        .sidebar-footer { text-align: center; font-size: 0.9rem; color: var(--text-light-color); padding-top: 20px; border-top: 1px solid var(--border-color); }
         #main-content {
-            flex-grow: 1;
-            padding: 30px;
-            margin-right: 260px;
+            flex-grow: 1; padding: 30px; margin-right: 260px;
+            transition: margin-right 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             animation: fadeIn 0.6s ease-in-out;
         }
-
-        .main-header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .main-header h1 {
-            color: var(--primary-color);
-            font-size: 2.8rem;
-            font-weight: 700;
-        }
-
-        .main-header p {
-            font-size: 1.3rem;
-            color: var(--text-light-color);
-        }
-
-        .header-controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: fixed;
-            top: 15px;
-            left: 15px; /* Adjusted for RTL */
-            z-index: 1001;
-        }
-
+        .main-header { text-align: center; margin-bottom: 40px; }
+        .main-header h1 { color: var(--primary-color); font-size: 2.8rem; font-weight: 700; }
+        .main-header p { font-size: 1.3rem; color: var(--text-light-color); }
+        .header-controls { display: flex; gap: 10px; align-items: center; position: fixed; top: 20px; right: 20px; z-index: 1200; }
         #menu-toggle, #theme-toggle {
-            background: var(--card-bg);
-            color: var(--text-color);
-            border: 1px solid var(--border-color);
-            padding: 10px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 1.5rem;
-            width: 48px;
-            height: 48px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 4px 12px var(--shadow-color);
-            transition: all 0.3s ease;
+            background: var(--card-bg); color: var(--text-color); border: 1px solid var(--border-color);
+            padding: 10px; border-radius: 50%; cursor: pointer; font-size: 1.5rem;
+            width: 48px; height: 48px; display: flex; justify-content: center; align-items: center;
+            box-shadow: 0 4px 12px var(--shadow-color); transition: all 0.3s ease;
+            position: relative; overflow: hidden;
         }
-        #theme-toggle { display: flex; margin-right: 10px; }
-        #menu-toggle { display: none; } /* Hidden by default on large screens */
-
+        #menu-toggle .icon-open, #menu-toggle .icon-close { transition: transform 0.3s ease-in-out; }
+        #menu-toggle .icon-close { position: absolute; transform: translateY(150%); }
+        #menu-toggle.active .icon-open { transform: translateY(-150%); }
+        #menu-toggle.active .icon-close { transform: translateY(0); }
+        #menu-toggle { display: none; }
         #menu-toggle:hover, #theme-toggle:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px var(--shadow-color);
-            background-color: var(--secondary-color);
-            color: white;
+            transform: translateY(-2px) scale(1.05); box-shadow: 0 6px 16px var(--shadow-color);
+            background-color: var(--secondary-color); color: white;
         }
-
-        .search-container {
-            margin-top: 30px;
-        }
-
+        .search-container { margin-top: 30px; }
         #search-box {
-            width: 100%;
-            max-width: 600px;
-            padding: 15px 25px;
-            border: 1px solid var(--border-color);
-            border-radius: 30px;
-            font-size: 1.1rem;
-            font-family: 'Tajawal', sans-serif;
-            background-color: var(--card-bg);
-            color: var(--text-color);
-            transition: all 0.3s ease;
+            width: 100%; max-width: 600px; padding: 15px 25px; border: 1px solid var(--border-color);
+            border-radius: 30px; font-size: 1.1rem; font-family: 'Tajawal', sans-serif;
+            background-color: var(--card-bg); color: var(--text-color); transition: all 0.3s ease;
         }
-
-        #search-box:focus {
-            outline: none;
-            border-color: var(--secondary-color);
-            box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.2);
-        }
-
+        #search-box:focus { outline: none; border-color: var(--secondary-color); box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.2); }
         .category-title {
-            font-size: 2rem;
-            color: var(--primary-color);
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 3px solid var(--secondary-color);
-            grid-column: 1 / -1;
+            font-size: 2rem; color: var(--primary-color); margin-bottom: 25px;
+            padding-bottom: 15px; border-bottom: 3px solid var(--secondary-color); grid-column: 1 / -1;
         }
-
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 30px;
-        }
-
+        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
         .card {
-            background-color: var(--card-bg);
-            border-radius: 15px;
-            box-shadow: 0 4px 20px var(--shadow-color);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            border: 1px solid var(--border-color);
+            background-color: var(--card-bg); border-radius: 15px; box-shadow: 0 4px 20px var(--shadow-color);
+            overflow: hidden; display: flex; flex-direction: column;
+            transition: transform 0.3s ease, box-shadow 0.3s ease; border: 1px solid var(--border-color);
         }
         .card.hidden { display: none; }
-
-        .card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 12px 30px var(--shadow-color);
-        }
-
-        .card a {
-            text-decoration: none;
-            color: inherit;
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-        }
-
-        .card-content {
-            padding: 30px;
-            text-align: center;
-            flex-grow: 1;
-        }
-
-        .card h3 {
-            margin-bottom: 10px;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary-color);
-        }
-
-        .card p {
-            font-size: 1rem;
-            color: var(--text-light-color);
-            line-height: 1.6;
-            min-height: 50px;
-        }
-
+        .card:hover { transform: translateY(-10px); box-shadow: 0 12px 30px var(--shadow-color); }
+        .card a { text-decoration: none; color: inherit; display: flex; flex-direction: column; flex-grow: 1; }
+        .card-content { padding: 30px; text-align: center; flex-grow: 1; }
+        .card h3 { margin-bottom: 10px; font-size: 1.5rem; font-weight: 700; color: var(--primary-color); }
+        .card p { font-size: 1rem; color: var(--text-light-color); line-height: 1.6; min-height: 50px; }
         .card-footer {
-            background-color: var(--card-footer-bg);
-            padding: 18px;
-            text-align: center;
-            border-top: 1px solid var(--border-color);
-            margin-top: auto;
-            font-weight: bold;
-            font-size: 1.1rem;
-            color: var(--secondary-color);
-            transition: background-color 0.3s, color 0.3s;
+            background-color: var(--card-footer-bg); padding: 18px; text-align: center;
+            border-top: 1px solid var(--border-color); margin-top: auto; font-weight: bold;
+            font-size: 1.1rem; color: var(--secondary-color); transition: background-color 0.3s, color 0.3s;
         }
-
-        .card:hover .card-footer {
-            background-color: var(--secondary-color);
-            color: white;
+        .card:hover .card-footer { background-color: var(--secondary-color); color: white; }
+        .overlay {
+            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: var(--overlay-bg); z-index: 1050; animation: fadeIn 0.4s;
         }
-
-        /* --- Animations --- */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
+        
+        /* --- Settings Modal Styles --- */
+        .settings-modal {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background-color: var(--card-bg); color: var(--text-color); width: 90%; max-width: 500px;
+            border-radius: 15px; box-shadow: 0 10px 40px var(--shadow-color); z-index: 2000;
+            display: none; animation: fadeIn 0.4s ease-out;
         }
+        .settings-modal-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 25px; border-bottom: 1px solid var(--border-color); }
+        .settings-modal-header h2 { margin: 0; color: var(--primary-color); }
+        #close-settings-modal { background: none; border: none; font-size: 2.5rem; cursor: pointer; color: var(--text-light-color); }
+        .settings-modal-content { padding: 25px; }
+        .settings-modal-content .form-group { margin-bottom: 20px; }
+        .settings-modal-content label { display: block; margin-bottom: 8px; font-weight: 500; }
+        .settings-modal-content input[type="password"] { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 1rem; font-family: 'Tajawal', sans-serif; }
+        .settings-modal-content .save-btn {
+            width: 100%; padding: 15px; background-color: var(--secondary-color); color: white;
+            border: none; border-radius: 10px; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: background-color 0.3s;
+        }
+        .settings-modal-content .save-btn:hover { background-color: var(--hover-color); }
+        #settings-message { margin-top: 15px; font-weight: 500; text-align: center; }
+        .password-history-link { text-align: center; margin-top: 20px; }
+        .password-history-link a { color: var(--secondary-color); text-decoration: none; font-weight: 500; }
+        .password-history-link a:hover { text-decoration: underline; }
 
-        /* --- Responsive Design --- */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
         @media (max-width: 992px) {
-            body {
-                align-items: flex-start; /* Adjust alignment for dashboard view */
-            }
-            #sidebar {
-                transform: translateX(260px);
-            }
-            #sidebar.active {
-                transform: translateX(0);
-                box-shadow: -5px 0 25px rgba(0,0,0,0.1);
-            }
-            #main-content {
-                margin-right: 0;
-            }
-            .header-controls {
-                display: flex;
-            }
-            #menu-toggle {
-                display: flex; /* Show on mobile */
-            }
-            .main-header h1 {
-                font-size: 2.2rem;
-                margin-top: 60px; /* Space for fixed buttons */
-            }
-            .category-title {
-                font-size: 1.8rem;
-            }
+            body { align-items: flex-start; }
+            #sidebar { transform: translateX(260px); box-shadow: -5px 0 25px rgba(0,0,0,0.1); }
+            #sidebar.active { transform: translateX(0); }
+            #main-content { margin-right: 0; }
+            #menu-toggle { display: flex; }
+            .header-controls { left: 20px; right: auto; }
+            .main-header h1 { font-size: 2.2rem; margin-top: 80px; }
+            .category-title { font-size: 1.8rem; }
         }
-        @media (min-width: 993px) {
-            .header-controls {
-                justify-content: flex-end;
-            }
-            #menu-toggle {
-                display: none; /* Hide hamburger on desktop */
-            }
+        
+        @media (max-width: 480px) {
+            #main-content { padding: 20px; }
+            .login-container { padding: 30px; }
+            .main-header h1 { font-size: 1.8rem; }
+            .main-header p { font-size: 1.1rem; }
+            .dashboard-grid { grid-template-columns: 1fr; gap: 20px; }
+            .card-content { padding: 20px; }
+            .card h3 { font-size: 1.3rem; }
         }
     </style>
 </head>
 <body>
+    
+    <div class="overlay" id="overlay"></div>
 
     <div class="login-container" id="login-section">
         <h1>تسجيل الدخول</h1>
@@ -436,10 +224,7 @@
             <div class="password-wrapper">
                 <input type="password" id="password-input" placeholder="كلمة المرور" required>
                 <button type="button" id="toggle-password" aria-label="إظهار/إخفاء كلمة المرور">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
-                        <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/>
-                        <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/>
-                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16"><path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/><path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/></svg>
                 </button>
             </div>
             <button type="submit" id="login-button">دخول</button>
@@ -455,16 +240,16 @@
             <nav>
                 <ul>
                     <li><a href="#management-tools">
-                        <span class="icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-tools" viewBox="0 0 16 16"><path d="M1 0 0 1l2.2 3.081a1 1 0 0 0 .815.419h.07a1 1 0 0 1 .708.293l2.675 2.675-2.617 2.654A3.003 3.003 0 0 0 0 13a3 3 0 1 0 5.878-.851l2.654-2.617.968.968-.305.914a1 1 0 0 0 .242 1.023l3.27 3.27a.997.997 0 0 0 1.414 0l1.586-1.586a.997.997 0 0 0 0-1.414l-3.27-3.27a1 1 0 0 0-1.023-.242L10.5 9.5l-.968-.968 2.617-2.654A3.003 3.003 0 0 0 16 3c0-.992-.49-1.87-1.227-2.435L14 0H1zm11.586 3.586a2 2 0 1 1-2.828-2.828 2 2 0 0 1 2.828 2.828zM3 14a2 2 0 1 1-2.828-2.828 2 2 0 0 1 2.828 2.828z"/></svg>
-                        </span>
+                        <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-tools" viewBox="0 0 16 16"><path d="M1 0 0 1l2.2 3.081a1 1 0 0 0 .815.419h.07a1 1 0 0 1 .708.293l2.675 2.675-2.617 2.654A3.003 3.003 0 0 0 0 13a3 3 0 1 0 5.878-.851l2.654-2.617.968.968-.305.914a1 1 0 0 0 .242 1.023l3.27 3.27a.997.997 0 0 0 1.414 0l1.586-1.586a.997.997 0 0 0 0-1.414l-3.27-3.27a1 1 0 0 0-1.023-.242L10.5 9.5l-.968-.968 2.617-2.654A3.003 3.003 0 0 0 16 3c0-.992-.49-1.87-1.227-2.435L14 0H1zm11.586 3.586a2 2 0 1 1-2.828-2.828 2 2 0 0 1 2.828 2.828zM3 14a2 2 0 1 1-2.828-2.828 2 2 0 0 1 2.828 2.828z"/></svg></span>
                         أدوات الإدارة
                     </a></li>
                     <li><a href="#religious-tools">
-                        <span class="icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-moon-stars-fill" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z"/><path d="M10.794 3.148a.217.217 0 0 1 .412 0l.387 1.162h1.212a.217.217 0 0 1 .162.321l-.988.724.387 1.162a.217.217 0 0 1-.321.242l-.988-.724-.988.724a.217.217 0 0 1-.321-.242l.387-1.162-.988-.724a.217.217 0 0 1 .162-.321h1.212l.387-1.162zM13.863.099a.145.145 0 0 1 .274 0l.258.774c.115.346.386.617.732.732l.774.258a.145.145 0 0 1 0 .274l-.774.258a1.156 1.156 0 0 0-.732.732l-.258.774a.145.145 0 0 1-.274 0l-.258-.774a1.156 1.156 0 0 0-.732-.732l-.774-.258a.145.145 0 0 1 0-.274l.774.258c.346-.115.617-.386.732-.732L13.863.1z"/></svg>
-                        </span>
+                        <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-moon-stars-fill" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z"/><path d="M10.794 3.148a.217.217 0 0 1 .412 0l.387 1.162h1.212a.217.217 0 0 1 .162.321l-.988.724.387 1.162a.217.217 0 0 1-.321.242l-.988-.724-.988.724a.217.217 0 0 1-.321-.242l.387-1.162-.988-.724a.217.217 0 0 1 .162-.321h1.212l.387-1.162zM13.863.099a.145.145 0 0 1 .274 0l.258.774c.115.346.386.617.732.732l.774.258a.145.145 0 0 1 0 .274l-.774.258a1.156 1.156 0 0 0-.732.732l-.258.774a.145.145 0 0 1-.274 0l-.258-.774a1.156 1.156 0 0 0-.732-.732l-.774-.258a.145.145 0 0 1 0-.274l.774.258c.346-.115.617-.386.732-.732L13.863.1z"/></svg></span>
                         أدوات دينية
+                    </a></li>
+                    <li><a href="#" id="settings-button">
+                        <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-gear-fill" viewBox="0 0 16 16"><path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311a1.464 1.464 0 0 1-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413-1.4-2.397 0-2.81l.34-.1a1.464 1.464 0 0 1 .872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872l-.1-.34zM8 10.93a2.929 2.929 0 1 1 0-5.858 2.929 2.929 0 0 1 0 5.858z"/></svg></span>
+                        الإعدادات
                     </a></li>
                 </ul>
             </nav>
@@ -479,8 +264,9 @@
                      <button id="theme-toggle" aria-label="تبديل الوضع الليلي">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-sun-fill" viewBox="0 0 16 16"><path d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"/></svg>
                     </button>
-                    <button id="menu-toggle" aria-label="فتح/إغلاق القائمة" aria-expanded="false" aria-controls="sidebar">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/></svg>
+                    <button id="menu-toggle" aria-label="فتح القائمة" aria-expanded="false" aria-controls="sidebar">
+                        <span class="icon-open"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/></svg></span>
+                        <span class="icon-close"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/></svg></span>
                     </button>
                 </div>
                 <h1>لوحة تحكم العم صالحي سليم</h1>
@@ -493,128 +279,51 @@
             <section id="management-tools">
                 <h2 class="category-title">أدوات الإدارة</h2>
                 <div class="dashboard-grid">
-                    <div class="card">
-                        <a href="indexdashboard.html">
-                            <div class="card-content">
-                                <h3>لوحة تحكم الموقع</h3>
-                                <p>لإدارة الإعدادات الرئيسية والوصول السريع للأدوات الأخرى.</p>
-                            </div>
-                            <div class="card-footer"><span>افتح الآن</span></div>
-                        </a>
-                    </div>
-                    <div class="card">
-                         <a href="dashboard.html">
-                            <div class="card-content">
-                                <h3>نظام الحضور</h3>
-                                <p>لتسجيل ومتابعة حضور وغياب الموظفين بسهولة ودقة.</p>
-                            </div>
-                            <div class="card-footer"><span>افتح الآن</span></div>
-                        </a>
-                    </div>
-                    <div class="card">
-                         <a href="صناعة شهادات العمل وحسن السلوك.html">
-                            <div class="card-content">
-                                <h3>صناعة شهادات العمل</h3>
-                                <p>لإنشاء شهادات العمل وحسن السيرة والسلوك للموظفين.</p>
-                            </div>
-                            <div class="card-footer"><span>افتح الآن</span></div>
-                        </a>
-                    </div>
-                    <div class="card">
-                        <a href="stoke.html">
-                            <div class="card-content">
-                                <h3>إدارة المخزن</h3>
-                                <p>لمتابعة المخزون، تسجيل المنتجات الواردة والصادرة.</p>
-                            </div>
-                             <div class="card-footer"><span>افتح الآن</span></div>
-                        </a>
-                    </div>
-                    <div class="card">
-                        <a href="invoice.html">
-                            <div class="card-content">
-                                <h3>مولد فواتير</h3>
-                                <p>لإنشاء فواتير احترافية للعملاء بسرعة وسهولة.</p>
-                            </div>
-                            <div class="card-footer"><span>افتح الآن</span></div>
-                        </a>
-                    </div>
-                    <div class="card">
-                        <a href="invoices.html">
-                            <div class="card-content">
-                                <h3>محفوظات الفواتير</h3>
-                                <p>للاطلاع على جميع الفواتير التي تم إنشاؤها مسبقًا.</p>
-                            </div>
-                            <div class="card-footer"><span>افتح الآن</span></div>
-                        </a>
-                    </div>
+                    <div class="card"><a href="indexdashboard.html"><div class="card-content"><h3>لوحة تحكم الموقع</h3><p>لإدارة الإعدادات الرئيسية والوصول السريع للأدوات الأخرى.</p></div><div class="card-footer"><span>افتح الآن</span></div></a></div>
+                    <div class="card"><a href="dashboard.html"><div class="card-content"><h3>نظام الحضور</h3><p>لتسجيل ومتابعة حضور وغياب الموظفين بسهولة ودقة.</p></div><div class="card-footer"><span>افتح الآن</span></div></a></div>
+                    <div class="card"><a href="صناعة شهادات العمل وحسن السلوك.html"><div class="card-content"><h3>صناعة شهادات العمل</h3><p>لإنشاء شهادات العمل وحسن السيرة والسلوك للموظفين.</p></div><div class="card-footer"><span>افتح الآن</span></div></a></div>
+                    <div class="card"><a href="stoke.html"><div class="card-content"><h3>إدارة المخزن</h3><p>لمتابعة المخزون، تسجيل المنتجات الواردة والصادرة.</p></div><div class="card-footer"><span>افتح الآن</span></div></a></div>
+                    <div class="card"><a href="invoice.html"><div class="card-content"><h3>مولد فواتير</h3><p>لإنشاء فواتير احترافية للعملاء بسرعة وسهولة.</p></div><div class="card-footer"><span>افتح الآن</span></div></a></div>
+                    <div class="card"><a href="invoices.html"><div class="card-content"><h3>محفوظات الفواتير</h3><p>للاطلاع على جميع الفواتير التي تم إنشاؤها مسبقًا.</p></div><div class="card-footer"><span>افتح الآن</span></div></a></div>
+                    <div class="card"><a href="yacine.html"><div class="card-content"><h3>القسم الخاص</h3><p>صفحة محمية بكلمة مرور إضافية.</p></div><div class="card-footer"><span>افتح الآن</span></div></a></div>
                 </div>
             </section>
             
             <section id="religious-tools" style="margin-top: 50px;">
                 <h2 class="category-title">أدوات دينية وروحانية</h2>
                  <div class="dashboard-grid">
-                    <div class="card">
-                        <a href="https://surahquran.com/warsh/fahras.html" target="_blank" rel="noopener noreferrer">
-                            <div class="card-content">
-                                <h3>القرآن الكريم (ورش)</h3>
-                                <p>لتصفح وقراءة القرآن الكريم كاملاً برواية ورش عن نافع.</p>
-                            </div>
-                            <div class="card-footer"><span>افتح الآن</span></div>
-                        </a>
-                    </div>
-                    <div class="card">
-                        <a href="https://s22mcs.github.io/S22MCS02-/%D9%B1%D8%AE%D9%92%D8%AA%D9%90%D9%85%D9%92%20%D9%82%D9%8F%D8%B1%D9%92%D8%A2%D9%86%D9%8E%D9%83%D9%8E%20%D9%8A%D9%8E%D8%B4%D9%92%D9%81%D9%8E%D8%B9%D9%92%20%D9%84%D9%8E%D9%83%D9%8E.html" target="_blank" rel="noopener noreferrer">
-                            <div class="card-content">
-                                <h3>وردك اليومي من القرآن</h3>
-                                <p>لمساعدتك على متابعة ختمة القرآن الكريم بشكل منظم.</p>
-                            </div>
-                            <div class="card-footer"><span>افتح الآن</span></div>
-                        </a>
-                    </div>
-                    <div class="card">
-                        <a href="https://s22mcs.github.io/S22MCS02-/%D8%A7%D9%90%D9%82%D9%92%D8%B1%D9%8E%D8%A3%D9%92%20%D8%A3%D9%8E%D8%B0%D9%92%D9%83%D9%8E%D8%A7%D8%B1%D9%8E%D9%83%D9%8E%20%D8%AA%D9%8E%D8%B4%D9%92%D9_81%D9%81%D9_8E%D8%B9%D9_92%20%D9_84%D9_8E%D9_83%D9_8E.html" target="_blank" rel="noopener noreferrer">
-                            <div class="card-content">
-                                <h3>زر الاستغفار والتسبيح</h3>
-                                <p>مسبحة إلكترونية لمساعدتك على الذكر والاستغفار.</p>
-                            </div>
-                             <div class="card-footer"><span>افتح الآن</span></div>
-                        </a>
-                    </div>
-                    <div class="card">
-                        <a href="https://s22mcs.github.io/S22MCS02-/mushaf_el_quran_el_karim.html" target="_blank" rel="noopener noreferrer">
-                            <div class="card-content">
-                                <h3>مصحف القرآن الكريم</h3>
-                                <p>نسخة رقمية من المصحف الشريف للقراءة المباشرة.</p>
-                            </div>
-                            <div class="card-footer"><span>افتح الآن</span></div>
-                        </a>
-                    </div>
-                    <div class="card">
-                        <a href="سورة الكهف مكتوبة.html">
-                            <div class="card-content">
-                                <h3>سورة الكهف مكتوبة</h3>
-                                <p>لقراءة سورة الكهف يوم الجمعة، مكتوبة بخط واضح.</p>
-                            </div>
-                            <div class="card-footer"><span>افتح الآن</span></div>
-                        </a>
-                    </div>
-                    <div class="card">
-                        <a href="https://s22market.github.io/AMIR_ALSHURUK/" target="_blank" rel="noopener noreferrer">
-                            <div class="card-content">
-                                <h3>موقع أمير الشروق</h3>
-                                <p>للاطلاع على آخر الأخبار والمقالات من موقع أمير الشروق.</p>
-                            </div>
-                            <div class="card-footer"><span>افتح الآن</span></div>
-                        </a>
-                    </div>
+                    <div class="card"><a href="https://surahquran.com/warsh/fahras.html" target="_blank" rel="noopener noreferrer"><div class="card-content"><h3>القرآن الكريم (ورش)</h3><p>لتصفح وقراءة القرآن الكريم كاملاً برواية ورش عن نافع.</p></div><div class="card-footer"><span>افتح الآن</span></div></a></div>
+                    <div class="card"><a href="https://s22mcs.github.io/S22MCS02-/%D9%B1%D8%AE%D9%92%D8%AA%D9%90%D9%85%D9%92%20%D9%82%D9%8F%D8%B1%D9%92%D8%A2%D9%86%D9%8E%D9%83%D9%8E%20%D9%8A%D9%8E%D8%B4%D9%92%D9%81%D9%8E%D8%B9%D9%92%20%D9%84%D9%8E%D9%83%D9%8E.html" target="_blank" rel="noopener noreferrer"><div class="card-content"><h3>وردك اليومي من القرآن</h3><p>لمساعدتك على متابعة ختمة القرآن الكريم بشكل منظم.</p></div><div class="card-footer"><span>افتح الآن</span></div></a></div>
+                    <div class="card"><a href="https://s22mcs.github.io/S22MCS02-/%D8%A7%D9%90%D9%82%D9%92%D8%B1%D9%8E%D8%A3%D9%92%20%D8%A3%D9%8E%D8%B0%D9%92%D9%83%D9%8E%D8%A7%D8%B1%D9%8E%D9%83%D9%8E%20%D8%AA%D9%8E%D8%B4%D9%92%D9_81%D9_81%D9_8E%D8%B9%D9_92%20%D9_84%D9_8E%D9_83%D9_8E.html" target="_blank" rel="noopener noreferrer"><div class="card-content"><h3>زر الاستغفار والتسبيح</h3><p>مسبحة إلكترونية لمساعدتك على الذكر والاستغفار.</p></div><div class="card-footer"><span>افتح الآن</span></div></a></div>
+                    <div class="card"><a href="https://s22mcs.github.io/S22MCS02-/mushaf_el_quran_el_karim.html" target="_blank" rel="noopener noreferrer"><div class="card-content"><h3>مصحف القرآن الكريم</h3><p>نسخة رقمية من المصحف الشريف للقراءة المباشرة.</p></div><div class="card-footer"><span>افتح الآن</span></div></a></div>
+                    <div class="card"><a href="سورة الكهف مكتوبة.html"><div class="card-content"><h3>سورة الكهف مكتوبة</h3><p>لقراءة سورة الكهف يوم الجمعة، مكتوبة بخط واضح.</p></div><div class="card-footer"><span>افتح الآن</span></div></a></div>
+                    <div class="card"><a href="https://s22market.github.io/AMIR_ALSHURUK/" target="_blank" rel="noopener noreferrer"><div class="card-content"><h3>موقع أمير الشروق</h3><p>للاطلاع على آخر الأخبار والمقالات من موقع أمير الشروق.</p></div><div class="card-footer"><span>افتح الآن</span></div></a></div>
                 </div>
             </section>
         </main>
     </div>
 
+    <div class="overlay" id="settings-overlay" style="z-index: 1999;"></div>
+    <div class="settings-modal" id="settings-modal">
+        <div class="settings-modal-header">
+            <h2>الإعدادات</h2>
+            <button id="close-settings-modal">&times;</button>
+        </div>
+        <div class="settings-modal-content">
+            <h4>تغيير كلمة المرور</h4>
+            <form id="change-password-form">
+                <div class="form-group"><label for="current-password">كلمة المرور الحالية</label><input type="password" id="current-password" required></div>
+                <div class="form-group"><label for="new-password">كلمة المرور الجديدة</label><input type="password" id="new-password" required></div>
+                <div class="form-group"><label for="confirm-password">تأكيد كلمة المرور الجديدة</label><input type="password" id="confirm-password" required></div>
+                <button type="submit" class="save-btn">حفظ التغييرات</button>
+                <p id="settings-message"></p>
+            </form>
+            <div class="password-history-link"><a href="password-history.html">عرض سجل كلمات المرور</a></div>
+        </div>
+    </div>
+
     <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // --- Element Selectors ---
         const loginSection = document.getElementById('login-section');
         const dashboardSection = document.getElementById('dashboard-section');
         const loginForm = document.getElementById('login-form');
@@ -627,11 +336,23 @@
         const searchBox = document.getElementById('search-box');
         const cards = document.querySelectorAll('.card');
         const navLinks = document.querySelectorAll('#sidebar nav ul li a');
+        const overlay = document.getElementById('overlay');
+        const settingsButton = document.getElementById('settings-button');
+        const settingsModal = document.getElementById('settings-modal');
+        const settingsOverlay = document.getElementById('settings-overlay');
+        const closeSettingsModal = document.getElementById('close-settings-modal');
+        const changePasswordForm = document.getElementById('change-password-form');
+        const settingsMessage = document.getElementById('settings-message');
 
-        // --- Correct Password ---
-        const correctPassword = 'SALHIAMMAR1952';
-
-        // --- Login Logic ---
+        const initializePassword = () => {
+            if (!localStorage.getItem('dashboardPassword')) {
+                const initialPassword = 'SALHIAMMAR1952';
+                localStorage.setItem('dashboardPassword', initialPassword);
+                const history = [{ password: initialPassword, status: 'Current', date: new Date().toISOString() }];
+                localStorage.setItem('passwordHistory', JSON.stringify(history));
+            }
+        };
+        
         togglePassword.addEventListener('click', () => {
             const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
             passwordInput.setAttribute('type', type);
@@ -643,61 +364,74 @@
         loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const enteredPassword = passwordInput.value;
-
+            const correctPassword = localStorage.getItem('dashboardPassword');
             if (enteredPassword === correctPassword) {
                 loginSection.style.display = 'none';
                 dashboardSection.style.display = 'flex';
-                document.body.style.alignItems = 'flex-start'; // Adjust body alignment for dashboard
+                document.body.style.alignItems = 'flex-start';
             } else {
                 errorMessage.textContent = 'كلمة المرور غير صحيحة. يرجى المحاولة مرة أخرى.';
                 passwordInput.style.borderColor = 'var(--error-color)';
             }
         });
 
-        // --- Dashboard Logic ---
-
-        // Sidebar Toggle for Mobile
+        const closeSidebar = () => {
+            sidebar.classList.remove('active');
+            menuToggle.classList.remove('active');
+            menuToggle.setAttribute('aria-expanded', 'false');
+            overlay.style.display = 'none';
+        };
         menuToggle.addEventListener('click', () => {
-            sidebar.classList.toggle('active');
-            const isExpanded = sidebar.classList.contains('active');
+            const isExpanded = sidebar.classList.toggle('active');
+            menuToggle.classList.toggle('active', isExpanded);
             menuToggle.setAttribute('aria-expanded', isExpanded);
+            overlay.style.display = isExpanded ? 'block' : 'none';
         });
-        
-        // Close sidebar when a link is clicked on mobile
-        navLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                if (sidebar.classList.contains('active')) {
-                    sidebar.classList.remove('active');
-                    menuToggle.setAttribute('aria-expanded', 'false');
-                }
-            });
-        });
-
-        // Theme Toggle (Dark/Light Mode)
-        const currentTheme = localStorage.getItem('theme');
-        if (currentTheme === 'dark') {
-            document.body.classList.add('dark-mode');
-        }
-
+        overlay.addEventListener('click', closeSidebar);
+        navLinks.forEach(link => { link.addEventListener('click', () => { if (sidebar.classList.contains('active') && !link.id.includes('settings')) { closeSidebar(); } }); });
+        const loadTheme = () => { if (localStorage.getItem('theme') === 'dark') { document.body.classList.add('dark-mode'); } };
         themeToggle.addEventListener('click', () => {
             document.body.classList.toggle('dark-mode');
-            let theme = document.body.classList.contains('dark-mode') ? 'dark' : 'light';
-            localStorage.setItem('theme', theme);
+            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
         });
-
-        // Live Search Functionality
         searchBox.addEventListener('input', (e) => {
             const searchTerm = e.target.value.toLowerCase().trim();
             cards.forEach(card => {
                 const title = card.querySelector('h3').textContent.toLowerCase();
                 const description = card.querySelector('p').textContent.toLowerCase();
-                if (title.includes(searchTerm) || description.includes(searchTerm)) {
-                    card.classList.remove('hidden');
-                } else {
-                    card.classList.add('hidden');
-                }
+                card.classList.toggle('hidden', !(title.includes(searchTerm) || description.includes(searchTerm)));
             });
         });
+        const openSettings = () => { settingsModal.style.display = 'block'; settingsOverlay.style.display = 'block'; closeSidebar(); };
+        const closeSettings = () => { settingsModal.style.display = 'none'; settingsOverlay.style.display = 'none'; changePasswordForm.reset(); settingsMessage.textContent = ''; };
+        settingsButton.addEventListener('click', (e) => { e.preventDefault(); openSettings(); });
+        closeSettingsModal.addEventListener('click', closeSettings);
+        settingsOverlay.addEventListener('click', closeSettings);
+        changePasswordForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const currentPassword = document.getElementById('current-password').value;
+            const newPassword = document.getElementById('new-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            const storedPassword = localStorage.getItem('dashboardPassword');
+            if (currentPassword !== storedPassword) {
+                settingsMessage.textContent = 'كلمة المرور الحالية غير صحيحة.'; settingsMessage.style.color = 'var(--error-color)'; return;
+            }
+            if (newPassword !== confirmPassword) {
+                settingsMessage.textContent = 'كلمتا المرور الجديدتان غير متطابقتين.'; settingsMessage.style.color = 'var(--error-color)'; return;
+            }
+            if (newPassword.length < 8) {
+                settingsMessage.textContent = 'يجب أن تتكون كلمة المرور الجديدة من 8 أحرف على الأقل.'; settingsMessage.style.color = 'var(--error-color)'; return;
+            }
+            let history = JSON.parse(localStorage.getItem('passwordHistory')) || [];
+            history.forEach(item => { if(item.status === 'Current') item.status = 'Old'; });
+            history.push({ password: newPassword, status: 'Current', date: new Date().toISOString() });
+            localStorage.setItem('passwordHistory', JSON.stringify(history));
+            localStorage.setItem('dashboardPassword', newPassword);
+            settingsMessage.textContent = 'تم تغيير كلمة المرور بنجاح!'; settingsMessage.style.color = 'green';
+            changePasswordForm.reset();
+        });
+        initializePassword();
+        loadTheme();
     });
     </script>
 </body>
