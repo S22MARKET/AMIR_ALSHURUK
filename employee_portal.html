@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بوابة الموظف المطورة</title>
+    <title>بوابة الموظف المطور</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -15,427 +15,104 @@
             --success-light: #dcfce7;
             --danger: #dc2626;
             --danger-light: #fee2e2;
-            --warning: #ea580c;
-            --info: #0891b2;
+            --warning: #f59e0b;
+            --warning-light: #fef3c7;
             --dark: #1e293b;
-            --dark-light: #334155;
             --light: #f8fafc;
             --gray: #64748b;
             --gray-light: #e2e8f0;
-            --sidebar-width: 300px;
             --border-radius: 12px;
-            --transition: all 0.3s ease;
+            --transition: all 0.3s ease-in-out;
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
         
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         
         body {
             font-family: 'Cairo', sans-serif;
             background-color: #f1f5f9;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
             min-height: 100vh;
-            color: var(--dark);
-            line-height: 1.6;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             padding: 16px;
-        }
-        
-        /* --- القائمة الجانبية --- */
-        .sidebar {
-            position: fixed;
-            top: 0;
-            right: -100%;
-            width: var(--sidebar-width);
-            height: 100%;
-            background: white;
-            box-shadow: var(--shadow-lg);
-            z-index: 1001;
             transition: var(--transition);
-            padding: 20px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
         }
         
-        .sidebar.open {
-            right: 0;
-        }
-        
-        .sidebar-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
+        .container {
             width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: var(--transition);
+            max-width: 450px;
+            margin: auto;
         }
         
-        .sidebar-overlay.open {
-            opacity: 1;
-            visibility: visible;
-        }
-        
-        .sidebar-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid var(--gray-light);
-        }
-        
-        .sidebar-header h2 {
-            color: var(--primary);
-            font-size: 1.5rem;
-            font-weight: 700;
-        }
-        
-        .close-sidebar {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: var(--gray);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            transition: var(--transition);
-        }
-        
-        .close-sidebar:hover {
-            background-color: var(--gray-light);
-            color: var(--dark);
-        }
-        
-        .sidebar-user {
-            text-align: center;
-            margin-bottom: 30px;
-            padding: 20px;
-            background: var(--light);
-            border-radius: var(--border-radius);
-        }
-        
-        .user-avatar {
-            width: 90px;
-            height: 90px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 2.5rem;
-            margin: 0 auto 15px;
-            border: 4px solid var(--primary-light);
-            box-shadow: var(--shadow);
-        }
-        
-        #sidebar-name {
-            color: var(--dark);
-            font-size: 1.25rem;
-            font-weight: 700;
-            margin-bottom: 5px;
-        }
-        
-        #sidebar-username {
-            color: var(--gray);
-            font-size: 0.9rem;
-            background: var(--gray-light);
-            padding: 6px 12px;
-            border-radius: 20px;
-            display: inline-block;
-        }
-        
-        .sidebar-stats {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-        
-        .sidebar-stat {
-            background: var(--light);
-            padding: 16px;
-            border-radius: var(--border-radius);
-            text-align: center;
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-        }
-        
-        .sidebar-stat:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-lg);
-        }
-        
-        .sidebar-stat .fas {
-            font-size: 1.5rem;
-            margin-bottom: 8px;
-            color: var(--primary);
-        }
-        
-        .sidebar-stat-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--dark);
-            margin-bottom: 4px;
-        }
-        
-        .sidebar-stat-label {
-            font-size: 0.85rem;
-            color: var(--gray);
-        }
-        
-        .sidebar-menu {
-            list-style: none;
-            flex-grow: 1;
-            margin-bottom: 20px;
-        }
-        
-        .sidebar-menu li {
-            margin-bottom: 8px;
-        }
-        
-        .sidebar-menu li a {
-            display: flex;
-            align-items: center;
-            padding: 14px 16px;
-            color: var(--dark);
-            text-decoration: none;
-            border-radius: var(--border-radius);
-            transition: var(--transition);
-            font-weight: 600;
-        }
-        
-        .sidebar-menu a:hover, .sidebar-menu a.active {
-            background: var(--primary-light);
-            color: var(--primary);
-        }
-        
-        .sidebar-menu i {
-            margin-left: 12px;
-            width: 20px;
-            text-align: center;
-        }
-
-        .sidebar-footer {
-            text-align: center;
-            font-size: 0.85rem;
-            color: var(--gray);
-            padding-top: 20px;
-            border-top: 1px solid var(--gray-light);
-        }
-        
-        .logout-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            color: var(--danger);
-            text-decoration: none;
-            font-weight: 600;
-            padding: 8px 16px;
-            border-radius: var(--border-radius);
-            transition: var(--transition);
-        }
-        
-        .logout-btn:hover {
-            background-color: var(--danger-light);
-        }
-        
-        /* --- الحاوية الرئيسية --- */
-        .portal-container {
+        .card {
             background-color: white;
-            padding: 24px;
+            padding: 28px;
             border-radius: var(--border-radius);
             box-shadow: var(--shadow-lg);
+            transition: var(--transition);
             width: 100%;
-            max-width: 500px;
+        }
+        
+        .card-header {
             text-align: center;
-        }
-        
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
             margin-bottom: 24px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid var(--gray-light);
         }
         
-        .header h2 {
+        .card-header h2 {
             color: var(--primary);
+            font-size: 1.8rem;
             font-weight: 700;
-            font-size: 1.5rem;
         }
         
-        .menu-toggle {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            color: var(--primary);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            transition: var(--transition);
+        .card-header p {
+            color: var(--gray);
+            font-size: 1rem;
         }
         
-        .menu-toggle:hover {
-            background-color: var(--primary-light);
-        }
-        
-        .user-greeting {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        
-        .avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 1.5rem;
-            cursor: pointer;
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-        }
-        
-        .avatar:hover {
-            transform: scale(1.05);
-        }
-        
-        #employeeName { 
-            font-weight: 600;
-            color: var(--dark);
-        }
-        
-        .time-section {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: white;
-            padding: 24px;
-            border-radius: var(--border-radius);
-            margin-bottom: 24px;
-            box-shadow: var(--shadow);
-        }
-        
-        #time { 
-            font-size: 2.5rem; 
-            font-weight: 700; 
-            letter-spacing: 1px;
-            margin-bottom: 8px;
-        }
-        
-        #date { 
-            font-size: 1.1rem; 
-            opacity: 0.9; 
-        }
-        
-        .stats-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-        
-        .stat-box {
-            background-color: white;
-            padding: 20px 16px;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-        }
-        
-        .stat-box:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-lg);
-        }
-        
-        .stat-box i { 
-            font-size: 2rem; 
-            margin-bottom: 12px; 
-            color: var(--primary); 
-        }
-        
-        .stat-value { 
-            font-size: 1.8rem; 
-            font-weight: 700; 
-            color: var(--dark); 
-            margin-bottom: 4px;
-        }
-        
-        .stat-label { 
-            font-size: 0.9rem; 
-            color: var(--gray); 
-        }
-        
-        .form-container, .verification-section {
-            background-color: var(--light);
-            padding: 20px;
-            border-radius: var(--border-radius);
+        .form-group {
             margin-bottom: 20px;
-            box-shadow: var(--shadow);
+            text-align: right;
         }
         
-        .form-group { 
-            margin-bottom: 18px; 
-            text-align: right; 
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
         }
         
-        .form-group label { 
-            display: block; 
-            margin-bottom: 8px; 
-            font-weight: 600; 
-            color: var(--dark);
+        .input-group {
+            position: relative;
         }
         
-        input[type="text"], input[type="password"], input[type="number"] {
+        .input-group i {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+        
+        input {
             width: 100%;
-            padding: 14px 16px;
+            padding: 14px 40px 14px 16px;
             border: 1px solid var(--gray-light);
             border-radius: var(--border-radius);
             font-size: 1rem;
-            text-align: right;
             font-family: 'Cairo', sans-serif;
             transition: var(--transition);
         }
         
-        input:focus { 
-            border-color: var(--primary); 
+        input:focus {
             outline: none;
+            border-color: var(--primary);
             box-shadow: 0 0 0 3px var(--primary-light);
         }
         
-        .button-group { 
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            gap: 12px; 
-            margin-bottom: 16px;
-        }
-        
-        button {
+        .btn {
+            width: 100%;
             padding: 14px 16px;
             border: none;
             border-radius: var(--border-radius);
@@ -447,390 +124,253 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
+            background-color: var(--primary);
+            color: white;
         }
         
-        button:hover:not(:disabled) { 
-            transform: translateY(-2px); 
+        .btn:hover:not(:disabled) {
+            background-color: var(--primary-dark);
             box-shadow: var(--shadow);
+            transform: translateY(-2px);
         }
         
-        button:disabled { 
-            background: var(--gray-light); 
+        .btn:disabled {
+            background-color: var(--gray-light);
             color: var(--gray);
-            cursor: not-allowed; 
-            opacity: 0.7; 
-        }
-        
-        #checkInBtn { 
-            background: var(--success); 
-            color: white; 
-        }
-        
-        #checkInBtn:hover:not(:disabled) {
-            background: #15803d;
-        }
-        
-        #checkOutBtn { 
-            background: var(--danger); 
-            color: white; 
-        }
-        
-        #checkOutBtn:hover:not(:disabled) {
-            background: #b91c1c;
-        }
-        
-        .action-buttons { 
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            gap: 12px; 
-            margin-top: 16px; 
-        }
-        
-        .action-btn { 
-            background-color: white; 
-            border: 1px solid var(--gray-light); 
-            color: var(--dark); 
-        }
-        
-        .action-btn:hover { 
-            border-color: var(--primary); 
-            color: var(--primary); 
-            background-color: var(--primary-light);
-        }
-        
-        #message-container {
-            position: fixed; 
-            bottom: 20px; 
-            right: 20px; 
-            z-index: 9999;
-            max-width: 350px;
-        }
-        
-        #message {
-            font-weight: 600; 
-            padding: 16px 20px; 
-            border-radius: var(--border-radius);
-            text-align: right; 
-            box-shadow: var(--shadow-lg);
-            display: none;
-            animation: slideIn 0.3s ease;
-        }
-        
-        @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-        
-        .success { 
-            background-color: var(--success-light); 
-            color: #166534; 
-            border-left: 4px solid var(--success);
-        }
-        
-        .error { 
-            background-color: var(--danger-light); 
-            color: #991b1b; 
-            border-left: 4px solid var(--danger);
-        }
-        
-        #human-verification label { 
-            font-weight: 700; 
-            color: var(--dark);
-            margin-bottom: 12px;
-            display: block;
-        }
-        
-        #math-question { 
-            font-size: 1.5rem; 
-            font-weight: bold; 
-            margin: 12px 0; 
-            color: var(--primary);
-        }
-        
-        #main-form { 
-            display: none; 
+            cursor: not-allowed;
         }
         
         .loading {
-            display: inline-block;
             width: 20px;
             height: 20px;
-            border: 3px solid rgba(255,255,255,.3);
+            border: 3px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
             border-top-color: #fff;
             animation: spin 1s ease-in-out infinite;
         }
         
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        /* Dashboard Styles */
+        .dashboard {
+            display: none; /* Initially hidden */
+            width: 100%;
+            max-width: 800px;
         }
         
-        /* --- نافذة التقرير --- */
-        .report-modal {
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6); 
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
-            z-index: 1001; 
-            opacity: 0; 
-            visibility: hidden; 
-            transition: var(--transition);
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
         }
         
-        .report-modal.open { 
-            opacity: 1; 
-            visibility: visible; 
-        }
-        
-        .report-modal-content {
-            background: white; 
-            width: 90%; 
-            max-width: 500px; 
-            border-radius: var(--border-radius);
-            padding: 24px; 
-            box-shadow: var(--shadow-lg);
-            transform: translateY(20px); 
-            transition: var(--transition);
-        }
-        
-        .report-modal.open .report-modal-content { 
-            transform: translateY(0); 
-        }
-        
-        .report-modal-header { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            margin-bottom: 20px; 
-            padding-bottom: 16px; 
-            border-bottom: 1px solid var(--gray-light); 
-        }
-        
-        .report-modal-header h2 { 
-            color: var(--primary); 
-            margin: 0; 
-        }
-        
-        .close-report { 
-            background: none; 
-            border: none; 
-            font-size: 1.5rem; 
-            cursor: pointer; 
-            color: var(--gray);
+        .user-info .avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            transition: var(--transition);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
         }
         
-        .close-report:hover {
-            background-color: var(--gray-light);
-            color: var(--dark);
-        }
+        .user-info h3 { font-size: 1.3rem; }
+        .user-info p { color: var(--gray); }
         
-        .report-form textarea {
-            width: 100%; 
-            padding: 16px; 
-            border: 1px solid var(--gray-light); 
+        .logout-btn {
+            background: none;
+            border: 1px solid var(--danger);
+            color: var(--danger);
+            padding: 8px 12px;
             border-radius: var(--border-radius);
-            font-family: 'Cairo', sans-serif; 
-            font-size: 1rem; 
-            min-height: 160px; 
-            margin-bottom: 20px;
-            resize: vertical;
+            font-size: 0.9rem;
+        }
+        .logout-btn:hover { background-color: var(--danger-light); }
+        
+        .time-section {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 24px;
+            border-radius: var(--border-radius);
+            text-align: center;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow);
+        }
+        
+        .time-section #time { font-size: 2.5rem; font-weight: 700; }
+        .time-section #date { font-size: 1.1rem; opacity: 0.9; }
+        
+        .dashboard-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .action-card {
+            background: white;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            text-align: center;
+            box-shadow: var(--shadow);
+            cursor: pointer;
             transition: var(--transition);
         }
         
-        .report-form textarea:focus {
-            border-color: var(--primary);
-            outline: none;
-            box-shadow: 0 0 0 3px var(--primary-light);
+        .action-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+            color: var(--primary);
         }
         
-        .report-form button { 
-            width: 100%; 
-            background-color: var(--success); 
-            color: white; 
+        .action-card i { font-size: 2.5rem; margin-bottom: 12px; }
+        .action-card p { font-weight: 600; }
+        
+        .stats-section {
+            background: white;
+            padding: 24px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
         }
         
-        .report-form button:hover {
-            background-color: #15803d;
+        .stats-header {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--gray-light);
+            padding-bottom: 12px;
         }
         
-        /* --- تصميم متجاوب --- */
-        @media (max-width: 768px) {
-            :root {
-                --sidebar-width: 85%;
-            }
-            
-            body { 
-                align-items: flex-start; 
-                padding: 12px;
-            }
-            
-            .portal-container { 
-                padding: 20px; 
-                margin-top: 0; 
-            }
-            
-            #time { 
-                font-size: 2rem; 
-            }
-            
-            .stats-container, .button-group, .action-buttons { 
-                grid-template-columns: 1fr; 
-            }
-            
-            .header { 
-                flex-direction: row; 
-            }
-            
-            .header h2 {
-                font-size: 1.3rem;
-            }
-            
-            .user-greeting {
-                flex-direction: column;
-                gap: 8px;
-            }
-            
-            #employeeName {
-                font-size: 0.9rem;
-            }
-            
-            .avatar {
-                width: 40px;
-                height: 40px;
-                font-size: 1.2rem;
-            }
-            
-            .sidebar-user {
-                padding: 16px;
-            }
-            
-            .user-avatar {
-                width: 70px;
-                height: 70px;
-                font-size: 2rem;
-            }
-            
-            .sidebar-stats {
-                grid-template-columns: 1fr;
-            }
-            
-            #message-container {
-                right: 12px;
-                bottom: 12px;
-                left: 12px;
-                max-width: none;
-            }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 16px;
         }
+        
+        .stat-item { text-align: center; }
+        .stat-item .value { font-size: 1.8rem; font-weight: 700; }
+        .stat-item .label { color: var(--gray); font-size: 0.9rem; }
+        .value.absent { color: var(--danger); }
+        .value.present { color: var(--success); }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0; top: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.6);
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 28px;
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 400px;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-header h2 { color: var(--primary); }
+        
+        .close-btn {
+            font-size: 1.8rem;
+            color: var(--gray);
+            cursor: pointer;
+            border: none; background: none;
+        }
+        
+        #toast-container {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .toast {
+            padding: 15px 20px;
+            border-radius: var(--border-radius);
+            color: #fff;
+            font-weight: bold;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            transform: translateY(-100px);
+            animation: slideDown 0.5s forwards;
+        }
+        
+        @keyframes slideDown { to { opacity: 1; transform: translateY(0); } }
+        
+        .toast.success { background-color: var(--success); }
+        .toast.error { background-color: var(--danger); }
         
         @media (max-width: 480px) {
-            .portal-container {
-                padding: 16px;
-            }
-            
-            .time-section {
-                padding: 20px;
-            }
-            
-            #time {
-                font-size: 1.8rem;
-            }
-            
-            .form-container, .verification-section {
-                padding: 16px;
-            }
-            
-            .sidebar {
-                padding: 16px;
-            }
-            
-            .report-modal-content {
-                padding: 20px;
-            }
+            .card { padding: 20px; }
+            .time-section #time { font-size: 2rem; }
         }
     </style>
 </head>
 <body>
+    <div id="toast-container"></div>
 
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <h2>الملف الشخصي</h2>
-            <button class="close-sidebar" id="close-sidebar"><i class="fas fa-times"></i></button>
-        </div>
-        
-        <div class="sidebar-user">
-            <div class="user-avatar" id="sidebar-avatar"></div>
-            <h3 id="sidebar-name"></h3>
-            <p id="sidebar-username"></p>
-        </div>
-        
-        <div class="sidebar-stats">
-            <div class="sidebar-stat">
-                <i class="fas fa-calendar-check"></i>
-                <div class="sidebar-stat-value" id="sidebar-days">--</div>
-                <div class="sidebar-stat-label">إجمالي الحضور</div>
+    <div id="login-view" class="container">
+        <div class="card">
+            <div class="card-header">
+                <h2>تسجيل الدخول</h2>
+                <p>مرحباً بك مجدداً! الرجاء إدخال بياناتك</p>
             </div>
-            <div class="sidebar-stat">
-                <i class="fas fa-business-time"></i>
-                <div class="sidebar-stat-value" id="sidebar-shift">--</div>
-                <div class="sidebar-stat-label">وردية اليوم</div>
-            </div>
-        </div>
-        
-        <ul class="sidebar-menu">
-            <li><a href="#" class="active"><i class="fas fa-home"></i> الرئيسية</a></li>
-            <li><a href="#"><i class="fas fa-history"></i> سجل الحضور</a></li>
-            <li><a href="#"><i class="fas fa-file-alt"></i> تقاريري</a></li>
-            <li><a href="#"><i class="fas fa-user-cog"></i> الإعدادات</a></li>
-        </ul>
-        
-        <div class="sidebar-footer">
-             <a href="#" id="logout-btn" class="logout-btn"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</a>
-        </div>
-    </div>
-    
-    <div class="sidebar-overlay" id="sidebar-overlay"></div>
-
-    <div class="report-modal" id="report-modal">
-        <div class="report-modal-content">
-            <div class="report-modal-header">
-                <h2>التقرير اليومي</h2>
-                <button class="close-report" id="close-report"><i class="fas fa-times"></i></button>
-            </div>
-            <form id="report-form">
-                <textarea class="report-form-textarea" placeholder="اكتب تقريرك اليومي هنا..." required></textarea>
-                <button type="submit"><i class="fas fa-check"></i> حفظ التقرير</button>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="username">الاسم الرمزي</label>
+                    <div class="input-group">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="username" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="password">كلمة المرور</label>
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="password" required>
+                    </div>
+                </div>
+                <button type="submit" id="login-btn" class="btn">
+                    <span>تسجيل الدخول</span>
+                </button>
             </form>
         </div>
     </div>
 
-    <div class="portal-container">
-        <div id="message-container"><div id="message"></div></div>
-
-        <div class="header">
-            <button class="menu-toggle" id="menu-toggle"><i class="fas fa-bars"></i></button>
-            <h2>بوابة الموظف</h2>
-            <div class="user-greeting">
-                <div id="employeeName">مرحباً بك</div>
-                <div class="avatar" id="avatar-toggle"></div>
+    <div id="dashboard-view" class="container dashboard">
+        <div class="dashboard-header">
+            <div class="user-info">
+                <div class="avatar" id="user-avatar"></div>
+                <h3 id="user-name"></h3>
+                <p id="user-username"></p>
             </div>
+            <button id="logout-btn" class="btn logout-btn">
+                <i class="fas fa-sign-out-alt"></i> خروج
+            </button>
         </div>
         
         <div class="time-section">
@@ -838,59 +378,83 @@
             <div id="date">...</div>
         </div>
         
-        <div class="stats-container">
-            <div class="stat-box">
-                <i class="fas fa-calendar-check"></i>
-                <div class="stat-value" id="daysWorked">--</div>
-                <div class="stat-label">إجمالي أيام الحضور</div>
+        <div class="dashboard-actions">
+            <div id="check-in-card" class="action-card">
+                <i class="fas fa-sign-in-alt"></i>
+                <p>تسجيل حضور</p>
             </div>
-            <div class="stat-box">
-                <i class="fas fa-info-circle"></i>
-                <div class="stat-value" id="attendanceStatus" style="font-size: 1.2rem;">لم تسجل حضور</div>
-                <div class="stat-label">حالة اليوم</div>
+            <div id="check-out-card" class="action-card">
+                <i class="fas fa-sign-out-alt"></i>
+                <p>تسجيل انصراف</p>
+            </div>
+            <div id="report-card" class="action-card">
+                <i class="fas fa-file-alt"></i>
+                <p>التقرير اليومي</p>
             </div>
         </div>
-
-        <div id="human-verification" class="verification-section">
-            <label>للتحقق، الرجاء حل العملية الحسابية:</label>
-            <div id="math-question">5 + 3 = ?</div>
-            <input type="number" id="math-answer" placeholder="أدخل الإجابة هنا">
-            <button id="verify-btn" style="width:100%; margin-top: 10px; background-color: var(--primary); color: white;">تحقق</button>
-        </div>
-
-        <div id="main-form" style="display: none;">
-            <div class="form-container">
-                <div class="form-group">
-                    <label for="employeeSymbolicName">الاسم الرمزي</label>
-                    <input type="text" id="employeeSymbolicName" required>
+        
+        <div class="stats-section">
+            <h3 class="stats-header">إحصائياتي</h3>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="value present" id="total-days-worked">--</div>
+                    <div class="label">إجمالي الحضور</div>
                 </div>
-                <div class="form-group">
-                    <label for="employeePassword">كلمة المرور</label>
-                    <input type="password" id="employeePassword" required>
+                <div class="stat-item">
+                    <div class="value absent" id="total-absences">--</div>
+                    <div class="label">إجمالي الغيابات</div>
                 </div>
-                <div class="form-group">
-                    <label for="dailyCode">الرمز اليومي</label>
-                    <input type="text" id="dailyCode" required>
+                <div class="stat-item">
+                    <div class="value" id="attendance-status">--</div>
+                    <div class="label">حالة اليوم</div>
                 </div>
-            </div>
-            
-            <div class="button-group">
-                <button id="checkInBtn"><i class="fas fa-sign-in-alt"></i> تسجيل حضور</button>
-                <button id="checkOutBtn"><i class="fas fa-sign-out-alt"></i> تسجيل انصراف</button>
-            </div>
-            
-            <div class="action-buttons">
-                <button id="editReportBtn" class="action-btn"><i class="fas fa-edit"></i> كتابة / تعديل التقرير</button>
-                <button id="viewReportBtn" class="action-btn"><i class="fas fa-file-alt"></i> عرض التقارير</button>
             </div>
         </div>
     </div>
 
-    <script type="module">
-        import { initializeApp as initializeFirebaseApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, query, where, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+    <div id="daily-code-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>شيفرة الحضور</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <form id="daily-code-form">
+                <div class="form-group">
+                    <label for="daily-code">الرجاء إدخال شيفرة الحضور لليوم</label>
+                    <div class="input-group">
+                        <i class="fas fa-key"></i>
+                        <input type="text" id="daily-code" required autocomplete="off">
+                    </div>
+                </div>
+                <button type="submit" id="submit-check-in-btn" class="btn">
+                    <span>تأكيد الحضور</span>
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <div id="report-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>التقرير اليومي</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <form id="report-form">
+                <div class="form-group">
+                    <label for="report-text">اكتب تقريرك هنا</label>
+                    <textarea id="report-text" rows="6" style="width: 100%; padding: 10px; border-radius: var(--border-radius); border: 1px solid var(--gray-light); font-family: 'Cairo', sans-serif; resize: vertical;"></textarea>
+                </div>
+                <button type="submit" id="save-report-btn" class="btn">
+                    <span>حفظ التقرير</span>
+                </button>
+            </form>
+        </div>
+    </div>
 
-        // --- إعدادات Firebase (نفس إعدادات لوحة التحكم) ---
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+        import { getFirestore, doc, getDoc, setDoc, onSnapshot, query, where, collection, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+
         const firebaseConfig = {
             apiKey: "AIzaSyA1VBBOZQOUwnHp8x487g7lkn14x6Sp-7g",
             authDomain: "stoke-c650a.firebaseapp.com",
@@ -904,106 +468,79 @@
         
         let db;
         try {
-            const app = initializeFirebaseApp(firebaseConfig);
+            const app = initializeApp(firebaseConfig);
             db = getFirestore(app);
         } catch (e) {
-            document.body.innerHTML = `
-                <div class="portal-container">
-                    <div class="header">
-                        <h2>بوابة الموظف</h2>
-                    </div>
-                    <div style="padding: 40px 20px; text-align: center; color: var(--danger);">
-                        <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 20px;"></i>
-                        <h3>خطأ في الاتصال</h3>
-                        <p>لا يمكن الاتصال بقاعدة البيانات. يرجى التحقق من اتصال الإنترنت والمحاولة مرة أخرى.</p>
-                    </div>
-                </div>
-            `;
+            showToast("خطأ في الاتصال بقاعدة البيانات", "error");
             console.error(e);
         }
 
-        // --- عناصر الواجهة ---
         const DOMElements = {
+            loginView: document.getElementById('login-view'),
+            dashboardView: document.getElementById('dashboard-view'),
+            loginForm: document.getElementById('login-form'),
+            loginBtn: document.getElementById('login-btn'),
+            usernameInput: document.getElementById('username'),
+            passwordInput: document.getElementById('password'),
+            logoutBtn: document.getElementById('logout-btn'),
+            userAvatar: document.getElementById('user-avatar'),
+            userName: document.getElementById('user-name'),
+            userUsername: document.getElementById('user-username'),
             time: document.getElementById('time'),
             date: document.getElementById('date'),
-            employeeName: document.getElementById('employeeName'),
-            daysWorked: document.getElementById('daysWorked'),
-            attendanceStatus: document.getElementById('attendanceStatus'),
-            mathQuestion: document.getElementById('math-question'),
-            mathAnswer: document.getElementById('math-answer'),
-            mainForm: document.getElementById('main-form'),
-            nameInput: document.getElementById('employeeSymbolicName'),
-            passwordInput: document.getElementById('employeePassword'),
-            codeInput: document.getElementById('dailyCode'),
-            message: document.getElementById('message'),
-            checkInBtn: document.getElementById('checkInBtn'),
-            checkOutBtn: document.getElementById('checkOutBtn'),
-            editReportBtn: document.getElementById('editReportBtn'),
-            viewReportBtn: document.getElementById('viewReportBtn'),
-            humanVerification: document.getElementById('human-verification'),
-            verifyBtn: document.getElementById('verify-btn'),
-            menuToggle: document.getElementById('menu-toggle'),
-            sidebar: document.getElementById('sidebar'),
-            closeSidebar: document.getElementById('close-sidebar'),
-            sidebarOverlay: document.getElementById('sidebar-overlay'),
-            avatarToggle: document.getElementById('avatar-toggle'),
-            mainAvatar: document.querySelector('.avatar'),
-            sidebarAvatar: document.getElementById('sidebar-avatar'),
-            sidebarName: document.getElementById('sidebar-name'),
-            sidebarUsername: document.getElementById('sidebar-username'),
-            sidebarDays: document.getElementById('sidebar-days'),
-            sidebarShift: document.getElementById('sidebar-shift'),
+            checkInCard: document.getElementById('check-in-card'),
+            checkOutCard: document.getElementById('check-out-card'),
+            reportCard: document.getElementById('report-card'),
+            totalDaysWorked: document.getElementById('total-days-worked'),
+            totalAbsences: document.getElementById('total-absences'),
+            attendanceStatus: document.getElementById('attendance-status'),
+            dailyCodeModal: document.getElementById('daily-code-modal'),
+            dailyCodeForm: document.getElementById('daily-code-form'),
+            dailyCodeInput: document.getElementById('daily-code'),
+            submitCheckInBtn: document.getElementById('submit-check-in-btn'),
             reportModal: document.getElementById('report-modal'),
-            closeReport: document.getElementById('close-report'),
             reportForm: document.getElementById('report-form'),
-            reportTextarea: document.querySelector('.report-form-textarea'),
-            logoutBtn: document.getElementById('logout-btn'),
+            reportText: document.getElementById('report-text'),
+            saveReportBtn: document.getElementById('save-report-btn'),
         };
-
-        // --- متغيرات الحالة ---
-        let appState = {
-            mathCorrectAnswer: 0,
+        
+        const state = {
             currentUser: null,
-            dailyReport: "",
-            isCheckedIn: false,
-            isLoading: false,
-            todayAttendance: null
+            todayAttendance: null,
+            qrSettings: null,
         };
         
         const todayDateString = new Date().toISOString().split('T')[0];
 
-        // --- دوال مساعدة ---
+        // --- Helper Functions ---
+        const showToast = (message, type = 'success') => {
+            const toastContainer = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-times-circle'}"></i> ${message}`;
+            toastContainer.appendChild(toast);
+            setTimeout(() => toast.remove(), 4000);
+        };
+        
+        const setLoading = (button, isLoading, text) => {
+            if (isLoading) {
+                button.disabled = true;
+                button.innerHTML = `<span class="loading"></span> <span>${text || 'جاري المعالجة...'}</span>`;
+            } else {
+                button.disabled = false;
+                button.innerHTML = `<span>${button.dataset.originalText}</span>`;
+            }
+        };
+        
+        const openModal = (modal) => modal.style.display = 'flex';
+        const closeModal = (modal) => modal.style.display = 'none';
+
         async function hashPassword(password) {
             const data = new TextEncoder().encode(password);
             const hashBuffer = await crypto.subtle.digest('SHA-256', data);
             return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
         }
-        
-        const showMessage = (text, type) => {
-            DOMElements.message.textContent = text;
-            DOMElements.message.className = type;
-            DOMElements.message.style.display = 'block';
-            setTimeout(() => { DOMElements.message.style.display = 'none'; }, 4000);
-        };
-        
-        const setLoading = (button, isLoading) => {
-            if (isLoading) {
-                button.innerHTML = `<span class="loading"></span> جاري المعالجة...`;
-                button.disabled = true;
-            } else {
-                // استعادة النص الأصلي بناءً على الزر
-                if (button.id === 'checkInBtn') {
-                    button.innerHTML = `<i class="fas fa-sign-in-alt"></i> تسجيل حضور`;
-                } else if (button.id === 'checkOutBtn') {
-                    button.innerHTML = `<i class="fas fa-sign-out-alt"></i> تسجيل انصراف`;
-                } else if (button.type === 'submit' && button.closest('#report-form')) {
-                    button.innerHTML = `<i class="fas fa-check"></i> حفظ التقرير`;
-                }
-                button.disabled = false;
-            }
-        };
 
-        // --- دوال الواجهة والتحديث ---
         const updateTime = () => {
             const now = new Date();
             DOMElements.time.textContent = now.toLocaleTimeString('en-GB');
@@ -1011,355 +548,249 @@
             DOMElements.date.textContent = now.toLocaleDateString('ar-EG', options);
         };
 
-        const generateMathQuestion = () => {
-            const num1 = Math.floor(Math.random() * 10) + 1;
-            const num2 = Math.floor(Math.random() * 10) + 1;
-            appState.mathCorrectAnswer = num1 + num2;
-            DOMElements.mathQuestion.textContent = `${num1} + ${num2} = ?`;
-            DOMElements.mathAnswer.value = '';
+        // --- UI Update Functions ---
+        const showView = (view) => {
+            DOMElements.loginView.style.display = 'none';
+            DOMElements.dashboardView.style.display = 'none';
+            view.style.display = 'block';
+        };
+
+        const updateDashboardUI = () => {
+            if (!state.currentUser) return;
+            DOMElements.userAvatar.textContent = state.currentUser.name.charAt(0);
+            DOMElements.userName.textContent = `مرحباً، ${state.currentUser.name}`;
+            DOMElements.userUsername.textContent = `@${state.currentUser.username}`;
+            updateStats();
         };
         
-        const updateUIForLogin = (employee, attendance) => {
-            const initial = employee.name.charAt(0);
-            DOMElements.employeeName.textContent = `مرحباً، ${employee.name}`;
-            
-            // تحديث القائمة الجانبية
-            DOMElements.sidebarName.textContent = employee.name;
-            DOMElements.sidebarUsername.textContent = employee.username;
-            DOMElements.mainAvatar.textContent = initial;
-            DOMElements.sidebarAvatar.textContent = initial;
+        const updateStats = async () => {
+            // Update attendance status for today
+            const docId = `${state.currentUser.username}_${todayDateString}`;
+            const attendanceDoc = await getDoc(doc(db, "attendance", docId));
+            state.todayAttendance = attendanceDoc.exists() ? attendanceDoc.data() : null;
 
-            // تحديث حالة الأزرار والنموذج
-            DOMElements.checkInBtn.disabled = true;
-            DOMElements.checkOutBtn.disabled = false;
-            DOMElements.editReportBtn.disabled = false;
-            DOMElements.nameInput.disabled = true;
-            DOMElements.passwordInput.disabled = true;
-            DOMElements.codeInput.disabled = true;
-            DOMElements.attendanceStatus.textContent = "تم تسجيل الحضور";
-            DOMElements.attendanceStatus.style.color = "var(--success)";
-            
-            // إذا كان هناك تقرير، قم بتحديثه
-            if (attendance && attendance.report) {
-                appState.dailyReport = attendance.report;
+            if (state.todayAttendance) {
+                DOMElements.attendanceStatus.textContent = 'تم تسجيل الحضور';
+                DOMElements.attendanceStatus.style.color = 'var(--success)';
+            } else {
+                DOMElements.attendanceStatus.textContent = 'لم يتم تسجيل الحضور';
+                DOMElements.attendanceStatus.style.color = 'var(--warning)';
             }
-            
-            appState.currentUser = employee;
-            appState.isCheckedIn = true;
-            appState.todayAttendance = attendance;
-            
-            // تحديث إحصائيات المستخدم
-            updateUserStats(employee.id);
-        };
 
-        const updateUIForLogout = () => {
-            DOMElements.employeeName.textContent = `مرحباً بك`;
-            DOMElements.daysWorked.textContent = '--';
-            DOMElements.attendanceStatus.textContent = "لم تسجل حضور";
-            DOMElements.attendanceStatus.style.color = "var(--dark)";
-            
-            DOMElements.sidebarName.textContent = '';
-            DOMElements.sidebarUsername.textContent = '';
-            DOMElements.sidebarDays.textContent = '--';
-            DOMElements.sidebarShift.textContent = '--';
-            DOMElements.mainAvatar.textContent = '';
-            DOMElements.sidebarAvatar.textContent = '';
-            
-            DOMElements.checkInBtn.disabled = false;
-            DOMElements.checkOutBtn.disabled = true;
-            DOMElements.editReportBtn.disabled = true;
-            
-            DOMElements.nameInput.disabled = false;
-            DOMElements.passwordInput.disabled = false;
-            DOMElements.codeInput.disabled = false;
-            DOMElements.nameInput.value = '';
-            DOMElements.passwordInput.value = '';
-            DOMElements.codeInput.value = '';
-            
-            appState.currentUser = null;
-            appState.isCheckedIn = false;
-            appState.dailyReport = "";
-            appState.todayAttendance = null;
-            DOMElements.reportTextarea.value = "";
-            
-            generateMathQuestion();
-            DOMElements.mainForm.style.display = 'none';
-            DOMElements.humanVerification.style.display = 'block';
-        };
+            // Update total days worked & absences
+            const q = query(collection(db, "attendance"), where("employeeSymbolicName", "==", state.currentUser.username));
+            const querySnapshot = await getDocs(q);
+            const totalDaysWorked = querySnapshot.size;
+            DOMElements.totalDaysWorked.textContent = totalDaysWorked;
 
-        // --- دوال Firebase ---
-        const updateUserStats = async (userId) => {
-            try {
-                // جلب عدد أيام الحضور
-                const attendanceRef = collection(db, "attendance");
-                const q = query(attendanceRef, where("employeeId", "==", userId));
-                const querySnapshot = await getDocs(q);
-                const daysCount = querySnapshot.size;
-                
-                DOMElements.daysWorked.textContent = daysCount;
-                DOMElements.sidebarDays.textContent = daysCount;
-                
-                // جلب وردية اليوم
+            if (state.currentUser.createdAt) {
+                const startDate = state.currentUser.createdAt.toDate();
                 const today = new Date();
-                const dayOfWeek = today.getDay();
-                const shifts = ["صباحية", "مسائية", "ليلية"];
-                const shift = shifts[dayOfWeek % 3];
-                DOMElements.sidebarShift.textContent = shift;
+                // To prevent counting the start day as a full day if they start late, we normalize the time
+                startDate.setHours(0,0,0,0);
+                today.setHours(0,0,0,0);
                 
-            } catch (error) {
-                console.error("خطأ في جلب إحصائيات المستخدم:", error);
+                const diffTime = Math.abs(today - startDate);
+                // +1 to include the current day in the count of total possible work days
+                const totalDaysSinceStart = Math.round(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                
+                const totalAbsences = Math.max(0, totalDaysSinceStart - totalDaysWorked);
+                DOMElements.totalAbsences.textContent = totalAbsences;
+            } else {
+                DOMElements.totalAbsences.textContent = '--';
             }
         };
 
-        const checkAttendance = async (employeeId) => {
-            try {
-                const docRef = doc(db, "attendance", `${employeeId}_${todayDateString}`);
-                const docSnap = await getDoc(docRef);
-                
-                if (docSnap.exists()) {
-                    return docSnap.data();
-                }
-                return null;
-            } catch (error) {
-                console.error("خطأ في التحقق من الحضور:", error);
-                return null;
-            }
-        };
+        // --- App Logic ---
+        const handleLogin = async (e) => {
+            e.preventDefault();
+            const username = DOMElements.usernameInput.value.trim();
+            const password = DOMElements.passwordInput.value.trim();
+            
+            if (!username || !password) return showToast("الرجاء ملء جميع الحقول", "error");
 
-        const verifyEmployee = async (symbolicName, password, dailyCode) => {
+            setLoading(DOMElements.loginBtn, true, 'جارِ التحقق...');
+            
             try {
-                // جلب الموظف بناءً على الاسم الرمزي
-                const employeesRef = collection(db, "employees");
-                const q = query(employeesRef, where("symbolicName", "==", symbolicName));
-                const querySnapshot = await getDocs(q);
-                
-                if (querySnapshot.empty) {
-                    return { success: false, message: "الاسم الرمزي غير صحيح" };
+                const userDoc = await getDoc(doc(db, "employees", username));
+                if (!userDoc.exists()) {
+                    showToast("الاسم الرمزي أو كلمة المرور غير صحيحة", "error");
+                    return;
                 }
                 
-                const employeeDoc = querySnapshot.docs[0];
-                const employee = { id: employeeDoc.id, ...employeeDoc.data() };
-                
-                // التحقق من كلمة المرور
+                const user = { username: userDoc.id, ...userDoc.data() };
                 const hashedPassword = await hashPassword(password);
-                if (employee.password !== hashedPassword) {
-                    return { success: false, message: "كلمة المرور غير صحيحة" };
-                }
-                
-                // التحقق من الرمز اليومي
-                if (employee.dailyCode !== dailyCode) {
-                    return { success: false, message: "الرمز اليومي غير صحيح" };
-                }
-                
-                return { success: true, employee };
-            } catch (error) {
-                console.error("خطأ في التحقق من بيانات الموظف:", error);
-                return { success: false, message: "حدث خطأ أثناء التحقق" };
-            }
-        };
 
-        const recordAttendance = async (type) => {
-            if (!appState.currentUser) return;
-            
-            try {
-                setLoading(type === 'checkin' ? DOMElements.checkInBtn : DOMElements.checkOutBtn, true);
-                
-                const now = new Date();
-                const timeString = now.toLocaleTimeString('ar-EG');
-                const dateString = now.toISOString().split('T')[0];
-                const docId = `${appState.currentUser.id}_${dateString}`;
-                
-                const attendanceData = {
-                    employeeId: appState.currentUser.id,
-                    employeeName: appState.currentUser.name,
-                    date: dateString,
-                    report: appState.dailyReport
-                };
-                
-                if (type === 'checkin') {
-                    attendanceData.checkInTime = timeString;
-                    attendanceData.checkInTimestamp = now;
-                } else {
-                    attendanceData.checkOutTime = timeString;
-                    attendanceData.checkOutTimestamp = now;
+                if (user.hashedPassword !== hashedPassword) {
+                    showToast("الاسم الرمزي أو كلمة المرور غير صحيحة", "error");
+                    return;
                 }
                 
-                await setDoc(doc(db, "attendance", docId), attendanceData, { merge: true });
-                
-                showMessage(`تم تسجيل ${type === 'checkin' ? 'الحضور' : 'الانصراف'} بنجاح`, 'success');
-                
-                if (type === 'checkin') {
-                    updateUIForLogin(appState.currentUser, attendanceData);
-                } else {
-                    updateUIForLogout();
-                }
-                
+                state.currentUser = user;
+                localStorage.setItem('loggedInUser', username);
+                showToast(`أهلاً بك مجدداً، ${user.name}`, "success");
+                showView(DOMElements.dashboardView);
+                updateDashboardUI();
+
             } catch (error) {
-                console.error("خطأ في تسجيل الحضور:", error);
-                showMessage("حدث خطأ أثناء التسجيل", 'error');
+                console.error("Login error:", error);
+                showToast("حدث خطأ أثناء تسجيل الدخول", "error");
             } finally {
-                setLoading(type === 'checkin' ? DOMElements.checkInBtn : DOMElements.checkOutBtn, false);
+                setLoading(DOMElements.loginBtn, false);
             }
         };
 
-        const saveDailyReport = async () => {
-            if (!appState.currentUser) return;
+        const handleLogout = () => {
+            state.currentUser = null;
+            localStorage.removeItem('loggedInUser');
+            DOMElements.loginForm.reset();
+            showView(DOMElements.loginView);
+            showToast("تم تسجيل الخروج بنجاح");
+        };
+
+        const handleCheckIn = async (e) => {
+            e.preventDefault();
+            const dailyCode = DOMElements.dailyCodeInput.value.trim();
+
+            if (!dailyCode) return showToast("الرجاء إدخال الشيفرة", "error");
+            if (!state.qrSettings) return showToast("إعدادات الشيفرة غير متاحة", "error");
+
+            if (!state.qrSettings.isActive) {
+                return showToast("نظام الحضور غير مفعل حالياً", "error");
+            }
+            if (state.qrSettings.dailyCode !== dailyCode) {
+                return showToast("الشيفرة اليومية غير صحيحة", "error");
+            }
+            if (state.qrSettings.activeDate !== todayDateString) {
+                return showToast("هذه الشيفرة منتهية الصلاحية", "error");
+            }
+
+            setLoading(DOMElements.submitCheckInBtn, true, 'جارِ تسجيل الحضور...');
             
             try {
-                setLoading(DOMElements.reportForm.querySelector('button'), true);
+                const now = new Date();
+                const shift = now.getHours() < 14 ? 'morning' : 'evening'; // Example shift logic
+                const docId = `${state.currentUser.username}_${todayDateString}`;
                 
-                const reportText = DOMElements.reportTextarea.value;
-                appState.dailyReport = reportText;
-                
-                const docId = `${appState.currentUser.id}_${todayDateString}`;
-                await updateDoc(doc(db, "attendance", docId), {
-                    report: reportText
+                await setDoc(doc(db, "attendance", docId), {
+                    employeeName: state.currentUser.name,
+                    employeeSymbolicName: state.currentUser.username,
+                    date: todayDateString,
+                    checkIn: now,
+                    shift: shift,
+                    report: ""
                 });
                 
-                showMessage("تم حفظ التقرير بنجاح", 'success');
-                setTimeout(() => {
-                    DOMElements.reportModal.classList.remove('open');
-                }, 1500);
-                
+                showToast("تم تسجيل الحضور بنجاح", "success");
+                closeModal(DOMElements.dailyCodeModal);
+                updateStats();
+
             } catch (error) {
-                console.error("خطأ في حفظ التقرير:", error);
-                showMessage("حدث خطأ أثناء حفظ التقرير", 'error');
+                console.error("Check-in error:", error);
+                showToast("حدث خطأ أثناء تسجيل الحضور", "error");
             } finally {
-                setLoading(DOMElements.reportForm.querySelector('button'), false);
+                setLoading(DOMElements.submitCheckInBtn, false);
             }
         };
 
-        // --- معالجات الأحداث ---
-        DOMElements.verifyBtn.addEventListener('click', async () => {
-            const userAnswer = parseInt(DOMElements.mathAnswer.value);
+        const handleCheckOut = async () => {
+            if (!state.todayAttendance) return showToast("يجب تسجيل الحضور أولاً", "error");
+            if (state.todayAttendance.checkOut) return showToast("لقد سجلت انصرافك بالفعل", "error");
             
-            if (isNaN(userAnswer)) {
-                showMessage("يرجى إدخال إجابة صحيحة", 'error');
-                return;
-            }
-            
-            if (userAnswer !== appState.mathCorrectAnswer) {
-                showMessage("الإجابة غير صحيحة، حاول مرة أخرى", 'error');
-                generateMathQuestion();
-                return;
-            }
-            
-            // إذا كانت الإجابة صحيحة، إظهار النموذج الرئيسي
-            DOMElements.humanVerification.style.display = 'none';
-            DOMElements.mainForm.style.display = 'block';
-        });
+            const confirmed = confirm("هل أنت متأكد من رغبتك في تسجيل الانصراف؟");
+            if (!confirmed) return;
 
-        DOMElements.checkInBtn.addEventListener('click', async () => {
-            const symbolicName = DOMElements.nameInput.value.trim();
-            const password = DOMElements.passwordInput.value.trim();
-            const dailyCode = DOMElements.codeInput.value.trim();
-            
-            if (!symbolicName || !password || !dailyCode) {
-                showMessage("يرجى ملء جميع الحقول", 'error');
-                return;
+            try {
+                const docId = `${state.currentUser.username}_${todayDateString}`;
+                await updateDoc(doc(db, "attendance", docId), {
+                    checkOut: new Date()
+                });
+                showToast("تم تسجيل الانصراف بنجاح");
+                updateStats();
+            } catch (error) {
+                console.error("Check-out error:", error);
+                showToast("حدث خطأ أثناء تسجيل الانصراف", "error");
             }
-            
-            const result = await verifyEmployee(symbolicName, password, dailyCode);
-            
-            if (!result.success) {
-                showMessage(result.message, 'error');
-                return;
-            }
-            
-            // التحقق مما إذا كان قد سجل حضور بالفعل اليوم
-            const todayAttendance = await checkAttendance(result.employee.id);
-            
-            if (todayAttendance && todayAttendance.checkInTime) {
-                showMessage("لقد سجلت حضورك مسبقاً اليوم", 'error');
-                updateUIForLogin(result.employee, todayAttendance);
-                return;
-            }
-            
-            await recordAttendance('checkin');
-        });
+        };
 
-        DOMElements.checkOutBtn.addEventListener('click', async () => {
-            await recordAttendance('checkout');
-        });
-
-        DOMElements.editReportBtn.addEventListener('click', () => {
-            DOMElements.reportTextarea.value = appState.dailyReport;
-            DOMElements.reportModal.classList.add('open');
-        });
-
-        DOMElements.closeReport.addEventListener('click', () => {
-            DOMElements.reportModal.classList.remove('open');
-        });
-
-        DOMElements.reportForm.addEventListener('submit', (e) => {
+        const handleSaveReport = async (e) => {
             e.preventDefault();
-            saveDailyReport();
-        });
+            if (!state.todayAttendance) return showToast("يجب تسجيل الحضور أولاً لكتابة تقرير", "error");
+            
+            const reportText = DOMElements.reportText.value.trim();
+            setLoading(DOMElements.saveReportBtn, true, 'جارِ الحفظ...');
 
-        DOMElements.menuToggle.addEventListener('click', () => {
-            DOMElements.sidebar.classList.add('open');
-            DOMElements.sidebarOverlay.classList.add('open');
-        });
+            try {
+                const docId = `${state.currentUser.username}_${todayDateString}`;
+                await updateDoc(doc(db, "attendance", docId), { report: reportText });
+                state.todayAttendance.report = reportText; // Update state locally
+                showToast("تم حفظ التقرير بنجاح");
+                closeModal(DOMElements.reportModal);
+            } catch (error) {
+                console.error("Report save error:", error);
+                showToast("حدث خطأ أثناء حفظ التقرير", "error");
+            } finally {
+                setLoading(DOMElements.saveReportBtn, false);
+            }
+        };
 
-        DOMElements.closeSidebar.addEventListener('click', () => {
-            DOMElements.sidebar.classList.remove('open');
-            DOMElements.sidebarOverlay.classList.remove('open');
-        });
-
-        DOMElements.sidebarOverlay.addEventListener('click', () => {
-            DOMElements.sidebar.classList.remove('open');
-            DOMElements.sidebarOverlay.classList.remove('open');
-        });
-
-        DOMElements.logoutBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            updateUIForLogout();
-            DOMElements.sidebar.classList.remove('open');
-            DOMElements.sidebarOverlay.classList.remove('open');
-            showMessage("تم تسجيل الخروج بنجاح", 'success');
-        });
-
-        // --- تهيئة التطبيق ---
-        updateTime();
-        setInterval(updateTime, 1000);
-        generateMathQuestion();
-        
-        // تعطيل أزرار الانصراف والتقرير في البداية
-        DOMElements.checkOutBtn.disabled = true;
-        DOMElements.editReportBtn.disabled = true;
-        DOMElements.viewReportBtn.disabled = true;
-        
-        // إضافة تأثيرات للواجهة
-        document.querySelectorAll('.stat-box, .sidebar-stat').forEach(box => {
-            box.addEventListener('mouseenter', () => {
-                box.style.transform = 'translateY(-5px)';
+        const setupEventListeners = () => {
+            DOMElements.loginForm.addEventListener('submit', handleLogin);
+            DOMElements.logoutBtn.addEventListener('click', handleLogout);
+            
+            DOMElements.checkInCard.addEventListener('click', () => {
+                if (state.todayAttendance) return showToast("لقد سجلت حضورك بالفعل اليوم", "error");
+                DOMElements.dailyCodeForm.reset();
+                openModal(DOMElements.dailyCodeModal);
             });
-            box.addEventListener('mouseleave', () => {
-                box.style.transform = 'translateY(0)';
+            
+            DOMElements.dailyCodeForm.addEventListener('submit', handleCheckIn);
+            DOMElements.dailyCodeModal.querySelector('.close-btn').addEventListener('click', () => closeModal(DOMElements.dailyCodeModal));
+
+            DOMElements.checkOutCard.addEventListener('click', handleCheckOut);
+            
+            DOMElements.reportCard.addEventListener('click', () => {
+                if (!state.todayAttendance) return showToast("يجب تسجيل الحضور أولاً", "error");
+                DOMElements.reportText.value = state.todayAttendance.report || '';
+                openModal(DOMElements.reportModal);
             });
-        });
-        
-        // إضافة تأثيرات للأزرار
-        document.querySelectorAll('button').forEach(btn => {
-            btn.addEventListener('mouseenter', () => {
-                if (!btn.disabled) {
-                    btn.style.transform = 'translateY(-2px)';
+            
+            DOMElements.reportForm.addEventListener('submit', handleSaveReport);
+            DOMElements.reportModal.querySelector('.close-btn').addEventListener('click', () => closeModal(DOMElements.reportModal));
+
+            // Store original button text
+            document.querySelectorAll('.btn').forEach(btn => {
+                btn.dataset.originalText = btn.querySelector('span')?.textContent || btn.textContent;
+            });
+        };
+
+        const init = async () => {
+            updateTime();
+            setInterval(updateTime, 1000);
+            
+            onSnapshot(doc(db, "settings", "dailyQr"), (docSnap) => {
+                state.qrSettings = docSnap.exists() ? docSnap.data() : null;
+            });
+
+            const loggedInUser = localStorage.getItem('loggedInUser');
+            if (loggedInUser) {
+                const userDoc = await getDoc(doc(db, "employees", loggedInUser));
+                if (userDoc.exists()) {
+                    state.currentUser = { username: userDoc.id, ...userDoc.data() };
+                    showView(DOMElements.dashboardView);
+                    updateDashboardUI();
+                } else {
+                    localStorage.removeItem('loggedInUser');
+                    showView(DOMElements.loginView);
                 }
-            });
-            btn.addEventListener('mouseleave', () => {
-                btn.style.transform = 'translateY(0)';
-            });
-        });
-        
-        // إضافة تأثيرات لحقول الإدخال
-        document.querySelectorAll('input').forEach(input => {
-            input.addEventListener('focus', () => {
-                input.parentElement.style.transform = 'translateY(-2px)';
-            });
-            input.addEventListener('blur', () => {
-                input.parentElement.style.transform = 'translateY(0)';
-            });
-        });
+            } else {
+                showView(DOMElements.loginView);
+            }
+            
+            setupEventListeners();
+        };
+
+        init();
     </script>
 </body>
 </html>

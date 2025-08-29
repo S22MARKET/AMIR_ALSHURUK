@@ -90,6 +90,7 @@
         .daily-report-item { border-bottom: 1px solid var(--border-color); padding: 15px 0; }
         .daily-report-item:last-child { border-bottom: none; }
         .daily-report-item strong { color: var(--primary-color); }
+        .table-wrapper { overflow-x: auto; }
         
         @media print {
             body { padding: 0; margin: 0; background-color: #fff; color: #000; }
@@ -178,7 +179,7 @@
                              <input type="text" id="search-input" placeholder="ابحث بالاسم أو الاسم الرمزي...">
                         </div>
                     </div>
-                    <div class="table-wrapper" style="overflow-x: auto;">
+                    <div class="table-wrapper">
                         <table id="employees-table">
                             <thead><tr><th>الاسم</th><th>الاسم الرمزي</th><th>رقم الهاتف</th><th>الحالة (لليوم المحدد)</th><th>الوردية</th><th class="no-print">إجراءات</th></tr></thead>
                             <tbody id="employees-table-body"><div class="spinner"></div></tbody>
@@ -211,7 +212,7 @@
                     <div id="report-spinner" class="spinner" style="display: none;"></div>
                     <div id="report-results" style="display: none;">
                          <div id="report-chart-container" style="position: relative; height:40vh; width:100%; margin-top: 20px;"><canvas id="attendance-chart"></canvas></div>
-                         <div class="table-wrapper" style="margin-top: 20px; overflow-x: auto;"><table id="report-table"></table></div>
+                         <div class="table-wrapper" style="margin-top: 20px;"><table id="report-table"></table></div>
                     </div>
                 </div>
             </section>
@@ -244,7 +245,29 @@
                         <button type="submit" class="btn primary"><i class="fas fa-save"></i> حفظ الإعدادات</button>
                     </form>
                 </div>
-            </section>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-key"></i> إدارة كلمات المرور للعمال</h2>
+                    </div>
+                    <p style="color: var(--light-text); margin-top: -10px; margin-bottom: 20px;">
+                        لا يمكن عرض كلمات المرور الحالية لأنها مشفرة. يمكنك إعادة تعيين كلمة مرور أي عامل من هنا.
+                    </p>
+                    <div class="table-wrapper">
+                        <table id="password-management-table">
+                           <thead>
+                               <tr>
+                                   <th>اسم العامل</th>
+                                   <th>الاسم الرمزي</th>
+                                   <th class="no-print">إجراء</th>
+                               </tr>
+                           </thead>
+                           <tbody id="password-management-tbody">
+                               </tbody>
+                        </table>
+                    </div>
+                </div>
+                </section>
         </div>
     </div>
 
@@ -359,6 +382,7 @@
         themeToggle: document.getElementById('theme-toggle'),
         settingsForm: document.getElementById('settings-form'),
         companyNameInput: document.getElementById('company-name'),
+        passwordManagementTbody: document.getElementById('password-management-tbody'), // عنصر جديد
     };
     
     const sanitizeHTML = str => str ? str.toString().replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;') : '';
@@ -400,22 +424,16 @@
 
         try {
             if (state.currentEditingId) {
-                // --- تعديل عامل حالي ---
-                // لن يتم تغيير كلمة المرور إلا إذا قام المستخدم بإدخال كلمة مرور جديدة.
-                // إذا ترك الحقل فارغاً، تبقى كلمة المرور القديمة كما هي. هذا إجراء أمني.
                 if (password) {
                     employeeData.hashedPassword = await hashPassword(password);
                 }
                 await updateDoc(doc(db, 'employees', state.currentEditingId), employeeData);
                 showToast('تم تحديث العامل بنجاح.');
             } else {
-                // --- إضافة عامل جديد ---
-                // عند إضافة عامل جديد، يجب تحديد كلمة مرور.
                 if (!password) { 
                     DOMElements.saveModalBtn.disabled = false; 
                     return showToast('الرجاء إدخال كلمة مرور للعامل الجديد.', 'error'); 
                 }
-                // التأكد من أن الاسم الرمزي غير مستخدم
                 if ((await getDoc(doc(db, "employees", username))).exists()) { 
                     DOMElements.saveModalBtn.disabled = false; 
                     return showToast('هذا الاسم الرمزي مستخدم بالفعل.', 'error'); 
@@ -463,12 +481,57 @@
         } 
         catch (err) { showToast('فشل حذف العامل.', 'error'); console.error(err); }
     };
+
+    // بداية: دالة جديدة لإعادة تعيين كلمة المرور
+    window.resetPassword = async (empId, empName) => {
+        const newPassword = prompt(`أدخل كلمة المرور الجديدة للعامل: ${empName}`);
+        if (newPassword === null) return; // المستخدم ألغى العملية
+        if (!newPassword.trim()) {
+            showToast('لا يمكن تعيين كلمة مرور فارغة.', 'error');
+            return;
+        }
+
+        try {
+            const hashedPassword = await hashPassword(newPassword);
+            await updateDoc(doc(db, 'employees', empId), { hashedPassword });
+            showToast(`تم تحديث كلمة مرور العامل ${empName} بنجاح.`);
+        } catch (error) {
+            console.error("Password reset failed:", error);
+            showToast('فشل تحديث كلمة المرور.', 'error');
+        }
+    };
+    // نهاية: دالة جديدة لإعادة تعيين كلمة المرور
     
+    // بداية: دالة جديدة لعرض جدول إدارة كلمات المرور
+    const renderPasswordManagementTable = () => {
+        const tbody = DOMElements.passwordManagementTbody;
+        tbody.innerHTML = '';
+        if (state.employees.size === 0) {
+            tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; padding: 20px;">لا يوجد عمال لعرضهم.</td></tr>`;
+            return;
+        }
+
+        const sortedEmployees = [...state.employees.values()].sort((a, b) => (a.name || '').localeCompare(b.name || '', 'ar'));
+        sortedEmployees.forEach(emp => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${sanitizeHTML(emp.name || '<i>لا يوجد اسم</i>')}</td>
+                <td>${sanitizeHTML(emp.username)}</td>
+                <td class="no-print">
+                    <button class="btn primary outline btn-sm" onclick="resetPassword('${emp.id}', '${sanitizeHTML(emp.name)}')">
+                        <i class="fas fa-key"></i> إعادة تعيين كلمة المرور
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+    };
+    // نهاية: دالة جديدة لعرض جدول إدارة كلمات المرور
+
     const renderEmployees = () => {
         const tableBody = DOMElements.employeesTableBody;
         tableBody.innerHTML = '';
         if (state.employees.size === 0) {
-            // تم تعديل colspan ليطابق العدد الجديد للأعمدة
             tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 20px;">لم يتم إضافة عمال بعد.</td></tr>`;
             return;
         }
@@ -481,7 +544,6 @@
             const row = document.createElement('tr');
             row.dataset.name = (emp.name || '').toLowerCase();
             row.dataset.username = (emp.username || '').toLowerCase();
-            // تمت إضافة حقل "رقم الهاتف" هنا
             row.innerHTML = `
                 <td>${sanitizeHTML(emp.name || '<i>لا يوجد اسم</i>')}</td>
                 <td>${sanitizeHTML(emp.username)}</td>
@@ -525,6 +587,7 @@
             renderEmployees();
             updateStatsDisplay();
             populateEmployeeFilters();
+            renderPasswordManagementTable(); // تحديث جدول كلمات المرور
         });
 
         onSnapshot(doc(db, "settings", "dailyQr"), (docSnap) => {
@@ -559,10 +622,8 @@
 
     const renderQrCodeManager = () => {
         const { isActive, dailyCode, activeDate } = state.qrSettings;
-
         DOMElements.dailyCodeDate.textContent = activeDate || '--';
         DOMElements.dailyCodeDisplay.textContent = dailyCode || '---';
-        
         const toggleBtn = DOMElements.toggleAttendanceBtn;
         toggleBtn.disabled = false;
         
@@ -593,7 +654,6 @@
 
         try {
             const dateDiff = (new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24) + 1;
-            
             let constraints = [where("date", ">=", startDate), where("date", "<=", endDate)];
             if (employeeFilter !== 'all') constraints.push(where("employeeSymbolicName", "==", employeeFilter));
             if (shiftFilter !== 'all') constraints.push(where("shift", "==", shiftFilter));
@@ -604,9 +664,7 @@
             const reportData = new Map();
             let targetEmployees = employeeFilter === 'all' ? [...state.employees.values()] : [state.employees.get(employeeFilter)];
             
-            targetEmployees.forEach(emp => {
-                reportData.set(emp.id, { name: emp.name, present: 0 });
-            });
+            targetEmployees.forEach(emp => reportData.set(emp.id, { name: emp.name, present: 0 }));
 
             querySnapshot.forEach(doc => {
                 const data = doc.data();
@@ -618,7 +676,6 @@
             renderReportTable(reportData, dateDiff);
             renderReportChart(reportData);
             DOMElements.reportResults.style.display = 'block';
-
         } catch (error) {
             console.error("Error generating report:", error);
             showToast("حدث خطأ أثناء إنشاء التقرير.", "error");
@@ -645,21 +702,10 @@
     const renderReportChart = (reportData) => {
         const labels = [...reportData.values()].map(d => d.name);
         const presentData = [...reportData.values()].map(d => d.present);
-
         if (attendanceChart) attendanceChart.destroy();
-        
         attendanceChart = new Chart(document.getElementById('attendance-chart').getContext('2d'), {
             type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'أيام الحضور',
-                    data: presentData,
-                    backgroundColor: 'rgba(25, 135, 84, 0.7)',
-                    borderColor: 'var(--success-color)',
-                    borderWidth: 1
-                }]
-            },
+            data: { labels, datasets: [{ label: 'أيام الحضور', data: presentData, backgroundColor: 'rgba(25, 135, 84, 0.7)', borderColor: 'var(--success-color)', borderWidth: 1 }] },
             options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
         });
     };
@@ -668,25 +714,13 @@
         const date = DOMElements.dailyReportDate.value;
         const employee = DOMElements.dailyReportEmployeeFilter.value;
         if (!date) return;
-
         DOMElements.dailyReportsSpinner.style.display = 'block';
         DOMElements.dailyReportsContainer.innerHTML = '';
-        
         try {
-            // ============================================================================================
-            //   !!! تنبيه هام جداً - لكي تعمل التقارير اليومية بشكل صحيح !!!
-            // ============================================================================================
-            //   إذا ظهر خطأ في هذه الوظيفة، فذلك بسبب أن قاعدة بيانات Firestore تتطلب "فهرس مركب"
-            //   لهذا النوع من الاستعلامات. لإنشائه: افتح Console المتصفح (F12) وحاول جلب تقرير.
-            //   سيظهر خطأ مع رابط، اضغط على الرابط لإنشاء الفهرس المطلوب في لوحة تحكم Firebase.
-            // ============================================================================================
-
             let constraints = [where("date", "==", date), where("report", ">", "")];
             if (employee !== 'all') constraints.push(where("employeeSymbolicName", "==", employee));
-
             const q = query(collection(db, "attendance"), ...constraints);
             const snapshot = await getDocs(q);
-            
             if (snapshot.empty) {
                 DOMElements.dailyReportsContainer.innerHTML = '<p style="text-align:center;">لا توجد تقارير مكتوبة لهذا اليوم.</p>';
             } else {
@@ -694,11 +728,7 @@
                     const data = doc.data();
                     const item = document.createElement('div');
                     item.className = 'daily-report-item';
-                    item.innerHTML = `
-                        <p><strong>العامل:</strong> ${sanitizeHTML(data.employeeName)}</p>
-                        <p><strong>الوردية:</strong> ${data.shift === 'morning' ? 'صباحية' : 'مسائية'}</p>
-                        <p><strong>التقرير:</strong> ${sanitizeHTML(data.report)}</p>
-                    `;
+                    item.innerHTML = `<p><strong>العامل:</strong> ${sanitizeHTML(data.employeeName)}</p><p><strong>الوردية:</strong> ${data.shift === 'morning' ? 'صباحية' : 'مسائية'}</p><p><strong>التقرير:</strong> ${sanitizeHTML(data.report)}</p>`;
                     DOMElements.dailyReportsContainer.appendChild(item);
                 });
             }
@@ -714,68 +744,49 @@
     const setupEventListeners = () => {
         DOMElements.employeeForm.addEventListener('submit', handleSaveEmployee);
         document.getElementById('add-employee-btn').addEventListener('click', openModal);
-        
         DOMElements.employeeModal.querySelector('.close-btn').addEventListener('click', closeModal);
         document.getElementById('close-modal-btn').addEventListener('click', closeModal);
         DOMElements.searchInput.addEventListener('input', filterTable);
         DOMElements.themeToggle.addEventListener('click', toggleTheme);
         DOMElements.generateReportBtn.addEventListener('click', generateAttendanceReport);
         DOMElements.sidebarToggle.addEventListener('click', toggleSidebar);
-        
         DOMElements.attendanceDatePicker.addEventListener('change', (e) => {
             if (e.target.value) {
                 state.selectedDateString = e.target.value;
                 listenForDailyAttendance(e.target.value);
             }
         });
-        
         DOMElements.dailyReportDate.addEventListener('change', fetchDailyReports);
         DOMElements.dailyReportEmployeeFilter.addEventListener('change', fetchDailyReports);
-
         DOMElements.navLinks.forEach(link => {
             link.addEventListener('click', (e) => { 
                 e.preventDefault(); 
                 setActiveSection(link.dataset.section); 
-                if (window.innerWidth <= 992) {
-                    document.body.classList.add('sidebar-collapsed');
-                }
+                if (window.innerWidth <= 992) document.body.classList.add('sidebar-collapsed');
             });
         });
-
         DOMElements.toggleAttendanceBtn.addEventListener('click', async () => {
             const newState = !state.qrSettings.isActive;
             try {
                 await setDoc(doc(db, "settings", "dailyQr"), { isActive: newState }, { merge: true });
                 showToast(`تم ${newState ? 'تفعيل' : 'إلغاء تفعيل'} الحضور بنجاح.`);
-            } catch (err) {
-                showToast('حدث خطأ.', 'error');
-            }
+            } catch (err) { showToast('حدث خطأ.', 'error'); }
         });
-
         DOMElements.generateCodeBtn.addEventListener('click', async () => {
             if (!await showConfirmation("إنشاء شيفرة جديدة", "هل أنت متأكد؟ سيتم إنشاء شيفرة جديدة لليوم الحالي وسيتم إلغاء تفعيل الحضور تلقائياً.")) return;
             const newCode = Math.floor(100000 + Math.random() * 900000).toString();
             try {
-                await setDoc(doc(db, "settings", "dailyQr"), {
-                    dailyCode: newCode,
-                    activeDate: todayDateString,
-                    isActive: false
-                });
+                await setDoc(doc(db, "settings", "dailyQr"), { dailyCode: newCode, activeDate: todayDateString, isActive: false });
                 showToast('تم إنشاء شيفرة جديدة بنجاح.');
-            } catch (err) {
-                showToast('فشل إنشاء الشيفرة.', 'error');
-            }
+            } catch (err) { showToast('فشل إنشاء الشيفرة.', 'error'); }
         });
-
         DOMElements.settingsForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const companyName = DOMElements.companyNameInput.value;
             try {
                 await setDoc(doc(db, "settings", "general"), { companyName });
                 showToast('تم حفظ الإعدادات بنجاح.');
-            } catch (error) {
-                showToast('فشل حفظ الإعدادات.', 'error');
-            }
+            } catch (error) { showToast('فشل حفظ الإعدادات.', 'error'); }
         });
     };
     
@@ -785,20 +796,14 @@
         const lastWeek = new Date(); lastWeek.setDate(today.getDate() - 7);
         DOMElements.reportStartDate.value = lastWeek.toISOString().split('T')[0];
         DOMElements.reportEndDate.value = todayDateString;
-
         const isDark = localStorage.getItem('darkTheme') === 'true';
         if (isDark) document.body.classList.add('dark-theme');
         updateThemeIcon(isDark);
-        
         setActiveSection(localStorage.getItem('activeSection') || 'dashboard');
-        
         setupEventListeners();
         listenForChanges();
         fetchDailyReports();
-
-        if (window.innerWidth <= 992) {
-            document.body.classList.add('sidebar-collapsed');
-        }
+        if (window.innerWidth <= 992) document.body.classList.add('sidebar-collapsed');
     };
 
     const filterTable = () => {
@@ -821,9 +826,7 @@
         DOMElements.themeToggle.innerHTML = `<i class="fas ${isDark ? 'fa-sun' : 'fa-moon'}"></i>`;
     }
 
-    const toggleSidebar = () => {
-        document.body.classList.toggle('sidebar-collapsed');
-    };
+    const toggleSidebar = () => document.body.classList.toggle('sidebar-collapsed');
 
     const populateEmployeeFilters = () => {
         const filters = [DOMElements.reportEmployeeFilter, DOMElements.dailyReportEmployeeFilter];
@@ -846,7 +849,6 @@
         DOMElements.pageSections.forEach(s => s.style.display = 'none');
         const activeSection = document.getElementById(sectionId);
         if(activeSection) activeSection.style.display = 'block';
-
         DOMElements.navLinks.forEach(l => l.classList.remove('active'));
         const activeLink = document.querySelector(`.nav-link[data-section="${sectionName}"]`);
         if(activeLink) {
