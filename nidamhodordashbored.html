@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم - نظام الحضور بالورديات</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #0d6efd; --primary-dark: #0a58ca; --primary-light: #e7f1ff;
+            --bg-color: #f0f2f5; --card-bg: #ffffff; --text-color: #212529; --light-text: #6c757d;
+            --border-color: #dee2e6; --shadow: 0 8px 25px rgba(0, 0, 0, 0.07);
+            --success-color: #198754; --danger-color: #dc3545; --warning-color: #ffc107; --info-color: #0dcaf0;
+        }
+        body.dark-theme {
+            --primary-color: #5887ff; --primary-dark: #3a52b1; --primary-light: #2a2f4c;
+            --bg-color: #121212; --card-bg: #1e1e1e; --text-color: #e0e0e0; --light-text: #888;
+            --border-color: #333; --shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+        *, *::before, *::after { transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; box-sizing: border-box; }
+        body { font-family: 'Cairo', sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; line-height: 1.6; display: flex; }
+        #sidebar {
+            width: 250px; background-color: var(--card-bg); height: 100vh;
+            position: fixed; top: 0; right: 0; padding: 20px;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.1); transition: transform 0.3s ease; z-index: 1000;
+        }
+        body.sidebar-collapsed #sidebar { transform: translateX(250px); }
+        #sidebar .logo { text-align: center; margin-bottom: 30px; color: var(--primary-color); font-size: 1.8em; font-weight: 800; }
+        #sidebar .nav-link { display: flex; align-items: center; padding: 15px 10px; color: var(--text-color); text-decoration: none; border-radius: 8px; margin-bottom: 10px; font-size: 1.1em; }
+        #sidebar .nav-link:hover, #sidebar .nav-link.active { background-color: var(--primary-light); color: var(--primary-dark); }
+        #sidebar .nav-link i { margin-left: 15px; width: 20px; text-align: center; }
+        #main-content { flex-grow: 1; padding: 20px; transition: margin-right 0.3s ease; margin-right: 250px; }
+        body.sidebar-collapsed #main-content { margin-right: 0; }
+        #sidebar-toggle { position: fixed; top: 20px; right: 270px; z-index: 1001; background: var(--primary-color); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; transition: right 0.3s ease, transform 0.3s ease; }
+        body.sidebar-collapsed #sidebar-toggle { right: 20px; transform: rotate(180deg); }
+        .container { max-width: 1400px; margin: auto; padding-bottom: 30px; }
+        header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-top: 10px; gap: 15px; }
+        header h1 { color: var(--primary-color); font-size: clamp(2em, 5vw, 2.8em); font-weight: 800; margin: 0; }
+        .header-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .card { background: var(--card-bg); border-radius: 16px; padding: 20px; margin-bottom: 25px; box-shadow: var(--shadow); border: 1px solid var(--border-color); }
+        .card-header { display: flex; flex-wrap: wrap; gap: 15px; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; }
+        .card-header h2 { margin: 0; color: var(--primary-color); font-size: clamp(1.4em, 4vw, 1.6em); }
+        .grid-container { display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 18px; border-radius: 8px; cursor: pointer; font-weight: 700; color: #fff; transition: all 0.25s ease; font-family: 'Cairo', sans-serif; font-size: 0.95em; text-decoration: none; white-space: nowrap; border: 1px solid transparent; }
+        .btn:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0,0,0,0.2); }
+        .btn.primary { background-color: var(--primary-color); }
+        .btn.primary.outline { background-color: transparent; border-color: var(--primary-color); color: var(--primary-color); }
+        .btn.primary.outline:hover { background-color: var(--primary-color); color: #fff; }
+        .btn.success { background-color: var(--success-color); }
+        .btn.danger { background-color: var(--danger-color); }
+        .btn:disabled { background-color: var(--light-text); cursor: not-allowed; opacity: 0.7; transform: none; box-shadow: none; }
+        input, select, textarea { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; background-color: var(--bg-color); color: var(--text-color); font-family: 'Cairo', sans-serif; font-size: 1em; }
+        table { width: 100%; border-collapse: collapse; min-width: 700px; }
+        th, td { padding: 14px 12px; text-align: right; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
+        thead th { background-color: var(--primary-light); color: var(--primary-dark); font-size: 1.1em; }
+        tbody tr:hover { background-color: color-mix(in srgb, var(--primary-color) 8%, transparent); }
+        .status-badge { padding: 5px 12px; border-radius: 20px; font-weight: bold; font-size: 0.85em; }
+        .status-present { background-color: color-mix(in srgb, var(--success-color) 20%, transparent); color: var(--success-color); }
+        .status-absent { background-color: color-mix(in srgb, var(--danger-color) 20%, transparent); color: var(--danger-color); }
+        .spinner { border: 4px solid var(--primary-light); width: 40px; height: 40px; border-radius: 50%; border-left-color: var(--primary-color); animation: spin 1s ease infinite; margin: 20px auto; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .stat-card { background-color: var(--card-bg); border-radius: 12px; padding: 20px; display: flex; align-items: center; gap: 20px; border-right: 5px solid; }
+        .stat-card i { font-size: clamp(2em, 6vw, 2.5em); opacity: 0.7; }
+        .stat-card .stat-value { font-size: clamp(1.8em, 5vw, 2em); font-weight: 800; display: block; }
+        .stat-card.success { border-color: var(--success-color); color: var(--success-color); }
+        .stat-card.danger { border-color: var(--danger-color); color: var(--danger-color); }
+        .stat-card.warning { border-color: var(--warning-color); color: var(--warning-color); }
+        .stat-card.primary { border-color: var(--primary-color); color: var(--primary-color); }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.7); align-items: center; justify-content: center; backdrop-filter: blur(5px); animation: fadeIn 0.3s; }
+        .modal-content { background-color: var(--card-bg); padding: 25px; width: 90%; max-width: 550px; border-radius: 16px; animation: slideDown 0.4s; position: relative; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideDown { from { transform: translateY(-30px); opacity: 0; } to { translateY(0); opacity: 1; } }
+        .modal-footer { display: flex; justify-content: flex-end; gap: 10px; margin-top: 25px; }
+        .close-btn { color: #aaa; position: absolute; left: 20px; top: 15px; font-size: 28px; font-weight: bold; cursor: pointer; }
+        #toast-container { position: fixed; bottom: 20px; left: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
+        .toast { padding: 15px 20px; border-radius: 8px; color: #fff; font-weight: bold; box-shadow: 0 5px 15px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 10px; opacity: 0; transform: translateY(100px); animation: slideUp 0.5s forwards; }
+        @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
+        .toast.success { background-color: var(--success-color); }
+        .toast.error { background-color: var(--danger-color); }
+        .toast.info { background-color: var(--info-color); }
+        .action-buttons { display: flex; gap: 8px; flex-wrap: nowrap; }
+        .report-controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; align-items: center; padding-block: 15px; }
+        .daily-code-area { text-align: center; padding: 20px; background-color: var(--bg-color); border-radius: 12px; margin-top: 15px; }
+        .daily-code-area #daily-code-display { font-size: 2.5em; font-weight: 800; letter-spacing: 5px; color: var(--primary-color); margin: 10px 0; font-family: monospace; }
+        .daily-code-area #daily-code-status { font-weight: bold; }
+        .code-actions { display: flex; gap: 10px; justify-content: center; margin-top: 15px; }
+        .daily-report-item { border-bottom: 1px solid var(--border-color); padding: 15px 0; }
+        .daily-report-item:last-child { border-bottom: none; }
+        .daily-report-item strong { color: var(--primary-color); }
+        
+        @media print {
+            body { padding: 0; margin: 0; background-color: #fff; color: #000; }
+            .card { box-shadow: none; border: 1px solid #ccc; }
+            .no-print { display: none !important; }
+            table { min-width: 100%; font-size: 10pt; }
+            #sidebar, #sidebar-toggle, header { display: none; }
+            #main-content { margin-right: 0; padding: 10px; }
+            #page-title { display: block !important; text-align: center; margin-bottom: 20px; }
+        }
+        @media (max-width: 992px) {
+            body:not(.sidebar-collapsed) #sidebar { transform: translateX(0); box-shadow: -5px 0 15px rgba(0,0,0,0.1); }
+            body:not(.sidebar-collapsed) #main-content { margin-right: 0; }
+            body.sidebar-collapsed #sidebar { transform: translateX(250px); }
+            #sidebar { transform: translateX(250px); }
+            #main-content { margin-right: 0; }
+            #sidebar-toggle { right: 20px; }
+            body:not(.sidebar-collapsed) #sidebar-toggle { right: 270px; }
+        }
+    </style>
+</head>
+<body>
+    <div id="toast-container"></div>
+
+    <div id="sidebar" class="no-print">
+        <div class="logo">نظام الحضور</div>
+        <a href="#" class="nav-link" data-section="dashboard"><i class="fas fa-tachometer-alt"></i> لوحة التحكم</a>
+        <a href="#" class="nav-link" data-section="employees"><i class="fas fa-users"></i> إدارة العمال</a>
+        <a href="#" class="nav-link" data-section="attendance-reports"><i class="fas fa-chart-pie"></i> تقارير الحضور</a>
+        <a href="#" class="nav-link" data-section="daily-reports"><i class="fas fa-file-alt"></i> التقارير اليومية</a>
+        <a href="#" class="nav-link" data-section="settings"><i class="fas fa-cogs"></i> الإعدادات</a>
+    </div>
+
+    <button id="sidebar-toggle" class="no-print"><i class="fas fa-bars"></i></button>
+
+    <div id="main-content">
+        <div class="container">
+            <header>
+                <h1 id="page-title">لوحة التحكم</h1>
+                <div class="header-controls no-print">
+                    <button id="add-employee-btn" class="btn primary"><i class="fas fa-user-plus"></i> إضافة عامل</button>
+                    <button id="theme-toggle" class="btn primary outline"><i class="fas fa-moon"></i></button>
+                    <a href="#" id="logout-link" class="btn danger outline"><i class="fas fa-sign-out-alt"></i> خروج</a>
+                </div>
+            </header>
+
+            <section id="dashboard-section" class="page-section">
+                 <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-tachometer-alt"></i> نظرة عامة للتاريخ: <span id="selected-date-display"></span></h2>
+                        <div class="report-controls no-print" style="grid-template-columns: auto 1fr;">
+                            <label for="attendance-date-picker">اختر التاريخ:</label>
+                            <input type="date" id="attendance-date-picker">
+                        </div>
+                    </div>
+                    <div class="grid-container">
+                        <div class="stat-card success"><i class="fas fa-user-check"></i><div><span class="stat-value" id="present-count">0</span><span>حاضر</span></div></div>
+                        <div class="stat-card danger"><i class="fas fa-user-times"></i><div><span class="stat-value" id="absent-count">0</span><span>غائب</span></div></div>
+                        <div class="stat-card warning"><i class="fas fa-pie-chart"></i><div><span class="stat-value" id="attendance-percentage">0%</span><span>نسبة الحضور</span></div></div>
+                        <div class="stat-card primary"><i class="fas fa-users"></i><div><span class="stat-value" id="total-employees-count">0</span><span>إجمالي العمال</span></div></div>
+                    </div>
+                </div>
+                <div class="card no-print">
+                    <div class="card-header">
+                        <h2><i class="fas fa-key"></i> التحكم بشيفرة الحضور اليومية</h2>
+                    </div>
+                    <div id="qr-control-section">
+                        <div class="daily-code-area">
+                            <p>الشيفرة الحالية (للتاريخ: <span id="daily-code-date">--</span>)</p>
+                            <p id="daily-code-display">---</p>
+                            <p id="daily-code-status" class="status-badge">...</p>
+                        </div>
+                        <div class="code-actions">
+                            <button id="toggle-attendance-btn" class="btn success" style="min-width: 150px;" disabled><i class="fas fa-power-off"></i> <span>...</span></button>
+                            <button id="generate-code-btn" class="btn primary outline"><i class="fas fa-sync-alt"></i> إنشاء شيفرة جديدة</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="employees-section" class="page-section" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-users"></i> قائمة العمال</h2>
+                         <div style="padding-bottom: 20px; width: 100%; max-width: 400px;" class="no-print">
+                             <input type="text" id="search-input" placeholder="ابحث بالاسم أو الاسم الرمزي...">
+                        </div>
+                    </div>
+                    <div class="table-wrapper" style="overflow-x: auto;">
+                        <table id="employees-table">
+                            <thead><tr><th>الاسم</th><th>الاسم الرمزي</th><th>الحالة (لليوم المحدد)</th><th>الوردية</th><th class="no-print">إجراءات</th></tr></thead>
+                            <tbody id="employees-table-body"><div class="spinner"></div></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="attendance-reports-section" class="page-section" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-chart-pie"></i> تقارير الحضور</h2>
+                         <div class="header-controls no-print">
+                            <button onclick="window.print()" class="btn primary outline"><i class="fas fa-print"></i> طباعة التقرير</button>
+                        </div>
+                    </div>
+                    <div class="report-controls no-print">
+                        <div><label for="report-start-date">من:</label> <input type="date" id="report-start-date"></div>
+                        <div><label for="report-end-date">إلى:</label> <input type="date" id="report-end-date"></div>
+                        <div><label for="report-employee-filter">العامل:</label> 
+                        <select id="report-employee-filter"><option value="all">كل العمال</option></select></div>
+                        <div><label for="report-shift-filter">فلترة حسب الوردية:</label>
+                        <select id="report-shift-filter">
+                            <option value="all">كلا الورديتين</option>
+                            <option value="morning">الوردية الصباحية</option>
+                            <option value="evening">الوردية المسائية</option>
+                        </select></div>
+                        <button id="generate-report-btn" class="btn primary" style="grid-column: 1 / -1;"><i class="fas fa-cogs"></i> إنشاء التقرير</button>
+                    </div>
+                    <div id="report-spinner" class="spinner" style="display: none;"></div>
+                    <div id="report-results" style="display: none;">
+                         <div id="report-chart-container" style="position: relative; height:40vh; width:100%; margin-top: 20px;"><canvas id="attendance-chart"></canvas></div>
+                         <div class="table-wrapper" style="margin-top: 20px; overflow-x: auto;"><table id="report-table"></table></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="daily-reports-section" class="page-section" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-file-alt"></i> التقارير اليومية المكتوبة</h2>
+                    </div>
+                     <div class="report-controls no-print">
+                        <div><label for="daily-report-date">التاريخ:</label> <input type="date" id="daily-report-date"></div>
+                        <div><label for="daily-report-employee-filter">العامل:</label> 
+                        <select id="daily-report-employee-filter"><option value="all">كل العمال</option></select></div>
+                    </div>
+                    <div id="daily-reports-spinner" class="spinner" style="display: none;"></div>
+                    <div id="daily-reports-container"></div>
+                </div>
+            </section>
+            
+            <section id="settings-section" class="page-section" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-cogs"></i> الإعدادات العامة</h2>
+                    </div>
+                    <form id="settings-form">
+                         <div style="margin-bottom: 15px;">
+                            <label for="company-name">اسم الشركة</label>
+                            <input type="text" id="company-name" placeholder="اسم الشركة للعرض في التقارير">
+                        </div>
+                        <button type="submit" class="btn primary"><i class="fas fa-save"></i> حفظ الإعدادات</button>
+                    </form>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <div id="employee-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2 id="modal-title">إضافة عامل جديد</h2>
+            <form id="employee-form" novalidate>
+                <div style="margin-bottom: 15px;"><label for="modal-employee-name">اسم العامل <span style="color:red">*</span></label><input type="text" id="modal-employee-name" required></div>
+                <div style="margin-bottom: 15px;"><label for="modal-employee-username">الاسم الرمزي (للدخول) <span style="color:red">*</span></label><input type="text" id="modal-employee-username" required></div>
+                <div style="margin-bottom: 15px;"><label for="modal-employee-password">كلمة المرور</label><input type="password" id="modal-employee-password" placeholder="اتركه فارغاً لعدم التغيير"></div>
+                <div style="margin-bottom: 15px;"><label for="modal-employee-id">رقم الهاتف او بطاقة التعريف</label><input type="text" id="modal-employee-id"></div>
+                <div style="margin-bottom: 15px;"><label for="modal-employee-notes">ملاحظات</label><textarea id="modal-employee-notes" rows="3"></textarea></div>
+                <div class="modal-footer">
+                    <button type="button" id="close-modal-btn" class="btn primary outline">إغلاق</button>
+                    <button id="save-modal-btn" type="submit" class="btn primary"><i class="fas fa-save"></i> <span>حفظ</span></button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="confirmation-modal" class="modal">
+        <div class="modal-content" style="max-width: 400px; text-align: center;">
+            <h2 id="confirmation-title" style="color: var(--danger-color);">تأكيد الإجراء</h2>
+            <p id="confirmation-text" style="font-size: 1.1em; margin-block: 20px;"></p>
+            <div class="modal-footer">
+                <button id="confirm-cancel-btn" class="btn primary outline">إلغاء</button>
+                <button id="confirm-ok-btn" class="btn danger">نعم، متأكد</button>
+            </div>
+        </div>
+    </div>
+
+<script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-analytics.js";
+    import { getFirestore, collection, doc, setDoc, updateDoc, deleteDoc, query, onSnapshot, getDoc, getDocs, where } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+    
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyA1VBBOZQOUwnHp8x487g7lkn14x6Sp-7g",
+        authDomain: "stoke-c650a.firebaseapp.com",
+        databaseURL: "https://stoke-c650a-default-rtdb.firebaseio.com",
+        projectId: "stoke-c650a",
+        storageBucket: "stoke-c650a.firebasestorage.app",
+        messagingSenderId: "464151163343",
+        appId: "1:464151163343:web:728a60e952e4943bc822ba",
+        measurementId: "G-6C1X40RWHZ"
+    };
+
+    let db, attendanceChart;
+    try {
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        db = getFirestore(app);
+    } catch (e) {
+        document.body.innerHTML = `<div style="text-align:center; padding-top: 50px;"><h1>خطأ في الاتصال بقاعدة البيانات: ${e.message}</h1></div>`;
+    }
+    
+    const today = new Date();
+    const todayDateString = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+    
+    const state = {
+        employees: new Map(),
+        dailyAttendance: new Map(),
+        currentEditingId: null,
+        selectedDateString: todayDateString,
+        qrSettings: {},
+    };
+
+    const DOMElements = {
+        mainContent: document.getElementById('main-content'),
+        sidebar: document.getElementById('sidebar'),
+        sidebarToggle: document.getElementById('sidebar-toggle'),
+        employeesTableBody: document.getElementById('employees-table-body'),
+        employeeModal: document.getElementById('employee-modal'),
+        employeeForm: document.getElementById('employee-form'),
+        modalTitle: document.getElementById('modal-title'),
+        saveModalBtn: document.getElementById('save-modal-btn'),
+        searchInput: document.getElementById('search-input'),
+        presentCount: document.getElementById('present-count'),
+        absentCount: document.getElementById('absent-count'),
+        attendancePercentage: document.getElementById('attendance-percentage'),
+        totalEmployeesCount: document.getElementById('total-employees-count'),
+        selectedDateDisplay: document.getElementById('selected-date-display'),
+        attendanceDatePicker: document.getElementById('attendance-date-picker'),
+        reportStartDate: document.getElementById('report-start-date'),
+        reportEndDate: document.getElementById('report-end-date'),
+        reportEmployeeFilter: document.getElementById('report-employee-filter'),
+        reportShiftFilter: document.getElementById('report-shift-filter'),
+        reportTable: document.getElementById('report-table'),
+        reportResults: document.getElementById('report-results'),
+        reportSpinner: document.getElementById('report-spinner'),
+        generateReportBtn: document.getElementById('generate-report-btn'),
+        dailyCodeDisplay: document.getElementById('daily-code-display'),
+        dailyCodeStatus: document.getElementById('daily-code-status'),
+        dailyCodeDate: document.getElementById('daily-code-date'),
+        toggleAttendanceBtn: document.getElementById('toggle-attendance-btn'),
+        generateCodeBtn: document.getElementById('generate-code-btn'),
+        pageTitle: document.getElementById('page-title'),
+        pageSections: document.querySelectorAll('.page-section'),
+        navLinks: document.querySelectorAll('.nav-link'),
+        confirmationModal: document.getElementById('confirmation-modal'),
+        confirmationTitle: document.getElementById('confirmation-title'),
+        confirmationText: document.getElementById('confirmation-text'),
+        confirmOkBtn: document.getElementById('confirm-ok-btn'),
+        confirmCancelBtn: document.getElementById('confirm-cancel-btn'),
+        dailyReportsContainer: document.getElementById('daily-reports-container'),
+        dailyReportsSpinner: document.getElementById('daily-reports-spinner'),
+        dailyReportDate: document.getElementById('daily-report-date'),
+        dailyReportEmployeeFilter: document.getElementById('daily-report-employee-filter'),
+        themeToggle: document.getElementById('theme-toggle'),
+        settingsForm: document.getElementById('settings-form'),
+        companyNameInput: document.getElementById('company-name'),
+    };
+    
+    const sanitizeHTML = str => str ? str.toString().replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;') : '';
+    
+    const showToast = (message, type = 'success') => {
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-times-circle'}"></i> ${sanitizeHTML(message)}`;
+        document.getElementById('toast-container').appendChild(toast);
+        setTimeout(() => toast.remove(), 4000);
+    };
+
+    const showConfirmation = (title, text) => {
+        DOMElements.confirmationTitle.textContent = title;
+        DOMElements.confirmationText.innerHTML = text;
+        DOMElements.confirmationModal.style.display = 'flex';
+        return new Promise((resolve) => {
+            DOMElements.confirmOkBtn.onclick = () => { DOMElements.confirmationModal.style.display = 'none'; resolve(true); };
+            DOMElements.confirmCancelBtn.onclick = () => { DOMElements.confirmationModal.style.display = 'none'; resolve(false); };
+        });
+    };
+
+    async function hashPassword(password) {
+        const data = new TextEncoder().encode(password);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+        return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    const handleSaveEmployee = async (e) => {
+        e.preventDefault();
+        const name = DOMElements.employeeForm['modal-employee-name'].value.trim();
+        const username = DOMElements.employeeForm['modal-employee-username'].value.trim();
+        const password = DOMElements.employeeForm['modal-employee-password'].value;
+
+        if (!name || !username) return showToast('الرجاء إدخال اسم العامل والاسم الرمزي.', 'error');
+        
+        const employeeData = { name, username, customId: DOMElements.employeeForm['modal-employee-id'].value.trim(), notes: DOMElements.employeeForm['modal-employee-notes'].value.trim() };
+        DOMElements.saveModalBtn.disabled = true;
+
+        try {
+            if (state.currentEditingId) {
+                if (password) employeeData.hashedPassword = await hashPassword(password);
+                await updateDoc(doc(db, 'employees', state.currentEditingId), employeeData);
+                showToast('تم تحديث العامل بنجاح.');
+            } else {
+                if (!password) { DOMElements.saveModalBtn.disabled = false; return showToast('الرجاء إدخال كلمة مرور للعامل الجديد.', 'error'); }
+                if ((await getDoc(doc(db, "employees", username))).exists()) { DOMElements.saveModalBtn.disabled = false; return showToast('هذا الاسم الرمزي مستخدم بالفعل.', 'error'); }
+                employeeData.hashedPassword = await hashPassword(password);
+                await setDoc(doc(db, 'employees', username), { ...employeeData, createdAt: new Date() });
+                showToast('تمت إضافة العامل بنجاح.');
+            }
+            closeModal();
+        } catch (err) { showToast(`حدث خطأ أثناء الحفظ: ${err.message}`, 'error'); console.error(err); } 
+        finally { DOMElements.saveModalBtn.disabled = false; }
+    };
+
+    const openModal = () => {
+        state.currentEditingId = null;
+        DOMElements.modalTitle.textContent = 'إضافة عامل جديد';
+        DOMElements.employeeForm.reset();
+        DOMElements.employeeForm['modal-employee-username'].disabled = false;
+        DOMElements.employeeForm['modal-employee-password'].placeholder = 'كلمة المرور مطلوبة';
+        DOMElements.employeeModal.style.display = 'flex';
+    };
+
+    const closeModal = () => DOMElements.employeeModal.style.display = 'none';
+    
+    window.openEditModal = (empId) => {
+        const emp = state.employees.get(empId);
+        if (!emp) return;
+        state.currentEditingId = empId;
+        DOMElements.modalTitle.textContent = 'تعديل بيانات العامل';
+        DOMElements.employeeForm.reset();
+        DOMElements.employeeForm['modal-employee-name'].value = emp.name || '';
+        DOMElements.employeeForm['modal-employee-username'].value = emp.username || '';
+        DOMElements.employeeForm['modal-employee-username'].disabled = true;
+        DOMElements.employeeForm['modal-employee-password'].placeholder = 'اتركه فارغاً لعدم التغيير';
+        DOMElements.employeeForm['modal-employee-id'].value = emp.customId || '';
+        DOMElements.employeeForm['modal-employee-notes'].value = emp.notes || '';
+        DOMElements.employeeModal.style.display = 'flex';
+    };
+    
+    window.handleDeleteEmployee = async (empId, empName) => {
+        if (!await showConfirmation("تأكيد الحذف", `هل أنت متأكد من حذف العامل "<strong>${empName}</strong>"؟ سيتم حذف جميع سجلات حضوره.`)) return;
+        try { 
+            await deleteDoc(doc(db, 'employees', empId));
+            showToast('تم حذف العامل بنجاح.');
+        } 
+        catch (err) { showToast('فشل حذف العامل.', 'error'); console.error(err); }
+    };
+    
+    const renderEmployees = () => {
+        const tableBody = DOMElements.employeesTableBody;
+        tableBody.innerHTML = '';
+        if (state.employees.size === 0) {
+            tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 20px;">لم يتم إضافة عمال بعد.</td></tr>`;
+            return;
+        }
+        
+        // FIX: Sort employees on the client-side to ensure all are displayed
+        const sortedEmployees = [...state.employees.values()].sort((a, b) => (a.name || '').localeCompare(b.name || '', 'ar'));
+        sortedEmployees.forEach(emp => {
+            const attendance = state.dailyAttendance.get(emp.id);
+            const status = attendance ? 'present' : 'absent';
+            const shiftText = attendance ? (attendance.shift === 'morning' ? 'صباحية' : 'مسائية') : '---';
+            const row = document.createElement('tr');
+            row.dataset.name = (emp.name || '').toLowerCase();
+            row.dataset.username = (emp.username || '').toLowerCase();
+            row.innerHTML = `
+                <td>${sanitizeHTML(emp.name || '<i>لا يوجد اسم</i>')}</td>
+                <td>${sanitizeHTML(emp.username)}</td>
+                <td><span class="status-badge status-${status}">${status === 'present' ? 'حاضر' : 'غائب'}</span></td>
+                <td>${shiftText}</td>
+                <td class="action-buttons no-print">
+                    <button class="btn primary outline btn-sm" onclick="openEditModal('${emp.id}')"><i class="fas fa-edit"></i></button>
+                    <button class="btn danger outline btn-sm" onclick="handleDeleteEmployee('${emp.id}', '${sanitizeHTML(emp.name)}')"><i class="fas fa-trash"></i></button>
+                </td>`;
+            tableBody.appendChild(row);
+        });
+        filterTable();
+    };
+
+    const updateStatsDisplay = () => {
+        const present = state.dailyAttendance.size;
+        const total = state.employees.size;
+        const absent = total - present;
+        const percentage = total > 0 ? ((present / total) * 100).toFixed(1) : 0;
+        
+        DOMElements.presentCount.textContent = present;
+        DOMElements.absentCount.textContent = absent;
+        DOMElements.totalEmployeesCount.textContent = total;
+        DOMElements.attendancePercentage.textContent = `${percentage}%`;
+        DOMElements.selectedDateDisplay.textContent = new Date(state.selectedDateString + 'T00:00:00').toLocaleDateString('ar-EG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    };
+
+    const listenForChanges = () => {
+        // FIX: Removed orderBy('name') to fetch ALL employees, even those missing a 'name' field.
+        // Sorting will now be handled reliably on the client-side in renderEmployees().
+        onSnapshot(collection(db, 'employees'), (snapshot) => {
+            const changes = snapshot.docChanges();
+            changes.forEach((change) => {
+                const empData = { id: change.doc.id, ...change.doc.data() };
+                if (change.type !== "removed") {
+                    state.employees.set(empData.id, empData);
+                } else {
+                    state.employees.delete(empData.id);
+                }
+            });
+            
+            renderEmployees();
+            updateStatsDisplay();
+            populateEmployeeFilters();
+        });
+
+        onSnapshot(doc(db, "settings", "dailyQr"), (docSnap) => {
+            state.qrSettings = docSnap.exists() ? docSnap.data() : { isActive: false, dailyCode: null, activeDate: null };
+            renderQrCodeManager();
+        });
+
+        onSnapshot(doc(db, "settings", "general"), (docSnap) => {
+            if (docSnap.exists()) {
+                DOMElements.companyNameInput.value = docSnap.data().companyName || '';
+            }
+        });
+
+        listenForDailyAttendance(state.selectedDateString);
+    };
+    
+    let dailyAttendanceUnsubscribe;
+    const listenForDailyAttendance = (dateString) => {
+        if (dailyAttendanceUnsubscribe) dailyAttendanceUnsubscribe();
+        
+        const q = query(collection(db, "attendance"), where("date", "==", dateString));
+        dailyAttendanceUnsubscribe = onSnapshot(q, (snapshot) => {
+            state.dailyAttendance.clear();
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                state.dailyAttendance.set(data.employeeSymbolicName, data);
+            });
+            renderEmployees();
+            updateStatsDisplay();
+        });
+    };
+
+    const renderQrCodeManager = () => {
+        const { isActive, dailyCode, activeDate } = state.qrSettings;
+
+        DOMElements.dailyCodeDate.textContent = activeDate || '--';
+        DOMElements.dailyCodeDisplay.textContent = dailyCode || '---';
+        
+        const toggleBtn = DOMElements.toggleAttendanceBtn;
+        toggleBtn.disabled = false;
+        
+        if (isActive) {
+            DOMElements.dailyCodeStatus.textContent = 'الحضور مفعل';
+            DOMElements.dailyCodeStatus.className = 'status-badge status-present';
+            toggleBtn.className = 'btn danger';
+            toggleBtn.innerHTML = '<i class="fas fa-power-off"></i> <span>إلغاء تفعيل الحضور</span>';
+        } else {
+            DOMElements.dailyCodeStatus.textContent = 'الحضور غير مفعل';
+            DOMElements.dailyCodeStatus.className = 'status-badge status-absent';
+            toggleBtn.className = 'btn success';
+            toggleBtn.innerHTML = '<i class="fas fa-power-off"></i> <span>تفعيل الحضور</span>';
+        }
+    };
+    
+    const generateAttendanceReport = async () => {
+        const startDate = DOMElements.reportStartDate.value;
+        const endDate = DOMElements.reportEndDate.value;
+        const employeeFilter = DOMElements.reportEmployeeFilter.value;
+        const shiftFilter = DOMElements.reportShiftFilter.value;
+
+        if (!startDate || !endDate) return showToast("الرجاء تحديد فترة زمنية.", "error");
+        
+        DOMElements.reportResults.style.display = 'none';
+        DOMElements.reportSpinner.style.display = 'block';
+        DOMElements.generateReportBtn.disabled = true;
+
+        try {
+            const dateDiff = (new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24) + 1;
+            
+            let constraints = [where("date", ">=", startDate), where("date", "<=", endDate)];
+            if (employeeFilter !== 'all') constraints.push(where("employeeSymbolicName", "==", employeeFilter));
+            if (shiftFilter !== 'all') constraints.push(where("shift", "==", shiftFilter));
+
+            const q = query(collection(db, "attendance"), ...constraints);
+            const querySnapshot = await getDocs(q);
+            
+            const reportData = new Map();
+            let targetEmployees = employeeFilter === 'all' ? [...state.employees.values()] : [state.employees.get(employeeFilter)];
+            
+            targetEmployees.forEach(emp => {
+                reportData.set(emp.id, { name: emp.name, present: 0 });
+            });
+
+            querySnapshot.forEach(doc => {
+                const data = doc.data();
+                if (reportData.has(data.employeeSymbolicName)) {
+                    reportData.get(data.employeeSymbolicName).present++;
+                }
+            });
+            
+            renderReportTable(reportData, dateDiff);
+            renderReportChart(reportData);
+            DOMElements.reportResults.style.display = 'block';
+
+        } catch (error) {
+            console.error("Error generating report:", error);
+            showToast("حدث خطأ أثناء إنشاء التقرير.", "error");
+        } finally {
+            DOMElements.reportSpinner.style.display = 'none';
+            DOMElements.generateReportBtn.disabled = false;
+        }
+    };
+
+    const renderReportTable = (reportData, totalDays) => {
+        let tableHTML = `<thead><tr><th>العامل</th><th>أيام الحضور</th><th>أيام الغياب</th><th>نسبة الحضور</th></tr></thead><tbody>`;
+        if (reportData.size === 0) {
+            tableHTML += `<tr><td colspan="4" style="text-align:center;">لا توجد بيانات لعرضها.</td></tr>`;
+        } else {
+             [...reportData.values()].sort((a,b) => b.present - a.present).forEach((data) => {
+                const absentDays = totalDays - data.present;
+                const percentage = totalDays > 0 ? ((data.present / totalDays) * 100).toFixed(1) : 0;
+                tableHTML += `<tr><td>${sanitizeHTML(data.name)}</td><td>${data.present}</td><td>${absentDays}</td><td>${percentage}%</td></tr>`;
+            });
+        }
+        DOMElements.reportTable.innerHTML = tableHTML + `</tbody>`;
+    };
+    
+    const renderReportChart = (reportData) => {
+        const labels = [...reportData.values()].map(d => d.name);
+        const presentData = [...reportData.values()].map(d => d.present);
+
+        if (attendanceChart) attendanceChart.destroy();
+        
+        attendanceChart = new Chart(document.getElementById('attendance-chart').getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'أيام الحضور',
+                    data: presentData,
+                    backgroundColor: 'rgba(25, 135, 84, 0.7)',
+                    borderColor: 'var(--success-color)',
+                    borderWidth: 1
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+        });
+    };
+    
+    const fetchDailyReports = async () => {
+        const date = DOMElements.dailyReportDate.value;
+        const employee = DOMElements.dailyReportEmployeeFilter.value;
+        if (!date) return;
+
+        DOMElements.dailyReportsSpinner.style.display = 'block';
+        DOMElements.dailyReportsContainer.innerHTML = '';
+        
+        try {
+            // ============================================================================================
+            //   !!! تنبيه هام جداً - لكي تعمل التقارير اليومية بشكل صحيح !!!
+            // ============================================================================================
+            //   إذا ظهر خطأ في هذه الوظيفة، فذلك بسبب أن قاعدة بيانات Firestore تتطلب "فهرس مركب"
+            //   لهذا النوع من الاستعلامات. إنشاؤه سهل جداً:
+            //   1. افتح متصفحك واذهب إلى Console (الطرفية) في المتصفح بالضغط على F12.
+            //   2. حاول جلب تقرير يومي من الصفحة.
+            //   3. سيظهر خطأ في الـ Console باللون الأحمر، وضمن رسالة الخطأ يوجد رابط طويل.
+            //   4. اضغط على ذلك الرابط. سيفتح لك صفحة إنشاء الفهرس في لوحة تحكم Firebase مع تعبئة الحقول تلقائياً.
+            //   5. كل ما عليك فعله هو الضغط على زر "إنشاء" أو "Create".
+            //   6. انتظر بضع دقائق حتى يتم بناء الفهرس، وبعدها سيعمل هذا القسم بشكل صحيح.
+            // ============================================================================================
+
+            let constraints = [where("date", "==", date), where("report", ">", "")];
+            if (employee !== 'all') constraints.push(where("employeeSymbolicName", "==", employee));
+
+            const q = query(collection(db, "attendance"), ...constraints);
+            const snapshot = await getDocs(q);
+            
+            if (snapshot.empty) {
+                DOMElements.dailyReportsContainer.innerHTML = '<p style="text-align:center;">لا توجد تقارير مكتوبة لهذا اليوم.</p>';
+            } else {
+                snapshot.docs.sort((a,b) => a.data().employeeName.localeCompare(b.data().employeeName, 'ar')).forEach(doc => {
+                    const data = doc.data();
+                    const item = document.createElement('div');
+                    item.className = 'daily-report-item';
+                    item.innerHTML = `
+                        <p><strong>العامل:</strong> ${sanitizeHTML(data.employeeName)}</p>
+                        <p><strong>الوردية:</strong> ${data.shift === 'morning' ? 'صباحية' : 'مسائية'}</p>
+                        <p><strong>التقرير:</strong> ${sanitizeHTML(data.report)}</p>
+                    `;
+                    DOMElements.dailyReportsContainer.appendChild(item);
+                });
+            }
+        } catch (err) {
+            console.error("خطأ في جلب التقارير اليومية - قد تحتاج لإنشاء فهرس مركب:", err);
+            DOMElements.dailyReportsContainer.innerHTML = `<p style="text-align:center; color: var(--danger-color);">فشل جلب التقارير. الرجاء مراجعة الـ Console (F12) واتباع التعليمات لإنشاء الفهرس المطلوب.</p>`;
+            showToast('فشل جلب التقارير اليومية. راجع التعليمات في الكود.', 'error');
+        } finally {
+            DOMElements.dailyReportsSpinner.style.display = 'none';
+        }
+    };
+
+    const setupEventListeners = () => {
+        DOMElements.employeeForm.addEventListener('submit', handleSaveEmployee);
+        document.getElementById('add-employee-btn').addEventListener('click', openModal);
+        
+        DOMElements.employeeModal.querySelector('.close-btn').addEventListener('click', closeModal);
+        document.getElementById('close-modal-btn').addEventListener('click', closeModal);
+        DOMElements.searchInput.addEventListener('input', filterTable);
+        DOMElements.themeToggle.addEventListener('click', toggleTheme);
+        DOMElements.generateReportBtn.addEventListener('click', generateAttendanceReport);
+        DOMElements.sidebarToggle.addEventListener('click', toggleSidebar);
+        
+        DOMElements.attendanceDatePicker.addEventListener('change', (e) => {
+            if (e.target.value) {
+                state.selectedDateString = e.target.value;
+                listenForDailyAttendance(e.target.value);
+            }
+        });
+        
+        DOMElements.dailyReportDate.addEventListener('change', fetchDailyReports);
+        DOMElements.dailyReportEmployeeFilter.addEventListener('change', fetchDailyReports);
+
+        DOMElements.navLinks.forEach(link => {
+            link.addEventListener('click', (e) => { 
+                e.preventDefault(); 
+                setActiveSection(link.dataset.section); 
+                if (window.innerWidth <= 992) {
+                    document.body.classList.add('sidebar-collapsed');
+                }
+            });
+        });
+
+        // الشيفرة الجديدة (الصحيحة)
+        DOMElements.toggleAttendanceBtn.addEventListener('click', async () => {
+            const newState = !state.qrSettings.isActive;
+            try {
+                // استخدام setDoc مع merge: true لضمان عملها سواء كان المستند موجوداً أم لا
+                await setDoc(doc(db, "settings", "dailyQr"), { isActive: newState }, { merge: true });
+                showToast(`تم ${newState ? 'تفعيل' : 'إلغاء تفعيل'} الحضور بنجاح.`);
+            } catch (err) {
+                showToast('حدث خطأ.', 'error');
+            }
+        });
+
+        DOMElements.generateCodeBtn.addEventListener('click', async () => {
+            if (!await showConfirmation("إنشاء شيفرة جديدة", "هل أنت متأكد؟ سيتم إنشاء شيفرة جديدة لليوم الحالي وسيتم إلغاء تفعيل الحضور تلقائياً.")) return;
+            const newCode = Math.floor(100000 + Math.random() * 900000).toString();
+            try {
+                await setDoc(doc(db, "settings", "dailyQr"), {
+                    dailyCode: newCode,
+                    activeDate: todayDateString,
+                    isActive: false
+                });
+                showToast('تم إنشاء شيفرة جديدة بنجاح.');
+            } catch (err) {
+                showToast('فشل إنشاء الشيفرة.', 'error');
+            }
+        });
+
+        DOMElements.settingsForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const companyName = DOMElements.companyNameInput.value;
+            try {
+                await setDoc(doc(db, "settings", "general"), { companyName });
+                showToast('تم حفظ الإعدادات بنجاح.');
+            } catch (error) {
+                showToast('فشل حفظ الإعدادات.', 'error');
+            }
+        });
+    };
+    
+    const initApp = () => {
+        DOMElements.attendanceDatePicker.value = todayDateString;
+        DOMElements.dailyReportDate.value = todayDateString;
+        const lastWeek = new Date(); lastWeek.setDate(today.getDate() - 7);
+        DOMElements.reportStartDate.value = lastWeek.toISOString().split('T')[0];
+        DOMElements.reportEndDate.value = todayDateString;
+
+        const isDark = localStorage.getItem('darkTheme') === 'true';
+        if (isDark) document.body.classList.add('dark-theme');
+        updateThemeIcon(isDark);
+        
+        setActiveSection(localStorage.getItem('activeSection') || 'dashboard');
+        
+        setupEventListeners();
+        listenForChanges();
+        fetchDailyReports();
+
+        if (window.innerWidth <= 992) {
+            document.body.classList.add('sidebar-collapsed');
+        }
+    };
+
+    const filterTable = () => {
+        const searchTerm = DOMElements.searchInput.value.toLowerCase();
+        DOMElements.employeesTableBody.querySelectorAll('tr').forEach(row => {
+            const name = row.dataset.name || '';
+            const username = row.dataset.username || '';
+            const isVisible = name.includes(searchTerm) || username.includes(searchTerm);
+            row.style.display = isVisible ? '' : 'none';
+        });
+    };
+    
+    const toggleTheme = () => {
+        const isDark = document.body.classList.toggle('dark-theme');
+        localStorage.setItem('darkTheme', isDark);
+        updateThemeIcon(isDark);
+    };
+
+    const updateThemeIcon = (isDark) => {
+        DOMElements.themeToggle.innerHTML = `<i class="fas ${isDark ? 'fa-sun' : 'fa-moon'}"></i>`;
+    }
+
+    const toggleSidebar = () => {
+        document.body.classList.toggle('sidebar-collapsed');
+    };
+
+    const populateEmployeeFilters = () => {
+        const filters = [DOMElements.reportEmployeeFilter, DOMElements.dailyReportEmployeeFilter];
+        filters.forEach(select => {
+            const selectedValue = select.value;
+            select.innerHTML = '<option value="all">كل العمال</option>';
+            const sortedEmployees = [...state.employees.values()].sort((a, b) => (a.name || '').localeCompare(b.name || '', 'ar'));
+            sortedEmployees.forEach(emp => {
+                const option = document.createElement('option');
+                option.value = emp.id;
+                option.textContent = emp.name;
+                select.appendChild(option);
+            });
+            select.value = selectedValue;
+        });
+    };
+    
+    const setActiveSection = (sectionName) => {
+        const sectionId = sectionName + '-section';
+        DOMElements.pageSections.forEach(s => s.style.display = 'none');
+        const activeSection = document.getElementById(sectionId);
+        if(activeSection) activeSection.style.display = 'block';
+
+        DOMElements.navLinks.forEach(l => l.classList.remove('active'));
+        const activeLink = document.querySelector(`.nav-link[data-section="${sectionName}"]`);
+        if(activeLink) {
+            activeLink.classList.add('active');
+            DOMElements.pageTitle.textContent = activeLink.textContent.trim();
+        }
+        localStorage.setItem('activeSection', sectionName);
+    };
+    
+    initApp();
+</script>
+</body>
+</html>

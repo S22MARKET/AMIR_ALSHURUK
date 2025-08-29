@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بوابة الموظف المطورة</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0d6efd;
+            --success: #198754;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --info: #0dcaf0;
+            --dark: #1d3557;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --sidebar-width: 280px;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #f0f2f5 0%, #e6eef5 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            line-height: 1.6;
+            position: relative;
+        }
+        
+        /* القائمة الجانبية */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: -280px;
+            width: var(--sidebar-width);
+            height: 100%;
+            background: white;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            transition: right 0.3s ease;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .sidebar.open {
+            right: 0;
+        }
+        
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none;
+        }
+        
+        .sidebar-overlay.open {
+            display: block;
+        }
+        
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .sidebar-header h2 {
+            color: var(--primary);
+            margin: 0;
+            font-weight: 700;
+            font-size: 1.3rem;
+        }
+        
+        .close-sidebar {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray);
+        }
+        
+        .sidebar-user {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 2rem;
+            margin: 0 auto 15px;
+        }
+        
+        .sidebar-user h3 {
+            color: var(--dark);
+            margin-bottom: 5px;
+        }
+        
+        .sidebar-user p {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        .sidebar-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .sidebar-stat {
+            background: var(--light);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .sidebar-stat i {
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+            color: var(--primary);
+        }
+        
+        .sidebar-stat-value {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--dark);
+            display: block;
+        }
+        
+        .sidebar-stat-label {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+        }
+        
+        .sidebar-menu li {
+            margin-bottom: 10px;
+        }
+        
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            color: var(--dark);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+        
+        .sidebar-menu i {
+            margin-left: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .portal-container {
+            background-color: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            margin: 20px auto;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .header h2 {
+            color: var(--primary);
+            margin: 0;
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+        
+        .menu-toggle {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--primary);
+            cursor: pointer;
+            display: none;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .time-section {
+            background: linear-gradient(135deg, var(--dark) 0%, #2a4a7e 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .time-display {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 2px;
+        }
+        
+        .date-display {
+            font-size: 1rem;
+            opacity: 0.9;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-box {
+            background-color: var(--light);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .stat-box i {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            color: var(--primary);
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark);
+        }
+        
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+        
+        .form-container {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+            text-align: right;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        input[type="text"], input[type="password"], input[type="number"] {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 14px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            text-align: right;
+            font-family: 'Cairo', sans-serif;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.2);
+        }
+        
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        
+        button {
+            padding: 14px 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        #checkInBtn { 
+            background: linear-gradient(135deg, var(--success) 0%, #0fa86d 100%);
+            color: white; 
+        }
+        
+        #checkOutBtn { 
+            background: linear-gradient(135deg, var(--danger) 0%, #e02b4c 100%);
+            color: white; 
+        }
+        
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 15px;
+        }
+        
+        .action-btn {
+            padding: 12px;
+            background-color: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .action-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        
+        .tasbih-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #f0f0f0;
+        }
+        
+        .tasbih-btn {
+            background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+            color: white;
+            padding: 12px;
+        }
+        
+        .counter {
+            font-size: 0.9rem;
+            color: var(--gray);
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+        
+        #message {
+            margin-top: 20px;
+            font-weight: bold;
+            padding: 15px;
+            border-radius: 10px;
+            display: none;
+        }
+        
+        .success { 
+            background-color: #d4edda; 
+            color: #155724; 
+            border-left: 4px solid var(--success);
+        }
+        
+        .error { 
+            background-color: #f8d7da; 
+            color: #721c24; 
+            border-left: 4px solid var(--danger);
+        }
+        
+        .verification-section {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 2px dashed #ffc107;
+        }
+        
+        .verification-section label {
+            font-weight: 700;
+            display: block;
+            margin-bottom: 10px;
+            color: #856404;
+        }
+        
+        .math-expression {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin: 10px 0;
+            color: var(--primary);
+            font-family: 'Courier New', monospace;
+        }
+        
+        .main-form { 
+            display: none;
+        }
+        
+        button:disabled { 
+            background: #adb5bd;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        
+        .remember-me {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+        
+        /* نافذة التقرير */
+        .report-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .report-modal.open {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .report-modal-content {
+            background: white;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .report-modal.open .report-modal-content {
+            transform: translateY(0);
+        }
+        
+        .report-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .report-modal-header h2 {
+            color: var(--primary);
+            margin: 0;
+        }
+        
+        .close-report {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray);
+        }
+        
+        .report-form textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-family: 'Cairo', sans-serif;
+            font-size: 1rem;
+            min-height: 150px;
+            margin-bottom: 20px;
+            resize: vertical;
+        }
+        
+        .report-form textarea:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.2);
+        }
+        
+        .report-form button {
+            width: 100%;
+        }
+        
+        /* تصميم متجاوب للهواتف */
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block;
+            }
+            
+            .portal-container {
+                padding: 20px 15px;
+                margin: 10px;
+            }
+            
+            .time-display {
+                font-size: 1.8rem;
+            }
+            
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .button-group, .action-buttons {
+                grid-template-columns: 1fr;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .user-info {
+                justify-content: center;
+            }
+            
+            .sidebar {
+                width: 85%;
+                right: -85%;
+            }
+            
+            .report-modal-content {
+                width: 95%;
+                padding: 20px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- القائمة الجانبية -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>ملفي الشخصي</h2>
+            <button class="close-sidebar" id="close-sidebar">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="sidebar-user">
+            <div class="user-avatar" id="sidebar-avatar">م</div>
+        
+        </div>
+        
+        <div class="sidebar-stats">
+            <div class="sidebar-stat">
+                <i class="fas fa-calendar-check"></i>
+                <span class="sidebar-stat-value" id="sidebar-days">18</span>
+                <span class="sidebar-stat-label">يوم عمل</span>
+            </div>
+            <div class="sidebar-stat">
+                <i class="fas fa-calendar-times"></i>
+                <span class="sidebar-stat-value" id="sidebar-absent">2</span>
+                <span class="sidebar-stat-label">أيام غياب</span>
+            </div>
+        </div>
+        
+        <ul class="sidebar-menu">
+            <li><a href="#" class="active"><i class="fas fa-home"></i> الرئيسية</a></li>
+            <li><a href="#"><i class="fas fa-history"></i> سجل الحضور</a></li>
+            <li><a href="#"><i class="fas fa-file-alt"></i> تقاريري</a></li>
+            <li><a href="#"><i class="fas fa-cog"></i> الإعدادات</a></li>
+            <li><a href="#"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</a></li>
+        </ul>
+    </div>
+    
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- نافذة إدخال التقرير -->
+    <div class="report-modal" id="report-modal">
+        <div class="report-modal-content">
+            <div class="report-modal-header">
+                <h2>التقرير اليومي</h2>
+                <button class="close-report" id="close-report">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form class="report-form" id="report-form">
+                <textarea placeholder="اكتب تقريرك اليومي هنا..." required></textarea>
+                <button type="submit" class="btn success">
+                    <i class="fas fa-check"></i>
+                    حفظ التقرير
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="portal-container">
+        <div class="header">
+            <button class="menu-toggle" id="menu-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <h2>بوابة الموظف</h2>
+            <div class="user-info">
+                <div class="avatar" id="avatar-toggle">م</div>
+                <div id="employeeName">مرحباً</div>
+            </div>
+        </div>
+        
+        <div class="time-section">
+            <div id="time" class="time-display">00:00:00</div>
+            <div id="date" class="date-display">الاثنين، ١ يونيو ٢٠٢٣</div>
+        </div>
+        
+        <div class="stats-container">
+            <div class="stat-box">
+                <i class="fas fa-calendar-check"></i>
+                <div class="stat-label">يوم عمل</div>
+            </div>
+            <div class="stat-box">
+                <i class="fas fa-calendar-times"></i>
+                <div class="stat-label">أيام غياب</div>
+            </div>
+        </div>
+
+        <div class="verification-section" id="human-verification">
+            <label>للتحقق من أنك لست روبوت، الرجاء حل العملية الحسابية:</label>
+            <div class="math-expression" id="math-question">5 + 3 = ?</div>
+            <input type="number" id="math-answer" placeholder="الإجابة">
+        </div>
+
+        <div id="main-form" class="main-form">
+            <div class="form-container">
+                <div class="form-group">
+                    <label for="employeeSymbolicName">الاسم الرمزي</label>
+                    <input type="text" id="employeeSymbolicName" placeholder="أدخل الاسم الرمزي" required>
+                </div>
+                <div class="form-group">
+                    <label for="employeePassword">كلمة المرور</label>
+                    <input type="password" id="employeePassword" placeholder="أدخل كلمة المرور" required>
+                </div>
+                <div class="form-group">
+                    <label for="dailyCode">الرمز اليومي</label>
+                    <input type="text" id="dailyCode" placeholder="أدخل الرمز اليومي" required>
+                </div>
+                
+                <div class="remember-me">
+                    <input type="checkbox" id="rememberMe">
+                    <label for="rememberMe">تذكر تسجيل الدخول</label>
+                </div>
+                
+                <div class="button-group">
+                    <button id="checkInBtn">
+                        <i class="fas fa-sign-in-alt"></i>
+                        تسجيل حضور
+                    </button>
+                    <button id="checkOutBtn">
+                        <i class="fas fa-sign-out-alt"></i>
+                        تسجيل انصراف
+                    </button>
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <button id="editReportBtn" class="action-btn">
+                    <i class="fas fa-edit"></i>
+                    تعديل التقرير
+                </button>
+                <button id="viewReportBtn" class="action-btn">
+                    <i class="fas fa-file-alt"></i>
+                    عرض التقارير
+                </button>
+            </div>
+        </div>
+
+        <div id="message"></div>
+        
+        <div class="tasbih-group">
+            <div>
+                <button id="tasbihBtn" class="tasbih-btn">
+                    <i class="fas fa-pray"></i>
+                    سبحان الله
+                </button>
+                <div class="counter">
+                    <i class="fas fa-counter"></i>
+                    عداد التسبيح: <span id="tasbih-counter">0</span>
+                </div>
+            </div>
+            <div>
+                <button id="salatBtn" class="tasbih-btn">
+                    <i class="fas fa-praying-hands"></i>
+                    اللهم صل على محمد
+                </button>
+                <div class="counter">نسأل الله القبول</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // بيانات محاكاة للتجربة - سيتم استبدالها ببيانات حقيقية من قاعدة البيانات
+        let mockEmployeeData = {
+            name: "محمد أحمد",
+            symbolicName: "MA123",
+            daysWorked: 18,
+            absentDays: 2,
+            isLoggedIn: localStorage.getItem('isLoggedIn') === 'true',
+            remembered: localStorage.getItem('rememberLogin') === 'true'
+        };
+
+        // عناصر الواجهة
+        const DOMElements = {
+            time: document.getElementById('time'),
+            date: document.getElementById('date'),
+            employeeName: document.getElementById('employeeName'),
+            daysWorked: document.getElementById('daysWorked'),
+            absentDays: document.getElementById('absentDays'),
+            mathQuestion: document.getElementById('math-question'),
+            mathAnswer: document.getElementById('math-answer'),
+            mainForm: document.getElementById('main-form'),
+            nameInput: document.getElementById('employeeSymbolicName'),
+            passwordInput: document.getElementById('employeePassword'),
+            codeInput: document.getElementById('dailyCode'),
+            message: document.getElementById('message'),
+            checkInBtn: document.getElementById('checkInBtn'),
+            checkOutBtn: document.getElementById('checkOutBtn'),
+            editReportBtn: document.getElementById('editReportBtn'),
+            viewReportBtn: document.getElementById('viewReportBtn'),
+            tasbihBtn: document.getElementById('tasbihBtn'),
+            salatBtn: document.getElementById('salatBtn'),
+            tasbihCounter: document.getElementById('tasbih-counter'),
+            rememberMe: document.getElementById('rememberMe'),
+            humanVerification: document.getElementById('human-verification'),
+            menuToggle: document.getElementById('menu-toggle'),
+            sidebar: document.getElementById('sidebar'),
+            closeSidebar: document.getElementById('close-sidebar'),
+            sidebarOverlay: document.getElementById('sidebar-overlay'),
+            avatarToggle: document.getElementById('avatar-toggle'),
+            sidebarName: document.getElementById('sidebar-name'),
+            sidebarUsername: document.getElementById('sidebar-username'),
+            sidebarAvatar: document.getElementById('sidebar-avatar'),
+            sidebarDays: document.getElementById('sidebar-days'),
+            sidebarAbsent: document.getElementById('sidebar-absent'),
+            reportModal: document.getElementById('report-modal'),
+            closeReport: document.getElementById('close-report'),
+            reportForm: document.getElementById('report-form')
+        };
+
+        let mathCorrectAnswer = 0;
+        let tasbihCount = 0;
+        let isCheckedIn = false;
+        let dailyReport = "";
+
+        // تحديث الوقت والتاريخ بأرقام إنجليزية
+        function updateTime() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('en-GB');
+            DOMElements.time.textContent = timeStr;
+            
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const dateStr = now.toLocaleDateString('ar-EG', options);
+            DOMElements.date.textContent = dateStr.replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d));
+        }
+        setInterval(updateTime, 1000);
+        updateTime();
+        
+        // توليد سؤال التحقق
+        function generateMathQuestion() {
+            const operations = [
+                { symbol: '+', func: (a, b) => a + b },
+                { symbol: '-', func: (a, b) => a - b },
+                { symbol: '×', func: (a, b) => a * b }
+            ];
+            
+            const opIndex = Math.floor(Math.random() * operations.length);
+            const operation = operations[opIndex];
+            
+            let num1, num2;
+            
+            if (operation.symbol === '-') {
+                num1 = Math.floor(Math.random() * 10) + 10;
+                num2 = Math.floor(Math.random() * 9) + 1;
+            } else {
+                num1 = Math.floor(Math.random() * 10) + 1;
+                num2 = Math.floor(Math.random() * 10) + 1;
+            }
+            
+            mathCorrectAnswer = operation.func(num1, num2);
+            DOMElements.mathQuestion.textContent = `${num1} ${operation.symbol} ${num2} = ?`;
+            DOMElements.mathAnswer.value = '';
+        }
+
+        // التحقق من إجابة السؤال
+        DOMElements.mathAnswer.addEventListener('input', () => {
+            if (parseInt(DOMElements.mathAnswer.value) === mathCorrectAnswer) {
+                DOMElements.mainForm.style.display = 'block';
+                DOMElements.humanVerification.style.display = 'none';
+                showMessage('تم التحقق بنجاح، يمكنك الآن تسجيل الدخول.', 'success');
+            }
+        });
+
+        // دالة لإظهار الرسائل
+        function showMessage(text, type) {
+            DOMElements.message.textContent = text;
+            DOMElements.message.className = type;
+            DOMElements.message.style.display = 'block';
+            setTimeout(() => { DOMElements.message.style.display = 'none'; }, 5000);
+        }
+
+        // محاكاة تسجيل الدخول
+        function simulateLogin() {
+            DOMElements.employeeName.textContent = mockEmployeeData.name;
+            DOMElements.daysWorked.textContent = mockEmployeeData.daysWorked;
+            DOMElements.absentDays.textContent = mockEmployeeData.absentDays;
+            
+            // تحديث بيانات القائمة الجانبية
+            DOMElements.sidebarName.textContent = mockEmployeeData.name;
+            DOMElements.sidebarUsername.textContent = mockEmployeeData.symbolicName;
+            DOMElements.sidebarDays.textContent = mockEmployeeData.daysWorked;
+            DOMElements.sidebarAbsent.textContent = mockEmployeeData.absentDays;
+            DOMElements.sidebarAvatar.textContent = mockEmployeeData.name.charAt(0);
+            
+            if (mockEmployeeData.remembered && mockEmployeeData.isLoggedIn) {
+                DOMElements.mainForm.style.display = 'block';
+                DOMElements.humanVerification.style.display = 'none';
+                DOMElements.nameInput.value = mockEmployeeData.symbolicName;
+                showMessage(`مرحباً بعودتك ${mockEmployeeData.name}`, 'success');
+            }
+        }
+
+        // تسجيل الدخول
+        function login() {
+            const symbolicName = DOMElements.nameInput.value.trim();
+            const password = DOMElements.passwordInput.value;
+            const dailyCode = DOMElements.codeInput.value.trim();
+            const rememberMe = DOMElements.rememberMe.checked;
+
+            if (!symbolicName || !password || !dailyCode) {
+                showMessage('الرجاء ملء جميع الحقول.', 'error');
+                return false;
+            }
+
+            // محاكاة عملية التسجيل
+            mockEmployeeData.isLoggedIn = true;
+            mockEmployeeData.remembered = rememberMe;
+            
+            if (rememberMe) {
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('rememberLogin', 'true');
+            }
+            
+            DOMElements.employeeName.textContent = mockEmployeeData.name;
+            showMessage(`تم تسجيل الدخول بنجاح، مرحباً ${mockEmployeeData.name}`, 'success');
+            
+            return true;
+        }
+
+        // تسجيل الحضور
+        DOMElements.checkInBtn.addEventListener('click', () => {
+            if (login()) {
+                isCheckedIn = true;
+                DOMElements.checkInBtn.disabled = true;
+                DOMElements.checkOutBtn.disabled = false;
+                showMessage('تم تسجيل حضورك بنجاح', 'success');
+            }
+        });
+
+        // تسجيل الانصراف
+        DOMElements.checkOutBtn.addEventListener('click', () => {
+            if (isCheckedIn) {
+                if (!dailyReport || dailyReport.trim() === "") {
+                    showMessage('يجب كتابة تقرير قبل الانصراف', 'error');
+                    openReportModal();
+                    return;
+                }
+                
+                isCheckedIn = false;
+                DOMElements.checkInBtn.disabled = false;
+                DOMElements.checkOutBtn.disabled = true;
+                showMessage('تم تسجيل انصرافك وتحميل التقرير بنجاح', 'success');
+                
+                // إعادة تعيين النموذج
+                DOMElements.passwordInput.value = '';
+                DOMElements.codeInput.value = '';
+                dailyReport = "";
+            } else {
+                showMessage('يجب تسجيل الدخول أولاً', 'error');
+            }
+        });
+
+        // تعديل التقرير
+        DOMElements.editReportBtn.addEventListener('click', () => {
+            if (isCheckedIn) {
+                openReportModal();
+            } else {
+                showMessage('يجب تسجيل الدخول أولاً', 'error');
+            }
+        });
+
+        // عرض التقارير
+        DOMElements.viewReportBtn.addEventListener('click', () => {
+            showMessage('سيتم فتح صفحة التقارير قريباً', 'success');
+        });
+
+        // أزرار التسبيح والصلاة
+        DOMElements.tasbihBtn.addEventListener('click', () => {
+            tasbihCount++;
+            DOMElements.tasbihCounter.textContent = tasbihCount;
+        });
+
+        DOMElements.salatBtn.addEventListener('click', () => {
+            showMessage('صلى الله عليه وسلم', 'success');
+        });
+
+        // فتح وإغلاق القائمة الجانبية
+        DOMElements.menuToggle.addEventListener('click', () => {
+            DOMElements.sidebar.classList.add('open');
+            DOMElements.sidebarOverlay.classList.add('open');
+        });
+
+        DOMElements.closeSidebar.addEventListener('click', closeSidebar);
+        DOMElements.sidebarOverlay.addEventListener('click', closeSidebar);
+        DOMElements.avatarToggle.addEventListener('click', () => {
+            DOMElements.sidebar.classList.add('open');
+            DOMElements.sidebarOverlay.classList.add('open');
+        });
+
+        function closeSidebar() {
+            DOMElements.sidebar.classList.remove('open');
+            DOMElements.sidebarOverlay.classList.remove('open');
+        }
+
+        // فتح وإغلاق نافذة التقرير
+        function openReportModal() {
+            DOMElements.reportModal.classList.add('open');
+            const textarea = DOMElements.reportForm.querySelector('textarea');
+            textarea.value = dailyReport;
+            textarea.focus();
+        }
+
+        DOMElements.closeReport.addEventListener('click', closeReportModal);
+
+        function closeReportModal() {
+            DOMElements.reportModal.classList.remove('open');
+        }
+
+        DOMElements.reportForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const textarea = DOMElements.reportForm.querySelector('textarea');
+            dailyReport = textarea.value.trim();
+            
+            if (dailyReport) {
+                showMessage('تم حفظ التقرير بنجاح', 'success');
+                closeReportModal();
+            } else {
+                showMessage('يرجى كتابة التقرير أولاً', 'error');
+            }
+        });
+
+        // دالة لجلب بيانات العامل من قاعدة البيانات
+        async function fetchEmployeeData(symbolicName) {
+            try {
+                // هنا سيتم الاتصال بقاعدة البيانات لجلب بيانات العامل
+                // هذه محاكاة للاتصال بقاعدة البيانات
+                const response = await fetch(`/api/employee-data?symbolicName=${symbolicName}`);
+                const employeeData = await response.json();
+                
+                // تحديث البيانات المحلية
+                mockEmployeeData.name = employeeData.name;
+                mockEmployeeData.symbolicName = employeeData.symbolicName;
+                mockEmployeeData.daysWorked = employeeData.daysWorked;
+                mockEmployeeData.absentDays = employeeData.absentDays;
+                
+                // تحديث واجهة المستخدم
+                simulateLogin();
+                
+            } catch (error) {
+                console.error('خطأ في جلب بيانات العامل:', error);
+                showMessage('حدث خطأ في جلب البيانات، الرجاء المحاولة لاحقاً', 'error');
+            }
+        }
+
+        // بدء التطبيق
+        generateMathQuestion();
+        updateTime();
+        simulateLogin();
+        
+        // تهيئة حالة الأزرار
+        DOMElements.checkOutBtn.disabled = !isCheckedIn;
+        DOMElements.checkInBtn.disabled = isCheckedIn;
+    </script>
+</body>
+</html>

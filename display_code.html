@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="refresh" content="60">
+    <title>شيفرة الحضور اليومية</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #0d6efd;
+            --bg-color: #f0f2f5;
+            --card-bg: #ffffff;
+            --text-color: #212529;
+            --success-color: #198754;
+            --danger-color: #dc3545;
+        }
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 15px;
+        }
+        .container {
+            background-color: var(--card-bg);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+        }
+        h1 {
+            color: var(--primary-color);
+            font-weight: 800;
+            margin-bottom: 15px;
+        }
+        p {
+            font-size: 1.1em;
+            color: #6c757d;
+        }
+        #daily-code-display {
+            font-size: clamp(3em, 15vw, 4.5em);
+            font-weight: 800;
+            letter-spacing: 8px;
+            color: var(--primary-color);
+            background-color: #e9ecef;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 25px 0;
+            font-family: monospace;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 1.1em;
+            color: #fff;
+        }
+        .status-active { background-color: var(--success-color); }
+        .status-inactive { background-color: var(--danger-color); }
+        #loading-spinner {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--primary-color);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1.5s linear infinite;
+            margin: 40px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>شيفرة الحضور اليومية</h1>
+        <p>الشيفرة الخاصة بتاريخ: <strong id="current-date">--/--/----</strong></p>
+        
+        <div id="loading-spinner"></div>
+        
+        <div id="code-content" style="display: none;">
+            <div id="daily-code-display">------</div>
+            <div id="attendance-status" class="status-badge status-inactive">الحالة غير معروفة</div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+        import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+
+        // !!! هام جداً: استخدم نفس إعدادات Firebase الموجودة في لوحة التحكم
+        const firebaseConfig = {
+            apiKey: "AIzaSyA1VBBOZQOUwnHp8x487g7lkn14x6Sp-7g",
+            authDomain: "stoke-c650a.firebaseapp.com",
+            databaseURL: "https://stoke-c650a-default-rtdb.firebaseio.com",
+            projectId: "stoke-c650a",
+            storageBucket: "stoke-c650a.firebasestorage.app",
+            messagingSenderId: "464151163343",
+            appId: "1:464151163343:web:728a60e952e4943bc822ba",
+            measurementId: "G-6C1X40RWHZ"
+        };
+
+        // تهيئة Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // جلب العناصر من الصفحة
+        const dateEl = document.getElementById('current-date');
+        const codeDisplayEl = document.getElementById('daily-code-display');
+        const statusEl = document.getElementById('attendance-status');
+        const spinner = document.getElementById('loading-spinner');
+        const codeContent = document.getElementById('code-content');
+
+        // الاستماع للتغيرات في مستند الشيفرة اليومية
+        // هذا هو نفس المسار المستخدم في لوحة التحكم: "settings/dailyQr"
+        const dailyCodeDocRef = doc(db, "settings", "dailyQr");
+
+        onSnapshot(dailyCodeDocRef, (docSnap) => {
+            spinner.style.display = 'none';
+            codeContent.style.display = 'block';
+
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                
+                // عرض التاريخ من المستند أو تاريخ اليوم
+                const displayDate = data.activeDate ? new Date(data.activeDate + 'T00:00:00').toLocaleDateString('ar-EG') : new Date().toLocaleDateString('ar-EG');
+                dateEl.textContent = displayDate;
+
+                // تحديث الشيفرة
+                codeDisplayEl.textContent = data.dailyCode || "------";
+                
+                // تحديث حالة الحضور
+                if (data.isActive) {
+                    statusEl.textContent = 'الحضور مفعل';
+                    statusEl.className = 'status-badge status-active';
+                } else {
+                    statusEl.textContent = 'الحضور غير مفعل';
+                    statusEl.className = 'status-badge status-inactive';
+                }
+
+            } else {
+                // في حال عدم وجود المستند
+                dateEl.textContent = new Date().toLocaleDateString('ar-EG');
+                codeDisplayEl.textContent = "N/A";
+                statusEl.textContent = 'لم يتم إنشاء شيفرة بعد';
+                statusEl.className = 'status-badge status-inactive';
+            }
+        }, (error) => {
+            console.error("خطأ في جلب البيانات: ", error);
+            spinner.style.display = 'none';
+            codeDisplayEl.textContent = "خطأ";
+            statusEl.textContent = "فشل الاتصال بقاعدة البيانات";
+        });
+    </script>
+</body>
+</html>
