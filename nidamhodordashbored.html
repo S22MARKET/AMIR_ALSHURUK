@@ -53,7 +53,7 @@
         .btn.danger { background-color: var(--danger-color); }
         .btn:disabled { background-color: var(--light-text); cursor: not-allowed; opacity: 0.7; transform: none; box-shadow: none; }
         input, select, textarea { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; background-color: var(--bg-color); color: var(--text-color); font-family: 'Cairo', sans-serif; font-size: 1em; }
-        table { width: 100%; border-collapse: collapse; min-width: 700px; }
+        table { width: 100%; border-collapse: collapse; min-width: 800px; }
         th, td { padding: 14px 12px; text-align: right; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
         thead th { background-color: var(--primary-light); color: var(--primary-dark); font-size: 1.1em; }
         tbody tr:hover { background-color: color-mix(in srgb, var(--primary-color) 8%, transparent); }
@@ -180,7 +180,7 @@
                     </div>
                     <div class="table-wrapper" style="overflow-x: auto;">
                         <table id="employees-table">
-                            <thead><tr><th>الاسم</th><th>الاسم الرمزي</th><th>الحالة (لليوم المحدد)</th><th>الوردية</th><th class="no-print">إجراءات</th></tr></thead>
+                            <thead><tr><th>الاسم</th><th>الاسم الرمزي</th><th>رقم الهاتف</th><th>الحالة (لليوم المحدد)</th><th>الوردية</th><th class="no-print">إجراءات</th></tr></thead>
                             <tbody id="employees-table-body"><div class="spinner"></div></tbody>
                         </table>
                     </div>
@@ -400,12 +400,26 @@
 
         try {
             if (state.currentEditingId) {
-                if (password) employeeData.hashedPassword = await hashPassword(password);
+                // --- تعديل عامل حالي ---
+                // لن يتم تغيير كلمة المرور إلا إذا قام المستخدم بإدخال كلمة مرور جديدة.
+                // إذا ترك الحقل فارغاً، تبقى كلمة المرور القديمة كما هي. هذا إجراء أمني.
+                if (password) {
+                    employeeData.hashedPassword = await hashPassword(password);
+                }
                 await updateDoc(doc(db, 'employees', state.currentEditingId), employeeData);
                 showToast('تم تحديث العامل بنجاح.');
             } else {
-                if (!password) { DOMElements.saveModalBtn.disabled = false; return showToast('الرجاء إدخال كلمة مرور للعامل الجديد.', 'error'); }
-                if ((await getDoc(doc(db, "employees", username))).exists()) { DOMElements.saveModalBtn.disabled = false; return showToast('هذا الاسم الرمزي مستخدم بالفعل.', 'error'); }
+                // --- إضافة عامل جديد ---
+                // عند إضافة عامل جديد، يجب تحديد كلمة مرور.
+                if (!password) { 
+                    DOMElements.saveModalBtn.disabled = false; 
+                    return showToast('الرجاء إدخال كلمة مرور للعامل الجديد.', 'error'); 
+                }
+                // التأكد من أن الاسم الرمزي غير مستخدم
+                if ((await getDoc(doc(db, "employees", username))).exists()) { 
+                    DOMElements.saveModalBtn.disabled = false; 
+                    return showToast('هذا الاسم الرمزي مستخدم بالفعل.', 'error'); 
+                }
                 employeeData.hashedPassword = await hashPassword(password);
                 await setDoc(doc(db, 'employees', username), { ...employeeData, createdAt: new Date() });
                 showToast('تمت إضافة العامل بنجاح.');
@@ -454,11 +468,11 @@
         const tableBody = DOMElements.employeesTableBody;
         tableBody.innerHTML = '';
         if (state.employees.size === 0) {
-            tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 20px;">لم يتم إضافة عمال بعد.</td></tr>`;
+            // تم تعديل colspan ليطابق العدد الجديد للأعمدة
+            tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 20px;">لم يتم إضافة عمال بعد.</td></tr>`;
             return;
         }
         
-        // FIX: Sort employees on the client-side to ensure all are displayed
         const sortedEmployees = [...state.employees.values()].sort((a, b) => (a.name || '').localeCompare(b.name || '', 'ar'));
         sortedEmployees.forEach(emp => {
             const attendance = state.dailyAttendance.get(emp.id);
@@ -467,9 +481,11 @@
             const row = document.createElement('tr');
             row.dataset.name = (emp.name || '').toLowerCase();
             row.dataset.username = (emp.username || '').toLowerCase();
+            // تمت إضافة حقل "رقم الهاتف" هنا
             row.innerHTML = `
                 <td>${sanitizeHTML(emp.name || '<i>لا يوجد اسم</i>')}</td>
                 <td>${sanitizeHTML(emp.username)}</td>
+                <td>${sanitizeHTML(emp.customId || '---')}</td>
                 <td><span class="status-badge status-${status}">${status === 'present' ? 'حاضر' : 'غائب'}</span></td>
                 <td>${shiftText}</td>
                 <td class="action-buttons no-print">
@@ -495,8 +511,6 @@
     };
 
     const listenForChanges = () => {
-        // FIX: Removed orderBy('name') to fetch ALL employees, even those missing a 'name' field.
-        // Sorting will now be handled reliably on the client-side in renderEmployees().
         onSnapshot(collection(db, 'employees'), (snapshot) => {
             const changes = snapshot.docChanges();
             changes.forEach((change) => {
@@ -663,13 +677,8 @@
             //   !!! تنبيه هام جداً - لكي تعمل التقارير اليومية بشكل صحيح !!!
             // ============================================================================================
             //   إذا ظهر خطأ في هذه الوظيفة، فذلك بسبب أن قاعدة بيانات Firestore تتطلب "فهرس مركب"
-            //   لهذا النوع من الاستعلامات. إنشاؤه سهل جداً:
-            //   1. افتح متصفحك واذهب إلى Console (الطرفية) في المتصفح بالضغط على F12.
-            //   2. حاول جلب تقرير يومي من الصفحة.
-            //   3. سيظهر خطأ في الـ Console باللون الأحمر، وضمن رسالة الخطأ يوجد رابط طويل.
-            //   4. اضغط على ذلك الرابط. سيفتح لك صفحة إنشاء الفهرس في لوحة تحكم Firebase مع تعبئة الحقول تلقائياً.
-            //   5. كل ما عليك فعله هو الضغط على زر "إنشاء" أو "Create".
-            //   6. انتظر بضع دقائق حتى يتم بناء الفهرس، وبعدها سيعمل هذا القسم بشكل صحيح.
+            //   لهذا النوع من الاستعلامات. لإنشائه: افتح Console المتصفح (F12) وحاول جلب تقرير.
+            //   سيظهر خطأ مع رابط، اضغط على الرابط لإنشاء الفهرس المطلوب في لوحة تحكم Firebase.
             // ============================================================================================
 
             let constraints = [where("date", "==", date), where("report", ">", "")];
@@ -733,11 +742,9 @@
             });
         });
 
-        // الشيفرة الجديدة (الصحيحة)
         DOMElements.toggleAttendanceBtn.addEventListener('click', async () => {
             const newState = !state.qrSettings.isActive;
             try {
-                // استخدام setDoc مع merge: true لضمان عملها سواء كان المستند موجوداً أم لا
                 await setDoc(doc(db, "settings", "dailyQr"), { isActive: newState }, { merge: true });
                 showToast(`تم ${newState ? 'تفعيل' : 'إلغاء تفعيل'} الحضور بنجاح.`);
             } catch (err) {
