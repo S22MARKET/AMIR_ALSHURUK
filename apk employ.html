@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="التطبيق الرسمي لموظفي وعمال مؤسسة أمير الشروق لتسهيل إدارة المهام اليومية والتواصل الفعال.">
+    <title>تحميل تطبيق عمال أمير الشروق</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* --- المتغيرات الرئيسية للتصميم --- */
+        :root {
+            --primary-color: #005A9C; /* أزرق داكن */
+            --secondary-color: #FDB813; /* ذهبي */
+            --background-gradient: linear-gradient(135deg, #e9f3ff 0%, #ffffff 100%);
+            --card-background: rgba(255, 255, 255, 0.7);
+            --text-color: #2c3e50;
+            --light-text-color: #555;
+            --success-color: #28a745;
+            --warning-bg-color: #fff9e6;
+            --warning-border-color: #ffd966;
+        }
+
+        /* --- إعدادات أساسية للجسم --- */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: var(--background-gradient);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            direction: rtl;
+        }
+        
+        /* --- الحاوية الرئيسية بتأثير زجاجي --- */
+        .container {
+            background: var(--card-background);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            max-width: 650px;
+            width: 100%;
+            padding: 40px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-top: 5px solid var(--primary-color);
+        }
+
+        /* --- رسوم متحركة لدخول العناصر --- */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInAnimation 0.6s ease-out forwards;
+        }
+        
+        header { animation-delay: 0.1s; }
+        .features { animation-delay: 0.3s; }
+        .download-section { animation-delay: 0.5s; }
+        .warning-section { animation-delay: 0.7s; }
+        
+        @keyframes fadeInAnimation {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* --- قسم الترويسة --- */
+        .logo {
+            max-width: 120px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            font-weight: 900;
+            font-size: clamp(1.8rem, 5vw, 2.5rem); /* خط مرن */
+            margin-bottom: 15px;
+        }
+
+        .description {
+            font-size: 1.1rem;
+            color: var(--light-text-color);
+            line-height: 1.7;
+            margin-bottom: 35px;
+        }
+
+        /* --- قسم المميزات --- */
+        .features h2 {
+            font-weight: 700;
+            margin-bottom: 30px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .features h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70px;
+            height: 4px;
+            background-color: var(--secondary-color);
+            border-radius: 2px;
+        }
+
+        .features-list {
+            list-style: none;
+            margin: 0 auto 40px;
+            display: inline-block;
+            text-align: right;
+        }
+
+        .features-list li {
+            font-size: 1.1rem;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            transition: transform 0.2s ease;
+        }
+        
+        .features-list li:hover {
+            transform: translateX(-5px);
+        }
+
+        .features-list i {
+            color: var(--success-color);
+            font-size: 1.5rem;
+            margin-left: 15px;
+            min-width: 25px; /* لضمان محاذاة النص */
+        }
+
+        /* --- قسم التحميل --- */
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(45deg, var(--primary-color), #007bff);
+            color: #fff;
+            padding: 18px 45px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 1.4rem;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 90, 156, 0.3);
+            border: none;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-7px) scale(1.05);
+            box-shadow: 0 10px 30px rgba(0, 90, 156, 0.4);
+        }
+
+        .download-btn i {
+            margin-left: 12px;
+            font-size: 1.5rem;
+        }
+
+        .version-info {
+            margin-top: 25px;
+            color: var(--light-text-color);
+        }
+
+        .version-info p { margin: 5px 0; }
+        .version-info span { font-size: 0.95rem; }
+        .version-info .fab.fa-android { color: var(--success-color); margin-left: 5px; }
+
+        /* --- قسم التنبيه والتعليمات --- */
+        .warning-section {
+            margin-top: 40px;
+            padding: 20px;
+            background-color: var(--warning-bg-color);
+            border: 1px solid var(--warning-border-color);
+            border-radius: 10px;
+            text-align: right;
+        }
+        
+        .warning-section h3 {
+            display: flex;
+            align-items: center;
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .warning-section h3 i {
+            margin-left: 12px;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+        }
+        
+        .warning-section p {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--light-text-color);
+        }
+
+        /* --- قسم الحقوق --- */
+        footer {
+            margin-top: 40px;
+            color: #888;
+            font-size: 0.9rem;
+            opacity: 0;
+            animation: fadeInAnimation 1s 1s ease-out forwards;
+        }
+
+        /* --- تصميم متجاوب للشاشات الصغيرة --- */
+        @media (max-width: 600px) {
+            body { padding: 10px; }
+            .container { padding: 25px; }
+            h1 { font-size: 1.9rem; }
+            .description, .features-list li, .warning-section p { font-size: 1rem; }
+            .download-btn { padding: 16px 35px; font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <main class="container">
+        
+        <header class="fade-in">
+            <img src="PIC/LOGO.jpg" alt="شعار أمير الشروق" class="logo">
+            <h1>تطبيق عمال أمير الشروق</h1>
+            <p class="description">التطبيق الرسمي لموظفي وعمال مؤسسة أمير الشروق لتسهيل إدارة المهام اليومية والتواصل الفعال.</p>
+        </header>
+
+        <section class="features fade-in">
+            <h2>مميزات التطبيق</h2>
+            <ul class="features-list">
+                <li><i class="fas fa-check-circle"></i> تسجيل الحضور والانصراف بسهولة</li>
+                <li><i class="fas fa-tasks"></i> عرض وإدارة المهام الموكلة</li>
+                <li><i class="fas fa-bullhorn"></i> استقبال الإعلانات والتنبيهات الهامة</li>
+                <li><i class="fas fa-shield-alt"></i> واجهة آمنة وسهلة الاستخدام</li>
+            </ul>
+        </section>
+
+        <section class="download-section fade-in">
+            <a href="تسجيل  الحضور  أمير الشروق .apk" class="download-btn" download>
+                <i class="fas fa-download"></i>
+                تحميل التطبيق (APK)
+            </a>
+            <div class="version-info">
+                <p>الإصدار: 1.0.0 | آخر تحديث: 27-08-2025</p>
+                <span><i class="fab fa-android"></i> متوافق مع أجهزة أندرويد</span>
+            </div>
+        </section>
+
+        <section class="warning-section fade-in">
+            <h3>
+                <i class="fas fa-shield-heart"></i>
+                هل التطبيق آمن للتثبيت؟
+            </h3>
+            <p>
+                نعم، التطبيق آمن تمامًا. قد يطلب منك هاتفك السماح بـ "التثبيت من مصادر غير معروفة" لأن التطبيق خاص بمؤسستنا وغير منشور على متجر Google Play الرسمي. هذه خطوة روتينية، يرجى الموافقة عليها لإكمال التثبيت.
+            </p>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2025 جميع الحقوق محفوظة لمؤسسة أمير الشروق.</p>
+    </footer>
+
+</body>
+</html>
