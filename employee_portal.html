@@ -3,331 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بوابة الموظف المطور</title>
+    <title>بوابة الموظف</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary: #2563eb;
-            --primary-light: #dbeafe;
-            --primary-dark: #1e40af;
-            --success: #16a34a;
-            --success-light: #dcfce7;
-            --danger: #dc2626;
-            --danger-light: #fee2e2;
-            --warning: #f59e0b;
-            --warning-light: #fef3c7;
-            --dark: #1e293b;
-            --light: #f8fafc;
-            --gray: #64748b;
-            --gray-light: #e2e8f0;
-            --border-radius: 12px;
+            --primary: #2563eb; --primary-light: #dbeafe; --primary-dark: #1e40af;
+            --success: #16a34a; --success-light: #dcfce7; --danger: #dc2626; --danger-light: #fee2e2;
+            --warning: #f59e0b; --warning-light: #fef3c7; --dark: #1e293b; --light: #f8fafc;
+            --gray: #64748b; --gray-light: #e2e8f0; --border-radius: 12px;
             --transition: all 0.3s ease-in-out;
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
-        
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        
         body {
-            font-family: 'Cairo', sans-serif;
-            background-color: #f1f5f9;
-            color: var(--dark);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            padding: 16px;
-            transition: var(--transition);
+            font-family: 'Cairo', sans-serif; background-color: #f1f5f9; color: var(--dark);
+            display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 16px;
         }
-        
-        .container {
-            width: 100%;
-            max-width: 450px;
-            margin: auto;
-        }
-        
-        .card {
-            background-color: white;
-            padding: 28px;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow-lg);
-            transition: var(--transition);
-            width: 100%;
-        }
-        
-        .card-header {
-            text-align: center;
-            margin-bottom: 24px;
-        }
-        
-        .card-header h2 {
-            color: var(--primary);
-            font-size: 1.8rem;
-            font-weight: 700;
-        }
-        
-        .card-header p {
-            color: var(--gray);
-            font-size: 1rem;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-            text-align: right;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-        }
-        
-        .input-group {
-            position: relative;
-        }
-        
-        .input-group i {
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--gray);
-        }
-        
-        input {
-            width: 100%;
-            padding: 14px 40px 14px 16px;
-            border: 1px solid var(--gray-light);
-            border-radius: var(--border-radius);
-            font-size: 1rem;
-            font-family: 'Cairo', sans-serif;
-            transition: var(--transition);
-        }
-        
-        input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px var(--primary-light);
-        }
-        
+        .container { width: 100%; max-width: 450px; margin: auto; }
+        .card { background-color: white; padding: 28px; border-radius: var(--border-radius); box-shadow: var(--shadow-lg); width: 100%; }
+        .card-header { text-align: center; margin-bottom: 24px; }
+        .card-header h2 { color: var(--primary); font-size: 1.8rem; font-weight: 700; }
+        .card-header p { color: var(--gray); font-size: 1rem; }
+        .form-group { margin-bottom: 20px; text-align: right; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; }
+        .input-group { position: relative; }
+        .input-group i { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--gray); }
+        input { width: 100%; padding: 14px 40px 14px 16px; border: 1px solid var(--gray-light); border-radius: var(--border-radius); font-size: 1rem; font-family: 'Cairo', sans-serif; transition: var(--transition); }
+        input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
         .btn {
-            width: 100%;
-            padding: 14px 16px;
-            border: none;
-            border-radius: var(--border-radius);
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            background-color: var(--primary);
-            color: white;
+            width: 100%; padding: 14px 16px; border: none; border-radius: var(--border-radius); font-size: 1rem; font-weight: 700;
+            cursor: pointer; transition: var(--transition); display: flex; align-items: center; justify-content: center; gap: 8px;
+            background-color: var(--primary); color: white;
         }
-        
-        .btn:hover:not(:disabled) {
-            background-color: var(--primary-dark);
-            box-shadow: var(--shadow);
-            transform: translateY(-2px);
-        }
-        
-        .btn:disabled {
-            background-color: var(--gray-light);
-            color: var(--gray);
-            cursor: not-allowed;
-        }
-        
-        .loading {
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: #fff;
-            animation: spin 1s ease-in-out infinite;
-        }
-        
+        .btn:hover:not(:disabled) { background-color: var(--primary-dark); box-shadow: var(--shadow); transform: translateY(-2px); }
+        .btn:disabled { background-color: var(--gray-light); color: var(--gray); cursor: not-allowed; }
+        .loading, .spinner { width: 20px; height: 20px; border: 3px solid rgba(255, 255, 255, 0.3); border-radius: 50%; border-top-color: #fff; animation: spin 1s linear infinite; }
+        .spinner { border-top-color: var(--primary); border-color: var(--gray-light); border-top-color: var(--primary); margin: 20px auto; }
         @keyframes spin { to { transform: rotate(360deg); } }
         
         /* Dashboard Styles */
-        .dashboard {
-            display: none; /* Initially hidden */
-            width: 100%;
-            max-width: 800px;
-        }
-        
-        .dashboard-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-        }
-        
+        .dashboard { display: none; max-width: 800px; }
+        .dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
         .user-info .avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: var(--primary);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 8px;
+            width: 50px; height: 50px; border-radius: 50%; background: var(--primary); color: white;
+            display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 700; margin-bottom: 8px;
         }
-        
-        .user-info h3 { font-size: 1.3rem; }
-        .user-info p { color: var(--gray); }
-        
-        .logout-btn {
-            background: none;
-            border: 1px solid var(--danger);
-            color: var(--danger);
-            padding: 8px 12px;
-            border-radius: var(--border-radius);
-            font-size: 0.9rem;
-        }
+        .user-info h3 { font-size: 1.3rem; } .user-info p { color: var(--gray); }
+        .logout-btn { background: none; border: 1px solid var(--danger); color: var(--danger); padding: 8px 12px; border-radius: var(--border-radius); font-size: 0.9rem; }
         .logout-btn:hover { background-color: var(--danger-light); }
-        
         .time-section {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: white;
-            padding: 24px;
-            border-radius: var(--border-radius);
-            text-align: center;
-            margin-bottom: 24px;
-            box-shadow: var(--shadow);
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; padding: 24px;
+            border-radius: var(--border-radius); text-align: center; margin-bottom: 24px; box-shadow: var(--shadow);
         }
-        
         .time-section #time { font-size: 2.5rem; font-weight: 700; }
         .time-section #date { font-size: 1.1rem; opacity: 0.9; }
-        
-        .dashboard-actions {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-        
-        .action-card {
-            background: white;
-            padding: 20px;
-            border-radius: var(--border-radius);
-            text-align: center;
-            box-shadow: var(--shadow);
-            cursor: pointer;
-            transition: var(--transition);
-        }
-        
-        .action-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-lg);
-            color: var(--primary);
-        }
-        
-        .action-card i { font-size: 2.5rem; margin-bottom: 12px; }
-        .action-card p { font-weight: 600; }
-        
-        .stats-section {
-            background: white;
-            padding: 24px;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-        }
-        
-        .stats-header {
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin-bottom: 16px;
-            border-bottom: 1px solid var(--gray-light);
-            padding-bottom: 12px;
-        }
-        
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 16px;
-        }
-        
+        .dashboard-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin-bottom: 24px; }
+        .action-card { background: white; padding: 20px; border-radius: var(--border-radius); text-align: center; box-shadow: var(--shadow); cursor: pointer; transition: var(--transition); }
+        .action-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); color: var(--primary); }
+        .action-card i { font-size: 2.5rem; margin-bottom: 12px; } .action-card p { font-weight: 600; }
+        .stats-section { background: white; padding: 24px; border-radius: var(--border-radius); box-shadow: var(--shadow); margin-bottom: 24px; }
+        .section-header { font-size: 1.3rem; font-weight: 700; margin-bottom: 16px; border-bottom: 1px solid var(--gray-light); padding-bottom: 12px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 16px; }
         .stat-item { text-align: center; }
         .stat-item .value { font-size: 1.8rem; font-weight: 700; }
         .stat-item .label { color: var(--gray); font-size: 0.9rem; }
-        .value.absent { color: var(--danger); }
-        .value.present { color: var(--success); }
+        .value.absent { color: var(--danger); } .value.present { color: var(--success); }
+        
+        /* History Section */
+        .history-section { background: white; padding: 24px; border-radius: var(--border-radius); box-shadow: var(--shadow); }
+        .table-wrapper { overflow-x: auto; max-height: 400px; }
+        .history-table { width: 100%; border-collapse: collapse; min-width: 500px; }
+        .history-table th, .history-table td { padding: 12px 15px; text-align: right; border-bottom: 1px solid var(--gray-light); }
+        .history-table thead th { background-color: #f8fafc; font-weight: 700; }
+        .history-table tbody tr:hover { background-color: #f1f5f9; }
+        .status-badge { padding: 4px 10px; border-radius: 20px; font-weight: 600; font-size: 0.85rem; }
+        .status-present { background-color: var(--success-light); color: var(--success); }
+        .status-absent { background-color: var(--danger-light); color: var(--danger); }
         
         /* Modal Styles */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0; top: 0;
-            width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.6);
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .modal-content {
-            background-color: white;
-            padding: 28px;
-            border-radius: var(--border-radius);
-            width: 90%;
-            max-width: 400px;
-        }
-        
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); align-items: center; justify-content: center; }
+        .modal-content { background-color: white; padding: 28px; border-radius: var(--border-radius); width: 90%; max-width: 400px; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .modal-header h2 { color: var(--primary); }
-        
-        .close-btn {
-            font-size: 1.8rem;
-            color: var(--gray);
-            cursor: pointer;
-            border: none; background: none;
-        }
-        
-        #toast-container {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        
+        .close-btn { font-size: 1.8rem; color: var(--gray); cursor: pointer; border: none; background: none; }
+        #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
         .toast {
-            padding: 15px 20px;
-            border-radius: var(--border-radius);
-            color: #fff;
-            font-weight: bold;
-            box-shadow: var(--shadow-lg);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            opacity: 0;
-            transform: translateY(-100px);
-            animation: slideDown 0.5s forwards;
+            padding: 15px 20px; border-radius: var(--border-radius); color: #fff; font-weight: bold; box-shadow: var(--shadow-lg);
+            display: flex; align-items: center; gap: 10px; opacity: 0; transform: translateY(-100px); animation: slideDown 0.5s forwards;
         }
-        
         @keyframes slideDown { to { opacity: 1; transform: translateY(0); } }
-        
-        .toast.success { background-color: var(--success); }
-        .toast.error { background-color: var(--danger); }
-        
-        @media (max-width: 480px) {
-            .card { padding: 20px; }
-            .time-section #time { font-size: 2rem; }
-        }
+        .toast.success { background-color: var(--success); } .toast.error { background-color: var(--danger); }
+        @media (max-width: 480px) { .card { padding: 20px; } .time-section #time { font-size: 2rem; } }
     </style>
 </head>
 <body>
@@ -335,28 +103,17 @@
 
     <div id="login-view" class="container">
         <div class="card">
-            <div class="card-header">
-                <h2>تسجيل الدخول</h2>
-                <p>مرحباً بك مجدداً! الرجاء إدخال بياناتك</p>
-            </div>
+            <div class="card-header"> <h2>تسجيل الدخول</h2> <p>مرحباً بك مجدداً! الرجاء إدخال بياناتك</p> </div>
             <form id="login-form">
                 <div class="form-group">
                     <label for="username">الاسم الرمزي</label>
-                    <div class="input-group">
-                        <i class="fas fa-user"></i>
-                        <input type="text" id="username" required>
-                    </div>
+                    <div class="input-group"> <i class="fas fa-user"></i> <input type="text" id="username" required> </div>
                 </div>
                 <div class="form-group">
                     <label for="password">كلمة المرور</label>
-                    <div class="input-group">
-                        <i class="fas fa-lock"></i>
-                        <input type="password" id="password" required>
-                    </div>
+                    <div class="input-group"> <i class="fas fa-lock"></i> <input type="password" id="password" required> </div>
                 </div>
-                <button type="submit" id="login-btn" class="btn">
-                    <span>تسجيل الدخول</span>
-                </button>
+                <button type="submit" id="login-btn" class="btn"> <span>تسجيل الدخول</span> </button>
             </form>
         </div>
     </div>
@@ -365,88 +122,64 @@
         <div class="dashboard-header">
             <div class="user-info">
                 <div class="avatar" id="user-avatar"></div>
-                <h3 id="user-name"></h3>
-                <p id="user-username"></p>
+                <h3 id="user-name"></h3> <p id="user-username"></p>
             </div>
-            <button id="logout-btn" class="btn logout-btn">
-                <i class="fas fa-sign-out-alt"></i> خروج
-            </button>
+            <button id="logout-btn" class="btn logout-btn"> <i class="fas fa-sign-out-alt"></i> خروج </button>
         </div>
         
         <div class="time-section">
-            <div id="time">00:00:00</div>
-            <div id="date">...</div>
+            <div id="time">00:00:00</div> <div id="date">...</div>
         </div>
         
         <div class="dashboard-actions">
-            <div id="check-in-card" class="action-card">
-                <i class="fas fa-sign-in-alt"></i>
-                <p>تسجيل حضور</p>
-            </div>
-            <div id="check-out-card" class="action-card">
-                <i class="fas fa-sign-out-alt"></i>
-                <p>تسجيل انصراف</p>
-            </div>
-            <div id="report-card" class="action-card">
-                <i class="fas fa-file-alt"></i>
-                <p>التقرير اليومي</p>
-            </div>
+            <div id="check-in-card" class="action-card"> <i class="fas fa-sign-in-alt"></i> <p>تسجيل حضور</p> </div>
+            <div id="check-out-card" class="action-card"> <i class="fas fa-sign-out-alt"></i> <p>تسجيل انصراف</p> </div>
+            <div id="report-card" class="action-card"> <i class="fas fa-file-alt"></i> <p>التقرير اليومي</p> </div>
         </div>
         
         <div class="stats-section">
-            <h3 class="stats-header">إحصائياتي</h3>
+            <h3 class="section-header">إحصائياتي</h3>
             <div class="stats-grid">
-                <div class="stat-item">
-                    <div class="value present" id="total-days-worked">--</div>
-                    <div class="label">إجمالي الحضور</div>
-                </div>
-                <div class="stat-item">
-                    <div class="value absent" id="total-absences">--</div>
-                    <div class="label">إجمالي الغيابات</div>
-                </div>
-                <div class="stat-item">
-                    <div class="value" id="attendance-status">--</div>
-                    <div class="label">حالة اليوم</div>
-                </div>
+                <div class="stat-item"> <div class="value present" id="total-days-worked">--</div> <div class="label">إجمالي الحضور</div> </div>
+                <div class="stat-item"> <div class="value absent" id="total-absences">--</div> <div class="label">إجمالي الغيابات</div> </div>
+                <div class="stat-item"> <div class="value" id="attendance-status">--</div> <div class="label">حالة اليوم</div> </div>
+            </div>
+        </div>
+        
+        <div class="history-section">
+            <h3 class="section-header">سجل الحضور والغياب</h3>
+            <div id="history-spinner" class="spinner" style="display: none;"></div>
+            <div id="history-table-wrapper" class="table-wrapper">
+                <table class="history-table">
+                    <thead> <tr> <th>التاريخ</th> <th>الحالة</th> <th>التقرير اليومي (للقراءة فقط)</th> </tr> </thead>
+                    <tbody id="history-table-body"></tbody>
+                </table>
             </div>
         </div>
     </div>
 
     <div id="daily-code-modal" class="modal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h2>شيفرة الحضور</h2>
-                <button class="close-btn">&times;</button>
-            </div>
+            <div class="modal-header"> <h2>شيفرة الحضور</h2> <button class="close-btn">&times;</button> </div>
             <form id="daily-code-form">
                 <div class="form-group">
                     <label for="daily-code">الرجاء إدخال شيفرة الحضور لليوم</label>
-                    <div class="input-group">
-                        <i class="fas fa-key"></i>
-                        <input type="text" id="daily-code" required autocomplete="off">
-                    </div>
+                    <div class="input-group"> <i class="fas fa-key"></i> <input type="text" id="daily-code" required autocomplete="off"> </div>
                 </div>
-                <button type="submit" id="submit-check-in-btn" class="btn">
-                    <span>تأكيد الحضور</span>
-                </button>
+                <button type="submit" id="submit-check-in-btn" class="btn"> <span>تأكيد الحضور</span> </button>
             </form>
         </div>
     </div>
     
     <div id="report-modal" class="modal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h2>التقرير اليومي</h2>
-                <button class="close-btn">&times;</button>
-            </div>
+            <div class="modal-header"> <h2>التقرير اليومي</h2> <button class="close-btn">&times;</button> </div>
             <form id="report-form">
                 <div class="form-group">
                     <label for="report-text">اكتب تقريرك هنا</label>
                     <textarea id="report-text" rows="6" style="width: 100%; padding: 10px; border-radius: var(--border-radius); border: 1px solid var(--gray-light); font-family: 'Cairo', sans-serif; resize: vertical;"></textarea>
                 </div>
-                <button type="submit" id="save-report-btn" class="btn">
-                    <span>حفظ التقرير</span>
-                </button>
+                <button type="submit" id="save-report-btn" class="btn"> <span>حفظ التقرير</span> </button>
             </form>
         </div>
     </div>
@@ -456,69 +189,44 @@
         import { getFirestore, doc, getDoc, setDoc, onSnapshot, query, where, collection, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
         const firebaseConfig = {
-            apiKey: "AIzaSyA1VBBOZQOUwnHp8x487g7lkn14x6Sp-7g",
-            authDomain: "stoke-c650a.firebaseapp.com",
-            databaseURL: "https://stoke-c650a-default-rtdb.firebaseio.com",
-            projectId: "stoke-c650a",
-            storageBucket: "stoke-c650a.firebasestorage.app",
-            messagingSenderId: "464151163343",
-            appId: "1:464151163343:web:728a60e952e4943bc822ba",
-            measurementId: "G-6C1X40RWHZ"
+            apiKey: "AIzaSyA1VBBOZQOUwnHp8x487g7lkn14x6Sp-7g", authDomain: "stoke-c650a.firebaseapp.com",
+            databaseURL: "https://stoke-c650a-default-rtdb.firebaseio.com", projectId: "stoke-c650a",
+            storageBucket: "stoke-c650a.firebasestorage.app", messagingSenderId: "464151163343",
+            appId: "1:464151163343:web:728a60e952e4943bc822ba", measurementId: "G-6C1X40RWHZ"
         };
         
         let db;
-        try {
-            const app = initializeApp(firebaseConfig);
-            db = getFirestore(app);
-        } catch (e) {
-            showToast("خطأ في الاتصال بقاعدة البيانات", "error");
-            console.error(e);
-        }
+        try { const app = initializeApp(firebaseConfig); db = getFirestore(app); } 
+        catch (e) { showToast("خطأ في الاتصال بقاعدة البيانات", "error"); console.error(e); }
 
         const DOMElements = {
-            loginView: document.getElementById('login-view'),
-            dashboardView: document.getElementById('dashboard-view'),
-            loginForm: document.getElementById('login-form'),
-            loginBtn: document.getElementById('login-btn'),
-            usernameInput: document.getElementById('username'),
-            passwordInput: document.getElementById('password'),
-            logoutBtn: document.getElementById('logout-btn'),
-            userAvatar: document.getElementById('user-avatar'),
-            userName: document.getElementById('user-name'),
-            userUsername: document.getElementById('user-username'),
-            time: document.getElementById('time'),
-            date: document.getElementById('date'),
-            checkInCard: document.getElementById('check-in-card'),
-            checkOutCard: document.getElementById('check-out-card'),
-            reportCard: document.getElementById('report-card'),
-            totalDaysWorked: document.getElementById('total-days-worked'),
-            totalAbsences: document.getElementById('total-absences'),
-            attendanceStatus: document.getElementById('attendance-status'),
-            dailyCodeModal: document.getElementById('daily-code-modal'),
-            dailyCodeForm: document.getElementById('daily-code-form'),
-            dailyCodeInput: document.getElementById('daily-code'),
-            submitCheckInBtn: document.getElementById('submit-check-in-btn'),
-            reportModal: document.getElementById('report-modal'),
-            reportForm: document.getElementById('report-form'),
-            reportText: document.getElementById('report-text'),
+            loginView: document.getElementById('login-view'), dashboardView: document.getElementById('dashboard-view'),
+            loginForm: document.getElementById('login-form'), loginBtn: document.getElementById('login-btn'),
+            usernameInput: document.getElementById('username'), passwordInput: document.getElementById('password'),
+            logoutBtn: document.getElementById('logout-btn'), userAvatar: document.getElementById('user-avatar'),
+            userName: document.getElementById('user-name'), userUsername: document.getElementById('user-username'),
+            time: document.getElementById('time'), date: document.getElementById('date'), checkInCard: document.getElementById('check-in-card'),
+            checkOutCard: document.getElementById('check-out-card'), reportCard: document.getElementById('report-card'),
+            totalDaysWorked: document.getElementById('total-days-worked'), totalAbsences: document.getElementById('total-absences'),
+            attendanceStatus: document.getElementById('attendance-status'), dailyCodeModal: document.getElementById('daily-code-modal'),
+            dailyCodeForm: document.getElementById('daily-code-form'), dailyCodeInput: document.getElementById('daily-code'),
+            submitCheckInBtn: document.getElementById('submit-check-in-btn'), reportModal: document.getElementById('report-modal'),
+            reportForm: document.getElementById('report-form'), reportText: document.getElementById('report-text'),
             saveReportBtn: document.getElementById('save-report-btn'),
+            historySpinner: document.getElementById('history-spinner'), // New
+            historyTableBody: document.getElementById('history-table-body'), // New
         };
         
-        const state = {
-            currentUser: null,
-            todayAttendance: null,
-            qrSettings: null,
-        };
-        
+        const state = { currentUser: null, todayAttendance: null, qrSettings: null, };
         const todayDateString = new Date().toISOString().split('T')[0];
+        const sanitizeHTML = str => str ? str.toString().replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;') : '';
 
         // --- Helper Functions ---
         const showToast = (message, type = 'success') => {
-            const toastContainer = document.getElementById('toast-container');
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
             toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-times-circle'}"></i> ${message}`;
-            toastContainer.appendChild(toast);
+            document.getElementById('toast-container').appendChild(toast);
             setTimeout(() => toast.remove(), 4000);
         };
         
@@ -544,8 +252,7 @@
         const updateTime = () => {
             const now = new Date();
             DOMElements.time.textContent = now.toLocaleTimeString('en-GB');
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            DOMElements.date.textContent = now.toLocaleDateString('ar-EG', options);
+            DOMElements.date.textContent = now.toLocaleDateString('ar-EG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
         };
 
         // --- UI Update Functions ---
@@ -560,15 +267,24 @@
             DOMElements.userAvatar.textContent = state.currentUser.name.charAt(0);
             DOMElements.userName.textContent = `مرحباً، ${state.currentUser.name}`;
             DOMElements.userUsername.textContent = `@${state.currentUser.username}`;
-            updateStats();
+            updateStatsAndHistory(); // Combined function now
         };
         
-        const updateStats = async () => {
-            // Update attendance status for today
-            const docId = `${state.currentUser.username}_${todayDateString}`;
-            const attendanceDoc = await getDoc(doc(db, "attendance", docId));
-            state.todayAttendance = attendanceDoc.exists() ? attendanceDoc.data() : null;
+        const updateStatsAndHistory = async () => {
+            if (!state.currentUser) return;
+            DOMElements.historySpinner.style.display = 'block';
+            DOMElements.historyTableBody.innerHTML = '';
+            
+            // Fetch ALL attendance records for the user
+            const q = query(collection(db, "attendance"), where("employeeSymbolicName", "==", state.currentUser.username));
+            const querySnapshot = await getDocs(q);
+            const attendanceMap = new Map();
+            querySnapshot.forEach(doc => {
+                attendanceMap.set(doc.data().date, doc.data());
+            });
 
+            // Update today's status
+            state.todayAttendance = attendanceMap.get(todayDateString) || null;
             if (state.todayAttendance) {
                 DOMElements.attendanceStatus.textContent = 'تم تسجيل الحضور';
                 DOMElements.attendanceStatus.style.color = 'var(--success)';
@@ -576,29 +292,46 @@
                 DOMElements.attendanceStatus.textContent = 'لم يتم تسجيل الحضور';
                 DOMElements.attendanceStatus.style.color = 'var(--warning)';
             }
-
-            // Update total days worked & absences
-            const q = query(collection(db, "attendance"), where("employeeSymbolicName", "==", state.currentUser.username));
-            const querySnapshot = await getDocs(q);
-            const totalDaysWorked = querySnapshot.size;
+            
+            // Update total stats and build history
+            const totalDaysWorked = attendanceMap.size;
             DOMElements.totalDaysWorked.textContent = totalDaysWorked;
 
             if (state.currentUser.createdAt) {
                 const startDate = state.currentUser.createdAt.toDate();
-                const today = new Date();
-                // To prevent counting the start day as a full day if they start late, we normalize the time
-                startDate.setHours(0,0,0,0);
-                today.setHours(0,0,0,0);
+                let totalAbsences = 0;
+                let historyHTML = '';
                 
-                const diffTime = Math.abs(today - startDate);
-                // +1 to include the current day in the count of total possible work days
-                const totalDaysSinceStart = Math.round(diffTime / (1000 * 60 * 60 * 24)) + 1;
-                
-                const totalAbsences = Math.max(0, totalDaysSinceStart - totalDaysWorked);
+                // Loop from today back to the start date
+                for (let d = new Date(); d >= startDate; d.setDate(d.getDate() - 1)) {
+                    const dateString = d.toISOString().split('T')[0];
+                    const record = attendanceMap.get(dateString);
+                    const formattedDate = new Date(dateString + 'T00:00:00').toLocaleDateString('ar-EG', { day: '2-digit', month: 'long', year: 'numeric' });
+                    
+                    if (record) {
+                        historyHTML += `
+                            <tr>
+                                <td>${formattedDate}</td>
+                                <td><span class="status-badge status-present">حاضر</span></td>
+                                <td>${sanitizeHTML(record.report) || '---'}</td>
+                            </tr>`;
+                    } else {
+                        totalAbsences++;
+                        historyHTML += `
+                            <tr>
+                                <td>${formattedDate}</td>
+                                <td><span class="status-badge status-absent">غائب</span></td>
+                                <td>---</td>
+                            </tr>`;
+                    }
+                }
+                DOMElements.historyTableBody.innerHTML = historyHTML;
                 DOMElements.totalAbsences.textContent = totalAbsences;
             } else {
                 DOMElements.totalAbsences.textContent = '--';
+                DOMElements.historyTableBody.innerHTML = '<tr><td colspan="3">لا يمكن حساب سجل الغياب.</td></tr>';
             }
+            DOMElements.historySpinner.style.display = 'none';
         };
 
         // --- App Logic ---
@@ -606,25 +339,16 @@
             e.preventDefault();
             const username = DOMElements.usernameInput.value.trim();
             const password = DOMElements.passwordInput.value.trim();
-            
             if (!username || !password) return showToast("الرجاء ملء جميع الحقول", "error");
-
             setLoading(DOMElements.loginBtn, true, 'جارِ التحقق...');
             
             try {
                 const userDoc = await getDoc(doc(db, "employees", username));
-                if (!userDoc.exists()) {
-                    showToast("الاسم الرمزي أو كلمة المرور غير صحيحة", "error");
-                    return;
-                }
+                if (!userDoc.exists()) { throw new Error("Invalid credentials"); }
                 
                 const user = { username: userDoc.id, ...userDoc.data() };
                 const hashedPassword = await hashPassword(password);
-
-                if (user.hashedPassword !== hashedPassword) {
-                    showToast("الاسم الرمزي أو كلمة المرور غير صحيحة", "error");
-                    return;
-                }
+                if (user.hashedPassword !== hashedPassword) { throw new Error("Invalid credentials"); }
                 
                 state.currentUser = user;
                 localStorage.setItem('loggedInUser', username);
@@ -632,12 +356,8 @@
                 showView(DOMElements.dashboardView);
                 updateDashboardUI();
 
-            } catch (error) {
-                console.error("Login error:", error);
-                showToast("حدث خطأ أثناء تسجيل الدخول", "error");
-            } finally {
-                setLoading(DOMElements.loginBtn, false);
-            }
+            } catch (error) { showToast("الاسم الرمزي أو كلمة المرور غير صحيحة", "error"); } 
+            finally { setLoading(DOMElements.loginBtn, false); }
         };
 
         const handleLogout = () => {
@@ -651,66 +371,38 @@
         const handleCheckIn = async (e) => {
             e.preventDefault();
             const dailyCode = DOMElements.dailyCodeInput.value.trim();
-
             if (!dailyCode) return showToast("الرجاء إدخال الشيفرة", "error");
-            if (!state.qrSettings) return showToast("إعدادات الشيفرة غير متاحة", "error");
-
-            if (!state.qrSettings.isActive) {
-                return showToast("نظام الحضور غير مفعل حالياً", "error");
-            }
-            if (state.qrSettings.dailyCode !== dailyCode) {
-                return showToast("الشيفرة اليومية غير صحيحة", "error");
-            }
-            if (state.qrSettings.activeDate !== todayDateString) {
-                return showToast("هذه الشيفرة منتهية الصلاحية", "error");
+            if (!state.qrSettings || !state.qrSettings.isActive || state.qrSettings.dailyCode !== dailyCode || state.qrSettings.activeDate !== todayDateString) {
+                return showToast("شيفرة الحضور غير صالحة أو أن النظام غير مفعل", "error");
             }
 
             setLoading(DOMElements.submitCheckInBtn, true, 'جارِ تسجيل الحضور...');
-            
             try {
                 const now = new Date();
-                const shift = now.getHours() < 14 ? 'morning' : 'evening'; // Example shift logic
+                const shift = now.getHours() < 14 ? 'morning' : 'evening';
                 const docId = `${state.currentUser.username}_${todayDateString}`;
-                
                 await setDoc(doc(db, "attendance", docId), {
-                    employeeName: state.currentUser.name,
-                    employeeSymbolicName: state.currentUser.username,
-                    date: todayDateString,
-                    checkIn: now,
-                    shift: shift,
-                    report: ""
+                    employeeName: state.currentUser.name, employeeSymbolicName: state.currentUser.username,
+                    date: todayDateString, checkIn: now, shift: shift, report: ""
                 });
-                
                 showToast("تم تسجيل الحضور بنجاح", "success");
                 closeModal(DOMElements.dailyCodeModal);
-                updateStats();
-
-            } catch (error) {
-                console.error("Check-in error:", error);
-                showToast("حدث خطأ أثناء تسجيل الحضور", "error");
-            } finally {
-                setLoading(DOMElements.submitCheckInBtn, false);
-            }
+                updateStatsAndHistory();
+            } catch (error) { showToast("حدث خطأ أثناء تسجيل الحضور", "error"); } 
+            finally { setLoading(DOMElements.submitCheckInBtn, false); }
         };
 
         const handleCheckOut = async () => {
             if (!state.todayAttendance) return showToast("يجب تسجيل الحضور أولاً", "error");
             if (state.todayAttendance.checkOut) return showToast("لقد سجلت انصرافك بالفعل", "error");
-            
-            const confirmed = confirm("هل أنت متأكد من رغبتك في تسجيل الانصراف؟");
-            if (!confirmed) return;
+            if (!confirm("هل أنت متأكد من رغبتك في تسجيل الانصراف؟")) return;
 
             try {
                 const docId = `${state.currentUser.username}_${todayDateString}`;
-                await updateDoc(doc(db, "attendance", docId), {
-                    checkOut: new Date()
-                });
+                await updateDoc(doc(db, "attendance", docId), { checkOut: new Date() });
                 showToast("تم تسجيل الانصراف بنجاح");
-                updateStats();
-            } catch (error) {
-                console.error("Check-out error:", error);
-                showToast("حدث خطأ أثناء تسجيل الانصراف", "error");
-            }
+                updateStatsAndHistory();
+            } catch (error) { showToast("حدث خطأ أثناء تسجيل الانصراف", "error"); }
         };
 
         const handleSaveReport = async (e) => {
@@ -719,58 +411,40 @@
             
             const reportText = DOMElements.reportText.value.trim();
             setLoading(DOMElements.saveReportBtn, true, 'جارِ الحفظ...');
-
             try {
                 const docId = `${state.currentUser.username}_${todayDateString}`;
                 await updateDoc(doc(db, "attendance", docId), { report: reportText });
-                state.todayAttendance.report = reportText; // Update state locally
+                state.todayAttendance.report = reportText;
                 showToast("تم حفظ التقرير بنجاح");
                 closeModal(DOMElements.reportModal);
-            } catch (error) {
-                console.error("Report save error:", error);
-                showToast("حدث خطأ أثناء حفظ التقرير", "error");
-            } finally {
-                setLoading(DOMElements.saveReportBtn, false);
-            }
+                updateStatsAndHistory(); // To update the report in the table
+            } catch (error) { showToast("حدث خطأ أثناء حفظ التقرير", "error"); } 
+            finally { setLoading(DOMElements.saveReportBtn, false); }
         };
 
         const setupEventListeners = () => {
             DOMElements.loginForm.addEventListener('submit', handleLogin);
             DOMElements.logoutBtn.addEventListener('click', handleLogout);
-            
             DOMElements.checkInCard.addEventListener('click', () => {
                 if (state.todayAttendance) return showToast("لقد سجلت حضورك بالفعل اليوم", "error");
-                DOMElements.dailyCodeForm.reset();
-                openModal(DOMElements.dailyCodeModal);
+                DOMElements.dailyCodeForm.reset(); openModal(DOMElements.dailyCodeModal);
             });
-            
             DOMElements.dailyCodeForm.addEventListener('submit', handleCheckIn);
             DOMElements.dailyCodeModal.querySelector('.close-btn').addEventListener('click', () => closeModal(DOMElements.dailyCodeModal));
-
             DOMElements.checkOutCard.addEventListener('click', handleCheckOut);
-            
             DOMElements.reportCard.addEventListener('click', () => {
                 if (!state.todayAttendance) return showToast("يجب تسجيل الحضور أولاً", "error");
                 DOMElements.reportText.value = state.todayAttendance.report || '';
                 openModal(DOMElements.reportModal);
             });
-            
             DOMElements.reportForm.addEventListener('submit', handleSaveReport);
             DOMElements.reportModal.querySelector('.close-btn').addEventListener('click', () => closeModal(DOMElements.reportModal));
-
-            // Store original button text
-            document.querySelectorAll('.btn').forEach(btn => {
-                btn.dataset.originalText = btn.querySelector('span')?.textContent || btn.textContent;
-            });
+            document.querySelectorAll('.btn').forEach(btn => { btn.dataset.originalText = btn.querySelector('span')?.textContent || btn.textContent; });
         };
 
         const init = async () => {
-            updateTime();
-            setInterval(updateTime, 1000);
-            
-            onSnapshot(doc(db, "settings", "dailyQr"), (docSnap) => {
-                state.qrSettings = docSnap.exists() ? docSnap.data() : null;
-            });
+            updateTime(); setInterval(updateTime, 1000);
+            onSnapshot(doc(db, "settings", "dailyQr"), (docSnap) => { state.qrSettings = docSnap.exists() ? docSnap.data() : null; });
 
             const loggedInUser = localStorage.getItem('loggedInUser');
             if (loggedInUser) {
@@ -779,17 +453,10 @@
                     state.currentUser = { username: userDoc.id, ...userDoc.data() };
                     showView(DOMElements.dashboardView);
                     updateDashboardUI();
-                } else {
-                    localStorage.removeItem('loggedInUser');
-                    showView(DOMElements.loginView);
-                }
-            } else {
-                showView(DOMElements.loginView);
-            }
-            
+                } else { localStorage.removeItem('loggedInUser'); showView(DOMElements.loginView); }
+            } else { showView(DOMElements.loginView); }
             setupEventListeners();
         };
-
         init();
     </script>
 </body>
