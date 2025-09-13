@@ -3,554 +3,1812 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TEXMEX Annaba - Tacos, Burgers & More</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>أمير الشروق - لمواد التنظيف الفاخرة</title>
+    <meta name="description" content="أمير الشروق | مواد تنظيف فاخرة بالجملة، شبه الجملة، والتجزئة في الجزائر. أفضل المنتجات بأعلى جودة وأسعار تنافسية. توصيل سريع وخدمة ممتازة لجميع الولايات.">
+    <meta name="keywords" content="أمير الشروق, مواد تنظيف, منظفات, بيع بالجملة, بيع شبه جملة, تنظيف فاخر, Blida, El Tarf, الجزائر, Amir El Chourouk, nettoyage Algérie">
+    
+    <meta property="og:title" content="أمير الشروق - لمواد التنظيف الفاخرة">
+    <meta property="og:description" content="أفضل منتجات التنظيف بالجملة والتجزئة في الجزائر بأعلى جودة وأسعار تنافسية.">
+    <meta property="og:image" content="PIC/LOGGGOOO.jpg">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="[ضع هنا رابط موقعك الكامل عند رفعه على الإنترنت]">
+
+    <link href="PIC/LOGGGOOO.jpg" rel="icon">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+:root {
+    --primary-color: #0d6efd;
+    --primary-dark: #0a58ca;
+    --primary-light: #e7f1ff;
+    --secondary-color: #6c757d;
+    --success-color: #198754;
+    --whatsapp-color: #25D366;
+    --facebook-color: #1877F2;
+    --instagram-color: #C13584;
+    --telegram-color: #24A1DE;
+    --bg-body: #f8f9fa;
+    --bg-card: #ffffff;
+    --text-primary: #212529;
+    --text-secondary: #6c757d;
+    --border-color: #dee2e6;
+    --white: #ffffff;
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.06);
+    --shadow-md: 0 5px 15px rgba(0, 0, 0, 0.1);
+    --radius: 0.8rem;
+    --sidebar-width: 280px;
+}
+
+body.dark-mode {
+    --bg-body: #121212;
+    --bg-card: #1e1e1e;
+    --text-primary: #e0e0e0;
+    --text-secondary: #a0a0a0;
+    --border-color: #333;
+    --primary-light: #2a2a35;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+    font-family: 'Tajawal', sans-serif;
+    background-color: var(--bg-body);
+    color: var(--text-primary);
+    line-height: 1.7;
+    transition: background-color 0.3s, color 0.3s;
+    overflow-x: hidden;
+}
+.container { width: 90%; max-width: 1200px; margin: 0 auto; }
+.py-16 { padding-top: 5rem; padding-bottom: 5rem; }
+h1, h2, h3 { color: var(--text-primary); font-weight: 800; }
+h2.section-title { color: var(--primary-color); }
+a { text-decoration: none; }
+
+/* --- Sidebar --- */
+.sidebar {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: var(--sidebar-width);
+    max-width: 90%;
+    height: 100vh;
+    background-color: var(--bg-card);
+    border-left: 1px solid var(--border-color);
+    z-index: 10002; /* Changed from 1200 */
+    transition: right 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow-md);
+}
+.sidebar.active { right: 0; }
+.sidebar-header { padding: 1.5rem; text-align: center; border-bottom: 1px solid var(--border-color); }
+.sidebar-header img { width: 90px; height: 90px; border-radius: 50%; border: 4px solid var(--primary-color); object-fit: cover; }
+.sidebar-header h2 { font-size: 1.8rem; margin-top: 10px; color: var(--primary-dark); }
+.sidebar-nav { list-style: none; padding-top: 1rem; flex-grow: 1; overflow-y: auto; }
+.sidebar-nav a { display: flex; align-items: center; gap: 1rem; padding: 1rem 1.5rem; color: var(--text-secondary); text-decoration: none; font-size: 1.1rem; font-weight: 700; transition: all .2s; }
+.sidebar-nav a:hover { background-color: var(--primary-light); color: var(--primary-color); padding-right: 2rem; }
+.sidebar-nav a.active { color: var(--primary-color); background-color: var(--primary-light); border-right: 4px solid var(--primary-color); }
+.sidebar-nav a i { font-size: 1.2rem; width: 25px; text-align: center; }
+
+/* --- Header --- */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background-color: var(--bg-card);
+    box-shadow: var(--shadow-md);
+    position: sticky;
+    top: 0;
+    z-index: 10000; /* Changed from 1000 */
+}
+.header h1 { font-weight: 700; font-size: 1.25rem; }
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.6);
+    z-index: 10001; /* Changed from 1199 */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease;
+}
+.overlay.active { opacity: 1; visibility: visible; }
+.icon-btn { background: transparent; border: none; color: var(--primary-color); font-size: 1.8rem; cursor: pointer; }
+
+/* --- Hero Section --- */
+.hero { text-align: center; padding: 6rem 1.5rem; background: linear-gradient(rgba(13, 110, 253, 0.6), rgba(0, 0, 0, 0.7)), url('PIC/LAVESOLE 1L.jpg') center/cover no-repeat fixed; color: white; }
+.hero-content { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 2rem; text-align: right; }
+.hero-text { flex: 1; min-width: 300px; }
+.hero-logo { flex: 1; min-width: 300px; text-align: center; }
+.hero-logo img { max-width: 250px; width: 100%; height: auto; border-radius: 50%; box-shadow: 0 10px 30px rgba(0,0,0,0.4); border: 5px solid rgba(255,255,255,0.8); }
+.hero h2 { font-size: clamp(2.5rem, 6vw, 4rem); margin-bottom: 1rem; color: var(--white); text-shadow: 2px 2px 8px rgba(0,0,0,0.5); }
+.hero p { font-size: 1.3rem; color: rgba(255,255,255,0.95); margin-bottom: 2rem; }
+.cta-button { background-color: var(--white); color: var(--primary-color) !important; padding: 0.8rem 2rem; border-radius: 50px; font-weight: 700; transition: all 0.3s; display: inline-flex; align-items: center; gap: 0.5rem; }
+.cta-button:hover { background-color: var(--primary-light); transform: scale(1.05); }
+
+/* --- Section Title --- */
+.section-title { text-align: center; margin-bottom: 3rem; font-size: clamp(2rem, 5vw, 2.8rem); position: relative; }
+.section-title::after { content: ''; display: block; width: 80px; height: 4px; background: var(--primary-color); margin: 0.5rem auto 0; border-radius: 2px; }
+
+/* --- Features Section --- */
+.features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; text-align: center; }
+.feature-item { background-color: var(--bg-card); padding: 2rem; border-radius: var(--radius); box-shadow: var(--shadow-sm); transition: all 0.3s; }
+.feature-item:hover { transform: translateY(-10px); box-shadow: var(--shadow-md); }
+.feature-item .icon { font-size: 2.5rem; color: var(--primary-color); margin-bottom: 1rem; background-color: var(--primary-light); width: 70px; height: 70px; border-radius: 50%; display: inline-flex; justify-content: center; align-items: center; }
+.feature-item h3 { font-size: 1.4rem; margin-bottom: 0.5rem; }
+
+/* --- About Us Section --- */
+.about-us { background-color: var(--bg-card); }
+.about-us-content p { font-size: 1.2rem; text-align: center; max-width: 800px; margin: 0 auto 2rem auto; }
+.video-container { max-width: 800px; margin: auto; border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-md); }
+.video-container video { width: 100%; display: block; }
+
+/* --- Product Card --- */
+.products-container {
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: 1fr; /* 1 column for mobile */
+}
+.product-card { background-color: var(--bg-card); border-radius: var(--radius); box-shadow: var(--shadow-sm); overflow: hidden; transition: transform 0.3s, box-shadow 0.3s; display: flex; flex-direction: column; border: 1px solid var(--border-color); }
+.product-card:hover { transform: translateY(-10px); box-shadow: var(--shadow-md); }
+.product-card-img-container { position: relative; width: 100%; aspect-ratio: 1 / 1; background-color: var(--white); overflow: hidden; user-select: none; }
+.product-info { padding: 1.5rem; flex-grow: 1; display: flex; flex-direction: column; text-align: center; }
+.product-info h3 { font-size: 1.4rem; margin-bottom: 1rem; flex-grow: 1; }
+.product-prices { display: flex; justify-content: center; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem; font-size: 1rem; font-weight: 700; }
+.price-tag { display: flex; flex-direction: column; padding: 0.5rem; border-radius: 8px; background-color: var(--primary-light); flex-basis: 100px; flex-grow: 1; }
+.price-tag .label { font-size: 0.8rem; color: var(--text-secondary); }
+.price-tag .price { color: var(--primary-dark); font-weight: 900; font-size: clamp(0.9rem, 3vw, 1.1rem); }
+.action-btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.75rem; padding: 0.8rem 1.5rem; border-radius: 8px; color: var(--white) !important; font-size: 1.1rem; font-weight: 700; transition: all 0.3s; border: none; width: 100%; background: var(--primary-color); cursor: pointer; }
+.action-btn:hover { background: var(--primary-dark); transform: scale(1.05); }
+
+/* --- Wholesale Info Section --- */
+.wholesale-info-section { background-color: var(--bg-card); border-radius: var(--radius); padding: 3rem 2rem; border-top: 4px solid var(--primary-color); box-shadow: var(--shadow-md); }
+.wholesale-info-section h2 { font-size: clamp(1.8rem, 5vw, 2.5rem); margin-bottom: 2rem; color: var(--text-primary); font-weight: 800; text-align: center; }
+.wholesale-info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; font-size: 1.1rem; text-align: right; }
+.wholesale-info-item { padding: 1.5rem; border-radius: var(--radius); border-right: 5px solid; background-color: var(--bg-body); }
+.wholesale-info-item.gros-1 { border-color: #4CAF50; }
+.wholesale-info-item.gros-5 { border-color: #2196F3; }
+.wholesale-info-item.semi-gros-1 { border-color: #FF9800; }
+.wholesale-info-item.semi-gros-5 { border-color: #E91E63; }
+
+/* --- Announcements Section --- */
+.announcements-section { background-color: var(--bg-card); border-radius: var(--radius); padding: 3rem 2rem; border: 1px solid var(--border-color); box-shadow: var(--shadow-md); }
+.announcements-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 2rem; }
+.announcement-card { background-color: var(--bg-body); border-radius: var(--radius); padding: 2rem; box-shadow: var(--shadow-sm); border-left: 5px solid var(--primary-color); transition: transform 0.3s, box-shadow 0.3s; }
+.announcement-card h3 { font-size: 1.4rem; color: var(--primary-dark); margin-bottom: 0.75rem; }
+
+/* --- Contact Section --- */
+.contact-section { background-color: var(--bg-card); }
+.contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; align-items: center; }
+.contact-details p { font-size: 1.1rem; margin-bottom: 1rem; }
+.contact-details i { color: var(--primary-color); margin-left: 10px; }
+.qr-code-container { text-align: center; background: var(--bg-body); padding: 1.5rem; border-radius: var(--radius); }
+.qr-code-container img { max-width: 200px; width: 100%; border: 5px solid var(--border-color); border-radius: var(--radius); }
+body.dark-mode .qr-code-container img { filter: invert(0.9); }
+
+/* --- Shared Styles --- */
+.text-center { text-align: center; }
+.mt-8 { margin-top: 2.5rem; }
+
+/* --- Modals & Cart --- */
+.modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.7); backdrop-filter: blur(5px); align-items: center; justify-content: center; }
+.modal.show { display: flex; }
+.modal-box { background-color: var(--bg-card); padding: 2.5rem; border-radius: var(--radius); width: 90%; text-align: center; position: relative; animation: fadeInUp 0.4s ease-out; box-shadow: var(--shadow-md); }
+@keyframes fadeInUp { from { opacity: 0; transform: scale(0.95) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+.modal-close { position: absolute; top: 15px; left: 20px; font-size: 2rem; color: var(--text-secondary); cursor: pointer; transition: transform 0.2s; }
+.modal-title { font-size: clamp(1.5rem, 4vw, 2rem); margin-bottom: 1rem; }
+.modal-actions { display: flex; flex-direction: column; gap: 1rem; margin-top: 2rem; }
+.modal-btn { padding: 0.8rem 1.5rem; border-radius: 8px; font-weight: 700; cursor: pointer; border: none; transition: all 0.2s; }
+.confirm-btn { background: var(--primary-color); color: var(--white); }
+.cancel-btn { background: var(--secondary-color); color: var(--white); }
+#quantityModal .modal-box, #customerTypeModal .modal-box, #contactModal .modal-box {
+    max-width: 450px;
+}
+
+#customerInfoModal .modal-box {
+    max-width: 500px; /* تمت زيادة العرض هنا */
+}.quantity-controls { display: flex; align-items: center; justify-content: center; margin: 1.5rem 0; gap: 1rem; }
+.quantity-btn { background: var(--primary-color); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; }
+.quantity-input { width: 80px; text-align: center; font-size: 1.5rem; padding: 0.5rem; border: 2px solid var(--border-color); border-radius: 8px; background: var(--bg-body); color: var(--text-primary); }
+
+/* NEW: Styles for Customer Info Form */
+.form-group { text-align: right; margin-bottom: 1.2rem; }
+.form-group label { display: block; font-weight: 700; margin-bottom: 0.5rem; }
+.form-group input {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-body);
+    color: var(--text-primary);
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.contact-option-btn { display: flex; align-items: center; justify-content: center; gap: 1rem; font-size: 1.1rem; color: var(--white) !important; }
+.contact-option-btn.whatsapp { background-color: var(--whatsapp-color); }
+.contact-option-btn.facebook { background-color: var(--facebook-color); }
+.contact-option-btn.instagram { background-color: var(--instagram-color); }
+.contact-option-btn.telegram { background-color: var(--telegram-color); }
+.contact-option-btn:hover { opacity: 0.9; }
+
+.fab { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: white; cursor: pointer; box-shadow: var(--shadow-md); z-index: 1050; position: fixed; transition: transform 0.3s, background-color 0.3s; border: none; }
+.cart-fab { bottom: 2rem; left: 2rem; background: var(--secondary-color); transform: scale(0); }
+.cart-fab.visible { transform: scale(1); }
+/* REMOVED: .contact-fab */
+.cart-count { position: absolute; top: -5px; right: -5px; background-color: #dc3545; color: white; font-size: 0.8rem; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+
+#cartModal .modal-box { max-width: 700px; }
+.cart-items { max-height: 350px; overflow-y: auto; margin-bottom: 1.5rem; text-align: right; border: 1px solid var(--border-color); border-radius: 8px; padding: 1rem; }
+.cart-item { display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 0; border-bottom: 1px solid var(--border-color); }
+.cart-item:last-child { border-bottom: none; }
+.cart-total { text-align: left; font-size: 1.2rem; font-weight: 700; margin: 1.5rem 0; }
+
+.toast-notification { position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%); background-color: var(--success-color); color: white; padding: 1rem 1.5rem; border-radius: 8px; z-index: 3000; transition: all 0.4s ease; display: flex; align-items: center; gap: 0.5rem; box-shadow: var(--shadow-md); }
+.toast-notification.show { bottom: 2rem; }
+
+/* --- Reveal Animation --- */
+.reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* --- Footer --- */
+.site-footer { background-color: #1A202C; color: #A0AEC0; padding: 2rem 1rem; text-align: center; }
+
+/* --- Styles for Product Slideshow (from ببب.html) --- */
+.slideshow-container {
+    position: relative;
+    width: 100%;
+    height: 100%; /* Fill the parent container */
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.slideshow-container img {
+    display: none; /* Hide images by default */
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 10px;
+}
+.slideshow-container img.active {
+    display: block; /* Show active image */
+}
+.product-image { /* For single images */
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 10px;
+}
+.slide-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.4);
+    color: white;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    font-size: 1.2rem;
+    z-index: 10;
+    transition: background-color 0.3s;
+}
+.slide-nav:hover {
+    background-color: rgba(0, 0, 0, 0.7);
+}
+.slide-prev {
+    left: 5px;
+    border-radius: 0 5px 5px 0;
+}
+.slide-next {
+    right: 5px;
+    border-radius: 5px 0 0 5px;
+}
+.slide-dots {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+}
+.dot {
+    width: 10px;
+    height: 10px;
+    background-color: rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+.dot.active {
+    background-color: #fff;
+}
+
+
+/* --- Responsive Design --- */
+@media (min-width: 640px) {
+    .products-container {
+        grid-template-columns: repeat(2, 1fr); /* 2 columns for tablets */
+    }
+}
+@media (min-width: 1024px) {
+    body { padding-right: var(--sidebar-width); }
+    .sidebar { right: 0; box-shadow: none; }
+    #menu-toggle, .overlay { display: none !important; }
+    .products-container {
+        grid-template-columns: repeat(3, 1fr); /* 3 columns for desktop */
+    }
+    .header h1 {
+        font-size: 1.5rem;
+    }
+}
+
+
+/* --- Styles for Dhikr/Jumaa Modal (NEW) --- */
+.adm-modal-overlay {
+    display: none; /* Hidden by default, JS will control visibility */
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    padding: 1rem;
+    background-color: rgba(0,0,0,0.7);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.4s ease-out, visibility 0.4s;
+}
+.adm-modal-overlay.is-visible {
+    display: flex;
+    opacity: 1;
+    visibility: visible;
+}
+.adm-modal-content, .adm-jumaa-message-content, .isn-modal-content {
+    background: var(--bg-card);
+    padding: 2rem;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    width: 100%;
+    max-width: 460px;
+    text-align: center;
+    border: 1px solid var(--border-color);
+    transform: translateY(20px) scale(0.98);
+    transition: transform 0.4s 0.1s ease-out;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+.is-visible .adm-modal-content,
+.is-visible .adm-jumaa-message-content,
+.is-visible .isn-modal-content {
+    transform: translateY(0) scale(1);
+}
+.adm-hidden { display: none !important; }
+.adm-modal-header h2, .isn-modal-header h2 {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin: 0;
+}
+.adm-tasks-header { color: var(--text-secondary); }
+.adm-dhikr-tasks { display: flex; flex-direction: column; gap: 1rem; }
+.adm-dhikr-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.8rem 1.5rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--white) !important;
+    background-color: var(--primary-color);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+}
+.adm-dhikr-btn:hover:not(:disabled) {
+    background-color: var(--primary-dark);
+    transform: scale(1.05);
+}
+.adm-dhikr-btn:disabled {
+    background-color: var(--success-color);
+    cursor: default;
+    transform: none;
+    opacity: 0.9;
+}
+.adm-dhikr-btn .adm-icon { margin-left: 10px; }
+.adm-dhikr-btn .adm-btn-text { flex-grow: 1; text-align: right; }
+.adm-dhikr-btn .adm-counter {
+    background-color: rgba(0, 0, 0, 0.15);
+    padding: 0.2rem 0.6rem;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    min-width: 40px;
+}
+.adm-modal-footer {
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+.adm-dhikr-reminder p {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin: 0 0 1rem 0;
+}
+.adm-dhikr-reminder .quran-verse { color: var(--text-primary); }
+.adm-progress-bar-container {
+    width: 100%;
+    background-color: var(--primary-light);
+    border-radius: 50px;
+    height: 10px;
+    overflow: hidden;
+}
+#adm-progress-bar {
+    width: 0%;
+    height: 100%;
+    background-color: var(--success-color);
+    border-radius: 50px;
+    transition: width 0.5s ease-in-out;
+}
+.adm-jumaa-message-content { background-color: var(--primary-light); }
+.adm-jumaa-message-content .jumaa-header { color: var(--primary-dark); }
+.adm-jumaa-message-content .jumaa-body { text-align: justify; }
+.adm-jumaa-message-content #play-jumaa-audio { background-color: var(--secondary-color); }
+.adm-jumaa-message-content #play-jumaa-audio:hover:not(:disabled) { background-color: #555; }
+.adm-jumaa-message-content .closing-message {
+    background-color: #fff3cd;
+    color: #664d03;
+    border: 1px solid var(--border-color);
+    padding: 1rem;
+    border-radius: 8px;
+}
+body.dark-mode .adm-jumaa-message-content .closing-message {
+    background-color: #2c2a21;
+    color: #ffc107;
+}
+.adm-jumaa-refresh-btn {
+    font-family: 'Tajawal', sans-serif;
+    font-size: 0.9rem;
+    padding: 0.6rem 1rem;
+    background-color: var(--bg-body);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    width: 100%;
+    margin-top: 1rem;
+}
+.isn-modal-content.jumaa-style { background-color: var(--primary-light); }
+.isn-btn {
+    flex: 1; padding: 0.75rem; border-radius: 8px; border: none; cursor: pointer; font-weight: 700; font-size: 1rem; text-decoration: none;
+}
+.isn-btn.btn-jumaa { background-color: var(--primary-color); color: white; }
+.isn-btn.btn-jumaa:hover { background-color: var(--primary-dark); }
+.isn-btn.btn-close { background-color: var(--bg-body); color: var(--text-secondary); border: 1px solid var(--border-color); }
+.isn-btn.btn-close:hover { background-color: var(--border-color); }
+
+</style>
+</head>
+<body>
+
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <img src="PIC/LOGO.jpg" alt="شعار أمير الشروق">
+        <h2>أمير الشروق</h2>
+    </div>
+    <nav class="sidebar-nav">
+        <a href="index.html" class="nav-link active"><i class="fas fa-home"></i><span>الصفحة الرئيسية</span></a>
+        <a href="#products" class="nav-link"><i class="fas fa-box-open"></i><span>منتجاتنا</span></a>
+        <a href="BORED.html" class="nav-link"><i class="fas fa-bullhorn"></i><span>كل العروض والأخبار</span></a>
+        <a href="offers.html" class="nav-link"><i class="fas fa-star"></i><span>العروض الحصرية</span></a>
+        <a href="maps.html" class="nav-link"><i class="fas fa-map-marked-alt"></i><span>خرائط نقاط البيع</span></a>
+        <a href="#" id="contact-sidebar-link" class="nav-link"><i class="fas fa-headset"></i><span>تواصل معنا</span></a>
+        <a href="suggestions.html" class="nav-link"><i class="fas fa-lightbulb"></i><span>اقتراحات الزبائن</span></a>
+        <a href="quran.html" class="nav-link"><i class="fas fa-quran"></i><span>القرآن الكريم</span></a>
+        <a href="quran.html" class="nav-link"><i class="fas fa-quran"></i><span>وردك اليومي من القرآن الكريم (أُخْتِمْ قُرْآنَكَ يَشْفَعْ لَكَ) </span></a>
+
+        <a href="#download-app" class="nav-link"><i class="fab fa-android"></i><span>تحميل تطبيقنا</span></a>
+    </nav>
+</aside>
+
+<div class="overlay" id="overlay"></div>
+
+<div id="main-content">
+    <header class="header">
+        <button id="menu-toggle" class="icon-btn" aria-label="فتح القائمة"><i class="fas fa-bars"></i></button>
+        <h1>مرحباً بك في أمير الشروق</h1>
+        <button id="theme-toggle" class="icon-btn" aria-label="تبديل الوضع"><i class="fas fa-sun"></i></button>
+    </header>
+
+    <main>
+        <section id="hero" class="hero">
+            <div class="container hero-content reveal">
+                <div class="hero-text">
+                    <h2>الجودة والنظافة تبدأ من هنا</h2>
+                    <p>أمير الشروق، خياركم الأول لمواد تنظيف عالية الفعالية. نخدمكم في الطارف وكل أنحاء الجزائر بأسعار تنافسية.</p>
+                    <a href="#products" class="cta-button">اكتشف منتجاتنا <i class="fas fa-arrow-down"></i></a>
+                </div>
+                <div class="hero-logo">
+                    <img src="PIC/LOGGGOOO.jpg" alt="شعار أمير الشروق">
+                </div>
+            </div>
+        </section>
+
+        <section id="features" class="py-16">
+            <div class="container">
+                <h2 class="section-title reveal">لماذا تختار أمير الشروق؟</h2>
+                <div class="features-grid">
+                    <div class="feature-item reveal"><div class="icon"><i class="fas fa-award"></i></div><h3>جودة فائقة</h3><p>منتجاتنا مصنعة وفق أعلى المعايير لضمان أفضل النتائج.</p></div>
+                    <div class="feature-item reveal"><div class="icon"><i class="fas fa-tags"></i></div><h3>أسعار تنافسية</h3><p>نقدم أسعار جملة وشبه جملة لا تقبل المنافسة.</p></div>
+                    <div class="feature-item reveal"><div class="icon"><i class="fas fa-truck-fast"></i></div><h3>توصيل مضمون</h3><p>توصيل فعال وموثوق لجميع الولايات.</p></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="about-us" class="about-us py-16">
+            <div class="container">
+                <h2 class="section-title reveal">تعرف على مؤسستنا</h2>
+                <div class="about-us-content reveal">
+                    <p>نحن في مؤسسة <strong>أمير الشروق</strong> نعمل على تقديم خدمات احترافية في مجالات متعددة، ونفخر بجودة أعمالنا والتزامنا برضا عملائنا. اكتشف المزيد من خلال هذا الفيديو التعريفي.</p>
+                    <div class="video-container">
+                        <video controls poster="PIC/LOGO.jpg" preload="metadata">
+                            <source src="vidio.mp4" type="video/mp4">
+                            المتصفح لا يدعم عرض الفيديو.
+                        </video>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+       <section id="wholesale-offers" class="py-16" style="background-color: var(--bg-card);">
+            <div class="container">
+                <div class="wholesale-info-section reveal">
+                    <h2>🛒 عروض الجملة وشبه الجملة</h2>
+                    <div class="wholesale-info-grid">
+                        <div class="wholesale-info-item gros-1">✅ الجملة تبدأ من منتجات <strong>1 لتر</strong> بكمية <strong>60 وحدة</strong> فما فوق</div>
+                        <div class="wholesale-info-item gros-5">✅ الجملة تبدأ من منتجات <strong>5 لتر</strong> بكمية <strong>15 وحدة</strong> فما فوق</div>
+                        <div class="wholesale-info-item semi-gros-1">📦 شبه الجملة تبدأ من منتجات <strong>1 لتر</strong> بكمية <strong>30 وحدة</strong> فما فوق</div>
+                        <div class="wholesale-info-item semi-gros-5">📦 شبه الجملة تبدأ من منتجات <strong>5 لتر</strong> بكمية <strong>3 وحدات</strong> فما فوق</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="products" class="py-16">
+            <div class="container">
+                <h2 class="section-title reveal">منتجاتنا المميزة</h2>
+                <div class="products-container reveal" id="products-container"></div>
+            </div>
+        </section>
+
+        <section id="announcements" class="py-16">
+            <div class="container">
+                <div class="announcements-section reveal">
+                    <h2 class="section-title">آخر الأخبار والعروض</h2>
+                    <div class="announcements-grid" id="announcements-container"><p>جاري تحميل آخر العروض...</p></div>
+                    <div class="text-center mt-8">
+                        <a href="BORED.html" class="action-btn" style="width: auto; display: inline-flex;"><i class="fas fa-arrow-left"></i> عرض كل الأخبار</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="contact-section py-16">
+            <div class="container">
+                <h2 class="section-title reveal">معلومات التواصل المباشر</h2>
+                <div class="contact-grid">
+                    <div class="contact-details reveal">
+                        <p><i class="fas fa-map-marker-alt"></i> <strong>العنوان:</strong> الطارف، الجزائر</p>
+                        <p><i class="fas fa-phone"></i> <strong>الهاتف:</strong> <a href="tel:+213781465477">0781465477</a> | <a href="tel:+213557754808">0557754808</a></p>
+                        <p><i class="fab fa-whatsapp"></i> <strong>واتساب:</strong> <a href="https://wa.me/213781465477" target="_blank" rel="noopener noreferrer">اضغط هنا للمحادثة</a></p>
+                        <p><i class="fas fa-envelope"></i> <strong>البريد:</strong> <a href="mailto:amirchourouk363636@gmail.com">amirchourouk363636@gmail.com</a></p>
+                    </div>
+                    <div class="qr-code-container reveal">
+                        <h3>أو امسح الرمز للتواصل السريع عبر واتساب</h3>
+                        <img src="PIC/QR02.jpg" alt="QR Code للاتصال عبر واتساب" id="qr-code-img">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="download-app" class="py-16 text-center container">
+             <h2 class="section-title reveal">حمّل تطبيقنا قريباً</h2>
+             <p class="text-secondary" style="max-width: 600px; margin: auto;">ترقبوا إطلاق تطبيقنا الرسمي على متجر جوجل بلاي لتجربة تسوق أسهل وأسرع، ومتابعة العروض الحصرية أولاً بأول.</p>
+             <i class="fab fa-google-play" style="font-size: 4rem; color: var(--text-secondary); margin-top: 1.5rem;"></i>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p>جميع الحقوق محفوظة &copy; أمير الشروق <span id="year"></span>.
+            <a href="indexdashboard.html" style="color: #1A202C; text-decoration: none;">.</a>
+        </p>
+    </footer>
+</div>
+
+<button class="cart-fab fab" id="cart-fab"><i class="fas fa-shopping-cart"></i><span class="cart-count" id="cart-count">0</span></button>
+<div id="customerTypeModal" class="modal"><div class="modal-box"><span class="modal-close">&times;</span><h3 class="modal-title">اختر نوع التسعير</h3><p class="text-secondary">يرجى تحديد نوع العميل لعرض السعر المناسب.</p><div class="modal-actions"><button class="modal-btn confirm-btn" data-type="زبون عادي">زبون عادي (سعر التجزئة)</button><button class="modal-btn confirm-btn" data-type="تاجر شبه جملة">تاجر شبه جملة</button><button class="modal-btn confirm-btn" data-type="تاجر جملة">تاجر جملة</button></div></div></div>
+<div id="quantityModal" class="modal"><div class="modal-box"><span class="modal-close">&times;</span><h3 class="modal-title" id="quantityProductTitle"></h3><p>الرجاء تحديد الكمية المطلوبة</p><div class="quantity-controls"><button class="quantity-btn" id="decreaseQty">-</button><input type="number" min="1" value="1" class="quantity-input" id="quantityInput"><button class="quantity-btn" id="increaseQty">+</button></div><div class="modal-actions"><button class="modal-btn cancel-btn" data-close>إلغاء</button><button class="modal-btn confirm-btn" id="confirmQuantityBtn">تأكيد وإضافة للسلة</button></div></div></div>
+<div id="cartModal" class="modal"><div class="modal-box"><span class="modal-close">&times;</span><h3 class="modal-title">سلة المشتريات</h3><div id="cart-items-container" class="cart-items"></div><div id="cart-total" class="cart-total"></div><button class="modal-btn confirm-btn" style="width:100%" id="proceedToInfoBtn">متابعة لإتمام الطلب</button></div></div>
+
+
+
+<div id="contactModal" class="modal">
+  <div class="modal-box">
+    <span class="modal-close">&times;</span>
+    <h3 class="modal-title">تواصل معنا</h3>
+    <p class="text-secondary" style="margin-bottom: 1.5rem;">
+      اختر الوسيلة التي تناسبك للتواصل معنا مباشرة.
+    </p>
+    <div class="modal-actions">
+      <!-- رقم واتساب الأول مصحح -->
+      <a href="https://wa.me/213699443914" target="_blank" class="modal-btn contact-option-btn whatsapp">
+        <i class="fab fa-whatsapp"></i> واتساب (الرقم الأول)
+      </a>
+
+      <!-- رقم واتساب الثاني كما هو -->
+      <a href="https://wa.me/213781465477" target="_blank" class="modal-btn contact-option-btn whatsapp">
+        <i class="fab fa-whatsapp"></i> واتساب (الرقم الثاني)
+      </a>
+
+      <a href="https://web.facebook.com/p/أ%D9%85%D9%8A%D8%B1-%D8%A7%D9%84%D8%B4%D8%B1%D9%88%D9%82-61559518204192/" target="_blank" class="modal-btn contact-option-btn facebook">
+        <i class="fab fa-facebook-f"></i> صفحتنا على فيسبوك
+      </a>
+
+      <a href="https://www.instagram.com/amir_el_chorouk?igsh=OHhyNnE0MGd5cGpo" target="_blank" class="modal-btn contact-option-btn instagram">
+        <i class="fab fa-instagram"></i> حسابنا على انستغرام
+      </a>
+
+      <a href="https://t.me/amirchourouk" target="_blank" rel="noopener noreferrer" class="modal-btn contact-option-btn telegram">
+        <i class="fab fa-telegram"></i> قناتنا على تيليجرام
+      </a>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+<div id="customerInfoModal" class="modal">
+    <div class="modal-box">
+        <span class="modal-close">&times;</span>
+        <h3 class="modal-title">معلومات الزبون</h3>
+        <p class="text-secondary">الرجاء إدخال معلوماتك لإتمام الطلب.</p>
+        <form id="customer-info-form" style="margin-top: 2rem;">
+            <div class="form-group">
+                <label for="customerName">الاسم الكامل</label>
+                <input type="text" id="customerName" required>
+            </div>
+            <div class="form-group">
+                <label for="customerPhone">رقم الهاتف</label>
+                <input type="tel" id="customerPhone" required>
+            </div>
+            <div class="form-group">
+                <label for="customerLocation">العنوان (الولاية والبلدية)</label>
+                <input type="text" id="customerLocation" required>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="modal-btn cancel-btn" data-close>إلغاء</button>
+                <button type="submit" class="modal-btn confirm-btn" id="confirmOrderBtn">تأكيد الطلب وإرسال عبر واتساب</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="toast" class="toast-notification"></div>
+
+<div id="adm-modal-overlay" class="adm-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="adm-modal-main-title">
+    <div id="adm-modal-content" class="adm-modal-content">
+        <div class="adm-modal-header">
+            <h2 id="adm-modal-main-title">أهلاً بكم، طبتم وطاب ممشاكم</h2>
+            <p class="adm-tasks-header">للمتابعة، نرجو منك إنجاز هذه الأذكار اليسيرة.</p>
+        </div>
+        <div id="adm-dhikr-tasks" class="adm-dhikr-tasks">
+            <button class="adm-dhikr-btn" data-key="salat">
+                <span class="adm-btn-text"><i class="fa-solid fa-moon adm-icon"></i>صلِّ على النبي ﷺ</span>
+                <span class="adm-counter">0/1</span>
+            </button>
+            <button class="adm-dhikr-btn" data-key="tasbih">
+                <span class="adm-btn-text"><i class="fa-solid fa-leaf adm-icon"></i>سبحان الله وبحمده</span>
+                <span class="adm-counter">0/1</span>
+            </button>
+            <button class="adm-dhikr-btn" data-key="istighfar">
+                <span class="adm-btn-text"><i class="fa-solid fa-hands-praying adm-icon"></i>استغفر الله</span>
+                <span class="adm-counter">0/1</span>
+            </button>
+        </div>
+        <div class="adm-modal-footer">
+            <div class="adm-dhikr-reminder">
+                <p>
+                    <span class="quran-verse">﴿ الَّذِينَ آمَنُوا وَتَطْمَئِنُّ قُلُوبُهُم بِذِكْرِ اللَّهِ ۗ أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ﴾</span>
+                    <br>[الرعد:28]
+                </p>
+            </div>
+            <div class="adm-progress-bar-container">
+                <div id="adm-progress-bar"></div>
+            </div>
+        </div>
+    </div>
+    <div id="adm-jumaa-message" class="adm-jumaa-message-content adm-hidden">
+        <h2 class="jumaa-header">📿 تذكير بصلاة الجمعة</h2>
+        <div class="jumaa-body">
+            <p>
+                يَٰٓأَيُّهَا ٱلَّذِينَ ءَامَنُوٓاْ إِذَا نُودِيَ لِلصَّلَوٰةِ مِن يَوۡمِ ٱلۡجُمُعَةِ فَٱسۡعَوۡاْ إِلَىٰ ذِكۡرِ ٱللَّهِ وَذَرُواْ ٱلۡبَيۡعَۚ ذَٰلِكُمۡ خَيۡرٞ لَّكُمۡ إِن كُنتُمۡ تَعۡلَمُونَ (9)
+            </p>
+        </div>
+        <p class="jumaa-source">[سورة الجمعة: 9]</p>
+        <button id="play-jumaa-audio" class="adm-dhikr-btn">
+            <span class="adm-btn-text"><i class="fa-solid fa-volume-high adm-icon"></i> تشغيل التلاوة</span>
+        </button>
+        <div class="closing-message">
+            <p>⛔ <strong>مؤسسة أمير الشروق</strong> مغلقة الآن احترامًا لصلاة الجمعة (من 11:30 إلى 14:00).</p>
+        </div>
+        <button class="adm-jumaa-refresh-btn" aria-label="تحديث الصفحة" onclick="location.reload();">
+            <i class="fas fa-sync-alt"></i>
+            <span>اضغط هنا بعد الساعة 14:00</span>
+        </button>
+    </div>
+    <div id="kahfModal" class="isn-modal-content jumaa-style adm-hidden">
+        <div class="isn-modal-header"><h2>📿 فضل سورة الكهف</h2></div>
+        <p class="quran-text" style="color: var(--text-primary);">"من قرأ سورةَ الكهفِ في يومِ الجمعةِ أضاء له من النورِ ما بين الجمُعَتَين."</p>
+        <p class="hadith-source" style="color: var(--text-secondary);">صحيح الترغيب | 736</p>
+        <div class="modal-actions" style="flex-direction: row; gap: 1rem;">
+            <a href="سورة الكهف مكتوبة.html" class="isn-btn btn-jumaa">قراءة السورة</a>
+            <button id="closeKahfModal" class="isn-btn btn-close">إغلاق</button>
+        </div>
+    </div>
+</div>
+<audio id="jumaa-audio" src="JOMAA.mp3" preload="auto"></audio>
+<script type="module">
+    // MODIFIED: Added addDoc, serverTimestamp, collection to imports
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getFirestore, collection, getDocs, query, orderBy, limit, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyA1VBBOZQOUwnHp8x487g7lkn14x6Sp-7g", authDomain: "stoke-c650a.firebaseapp.com",
+        databaseURL: "https://stoke-c650a-default-rtdb.firebaseio.com", projectId: "stoke-c650a",
+        storageBucket: "stoke-c650a.appspot.com", messagingSenderId: "464151163343",
+        appId: "1:464151163343:web:c77c7dfd093ce9c1c822ba", measurementId: "G-EP0R97CYLS"
+    };
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const products = [
+            { name: 'جافيل 5 لتر', gros: '135.00 د.ج', superGros: '125.00 د.ج', prixUnite: '150.00 د.ج', image: 'PIC/JAVAIL 5L.png' },
+            { name: 'جافيل 1 لتر', gros: '42.00 د.ج', superGros: '35.00 د.ج', prixUnite: '50.00 د.ج', image: 'PIC/JAVAIL 1 L.png' },
+            { 
+                name: 'صانيبون 5 لتر', 
+                gros: '165.00 د.ج', 
+                superGros: '155.00 د.ج', 
+                prixUnite: '200.00 د.ج', 
+                images: ['PIC/SANIDO 5L WHITE.png', 'PIC/SANOBO 5 L PINK.png','PIC/SANIDO 5L PURPLE.png' ] 
+            },
+            { 
+                name: 'صانيبون 1 لتر', 
+                gros: '85.00 د.ج', 
+                superGros: '75.00 د.ج', 
+                prixUnite: '100.00 د.ج', 
+                images: ['PIC/SANIBO 1L WHITE.png'] 
+            },
+            { name: 'منظف الأرضيات 1 لتر', gros: '95.00 د.ج', superGros: '85.50 د.ج', prixUnite: '110.00 د.ج', image: 'PIC/LAVESOLE 1L.jpg' },
+            { name: 'سائل الأواني 5 لتر', gros: '310.00 د.ج', superGros: '290.00 د.ج', prixUnite: '330.00 د.ج', image: 'PIC/AWANI 5 L.png' },
+            { name: 'سائل الأواني 1 لتر', gros: '105.00 د.ج', superGros: '90.00 د.ج', prixUnite: '120.00 د.ج', image: 'PIC/AWANI 1 L.png' },
+        ];
+        let cart = [];
+        let currentProductForOrder = null;
+        const WHATSAPP_NUMBER = "213781465477"; 
+
+        const productsContainer = document.getElementById('products-container');
+        const cartFab = document.getElementById('cart-fab');
+        const cartCount = document.getElementById('cart-count');
+        const contactSidebarLink = document.getElementById('contact-sidebar-link');
+        
+        function renderProducts() {
+            if (!productsContainer) return;
+            productsContainer.innerHTML = products.map((product, index) => {
+                let imageHtml;
+                if (product.images && product.images.length > 0) {
+                    const slides = product.images.map((img, i) => 
+                        `<img src="${img}" alt="${product.name} ${i + 1}" class="${i === 0 ? 'active' : ''}" loading="lazy">`
+                    ).join('');
+
+                    const dots = product.images.map((_, i) => 
+                        `<span class="dot ${i === 0 ? 'active' : ''}" data-slide-index="${i}"></span>`
+                    ).join('');
+
+                    imageHtml = `
+                        <div class="slideshow-container" data-product-index="${index}">
+                            ${slides}
+                            <button class="slide-nav slide-prev"><i class="fas fa-chevron-right"></i></button>
+                            <button class="slide-nav slide-next"><i class="fas fa-chevron-left"></i></button>
+                            <div class="slide-dots">${dots}</div>
+                        </div>`;
+                } else {
+                    imageHtml = `<img src="${product.image}" alt="${product.name}" class="product-image" loading="lazy">`;
+                }
+                
+                return `<div class="product-card" data-product-index="${index}">
+                            <div class="product-card-img-container">
+                                ${imageHtml}
+                            </div>
+                            <div class="product-info">
+                                <h3>${product.name}</h3>
+                                <div class="product-prices">
+                                    <div class="price-tag"><span class="label">تجزئة</span><span class="price">${product.prixUnite}</span></div>
+                                    <div class="price-tag"><span class="label"> جملة</span><span class="price">${product.superGros}</span></div>
+                                    <div class="price-tag"><span class="label"> شبه الجملة</span><span class="price">${product.gros}</span></div>
+                                </div>
+                                <button class="action-btn add-to-cart-btn"><i class="fas fa-cart-plus"></i> أضف للسلة</button>
+                            </div>
+                        </div>`;
+            }).join('');
+            setupSlideshows();
+        }
+        
+        function setupSlideshows() {
+            const slideshows = document.querySelectorAll('.slideshow-container');
+            slideshows.forEach(container => {
+                let currentIndex = 0;
+                const images = container.querySelectorAll('img');
+                const dots = container.querySelectorAll('.dot');
+                const nextBtn = container.querySelector('.slide-next');
+                const prevBtn = container.querySelector('.slide-prev');
+                
+                if (images.length <= 1) return;
+
+                function showSlide(index) {
+                    images.forEach((img, i) => img.classList.toggle('active', i === index));
+                    dots.forEach((dot, i) => dot.classList.toggle('active', i === index));
+                    currentIndex = index;
+                }
+
+                nextBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    let nextIndex = (currentIndex + 1) % images.length;
+                    showSlide(nextIndex);
+                });
+
+                prevBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    let prevIndex = (currentIndex - 1 + images.length) % images.length;
+                    showSlide(prevIndex);
+                });
+
+                dots.forEach(dot => {
+                    dot.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const index = parseInt(e.target.dataset.slideIndex, 10);
+                        showSlide(index);
+                    });
+                });
+            });
+        }
+
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if(modal) modal.classList.add('show');
+        }
+
+        function closeModal(modal) {
+            if (typeof modal === 'string') modal = document.getElementById(modal);
+            if(modal) modal.classList.remove('show');
+        }
+
+        function openCustomerTypeModal(productIndex) {
+            currentProductForOrder = { ...products[productIndex] };
+            openModal('customerTypeModal');
+        }
+
+        document.getElementById('customerTypeModal')?.addEventListener('click', e => {
+            const btn = e.target.closest('.confirm-btn');
+            if (btn) {
+                currentProductForOrder.customerType = btn.dataset.type;
+                if (currentProductForOrder.customerType === 'زبون عادي') {
+                    currentProductForOrder.price = currentProductForOrder.prixUnite;
+                } else if (currentProductForOrder.customerType === 'تاجر شبه جملة') {
+                    // *** CORRECTED LINE ***
+                    currentProductForOrder.price = currentProductForOrder.gros;
+                } else { // This handles 'تاجر جملة'
+                    // *** CORRECTED LINE ***
+                    currentProductForOrder.price = currentProductForOrder.superGros;
+                }
+                closeModal('customerTypeModal');
+                const qModal = document.getElementById('quantityModal');
+                qModal.querySelector('#quantityProductTitle').textContent = `تحديد كمية: ${currentProductForOrder.name}`;
+                qModal.querySelector('#quantityInput').value = 1;
+                openModal('quantityModal');
+            }
+        });
+        
+        document.getElementById('confirmQuantityBtn')?.addEventListener('click', () => {
+            const quantity = parseInt(document.getElementById('quantityInput').value, 10);
+            if (!currentProductForOrder || quantity <= 0) return;
+
+            const product = currentProductForOrder;
+            const productName = product.name;
+            const originalCustomerType = product.customerType; 
+
+            let productSize = null;
+            if (productName.includes('1 لتر')) {
+                productSize = '1 لتر';
+            } else if (productName.includes('5 لتر')) {
+                productSize = '5 لتر';
+            }
+
+            let bestTier = null;
+            
+            // *** CORRECTED PRICE TIER DEFINITIONS ***
+            const priceTiers = [
+                { type: 'تاجر جملة', priceString: product.superGros, min: { '1 لتر': 60, '5 لتر': 15 } },
+                { type: 'تاجر شبه جملة', priceString: product.gros, min: { '1 لتر': 30, '5 لتر': 3 } },
+                { type: 'زبون عادي', priceString: product.prixUnite, min: { '1 لتر': 1, '5 لتر': 1 } }
+            ];
+
+            if (productSize) {
+                for (const tier of priceTiers) {
+                    if (quantity >= tier.min[productSize]) {
+                        bestTier = tier;
+                        break; 
+                    }
+                }
+            }
+            
+            if (!bestTier) {
+                bestTier = priceTiers.find(t => t.type === 'زبون عادي');
+            }
+            
+            const productForCart = {
+                ...product,
+                customerType: bestTier.type,
+                price: bestTier.priceString
+            };
+
+            addToCart(productForCart, quantity);
+
+            if (originalCustomerType !== bestTier.type) {
+                showToast(`✅ تم تطبيق سعر "${bestTier.type}" تلقائياً لأفضل سعر!`);
+            }
+
+            closeModal('quantityModal');
+            currentProductForOrder = null;
+        });
+
+        function addToCart(product, quantity) {
+            const existingProduct = cart.find(item => item.name === product.name && item.customerType === product.customerType);
+            if (existingProduct) {
+                existingProduct.quantity += quantity;
+            } else {
+                cart.push({ 
+                    name: product.name, 
+                    quantity, 
+                    customerType: product.customerType, 
+                    price: parseFloat(product.price), 
+                    priceString: product.price 
+                });
+            }
+            updateCartUI();
+            showToast(`✅ تمت إضافة ${quantity} من "${product.name}" للسلة.`);
+        }
+
+        function updateCartUI() {
+            const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+            cartCount.textContent = totalItems;
+            cartFab.classList.toggle('visible', totalItems > 0);
+            const container = document.getElementById('cart-items-container');
+            const totalContainer = document.getElementById('cart-total');
+            if (cart.length === 0) {
+                container.innerHTML = '<p>سلتك فارغة حالياً.</p>';
+                totalContainer.innerHTML = '';
+                return;
+            }
+            container.innerHTML = cart.map(item => `<div class="cart-item"><div><span>${item.name} (<strong>x${item.quantity}</strong>)</span><br><small style="color:var(--text-secondary)">(${item.customerType}) - ${item.priceString} للقطعة</small></div><div style="text-align:left;"><strong>${(item.quantity * item.price).toFixed(2)} د.ج</strong><br><button class="cart-item-remove icon-btn" data-name="${item.name}" data-type="${item.customerType}"><i class="fas fa-trash-alt" style="color:red; font-size:1.2rem;"></i></button></div></div>`).join('');
+            const grandTotal = cart.reduce((total, item) => total + (item.quantity * item.price), 0);
+            totalContainer.innerHTML = `الإجمالي: <strong>${grandTotal.toFixed(2)} د.ج</strong>`;
+        }
+        
+        document.getElementById('proceedToInfoBtn')?.addEventListener('click', () => {
+            if (cart.length === 0) return showToast("⚠️ سلتك فارغة!", true);
+            closeModal('cartModal');
+            openModal('customerInfoModal');
+        });
+
+        document.getElementById('customer-info-form')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const customerName = document.getElementById('customerName').value.trim();
+            const customerPhone = document.getElementById('customerPhone').value.trim();
+            const customerLocation = document.getElementById('customerLocation').value.trim();
+
+            if (!customerName || !customerPhone || !customerLocation) {
+                showToast("⚠️ الرجاء ملء جميع الحقول.", true);
+                return;
+            }
+
+            const orderData = {
+                customerName,
+                customerPhone,
+                customerLocation,
+                items: cart.map(item => ({ name: item.name, quantity: item.quantity, type: item.customerType })),
+                status: 'مازال',
+                createdAt: serverTimestamp()
+            };
+
+            try {
+                await addDoc(collection(db, "orders"), orderData);
+                
+                let message = `
+                
+                السلام عليكم ورحمة الله تعالى وبركاته 
+                *طلب جديد من موقع أمير الشروق*\n\n` +
+                    `*اسم العميل:* ${customerName}\n` +
+                    `*رقم الهاتف:* ${customerPhone}\n` +
+                    `*العنوان:* ${customerLocation}\n\n` +
+                    `---------------------\n*تفاصيل الطلب:*\n---------------------\n\n` +
+                    cart.map(item => `*المنتج*: ${item.name}\n*الكمية*: ${item.quantity}\n*نوع التسعير*: ${item.customerType}\n*الإجمالي*: ${(item.quantity * item.price).toFixed(2)} د.ج\n---------------------\n`).join('');
+                
+                const grandTotal = cart.reduce((total, item) => total + (item.quantity * item.price), 0);
+                message += `\n*الإجمالي الكلي للطلب: ${grandTotal.toFixed(2)} د.ج*`;
+                
+                window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, '_blank');
+                
+                showToast("✅ تم إرسال طلبك بنجاح!");
+                closeModal('customerInfoModal');
+                cart = [];
+                updateCartUI();
+                document.getElementById('customer-info-form').reset();
+
+            } catch (error) {
+                console.error("Error adding document: ", error);
+                showToast("❌ حدث خطأ، لم يتم إرسال الطلب.", true);
+            }
+        });
+
+        async function fetchAnnouncements() {
+            const container = document.getElementById('announcements-container');
+            if(!container) return;
+            try {
+                const q = query(collection(db, "announcements"), orderBy("createdAt", "desc"), limit(3));
+                const querySnapshot = await getDocs(q);
+                if (querySnapshot.empty) { container.innerHTML = '<p>لا توجد عروض أو أخبار حالياً.</p>'; return; }
+                container.innerHTML = querySnapshot.docs.map(doc => {
+                    const ann = doc.data();
+                    const date = ann.createdAt ? ann.createdAt.toDate().toLocaleDateString('ar-EG', { day: 'numeric', month: 'long' }) : '';
+                    return `<div class="announcement-card"><small>${date}</small><h3>${ann.title}</h3><p>${ann.content}</p></div>`;
+                }).join('');
+            } catch (error) { console.error(error); container.innerHTML = '<p>حدث خطأ في تحميل العروض.</p>'; }
+        }
+
+        document.addEventListener('click', e => {
+            if (e.target.closest('.add-to-cart-btn')) {
+                openCustomerTypeModal(e.target.closest('.product-card').dataset.productIndex);
+            }
+            if (e.target.closest('.cart-item-remove')) {
+                const btn = e.target.closest('.cart-item-remove');
+                cart = cart.filter(item => !(item.name === btn.dataset.name && item.customerType === btn.dataset.type));
+                updateCartUI();
+            }
+            if (e.target.closest('.modal-close') || e.target.closest('.modal-btn[data-close]')) {
+                closeModal(e.target.closest('.modal'));
+            }
+        });
+        
+        cartFab?.addEventListener('click', () => openModal('cartModal'));
+        contactSidebarLink?.addEventListener('click', (e) => { e.preventDefault(); openModal('contactModal'); });
+        
+        document.getElementById('increaseQty')?.addEventListener('click', () => document.getElementById('quantityInput').value++);
+        document.getElementById('decreaseQty')?.addEventListener('click', () => {
+            const input = document.getElementById('quantityInput');
+            if (input.value > 1) input.value--;
+        });
+
+        const sidebar = document.getElementById('sidebar');
+        const menuToggle = document.getElementById('menu-toggle');
+        const overlay = document.getElementById('overlay');
+        menuToggle?.addEventListener('click', () => { sidebar.classList.toggle('active'); overlay.classList.toggle('active'); });
+        overlay?.addEventListener('click', () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); });
+        document.getElementById('theme-toggle')?.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            document.querySelector('#theme-toggle i').className = isDark ? 'fas fa-moon' : 'fas fa-sun';
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        });
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+            document.querySelector('#theme-toggle i').className = 'fas fa-moon';
+        }
+
+        function showToast(message, isError = false) {
+            const toastEl = document.getElementById('toast');
+            toastEl.innerHTML = `<i class="fas ${isError ? 'fa-times-circle' : 'fa-check-circle'}"></i> ${message}`;
+            toastEl.style.backgroundColor = isError ? '#dc3545' : 'var(--success-color)';
+            toastEl.classList.add('show');
+            setTimeout(() => toastEl.classList.remove('show'), 4000);
+        }
+        
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+        renderProducts();
+        fetchAnnouncements();
+        document.getElementById('year').textContent = new Date().getFullYear();
+    });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نافذة أذكار وتنبيهات</title>
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
     <style>
-        body { font-family: 'Tajawal', sans-serif; background-color: #f1f5f9; }
-        html { scroll-behavior: smooth; }
-        .loader {
-            border: 5px solid #f3f3f3; border-top: 5px solid #f97316;
-            border-radius: 50%; width: 50px; height: 50px;
-            animation: spin 1s linear infinite;
+        /* =================================================================== */
+        /* نافذة الأذكار المنبثقة - نسخة محسّنة                                   */
+        /* =================================================================== */
+
+        :root {
+            --adm-bg-color: #f8f5f2;
+            --adm-modal-bg: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(249, 249, 249, 0.85));
+            --adm-primary-text: #3a4d39;
+            --adm-secondary-text: #6c757d;
+            --adm-reminder-text: #8d8d8d;
+            --adm-primary-accent: #4f6f52;
+            --adm-primary-accent-hover: #739072;
+            --adm-success-color: #a3b18a;
+            --adm-subtle-border: rgba(0, 0, 0, 0.1);
+            
+            --adm-border-radius-lg: 16px;
+            --adm-border-radius-md: 10px;
+            
+            --adm-shadow: 0 10px 35px rgba(0, 0, 0, 0.12);
+            --adm-transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .small-loader {
-            border: 3px solid rgba(255, 255, 255, 0.3); border-top-color: #fff;
-            border-radius: 50%; width: 20px; height: 20px;
-            animation: spin 0.8s linear infinite;
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+
         }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
-        @keyframes slideInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .modal-backdrop {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.7); z-index: 50;
-            display: flex; align-items: center; justify-content: center;
-            animation: fadeIn 0.3s; padding: 1rem;
-        }
-        .modal-content {
-            background-color: white; border-radius: 1rem;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%;
-            max-width: 500px; max-height: 95vh;
-            display: flex; flex-direction: column;
-            animation: slideInUp 0.4s; position: relative;
-        }
-        .special-offer-card {
-            border: 3px solid #f59e0b;
-            box-shadow: 0 0 15px rgba(245, 158, 11, 0.5), 0 0 25px rgba(245, 158, 11, 0.3);
-            transform: scale(1.02);
-        }
-        .special-offer-card::before {
-            content: 'مميز';
-            position: absolute;
-            top: 10px;
-            left: -8px;
-            background-color: #f59e0b;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 5px;
-            font-size: 14px;
-            font-weight: bold;
-            z-index: 10;
-        }
-        #order-badge {
-            position: absolute; top: -8px; left: -8px;
-            background-color: #ef4444; color: white;
-            border-radius: 50%; width: 22px; height: 22px;
-            font-size: 13px; font-weight: bold;
-            display: flex; align-items: center; justify-content: center;
-            border: 2px solid white;
-        }
-        .sidebar {
-            transition: transform 0.3s ease-in-out;
-        }
-        .sidebar-overlay {
-            transition: opacity 0.3s ease-in-out;
-        }
-        .is-visible {
-            opacity: 1;
-            pointer-events: auto;
-        }
-        .is-hidden {
+
+        .adm-modal-overlay {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            padding: 1rem;
+            
+            background-color: rgba(40, 55, 40, 0.5);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            
+            overflow-y: auto;
+
             opacity: 0;
-            pointer-events: none;
+            visibility: hidden; /* تحسين: استخدام visibility للوصولية */
+            transition: opacity 0.4s ease-out, visibility 0.4s;
         }
+
+        .adm-modal-overlay.is-visible {
+             opacity: 1;
+             visibility: visible;
+        }
+
+        /* تصميم موحد لكل النوافذ المنبثقة */
+        .adm-modal-content, .adm-jumaa-message-content, .isn-modal-content {
+            background: var(--adm-modal-bg);
+            padding: clamp(1.25rem, 4vw, 2rem) clamp(1rem, 4vw, 2rem) 1.5rem;
+            border-radius: var(--adm-border-radius-lg);
+            box-shadow: var(--adm-shadow);
+            width: 100%;
+            max-width: 460px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            
+            transform: translateY(20px) scale(0.98);
+            transition: transform 0.4s 0.1s ease-out;
+
+            display: flex;
+            flex-direction: column;
+            gap: clamp(1rem, 3.5vw, 1.5rem);
+        }
+
+        .is-visible .adm-modal-content,
+        .is-visible .adm-jumaa-message-content,
+        .is-visible .isn-modal-content {
+            transform: translateY(0) scale(1);
+        }
+        
+        .adm-hidden {
+            display: none !important;
+        }
+        
+        .adm-modal-header h2, .isn-modal-header h2 {
+            font-size: clamp(1.5rem, 5.5vw, 2rem);
+            font-weight: 700;
+            color: var(--adm-primary-text);
+            margin: 0 0 0.25rem 0;
+        }
+        
+        .adm-tasks-header {
+            font-size: clamp(1rem, 3.5vw, 1.1rem);
+            line-height: 1.6;
+            color: var(--adm-secondary-text);
+            margin: 0;
+        }
+
+        .adm-dhikr-tasks {
+            display: flex;
+            flex-direction: column;
+            gap: clamp(0.75rem, 3vw, 1rem);
+        }
+
+        .adm-dhikr-btn {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: clamp(0.8rem, 3vw, 1rem) clamp(1rem, 4vw, 1.25rem);
+            font-size: clamp(1rem, 4vw, 1.1rem);
+            font-weight: 500;
+            color: #fff;
+            background-color: var(--adm-primary-accent);
+            border: none;
+            border-radius: var(--adm-border-radius-md);
+            cursor: pointer;
+            transition: var(--adm-transition);
+            text-decoration: none;
+        }
+        
+        .adm-dhikr-btn .adm-icon {
+            margin-left: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .adm-dhikr-btn .adm-btn-text {
+            flex-grow: 1;
+            text-align: right;
+        }
+
+        .adm-dhikr-btn:hover:not(:disabled) {
+            background-color: var(--adm-primary-accent-hover);
+            transform: translateY(-4px);
+            box-shadow: 0 6px 20px rgba(79, 111, 82, 0.4);
+        }
+
+        .adm-dhikr-btn:disabled {
+            background-color: var(--adm-success-color);
+            cursor: default;
+        }
+
+        .adm-dhikr-btn.adm-is-completed::after {
+            content: "\f00c";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            color: #fff;
+            margin-right: 10px;
+            animation: adm-popIn 0.3s ease-out;
+        }
+        
+        @keyframes adm-popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .adm-dhikr-btn .adm-counter {
+            background-color: rgba(0, 0, 0, 0.15);
+            padding: 0.2rem 0.6rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            min-width: 40px;
+        }
+        
+        .adm-modal-footer {
+            margin-top: auto;
+            padding-top: clamp(0.75rem, 3vw, 1rem);
+            border-top: 1px solid rgba(0,0,0,0.07);
+        }
+        
+        .adm-dhikr-reminder p {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            color: var(--adm-reminder-text);
+            line-height: 1.6;
+            margin: 0 0 1rem 0;
+        }
+        
+        .adm-dhikr-reminder .quran-verse {
+            color: var(--adm-primary-text);
+            font-weight: 500;
+        }
+
+        .adm-progress-bar-container {
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.08);
+            border-radius: 50px;
+            height: 10px;
+            overflow: hidden;
+        }
+        
+        #adm-progress-bar {
+            width: 0%;
+            height: 100%;
+            background-color: var(--adm-success-color);
+            border-radius: 50px;
+            transition: width 0.5s ease-in-out;
+        }
+        
+        /* تصميم نافذة الجمعة */
+        .adm-jumaa-message-content {
+            background-color: #fdf6f0;
+            border: 2px solid #d4a373;
+        }
+        .adm-jumaa-message-content .jumaa-header {
+            font-size: clamp(1.5rem, 5vw, 1.7rem);
+            color: var(--adm-primary-accent);
+            font-weight: 700;
+            margin-bottom: 0;
+        }
+        .adm-jumaa-message-content .jumaa-body {
+            font-size: clamp(0.9rem, 3.5vw, 1rem);
+            color: var(--adm-primary-text);
+            line-height: 1.8;
+            text-align: justify;
+        }
+        .adm-jumaa-message-content .jumaa-source {
+            font-size: clamp(0.8rem, 3vw, 0.9rem);
+            color: var(--adm-secondary-text);
+            margin-top: 0.5rem;
+        }
+        .adm-jumaa-message-content #play-jumaa-audio {
+            background-color: #d4a373;
+        }
+        .adm-jumaa-message-content #play-jumaa-audio:hover:not(:disabled) {
+            background-color: #c79059;
+            transform: translateY(-2px);
+        }
+        .adm-jumaa-message-content #play-jumaa-audio:disabled {
+            background-color: #e3c1a0;
+            transform: none;
+            box-shadow: none;
+        }
+        .adm-jumaa-message-content .closing-message {
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            padding: clamp(0.75rem, 3vw, 1rem);
+            border-radius: 8px;
+            font-size: clamp(0.9rem, 3.5vw, 1rem);
+        }
+        .adm-jumaa-message-content .closing-message p {
+            color: #856404;
+            font-weight: bold;
+            margin: 0;
+        }
+        .adm-jumaa-refresh-btn {
+            font-family: 'Tajawal', sans-serif;
+            font-size: clamp(0.8rem, 3vw, 0.9rem);
+            padding: 0.6rem 1rem;
+            background-color: rgba(0,0,0,0.05);
+            border: 1px solid rgba(0,0,0,0.1);
+            border-radius: var(--adm-border-radius-md);
+            color: var(--adm-secondary-text);
+            cursor: pointer;
+            transition: var(--adm-transition);
+            width: 100%;
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .adm-jumaa-refresh-btn:hover {
+            background-color: #e2e6ea;
+            color: var(--adm-primary-text);
+            border-color: rgba(0,0,0,0.15);
+        }
+
+
+        /* تصميم نافذة سورة الكهف */
+        .isn-modal-content.jumaa-style {
+            background-color: #e8f5e9;
+            border: 2px solid var(--adm-primary-accent);
+        }
+        .isn-modal-content .quran-text {
+            font-size: clamp(1.1rem, 4vw, 1.3rem);
+            color: var(--adm-primary-text);
+            font-style: italic;
+            line-height: 1.7;
+        }
+        .isn-modal-content .hadith-source {
+            font-size: clamp(0.8rem, 3vw, 0.9rem);
+            color: var(--adm-secondary-text);
+        }
+        .isn-modal-content .buttons-container {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            width: 100%;
+        }
+        .isn-btn {
+            flex: 1;
+            padding: 0.75rem;
+            border-radius: var(--adm-border-radius-md);
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: clamp(0.9rem, 3.5vw, 1rem);
+            transition: var(--adm-transition);
+            text-decoration: none;
+            display: inline-block;
+        }
+        .isn-btn.btn-jumaa {
+            background-color: var(--adm-primary-accent);
+            color: white;
+        }
+        .isn-btn.btn-jumaa:hover {
+            background-color: var(--adm-primary-accent-hover);
+            transform: translateY(-2px);
+        }
+        .isn-btn.btn-close {
+            background-color: #e9ecef;
+            color: #495057;
+        }
+        .isn-btn.btn-close:hover {
+            background-color: #dee2e6;
+        }
+
+        @media (max-width: 360px) {
+            .isn-modal-content .buttons-container {
+                flex-direction: column;
+            }
+        }
+
     </style>
 </head>
 <body>
-    <div id="restaurant-status-banner" class="hidden text-center p-3 bg-red-600 text-white font-bold text-lg sticky top-0 z-40">
-        <i class="fas fa-clock mr-2"></i> <span id="restaurant-status-message">المطعم مغلق حاليًا.</span>
+
+    <div id="adm-modal-overlay" class="adm-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="adm-modal-main-title">
+        
+        <div id="adm-modal-content" class="adm-modal-content">
+            <div class="adm-modal-header">
+                <h2 id="adm-modal-main-title">أهلاً بكم، طبتم وطاب ممشاكم</h2>
+                <p class="adm-tasks-header">للمتابعة، نرجو منك إنجاز هذه الأذكار اليسيرة.</p>
+            </div>
+            <div id="adm-dhikr-tasks" class="adm-dhikr-tasks">
+                <button class="adm-dhikr-btn" data-key="salat">
+                    <span class="adm-btn-text"><i class="fa-solid fa-moon adm-icon"></i>صلِّ على النبي ﷺ</span>
+                    <span class="adm-counter">0/1</span>
+                </button>
+                <button class="adm-dhikr-btn" data-key="tasbih">
+                    <span class="adm-btn-text"><i class="fa-solid fa-leaf adm-icon"></i>سبحان الله وبحمده</span>
+                    <span class="adm-counter">0/1</span>
+                </button>
+                <button class="adm-dhikr-btn" data-key="istighfar">
+                    <span class="adm-btn-text"><i class="fa-solid fa-hands-praying adm-icon"></i>استغفر الله</span>
+                    <span class="adm-counter">0/1</span>
+                </button>
+            </div>
+            <div class="adm-modal-footer">
+                <div class="adm-dhikr-reminder">
+                    <p>
+                        <span class="quran-verse">﴿ الَّذِينَ آمَنُوا وَتَطْمَئِنُّ قُلُوبُهُم بِذِكْرِ اللَّهِ ۗ أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ﴾</span>
+                        <br>[الرعد:28]
+                        <br><br>
+                        اذكر الله بنية التقرب إليه، ولك الأجر إن شاء الله.
+                    </p>
+                </div>
+                <div class="adm-progress-bar-container">
+                    <div id="adm-progress-bar"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="adm-jumaa-message" class="adm-jumaa-message-content adm-hidden">
+            <h2 class="jumaa-header">📿 تذكير بصلاة الجمعة</h2>
+            <div class="jumaa-body">
+                <p>
+                    يَٰٓأَيُّهَا ٱلَّذِينَ ءَامَنُوٓاْ إِذَا نُودِيَ لِلصَّلَوٰةِ مِن يَوۡمِ ٱلۡجُمُعَةِ فَٱسۡعَوۡاْ إِلَىٰ ذِكۡرِ ٱللَّهِ وَذَرُواْ ٱلۡبَيۡعَۚ ذَٰلِكُمۡ خَيۡرٞ لَّكُمۡ إِن كُنتُمۡ تَعۡلَمُونَ (9) فَإِذَا قُضِيَتِ ٱلصَّلَوٰةُ فَٱنتَشِرُواْ فِي ٱلۡأَرۡضِ وَٱبۡتَغُواْ مِن فَضۡلِ ٱللَّهِ وَٱذۡكُرُواْ ٱللَّهَ كَثِيرٗا لَّعَلَّكُمۡ تُفۡلِحُونَ (10)
+                </p>
+            </div>
+            <p class="jumaa-source">[سورة الجمعة: 9-10]</p>
+            <button id="play-jumaa-audio" class="adm-dhikr-btn">
+                <span class="adm-btn-text"><i class="fa-solid fa-volume-high adm-icon"></i> تشغيل التلاوة</span>
+            </button>
+            <div class="closing-message">
+                <p>⛔ تُغلق <strong>مؤسسة أمير الشروق</strong> أبوابها يوم الجمعة من الساعة <strong>11:30</strong> إلى <strong>14:00</strong> احترامًا للصلاة.</p>
+            </div>
+            <button class="adm-jumaa-refresh-btn" aria-label="تحديث الصفحة" onclick="location.reload();">
+                <i class="fas fa-sync-alt"></i>
+                <span>اضغط هنا بعد الساعة 14:00</span>
+            </button>
+        </div>
+
+        <div id="kahfModal" class="isn-modal-content jumaa-style adm-hidden">
+            <div class="isn-modal-header"><h2>📿 فضل سورة الكهف</h2></div>
+            <p class="quran-text">"من قرأ سورةَ الكهفِ في يومِ الجمعةِ أضاء له من النورِ ما بين الجمُعَتَين."</p>
+            <p class="hadith-source">صحيح الترغيب | 736</p>
+            <div class="buttons-container">
+                <a href="سورة الكهف مكتوبة.html" class="isn-btn btn-jumaa">قراءة السورة</a>
+                <button id="closeKahfModal" class="isn-btn btn-close">إغلاق</button>
+            </div>
+        </div>
     </div>
 
-    <header class="bg-white shadow-sm sticky top-0 z-30">
-        <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-             <div class="flex items-center gap-3">
-                <img src="https://i.ibb.co/6yV2L7p/texmex-logo.png" alt="TEXMEX Logo" class="h-10">
-                <h1 class="text-xl sm:text-2xl md:text-3xl font-extrabold text-gray-800">
-                    TEX<span class="text-orange-500">MEX</span>
-                </h1>
-            </div>
-            <div class="flex items-center gap-4">
-                <button id="order-btn" class="relative text-lg font-semibold text-white bg-orange-500 hover:bg-orange-600 px-5 py-2.5 rounded-full transition-colors flex items-center gap-2 shadow-lg">
-                    <i class="fas fa-shopping-basket"></i>
-                    <span class="hidden md:inline">طلبيتي</span>
-                    <span id="order-badge" class="hidden">0</span>
-                </button>
-                <button id="sidebar-toggle" class="md:hidden text-2xl text-gray-700 p-2">
-                    <i class="fas fa-filter"></i>
-                </button>
-            </div>
-        </div>
-    </header>
+    <audio id="jumaa-audio" src="JOMAA.mp3" preload="auto"></audio>
 
-    <main class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 relative">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <aside id="sidebar" class="sidebar md:col-span-1 bg-white p-6 rounded-xl shadow-md h-fit md:sticky top-24 fixed md:relative top-0 right-0 h-full w-72 md:w-auto z-40 transform translate-x-full md:translate-x-0 overflow-y-auto">
-                <div class="flex justify-between items-center md:hidden mb-4 pb-3 border-b">
-                    <h3 class="text-xl font-bold">فلترة القائمة</h3>
-                    <button id="close-sidebar" class="text-2xl">&times;</button>
-                </div>
-                <div class="space-y-4">
-                    <div>
-                        <label for="search-input" class="font-semibold text-gray-700">ابحث عن وجبة</label>
-                        <div class="relative mt-1">
-                            <span class="absolute inset-y-0 right-0 flex items-center pr-3"><i class="fas fa-search text-gray-400"></i></span>
-                            <input type="text" id="search-input" placeholder="اسم الوجبة..." class="w-full pr-10 pl-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500">
-                        </div>
-                    </div>
-                    <div>
-                        <h4 class="font-semibold text-gray-700 mb-2">الأقسام</h4>
-                        <div id="store-categories" class="space-y-2">
-                            <div class="text-center p-4"><div class="loader mx-auto"></div></div>
-                        </div>
-                    </div>
-                </div>
-            </aside>
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
 
-             <div class="md:col-span-3">
-                 <div id="store-loader" class="text-center py-20"><div class="loader mx-auto"></div><p class="mt-4 text-gray-600">جاري تحميل القائمة...</p></div>
-
-                 <section id="offers-section" class="mb-12 hidden">
-                    <h2 class="text-2xl md:text-3xl font-extrabold text-gray-800 mb-6 border-r-4 border-orange-500 pr-4">العروض الحصرية والباقات</h2>
-                    <div id="offers-loader" class="text-center py-10"><div class="loader mx-auto"></div></div>
-                    <div id="offers-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-6"></div>
-                 </section>
-
-                 <section id="menu-section">
-                     <h2 class="text-2xl md:text-3xl font-extrabold text-gray-800 mb-6 border-r-4 border-orange-500 pr-4">قائمة الطعام</h2>
-                     <div id="menu-grid" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-                     <div id="no-products-msg" class="hidden text-center py-20 bg-white rounded-xl shadow-sm">
-                        <i class="fas fa-utensils text-4xl text-gray-400"></i>
-                        <p class="mt-4 text-xl font-semibold text-gray-500">لا توجد وجبات تطابق بحثك حاليًا.</p>
-                    </div>
-                 </section>
-            </div>
-        </div>
-        <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden sidebar-overlay is-hidden"></div>
-    </main>
-
-    <footer class="bg-gray-800 text-white mt-12">
-        <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 text-center">
-            <h3 class="text-2xl font-bold">TEXMEX Annaba</h3>
-            <p class="text-gray-400 mt-2 mb-6" id="footer-phone"></p>
-            <div id="social-links-container" class="flex justify-center items-center gap-6"></div>
-            <p class="mt-8 text-gray-500 text-sm">&copy; 2025 TEXMEX. كل الحقوق محفوظة.</p>
-        </div>
-    </footer>
-
-    <div id="modal-container"></div>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, collection, getDocs, doc, getDoc, addDoc, query, orderBy, serverTimestamp, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyAsG-85oNZq8kzWPHIDpsifkQ7rhua_oPk",
-            authDomain: "texmexfoodannaba23.firebaseapp.com",
-            projectId: "texmexfoodannaba23",
-            storageBucket: "texmexfoodannaba23.appspot.com",
-            messagingSenderId: "712480664933",
-            appId: "1:712480664933:web:a5310190bf63115ac9058c",
-            measurementId: "G-38D210X1EG"
+        // ===================================================================
+        // 1. الإعدادات وعناصر DOM
+        // ===================================================================
+        const config = {
+            dhikrRequiredClicks: 1,
+            fridayPrayerStart: { hour: 11, minute: 30 },
+            fridayPrayerEnd: { hour: 14, minute: 0 },
+            completionMessage: `<p style="color: var(--adm-primary-accent); font-size: 1.2rem; font-weight: bold;">جزاكم الله خيرًا، تم إنجاز الأذكار!</p>`,
+            autoCloseDelay: 2000,
         };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        let menuItemsCache = [];
-        let categoriesCache = [];
-        let deliveryZonesCache = [];
-        let restaurantSettings = {};
-        let order = JSON.parse(localStorage.getItem('texmex_order')) || [];
 
         const elements = {
-            modalContainer: document.getElementById('modal-container'),
-            grid: document.getElementById('menu-grid'),
-            loader: document.getElementById('store-loader'),
-            noProductsMsg: document.getElementById('no-products-msg'),
-            categoriesContainer: document.getElementById('store-categories'),
-            searchInput: document.getElementById('search-input'),
-            socialLinksContainer: document.getElementById('social-links-container'),
-            footerPhone: document.getElementById('footer-phone'),
-            orderBtn: document.getElementById('order-btn'),
-            orderBadge: document.getElementById('order-badge'),
-            statusBanner: document.getElementById('restaurant-status-banner'),
-            statusMessage: document.getElementById('restaurant-status-message'),
-            sidebar: document.getElementById('sidebar'),
-            sidebarToggle: document.getElementById('sidebar-toggle'),
-            closeSidebar: document.getElementById('close-sidebar'),
-            sidebarOverlay: document.getElementById('sidebar-overlay'),
-            offersSection: document.getElementById('offers-section'),
-            offersGrid: document.getElementById('offers-grid'),
-            offersLoader: document.getElementById('offers-loader'),
+            overlay: document.getElementById('adm-modal-overlay'),
+            modals: {
+                dhikr: document.getElementById('adm-modal-content'),
+                jumaa: document.getElementById('adm-jumaa-message'),
+                kahf: document.getElementById('kahfModal'),
+            },
+            dhikrTasksContainer: document.getElementById('adm-dhikr-tasks'),
+            progressBar: document.getElementById('adm-progress-bar'),
+            jumaaAudio: document.getElementById('jumaa-audio'),
+            playJumaaBtn: document.getElementById('play-jumaa-audio'),
+            closeKahfBtn: document.getElementById('closeKahfModal'),
         };
 
-        // --- UTILITY FUNCTIONS ---
-        const debounce = (func, delay = 300) => {
-            let timeout;
-            return (...args) => {
-                clearTimeout(timeout);
-                timeout = setTimeout(() => {
-                    func.apply(this, args);
-                }, delay);
-            };
-        };
-        
-        // --- ORDER (CART) LOGIC ---
-        const updateOrderIcon = () => {
-            const totalItems = order.reduce((sum, item) => sum + item.quantity, 0);
-            elements.orderBadge.textContent = totalItems;
-            elements.orderBadge.classList.toggle('hidden', totalItems === 0);
+        const state = {
+            buttons: {},
+            totalClicks: 0,
+            totalRequiredClicks: 0,
+            activeModal: null,
         };
 
-        const saveOrderToStorage = () => {
-            localStorage.setItem('texmex_order', JSON.stringify(order));
-            updateOrderIcon();
-        };
+        // ===================================================================
+        // 2. الدوال الرئيسية
+        // ===================================================================
 
-        const addToOrder = (itemId) => {
-            if (!restaurantSettings.isOpen) {
-                alert(restaurantSettings.closedMessage || "المطعم مغلق حاليًا، لا يمكن إضافة طلبات.");
-                return;
-            }
-            const item = menuItemsCache.find(p => p.id === itemId);
-            if (!item) return;
-            const existingItem = order.find(i => i.id === itemId);
-            if (existingItem) existingItem.quantity++;
-            else order.push({ ...item, quantity: 1 });
-            saveOrderToStorage();
-            alert(`تم إضافة "${item.name.replace(/<[^>]*>?/gm, '')}" إلى طلبيتك!`);
-        };
-
-        window.updateOrderQuantity = (itemId, newQuantity) => {
-            const itemIndex = order.findIndex(i => i.id === itemId);
-            if (itemIndex > -1) {
-                if (newQuantity > 0) order[itemIndex].quantity = newQuantity;
-                else order.splice(itemIndex, 1);
-                saveOrderToStorage();
-                showOrderModal();
-            }
-        };
-
-        // --- MODAL & UI LOGIC ---
-        const showOrderModal = () => {
-            let contentHTML = '';
-            let subTotal = order.reduce((sum, item) => sum + item.price * item.quantity, 0);
-
-            if (order.length === 0) {
-                contentHTML = `<div class="text-center p-8"><i class="fas fa-shopping-basket text-4xl text-gray-300 mb-4"></i><p class="text-gray-500">طلبيتك فارغة حاليًا.</p></div>`;
+        /**
+         * يعرض أو يخفي النافذة المنبثقة مع تأثيرات CSS.
+         * @param {boolean} show - true للعرض, false للإخفاء.
+         */
+        function toggleOverlay(show) {
+            if (show) {
+                elements.overlay.classList.add('is-visible');
             } else {
-                order.forEach(item => {
-                    const itemTotal = item.price * item.quantity;
-                    const image = (item.imageUrls && item.imageUrls.length > 0 && item.imageUrls[0]) ? item.imageUrls[0] : 'https://via.placeholder.com/150';
-                    contentHTML += `
-                        <div class="flex items-center gap-4 py-3 border-b">
-                            <img src="${image}" class="w-16 h-16 rounded-md object-cover bg-gray-100" alt="">
-                            <div class="flex-grow">
-                                <h4 class="font-bold">${item.name}</h4>
-                                <p class="text-sm text-gray-500">${item.price.toLocaleString()} د.ج</p>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <button onclick="window.updateOrderQuantity('${item.id}', ${item.quantity - 1})" class="w-7 h-7 bg-gray-200 rounded-md font-bold">-</button>
-                                <span class="w-8 text-center font-semibold">${item.quantity}</span>
-                                <button onclick="window.updateOrderQuantity('${item.id}', ${item.quantity + 1})" class="w-7 h-7 bg-gray-200 rounded-md font-bold">+</button>
-                            </div>
-                            <p class="font-bold w-24 text-left">${itemTotal.toLocaleString()} د.ج</p>
-                        </div>`;
-                });
+                elements.overlay.classList.remove('is-visible');
             }
-
-            const modalHTML = `
-            <div class="modal-backdrop" id="modal-backdrop">
-                <div class="modal-content !max-w-2xl">
-                    <div class="p-4 border-b flex justify-between items-center"><h2 class="text-xl font-bold"><i class="fas fa-shopping-basket mr-2"></i> تفاصيل الطلبية</h2><button id="modal-close" class="text-2xl hover:text-red-500">&times;</button></div>
-                    <div class="p-4 overflow-y-auto">${contentHTML}</div>
-                    ${order.length > 0 ? `<div class="p-4 border-t bg-gray-50"><div class="text-left mb-4"><span class="text-gray-600">المجموع: </span><span class="text-2xl font-extrabold text-orange-600">${subTotal.toLocaleString()} د.ج</span></div><button id="checkout-btn" class="w-full bg-green-600 text-white font-bold py-3 px-6 rounded-lg text-lg hover:bg-green-700 transition-colors">متابعة لإنهاء الطلب</button></div>` : ''}
-                </div>
-            </div>`;
-            elements.modalContainer.innerHTML = modalHTML;
-            const close = () => elements.modalContainer.innerHTML = '';
-            document.getElementById('modal-close').onclick = close;
-            document.getElementById('modal-backdrop').onclick = (e) => e.target.id === 'modal-backdrop' && close();
-            if(order.length > 0) document.getElementById('checkout-btn').onclick = () => { close(); showCheckoutModal(); };
-        };
-
-        const showCheckoutModal = () => {
-            const deliveryOptions = deliveryZonesCache.map(zone => `<option value="${zone.id}" data-price="${zone.price}">${zone.name} - ${zone.price} د.ج</option>`).join('');
-            const modalHTML = `<div class="modal-backdrop" id="modal-backdrop"><div class="modal-content"><div class="p-5 border-b flex justify-between items-center"><h2 class="text-xl font-bold">معلومات التوصيل</h2><button id="modal-close" class="text-2xl hover:text-red-500">&times;</button></div><form id="order-form" class="p-5 overflow-y-auto space-y-4"><input type="text" id="customer-name" required placeholder="الاسم الكامل" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"><input type="tel" id="customer-contact" required placeholder="رقم الهاتف" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500" dir="ltr"><div><label class="font-semibold text-sm text-gray-700">اختر منطقة التوصيل</label><select id="customer-location" required class="mt-1 w-full p-3 border bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"><option value="" disabled selected>-- اختر المنطقة --</option>${deliveryOptions}</select></div><div id="total-price-summary" class="p-3 bg-gray-100 rounded-lg text-center font-bold text-lg"></div></form><div class="p-4 border-t bg-gray-50"><button id="submit-order-btn" class="w-full bg-orange-500 text-white font-bold py-3 rounded-lg text-lg hover:bg-orange-600" disabled>أكمل الطلب</button></div></div></div>`;
-            elements.modalContainer.innerHTML = modalHTML;
-            const subTotal = order.reduce((sum, item) => sum + item.price * item.quantity, 0);
-            const locationSelect = document.getElementById('customer-location');
-            const summaryDiv = document.getElementById('total-price-summary');
-            const submitBtn = document.getElementById('submit-order-btn');
-            const updateTotal = () => {
-                const selectedOption = locationSelect.options[locationSelect.selectedIndex];
-                if (!selectedOption || !selectedOption.dataset.price) {
-                    summaryDiv.innerHTML = `المجموع: ${subTotal.toLocaleString()} د.ج + سعر التوصيل`;
-                    submitBtn.disabled = true; return;
-                }
-                const deliveryFee = parseFloat(selectedOption.dataset.price);
-                const grandTotal = subTotal + deliveryFee;
-                summaryDiv.innerHTML = `المجموع: ${subTotal.toLocaleString()} + التوصيل: ${deliveryFee.toLocaleString()} = <span class="text-green-600">${grandTotal.toLocaleString()} د.ج</span>`;
-                submitBtn.disabled = false;
-            };
-            updateTotal();
-            locationSelect.onchange = updateTotal;
-            const close = () => elements.modalContainer.innerHTML = '';
-            document.getElementById('modal-close').onclick = close;
-            document.getElementById('modal-backdrop').onclick = (e) => e.target.id === 'modal-backdrop' && close();
-            document.getElementById('order-form').addEventListener('submit', handleOrderSubmit);
-            document.getElementById('submit-order-btn').onclick = () => document.getElementById('order-form').requestSubmit();
-        };
-
-        const showDhikrCountdownModal = () => {
-            return new Promise(resolve => {
-                let seconds = 20;
-                const modalHTML = `
-                <div class="modal-backdrop">
-                    <div class="modal-content text-center p-8">
-                        <h2 class="text-2xl font-bold mb-3">جاري إرسال طلبك...</h2>
-                        <p class="text-gray-600 mb-4">بينما تنتظر، لنجعل هذا الوقت مباركًا.</p>
-                        <p class="text-3xl font-bold text-orange-600 my-4">استغفر الله العظيم</p>
-                        <div id="countdown-timer" class="text-5xl font-bold text-gray-800">${seconds}</div>
-                    </div>
-                </div>`;
-                elements.modalContainer.innerHTML = modalHTML;
-                const timerElement = document.getElementById('countdown-timer');
-                const interval = setInterval(() => {
-                    seconds--;
-                    timerElement.textContent = seconds;
-                    if (seconds <= 0) {
-                        clearInterval(interval);
-                        resolve();
-                    }
-                }, 1000);
-            });
-        };
-
-        const showSecondaryConfirmationChoiceModal = (orderId) => {
-            const modalHTML = `
-            <div class="modal-backdrop" id="modal-backdrop">
-                <div class="modal-content text-center p-6">
-                    <i class="fas fa-check-circle text-6xl text-green-500 mb-4"></i>
-                    <h2 class="text-2xl font-bold">تم استلام طلبك بنجاح!</h2>
-                    <p class="text-gray-600 my-4">كيف تفضل أن نتصل بك لتأكيد الطلب؟</p>
-                    <div id="confirmation-choices" class="space-y-3 my-5">
-                        <button data-choice="phone" class="w-full text-center bg-blue-500 text-white font-bold p-3 rounded-lg flex items-center justify-center gap-2 hover:bg-blue-600"><i class="fas fa-phone"></i> عبر اتصال هاتفي</button>
-                        <button data-choice="whatsapp" class="w-full text-center bg-green-500 text-white font-bold p-3 rounded-lg flex items-center justify-center gap-2 hover:bg-green-600"><i class="fab fa-whatsapp"></i> عبر رسالة واتساب</button>
-                        <button data-choice="instagram" class="w-full text-center bg-pink-500 text-white font-bold p-3 rounded-lg flex items-center justify-center gap-2 hover:bg-pink-600"><i class="fab fa-instagram"></i> عبر رسالة انستغرام</button>
-                    </div>
-                    <button id="modal-close" class="mt-4 text-gray-500 hover:underline">لا بأس، سأنتظر اتصالكم</button>
-                </div>
-            </div>`;
-            elements.modalContainer.innerHTML = modalHTML;
-            
-            const handleChoice = async (choice) => {
-                const choiceButtons = document.getElementById('confirmation-choices');
-                choiceButtons.innerHTML = '<div class="small-loader mx-auto" style="border-top-color: #f97316;"></div>';
-                try {
-                    await updateDoc(doc(db, "orders", orderId), { confirmationPreference: choice });
-                } catch (error) {
-                    console.error("Failed to save confirmation preference: ", error);
-                } finally {
-                    elements.modalContainer.innerHTML = `
-                    <div class="modal-backdrop">
-                        <div class="modal-content text-center p-8">
-                            <i class="fas fa-thumbs-up text-6xl text-green-500 mb-4"></i>
-                            <h2 class="text-2xl font-bold">شكرًا لك!</h2>
-                            <p class="text-gray-600 my-4">سنتواصل معك بالطريقة التي اخترتها قريبًا.</p>
-                            <button id="final-close" class="mt-4 bg-orange-500 text-white font-bold py-2 px-6 rounded-lg">إغلاق</button>
-                        </div>
-                    </div>`;
-                    document.getElementById('final-close').onclick = () => elements.modalContainer.innerHTML = '';
-                }
-            };
-
-            document.getElementById('confirmation-choices').addEventListener('click', e => {
-                const choiceBtn = e.target.closest('button');
-                if (choiceBtn && choiceBtn.dataset.choice) {
-                    handleChoice(choiceBtn.dataset.choice);
-                }
-            });
-
-            document.getElementById('modal-close').onclick = () => elements.modalContainer.innerHTML = '';
-        };
-
-        const handleOrderSubmit = async (e) => {
-            e.preventDefault();
-            const submitBtn = document.getElementById('submit-order-btn');
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<span class="small-loader"></span> جاري الإرسال...';
-            
-            await showDhikrCountdownModal();
-            
-            const locationSelect = document.getElementById('customer-location');
-            const selectedZone = locationSelect.options[locationSelect.selectedIndex];
-            const orderData = {
-                customerName: document.getElementById('customer-name').value.trim(),
-                customerContact: document.getElementById('customer-contact').value.trim(),
-                customerLocation: selectedZone.text,
-                deliveryFee: parseFloat(selectedZone.dataset.price),
-                totalPrice: order.reduce((sum, item) => sum + item.price * item.quantity, 0) + parseFloat(selectedZone.dataset.price),
-                items: order.map(item => ({ name: item.name.replace(/<[^>]*>?/gm, ''), quantity: item.quantity, price: item.price })),
-                status: 'new',
-                createdAt: serverTimestamp(),
-                confirmationPreference: null
-            };
-
-            try {
-                const docRef = await addDoc(collection(db, "orders"), orderData);
-                showSecondaryConfirmationChoiceModal(docRef.id);
-                order = [];
-                saveOrderToStorage();
-            } catch (error) {
-                console.error("Error submitting order: ", error);
-                alert("حدث خطأ أثناء إرسال الطلب. يرجى المحاولة مرة أخرى.");
-                elements.modalContainer.innerHTML = ''; // Close countdown modal on error
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'أكمل الطلب';
-            }
-        };
-
-        // --- DATA FETCHING & RENDERING ---
-        const renderMenuItems = () => {
-            const activeCatBtn = document.querySelector('.category-filter-btn.bg-orange-100');
-            const selectedCatId = activeCatBtn ? activeCatBtn.dataset.id : 'all';
-            const searchTerm = elements.searchInput.value.toLowerCase().trim();
-            const filteredItems = menuItemsCache.filter(item => (selectedCatId === 'all' || item.categoryId === selectedCatId) && item.name.toLowerCase().includes(searchTerm));
-            elements.grid.innerHTML = '';
-            if (filteredItems.length === 0) {
-                elements.noProductsMsg.classList.remove('hidden');
-                elements.grid.classList.add('hidden'); return;
-            }
-            elements.noProductsMsg.classList.add('hidden');
-            elements.grid.classList.remove('hidden');
-            filteredItems.forEach(item => {
-                const image = (item.imageUrls && item.imageUrls.length > 0 && item.imageUrls[0]) ? item.imageUrls[0] : 'https://via.placeholder.com/300x224.png?text=TEXMEX';
-                const card = document.createElement('div');
-                card.className = `relative bg-white rounded-xl shadow-md overflow-hidden flex flex-col transition-all duration-300 hover:shadow-xl ${item.isOffer ? 'special-offer-card' : ''}`;
-                const namePlainText = item.name.replace(/<[^>]*>?/gm, "");
-                card.innerHTML = `<div class="h-56 overflow-hidden relative"><img src="${image}" alt="${namePlainText}" class="w-full h-full object-cover bg-gray-100" loading="lazy"></div><div class="p-4 flex flex-col flex-grow"><h3 class="text-lg font-bold text-gray-800" title="${namePlainText}">${item.name}</h3><div class="my-3 flex-grow"><p class="text-gray-600 text-sm">${item.description || ''}</p></div><p class="text-orange-600 text-2xl font-extrabold mt-2">${item.price.toLocaleString()} د.ج</p></div><div class="p-4 mt-auto pt-2 border-t border-gray-100"><button data-id="${item.id}" class="add-to-order-btn w-full bg-orange-500 text-white font-bold py-2.5 px-4 rounded-lg transition-colors hover:bg-orange-600 flex items-center justify-center gap-2"><i class="fas fa-plus"></i> أضف للطلبية</button></div>`;
-                elements.grid.appendChild(card);
-            });
-        };
+        }
         
-        const renderOffers = async () => {
-            try {
-                const snapshot = await getDocs(query(collection(db, "offers"), orderBy("createdAt", "desc")));
-                if (snapshot.empty) { elements.offersSection.classList.add('hidden'); return; }
-                elements.offersSection.classList.remove('hidden');
-                elements.offersGrid.innerHTML = '';
-                snapshot.forEach(doc => {
-                    const offer = { id: doc.id, ...doc.data() };
-                    const hasImage = offer.imageUrl && offer.imageUrl.trim() !== '';
-                    const card = document.createElement('div');
-                    card.className = 'bg-white rounded-xl shadow-md overflow-hidden flex flex-col transition-all duration-300 hover:shadow-xl';
-                    card.innerHTML = `${hasImage ? `<div class="h-56 overflow-hidden relative"><img src="${offer.imageUrl}" alt="${offer.title}" class="w-full h-full object-cover bg-gray-100" loading="lazy"></div>` : ''}<div class="p-4 flex flex-col flex-grow"><h3 class="text-lg font-bold text-gray-800">${offer.title}</h3><div class="my-3 flex-grow"><p class="text-gray-600 text-sm">${offer.description || ''}</p></div><p class="text-green-600 text-2xl font-extrabold mt-2">${offer.price.toLocaleString()} د.ج</p></div>`;
-                    elements.offersGrid.appendChild(card);
-                });
-            } catch (error) { console.error("Error fetching offers: ", error); elements.offersSection.classList.add('hidden');
-            } finally { elements.offersLoader.classList.add('hidden'); }
-        };
-
-        const checkRestaurantStatus = () => {
-            const { openTime, closeTime, closedMessage } = restaurantSettings;
-            if (!openTime || !closeTime) { restaurantSettings.isOpen = true; return; }
+        /**
+         * يحدد أي نافذة يجب عرضها بناءً على اليوم والوقت.
+         */
+        function handleModalsVisibility() {
             const now = new Date();
-            const currentTime = now.getHours() * 60 + now.getMinutes();
-            const open = parseInt(openTime.split(':')[0]) * 60 + parseInt(openTime.split(':')[1]);
-            const close = parseInt(closeTime.split(':')[0]) * 60 + parseInt(closeTime.split(':')[1]);
-            if (currentTime >= open && currentTime < close) {
-                restaurantSettings.isOpen = true; elements.statusBanner.classList.add('hidden');
+            const day = now.getDay();
+            const hours = now.getHours();
+            const minutes = now.getMinutes();
+            
+            const currentTimeInMinutes = hours * 60 + minutes;
+            const startTime = config.fridayPrayerStart.hour * 60 + config.fridayPrayerStart.minute;
+            const endTime = config.fridayPrayerEnd.hour * 60;
+
+            const isFriday = (day === 5);
+            const isJumaaClosingTime = (isFriday && currentTimeInMinutes >= startTime && currentTimeInMinutes < endTime);
+
+            // إخفاء جميع النوافذ أولاً
+            Object.values(elements.modals).forEach(modal => modal.classList.add('adm-hidden'));
+
+            if (isJumaaClosingTime) {
+                state.activeModal = elements.modals.jumaa;
+            } else if (isFriday) {
+                state.activeModal = elements.modals.kahf;
             } else {
-                restaurantSettings.isOpen = false; elements.statusMessage.textContent = closedMessage || `المطعم مغلق حاليًا. نفتح من ${openTime} إلى ${closeTime}.`; elements.statusBanner.classList.remove('hidden');
+                state.activeModal = elements.modals.dhikr;
+                initializeDhikrModule();
             }
-        };
-
-        const initializeStore = async () => {
-            try {
-                const [settingsSnap, zonesSnap, categoriesSnap, productsSnap] = await Promise.all([
-                    getDoc(doc(db, "settings", "config")),
-                    getDocs(collection(db, "delivery_zones")),
-                    getDocs(query(collection(db, "categories"), orderBy("name"))),
-                    getDocs(query(collection(db, "products"), orderBy("createdAt", "desc")))
-                ]);
-
-                restaurantSettings = settingsSnap.exists() ? settingsSnap.data() : {};
-                const social = restaurantSettings.socialLinks || {};
-                let linksHTML = '';
-                if(social.facebook1) linksHTML += `<a href="${social.facebook1}" target="_blank" class="w-12 h-12 flex items-center justify-center bg-blue-600 rounded-full text-2xl hover:scale-110 transition-transform"><i class="fab fa-facebook-f"></i></a>`;
-                if(social.instagram1) linksHTML += `<a href="${social.instagram1}" target="_blank" class="w-12 h-12 flex items-center justify-center bg-pink-500 rounded-full text-2xl hover:scale-110 transition-transform"><i class="fab fa-instagram"></i></a>`;
-                if(social.whatsapp1) linksHTML += `<a href="https://wa.me/${social.whatsapp1}" target="_blank" class="w-12 h-12 flex items-center justify-center bg-green-500 rounded-full text-2xl hover:scale-110 transition-transform"><i class="fab fa-whatsapp"></i></a>`;
-                elements.socialLinksContainer.innerHTML = linksHTML;
-                if(social.phone1) elements.footerPhone.innerHTML = `للتواصل المباشر: <a href="tel:${social.phone1}" class="font-bold hover:underline" dir="ltr">${social.phone1}</a>`;
-                checkRestaurantStatus();
-
-                deliveryZonesCache = zonesSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-                categoriesCache = categoriesSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                elements.categoriesContainer.innerHTML = '<button class="category-filter-btn w-full text-right p-2 rounded-md font-semibold transition-colors bg-orange-100 text-orange-700" data-id="all">كل الوجبات</button>';
-                categoriesCache.forEach(cat => { elements.categoriesContainer.innerHTML += `<button class="category-filter-btn w-full text-right p-2 rounded-md font-semibold transition-colors hover:bg-orange-100" data-id="${cat.id}">${cat.name}</button>`; });
-                
-                menuItemsCache = productsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                
-                elements.loader.classList.add('hidden');
-                renderMenuItems();
-                renderOffers();
-
-                // --- Event Listeners ---
-                const debouncedRender = debounce(renderMenuItems, 300);
-                const toggleSidebar = () => {
-                    elements.sidebar.classList.toggle('translate-x-full');
-                    elements.sidebarOverlay.classList.toggle('is-hidden');
-                    elements.sidebarOverlay.classList.toggle('is-visible');
+            
+            if (state.activeModal) {
+                state.activeModal.classList.remove('adm-hidden');
+                toggleOverlay(true);
+            }
+        }
+        
+        // ===================================================================
+        // 3. منطق نافذة الأذكار
+        // ===================================================================
+        function initializeDhikrModule() {
+            if (!elements.dhikrTasksContainer) return;
+            const dhikrButtons = elements.dhikrTasksContainer.querySelectorAll('.adm-dhikr-btn');
+            
+            dhikrButtons.forEach(btn => {
+                const key = btn.dataset.key;
+                state.buttons[key] = {
+                    element: btn,
+                    count: 0,
+                    counterElement: btn.querySelector('.adm-counter'),
+                    textElement: btn.querySelector('.adm-btn-text')
                 };
-                elements.sidebarToggle.onclick = toggleSidebar;
-                elements.closeSidebar.onclick = toggleSidebar;
-                elements.sidebarOverlay.onclick = toggleSidebar;
+                state.buttons[key].counterElement.textContent = `0/${config.dhikrRequiredClicks}`;
+            });
 
-                elements.categoriesContainer.addEventListener('click', e => {
-                    if (e.target.classList.contains('category-filter-btn')) {
-                        document.querySelectorAll('.category-filter-btn').forEach(btn => btn.classList.remove('bg-orange-100', 'text-orange-700'));
-                        e.target.classList.add('bg-orange-100', 'text-orange-700');
-                        renderMenuItems();
-                        if (window.innerWidth < 768) toggleSidebar();
+            state.totalRequiredClicks = Object.keys(state.buttons).length * config.dhikrRequiredClicks;
+            
+            // تحسين: استخدام تفويض الأحداث
+            elements.dhikrTasksContainer.addEventListener('click', handleDhikrClick);
+        }
+
+        function handleDhikrClick(event) {
+            const clickedButton = event.target.closest('.adm-dhikr-btn');
+            if (!clickedButton) return;
+
+            const key = clickedButton.dataset.key;
+            const buttonData = state.buttons[key];
+
+            if (buttonData && buttonData.count < config.dhikrRequiredClicks) {
+                buttonData.count++;
+                state.totalClicks++;
+                
+                buttonData.counterElement.textContent = `${buttonData.count}/${config.dhikrRequiredClicks}`;
+                updateProgressBar();
+
+                if (buttonData.count === config.dhikrRequiredClicks) {
+                    buttonData.element.disabled = true;
+                    buttonData.element.classList.add('adm-is-completed');
+                    const iconHTML = buttonData.textElement.querySelector('.adm-icon')?.outerHTML || '';
+                    buttonData.textElement.innerHTML = iconHTML + 'أُنجِز';
+                }
+                
+                checkAllTasksCompletion();
+            }
+        }
+        
+        function updateProgressBar() {
+            if (!elements.progressBar || state.totalRequiredClicks === 0) return;
+            const progressPercentage = (state.totalClicks / state.totalRequiredClicks) * 100;
+            elements.progressBar.style.width = `${progressPercentage}%`;
+        }
+
+        function checkAllTasksCompletion() {
+            if (state.totalClicks >= state.totalRequiredClicks) {
+                elements.dhikrTasksContainer.innerHTML = config.completionMessage;
+                setTimeout(() => toggleOverlay(false), config.autoCloseDelay);
+            }
+        }
+
+        // ===================================================================
+        // 4. منطق النوافذ الأخرى والمستمعين
+        // ===================================================================
+        function setupEventListeners() {
+            // زر تشغيل صوت الجمعة
+            if (elements.playJumaaBtn && elements.jumaaAudio) {
+                elements.playJumaaBtn.addEventListener('click', () => {
+                    if (elements.jumaaAudio.paused) {
+                        elements.jumaaAudio.play().catch(e => console.error("Error playing audio:", e));
+                        elements.playJumaaBtn.querySelector('.adm-btn-text').innerHTML = '<i class="fa-solid fa-pause adm-icon"></i> جارٍ التشغيل...';
+                    } else {
+                        elements.jumaaAudio.pause();
+                        elements.playJumaaBtn.querySelector('.adm-btn-text').innerHTML = '<i class="fa-solid fa-volume-high adm-icon"></i> تشغيل التلاوة';
                     }
                 });
-                elements.orderBtn.onclick = showOrderModal;
-                elements.searchInput.oninput = debouncedRender;
-                elements.grid.addEventListener('click', (e) => { const btn = e.target.closest('.add-to-order-btn'); if (btn) addToOrder(btn.dataset.id); });
-                updateOrderIcon();
-            } catch (error) {
-                console.error("Initialization failed:", error);
-                elements.loader.innerHTML = '<p class="text-red-500">فشل تحميل بيانات المطعم. يرجى تحديث الصفحة.</p>';
+                elements.jumaaAudio.onended = () => {
+                    elements.playJumaaBtn.querySelector('.adm-btn-text').innerHTML = '<i class="fa-solid fa-volume-high adm-icon"></i> تشغيل التلاوة';
+                };
             }
-        };
-        initializeStore();
+            
+            // زر إغلاق نافذة الكهف
+            if (elements.closeKahfBtn) {
+                elements.closeKahfBtn.addEventListener('click', () => toggleOverlay(false));
+            }
+
+            // تحسين: إغلاق النافذة عند الضغط خارجها أو على مفتاح Esc
+            elements.overlay.addEventListener('click', (event) => {
+                // أغلق فقط إذا كانت نافذة الكهف هي المفتوحة وتم النقر على الخلفية مباشرة
+                if (state.activeModal === elements.modals.kahf && event.target === elements.overlay) {
+                    toggleOverlay(false);
+                }
+            });
+
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape' && elements.overlay.classList.contains('is-visible')) {
+                    // أغلق فقط إذا كانت نافذة الكهف هي المفتوحة
+                    if (state.activeModal === elements.modals.kahf) {
+                        toggleOverlay(false);
+                    }
+                }
+            });
+        }
+        
+        // ===================================================================
+        // 5. التشغيل
+        // ===================================================================
+        handleModalsVisibility();
+        setupEventListeners();
+    });
     </script>
 </body>
 </html>
